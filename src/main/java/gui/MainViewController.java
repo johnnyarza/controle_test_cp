@@ -27,7 +27,7 @@ public class MainViewController implements Initializable{
 	@FXML
 	public void onBtNewTestAction(ActionEvent event) {
 		Stage parentStage = Utils.getMenuBarStage(myMenuBar);
-		createDialogForm("/gui/CompresionTestForm.fxml", parentStage);
+		createDialogForm("/gui/NewCompresionTestForm.fxml", parentStage);
 	}
 	
 	private void createDialogForm(String absoluteName, Stage parentStage) {
