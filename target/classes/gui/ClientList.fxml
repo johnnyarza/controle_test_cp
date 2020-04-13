@@ -9,8 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<VBox prefHeight="316.0" prefWidth="494.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1">
+<VBox prefHeight="316.0" prefWidth="494.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ClientListController">
    <children>
       <Label text="Lista de Clientes">
          <font>
@@ -22,17 +21,17 @@
       </Label>
       <ToolBar prefHeight="40.0" prefWidth="200.0">
         <items>
-          <Button mnemonicParsing="false" text="Nuevo" />
-            <Button mnemonicParsing="false" text="Editar" />
+          <Button fx:id="btNew" mnemonicParsing="false" onAction="#onBtNewAction" text="Nuevo" />
+            <Button fx:id="btEdit" mnemonicParsing="false" onAction="#onBtEditAction" text="Editar" />
         </items>
       </ToolBar>
-      <TableView prefHeight="200.0" prefWidth="200.0">
+      <TableView fx:id="tableViewClient" prefHeight="200.0" prefWidth="200.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="iD" />
-          <TableColumn prefWidth="75.0" text="Nombre" />
-            <TableColumn prefWidth="75.0" text="Telefono" />
-            <TableColumn prefWidth="75.0" text="Ubicación" />
-            <TableColumn prefWidth="75.0" text="Correo E." />
+          <TableColumn fx:id="tableColumnId" prefWidth="75.0" text="iD" />
+          <TableColumn fx:id="tableColumnName" prefWidth="75.0" text="Nombre" />
+            <TableColumn fx:id="tableColumnPhone" prefWidth="75.0" text="Telefono" />
+            <TableColumn fx:id="tableColumnAddress" prefWidth="75.0" text="Ubicación" />
+            <TableColumn fx:id="tableColumnEmail" prefWidth="75.0" text="Correo E." />
         </columns>
       </TableView>
    </children>
