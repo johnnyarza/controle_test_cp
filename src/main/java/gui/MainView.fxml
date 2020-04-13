@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainViewController">
+   <content>
+      <VBox prefHeight="318.0" prefWidth="514.0">
+         <children>
+            <MenuBar fx:id="myMenuBar">
+              <menus>
+                  <Menu mnemonicParsing="false" text="Archivo">
+                    <items>
+                      <MenuItem fx:id="onBtNewTestAction" mnemonicParsing="false" onAction="#onBtNewTestAction" text="Nueva rotura" />
+                        <MenuItem mnemonicParsing="false" text="Cargar rotura" />
+                    </items>
+                  </Menu>
+                <Menu mnemonicParsing="false" text="Registros">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Clientes" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+         </children>
+      </VBox>
+   </content>
+</ScrollPane>
