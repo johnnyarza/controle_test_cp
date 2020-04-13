@@ -1,7 +1,12 @@
-package application.domaim;
+	package application.domaim;
 
-public class Cliente {
+import java.io.Serializable;
+
+
+public class Cliente implements Serializable{
+	private static final long serialVersionUID = 1L;
 	
+
 	private Integer id;
 	private String name;
 	private String phone;
@@ -88,6 +93,12 @@ public class Cliente {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Cliente [id=" + id + ", name=" + name + ", phone=" + phone + ", address=" + address + ", email=" + email
+				+ "]";
 	}
 	
 	

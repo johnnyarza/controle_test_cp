@@ -8,8 +8,10 @@
 
 <ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainViewController">
    <content>
-      <VBox prefHeight="318.0" prefWidth="514.0">
+   
+      <VBox prefHeight="318.0" prefWidth="514.0">   
          <children>
+         
             <MenuBar fx:id="myMenuBar">
               <menus>
                   <Menu mnemonicParsing="false" text="Archivo">
@@ -20,7 +22,7 @@
                   </Menu>
                 <Menu mnemonicParsing="false" text="Registros">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Clientes" />
+                    <MenuItem fx:id="onBtClientAction" mnemonicParsing="false" onAction="#onBtClientAction" text="Clientes" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
@@ -30,7 +32,9 @@
                 </Menu>
               </menus>
             </MenuBar>
-         </children>
+            
+         </children>         
       </VBox>
+      
    </content>
 </ScrollPane>
