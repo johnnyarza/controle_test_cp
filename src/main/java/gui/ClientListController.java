@@ -2,6 +2,7 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -9,6 +10,7 @@ import application.Program;
 import application.domaim.Cliente;
 import application.service.ClientService;
 import gui.listeners.DataChangeListener;
+import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -64,8 +67,15 @@ public class ClientListController implements Initializable,DataChangeListener{
 	}
 	
 	@FXML
-	public void onBtEditAction() {
-		System.out.println("Edit cliente");	
+	public void onBtEditAction(ActionEvent event) {
+		try {
+			Stage parentStage = Utils.currentStage(event);
+			Cliente obj = getClientFromTableView();
+			createDialogForm(obj,"/gui/ClienteRegistrationForm.fxml", parentStage);
+			
+		} catch (NullPointerException e) {
+			Alerts.showAlert("Error", "Ningun cliente seleccionado", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	public void setClientService(ClientService service) {
@@ -94,9 +104,14 @@ public class ClientListController implements Initializable,DataChangeListener{
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
 		}
-		List<Cliente> list = service.findAll();
+		//List<Cliente> list = new ArrayList<>();
+		//obsList = FXCollections.observableArrayList(list);
+		//tableViewClient.setItems(obsList);
+		
+		List<Cliente> list =service.findAll();
 		obsList = FXCollections.observableArrayList(list);
 		tableViewClient.setItems(obsList);
+		tableViewClient.refresh();
 	}
 	
 	public  void createDialogForm(Cliente obj, String absoluteName, Stage parentStage) {
@@ -130,4 +145,15 @@ public class ClientListController implements Initializable,DataChangeListener{
 		updateTableView();		
 	}
 	
+	private Cliente getClientFromTableView() {
+
+		//Integer row = tableViewClient.getSelectionModel().selectedIndexProperty().get();
+		Cliente client = tableViewClient.getSelectionModel().getSelectedItem();
+		//Integer id = tableColumnId.getCellData(row);
+		if (client == null) {
+			throw new NullPointerException();
+		}
+		return client;
+	}
 }
+

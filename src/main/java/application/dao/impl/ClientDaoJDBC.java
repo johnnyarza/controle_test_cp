@@ -71,9 +71,9 @@ public class ClientDaoJDBC implements ClientDao{
 			st.setString(2, obj.getPhone());
 			st.setString(3, obj.getAddress());
 			st.setString(4, obj.getEmail());
-			st.setInt(4, obj.getId());
+			st.setInt(5, obj.getId());
 			
-			st.executeQuery();
+			st.executeUpdate();
 
 		} 
 		catch (SQLException e) {
