@@ -1,5 +1,6 @@
 package gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -7,19 +8,26 @@ import java.util.ResourceBundle;
 import application.Program;
 import application.domaim.Cliente;
 import application.service.ClientService;
+import gui.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class ClientListController implements Initializable{
 	
 	private ClientService service;
+	
 	
 	@FXML
 	private TableView<Cliente> tableViewClient;
@@ -48,8 +56,9 @@ public class ClientListController implements Initializable{
 	private Button btEdit;
 	
 	@FXML
-	public void onBtNewAction() {
-		System.out.println("Nuevo cliente");
+	public void onBtNewAction(ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
+		createDialogForm("/gui/ClienteRegistrationForm.fxml", parentStage);
 	}
 	
 	@FXML
@@ -60,6 +69,7 @@ public class ClientListController implements Initializable{
 	public void setClientService(ClientService service) {
 		this.service = service;
 	}
+	
 	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -86,4 +96,25 @@ public class ClientListController implements Initializable{
 		obsList = FXCollections.observableArrayList(list);
 		tableViewClient.setItems(obsList);
 	}
+	
+	public  void createDialogForm(String absoluteName, Stage parentStage) {
+		try {
+			
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			Pane pane = loader.load();
+			
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Cliente");
+			dialogStage.setScene(new Scene(pane));
+			dialogStage.setResizable(false);
+			dialogStage.initOwner(parentStage);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.showAndWait();
+			
+			
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
