@@ -15,6 +15,13 @@ public class Utils {
 		return (Stage) myMenuBar.getScene().getWindow();
 	}
 
-	
+	public static Integer tryParseToInt(String str) {
+		try {
+		return Integer.parseInt(str);
+		}
+		catch (NumberFormatException e) {
+			return null;
+		}
+	}
 
 }
