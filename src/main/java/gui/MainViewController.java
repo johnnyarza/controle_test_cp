@@ -3,8 +3,10 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import application.Program;
+import application.service.ClientService;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.event.ActionEvent;
@@ -40,7 +42,10 @@ public class MainViewController implements Initializable{
 	}
 	
 	public void onBtClientAction(ActionEvent event) {
-		loadView("/gui/ClientList.fxml");
+		loadView("/gui/ClientList.fxml", (ClientListController controller) -> {
+			controller.setClientService(new ClientService());
+			controller.updateTableView();
+		});
 	}
 	
 	private void createDialogForm(String absoluteName, Stage parentStage) {
@@ -62,7 +67,7 @@ public class MainViewController implements Initializable{
 		}
 	}
 
-	private synchronized void loadView(String absoluteName) {
+	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
 
 			try {
 				FXMLLoader loader = new FXMLLoader (getClass().getResource(absoluteName));
@@ -75,11 +80,15 @@ public class MainViewController implements Initializable{
 				mainVBox.getChildren().clear();
 				mainVBox.getChildren().add(mainMenu);
 				mainVBox.getChildren().addAll(newVbox.getChildren());
+				
+				T controller = loader.getController();
+				initializingAction.accept(controller);
 			
 			} catch (IOException e) {
 				Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 			}
 	}
+	
 	@Override
 	public void initialize(URL uri, ResourceBundle rb) {
 		// TODO Auto-generated method stub

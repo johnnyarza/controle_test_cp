@@ -1,10 +1,14 @@
 package gui;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Program;
 import application.domaim.Cliente;
+import application.service.ClientService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -14,6 +18,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 public class ClientListController implements Initializable{
+	
+	private ClientService service;
 	
 	@FXML
 	private TableView<Cliente> tableViewClient;
@@ -36,19 +42,25 @@ public class ClientListController implements Initializable{
 	@FXML
 	private Button btNew;
 	
+	private ObservableList<Cliente> obsList;
+	
+	@FXML
+	private Button btEdit;
+	
 	@FXML
 	public void onBtNewAction() {
 		System.out.println("Nuevo cliente");
 	}
 	
 	@FXML
-	private Button btEdit;
-	
-	@FXML
 	public void onBtEditAction() {
 		System.out.println("Edit cliente");	
 	}
 
+	public void setClientService(ClientService service) {
+		this.service = service;
+	}
+	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		initializeNodes();
@@ -63,8 +75,15 @@ public class ClientListController implements Initializable{
 		tableColumnPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
 		
 		Stage stage =(Stage) Program.getMainScene().getWindow();
-		tableViewClient.prefHeightProperty().bind(stage.heightProperty());
-		
+		tableViewClient.prefHeightProperty().bind(stage.heightProperty());	
 	}
 
+	public void updateTableView() {
+		if (service == null) {
+			throw new IllegalStateException("Service was null");
+		}
+		List<Cliente> list = service.findAll();
+		obsList = FXCollections.observableArrayList(list);
+		tableViewClient.setItems(obsList);
+	}
 }
