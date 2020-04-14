@@ -23,6 +23,7 @@
         <items>
           <Button fx:id="btNew" mnemonicParsing="false" onAction="#onBtNewAction" text="Nuevo" />
             <Button fx:id="btEdit" mnemonicParsing="false" onAction="#onBtEditAction" text="Editar" />
+            <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" text="Apagar" />
         </items>
       </ToolBar>
       <TableView fx:id="tableViewClient" prefHeight="200.0" prefWidth="200.0">

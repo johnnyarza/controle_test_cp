@@ -163,30 +163,12 @@ public class ClienteRegistrationFormController implements Initializable{
 	}
 	
 	private void setErrorMessages(Map<String, String> errors) {
-		Set<String> fields = errors.keySet(); // Set é conjunto
+		Set<String> fields = errors.keySet(); // Set é conjunto		
 		
-		if (fields.contains("name")) {
-			labelErrorName.setText(errors.get("name"));
-		} else {
-			labelErrorName.setText("");
-		}
+		labelErrorName.setText(fields.contains("name") ? errors.get("name") : "");
+		labelErrorPhone.setText(fields.contains("phone") ? errors.get("phone") : "");
+		labelErrorAddress.setText(fields.contains("address") ? errors.get("address") : "");
+		labelErrorEmail.setText(fields.contains("email") ? errors.get("email") : "");
 		
-		if (fields.contains("phone")) {
-			labelErrorPhone.setText(errors.get("phone"));
-		}else {
-			labelErrorPhone.setText("");
-		}
-		
-		if (fields.contains("address")) {
-			labelErrorAddress.setText(errors.get("address"));
-		}else {
-			labelErrorAddress.setText("");
-		}
-		
-		if (fields.contains("email")) {
-			labelErrorEmail.setText(errors.get("email"));
-		}else {
-			labelErrorEmail.setText("");
-		}
 	}
 }

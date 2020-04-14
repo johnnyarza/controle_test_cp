@@ -2,11 +2,11 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Program;
+import application.db.DbException;
 import application.domaim.Cliente;
 import application.service.ClientService;
 import gui.listeners.DataChangeListener;
@@ -19,10 +19,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -32,7 +32,8 @@ public class ClientListController implements Initializable,DataChangeListener{
 	
 	private ClientService service;
 	
-	
+	private ObservableList<Cliente> obsList;
+		
 	@FXML
 	private TableView<Cliente> tableViewClient;
 	
@@ -54,7 +55,8 @@ public class ClientListController implements Initializable,DataChangeListener{
 	@FXML
 	private Button btNew;
 	
-	private ObservableList<Cliente> obsList;
+	@FXML
+	private Button btDelete;
 	
 	@FXML
 	private Button btEdit;
@@ -74,6 +76,17 @@ public class ClientListController implements Initializable,DataChangeListener{
 			createDialogForm(obj,"/gui/ClienteRegistrationForm.fxml", parentStage);
 			
 		} catch (NullPointerException e) {
+			Alerts.showAlert("Error", "Ningun cliente seleccionado", e.getMessage(), AlertType.ERROR);
+		}
+	}
+	
+	@FXML
+	public void onBtDeleteAction(ActionEvent event) {
+		try {
+			System.out.println("Delete");
+			//TODO Implementar função deletar
+			
+		} catch (DbException e) {
 			Alerts.showAlert("Error", "Ningun cliente seleccionado", e.getMessage(), AlertType.ERROR);
 		}
 	}
