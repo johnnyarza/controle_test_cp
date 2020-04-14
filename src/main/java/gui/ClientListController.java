@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import application.Program;
 import application.domaim.Cliente;
 import application.service.ClientService;
+import gui.listeners.DataChangeListener;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,7 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ClientListController implements Initializable{
+public class ClientListController implements Initializable,DataChangeListener{
 	
 	private ClientService service;
 	
@@ -107,6 +108,7 @@ public class ClientListController implements Initializable{
 			ClienteRegistrationFormController controller = loader.getController();
 			controller.setEntity(obj);
 			controller.setService(new ClientService());
+			controller.subscribeDataChangeListener(this);
 			controller.updateFormData();
 			
 			Stage dialogStage = new Stage();
@@ -121,6 +123,11 @@ public class ClientListController implements Initializable{
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void onDataChange() {
+		updateTableView();		
 	}
 	
 }

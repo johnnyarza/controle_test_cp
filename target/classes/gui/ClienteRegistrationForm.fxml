@@ -10,13 +10,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane prefHeight="212.0" prefWidth="334.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ClienteRegistrationFormController">
+<AnchorPane prefHeight="212.0" prefWidth="369.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ClienteRegistrationFormController">
    <children>
       <GridPane layoutX="-86.0" layoutY="-50.0" prefHeight="176.0" prefWidth="302.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="20.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="137.0" minWidth="10.0" prefWidth="75.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="195.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="211.0" minWidth="10.0" prefWidth="54.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="160.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="211.0" minWidth="10.0" prefWidth="97.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -46,11 +46,11 @@
                   <Insets top="5.0" />
                </GridPane.margin>
             </HBox>
-            <Label textFill="RED" GridPane.columnIndex="2" />
-            <Label fx:id="labelErrorName" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Label fx:id="labelErrorPhone" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <Label fx:id="labelErrorAddress" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <Label fx:id="labelErrorEmail" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Label textFill="RED" wrapText="true" GridPane.columnIndex="2" />
+            <Label fx:id="labelErrorName" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label fx:id="labelErrorPhone" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Label fx:id="labelErrorAddress" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Label fx:id="labelErrorEmail" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="4" />
          </children>
       </GridPane>
    </children>
