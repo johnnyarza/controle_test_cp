@@ -53,8 +53,7 @@ public class ClientDaoJDBC implements ClientDao{
 			throw new DbException(e.getMessage());
 		} finally {
 			DB.closeStatement(st);
-		}
-		
+		}		
 	}
 
 	@Override
@@ -82,14 +81,26 @@ public class ClientDaoJDBC implements ClientDao{
 		} 
 		finally {
 			DB.closeStatement(st);
-		}
-		
+		}	
 	}
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
-		
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("delete from clients where clients.id = ?");
+			
+			st.setInt(1, id);
+			
+			st.executeUpdate();
+
+		} 
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} 
+		finally {
+			DB.closeStatement(st);
+		}	
 	}
 
 	@Override
@@ -101,6 +112,7 @@ public class ClientDaoJDBC implements ClientDao{
 			
 			st.setInt(1, id);
 			rs = st.executeQuery();
+			
 			if (rs.next()) {
 				return new Cliente(rs.getInt(0), rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
 			}
@@ -122,6 +134,7 @@ public class ClientDaoJDBC implements ClientDao{
 			st = conn.prepareStatement("SELECT * FROM clients");
 			
 			rs = st.executeQuery();
+			
 			List<Cliente> list = new ArrayList<>();
 			while (rs.next()) {
 				list.add(new Cliente(rs.getInt(0), rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)));
@@ -136,5 +149,4 @@ public class ClientDaoJDBC implements ClientDao{
 			DB.closeResultSet(rs);
 		}	
 	}
-
 }
