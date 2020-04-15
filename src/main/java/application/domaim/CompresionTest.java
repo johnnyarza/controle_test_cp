@@ -7,15 +7,19 @@ public class CompresionTest {
 	
 	private Integer id;
 	private Cliente client;
+	private String obra;
+	private String address;
 	private Date date;
 	private List<CorpoDeProva> listCps;
 		
 	public CompresionTest() {
 	}
 
-	public CompresionTest(Integer id,Cliente client, Date date) {
+	public CompresionTest(Integer id,Cliente client, String obra,String address,Date date) {
 		this.id = id;
 		this.client = client;
+		this.setObra(obra);
+		this.setAddress(address);
 		this.date = date;
 	}
 
@@ -49,5 +53,21 @@ public class CompresionTest {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getObra() {
+		return obra;
+	}
+
+	public void setObra(String obra) {
+		this.obra = obra;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 }

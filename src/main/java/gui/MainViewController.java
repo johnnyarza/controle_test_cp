@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import application.Program;
 import application.service.ClientService;
+import application.service.CompresionTestService;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.event.ActionEvent;
@@ -38,7 +39,11 @@ public class MainViewController implements Initializable{
 	@FXML
 	public void onBtNewTestAction(ActionEvent event) {
 		Stage parentStage = Utils.getMenuBarStage(myMenuBar);
-		createDialogForm("/gui/NewCompresionTestForm.fxml", parentStage);
+		createDialogForm("/gui/NewCompresionTestForm.fxml", parentStage, 
+				(NewCompresionTestFormController controller) -> {
+					controller.setCompresionTestService(new CompresionTestService());
+					controller.setClientService(new ClientService());
+				});
 	}
 	
 	public void onBtClientAction(ActionEvent event) {
@@ -48,11 +53,12 @@ public class MainViewController implements Initializable{
 		});
 	}
 	
-	private void createDialogForm(String absoluteName, Stage parentStage) {
+	private <T> void createDialogForm(String absoluteName, Stage parentStage,Consumer<T> initializingAction) {
 		try {
 			
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
+		
 			
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Nueva rotura");
@@ -61,6 +67,9 @@ public class MainViewController implements Initializable{
 			dialogStage.initOwner(parentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.showAndWait();
+			
+			T controller = loader.getController();
+			initializingAction.accept(controller);
 			
 		}catch (IOException e) {
 			e.printStackTrace();

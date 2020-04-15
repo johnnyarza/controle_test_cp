@@ -26,4 +26,8 @@ public class ClientService {
 	public void deleteById(Integer id) {
 		dao.deleteById(id);
 	}
+	
+	public Cliente findById (Integer id) {	
+		return dao.findById(id);
+	}
 }

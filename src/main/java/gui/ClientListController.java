@@ -97,11 +97,9 @@ public class ClientListController implements Initializable,DataChangeListener{
 		}
 	}
 
-
 	public void setClientService(ClientService service) {
 		this.service = service;
 	}
-	
 	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
