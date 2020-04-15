@@ -3,6 +3,7 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.Program;
@@ -21,6 +22,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -82,14 +84,19 @@ public class ClientListController implements Initializable,DataChangeListener{
 	
 	@FXML
 	public void onBtDeleteAction(ActionEvent event) {
-		try {
-			System.out.println("Delete");
-			//TODO Implementar função deletar
-			
+		try {		
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacion", null, "Segura que desea apagar cliente?");
+			if (result.get() == ButtonType.OK) {
+				Cliente obj = getClientFromTableView();
+				Integer id = obj.getId();
+				service.deleteById(id);	
+				onDataChange();
+			}
 		} catch (DbException e) {
 			Alerts.showAlert("Error", "Ningun cliente seleccionado", e.getMessage(), AlertType.ERROR);
 		}
 	}
+
 
 	public void setClientService(ClientService service) {
 		this.service = service;
@@ -168,5 +175,6 @@ public class ClientListController implements Initializable,DataChangeListener{
 		}
 		return client;
 	}
+	
 }
 
