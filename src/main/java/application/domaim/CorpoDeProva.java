@@ -5,74 +5,205 @@ import java.util.Date;
 public class CorpoDeProva {
 	
 	private Integer id;
-	private Cliente client;
-	private Date moldeDate;
 	private String code;
-	private Double fck;
+	private Cliente client;
+	private CompresionTest compresionTest;
+	private Double slump;
+	private Date moldeDate;	
+	private Date ruptureDate;
+	private Integer days;
 	private Double diameter;
 	private Double height;
+	private Double weight;
+	private Double densid;
+	private Double tonRupture;
+	private Double fckRupture;
+
 	
 	public CorpoDeProva() {
 	}
 		
-	public CorpoDeProva(Integer id, Cliente client, Date moldeDate, String code, Double fck, Double diameter,
-			Double height) {
+
+	public CorpoDeProva(Integer id, String code, Cliente client, CompresionTest compresionTest, Double slump,
+			Date moldeDate, Date ruptureDate, Double diameter, Double height, Double weight, Double tonRupture) {
 		super();
 		this.id = id;
-		this.client = client;
-		this.moldeDate = moldeDate;
 		this.code = code;
-		this.fck = fck;
+		this.client = client;
+		this.compresionTest = compresionTest;
+		this.slump = slump;
+		this.moldeDate = moldeDate;
+		this.ruptureDate = ruptureDate;
 		this.diameter = diameter;
 		this.height = height;
+		this.weight = weight;
+		this.tonRupture = tonRupture;
 	}
+
 
 	public Integer getId() {
 		return id;
 	}
 
+
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public Cliente getClient() {
-		return client;
-	}
 
-	public void setClient(Cliente client) {
-		this.client = client;
-	}
 
 	public String getCode() {
 		return code;
 	}
 
+
+
 	public void setCode(String code) {
 		this.code = code;
 	}
 
-	public Double getFck() {
-		return fck;
+
+
+	public Cliente getClient() {
+		return client;
 	}
 
-	public void setFck(Double fck) {
-		this.fck = fck;
+
+
+	public void setClient(Cliente client) {
+		this.client = client;
 	}
+
+
+
+	public CompresionTest getCompresionTest() {
+		return compresionTest;
+	}
+
+
+
+	public void setCompresionTest(CompresionTest compresionTest) {
+		this.compresionTest = compresionTest;
+	}
+
+
+
+	public Double getSlump() {
+		return slump;
+	}
+
+
+
+	public void setSlump(Double slump) {
+		this.slump = slump;
+	}
+
+
+
+	public Date getMoldeDate() {
+		return moldeDate;
+	}
+
+
+
+	public void setMoldeDate(Date moldeDate) {
+		this.moldeDate = moldeDate;
+	}
+
+
+
+	public Date getRuptureDate() {
+		return ruptureDate;
+	}
+
+
+
+	public void setRuptureDate(Date ruptureDate) {
+		this.ruptureDate = ruptureDate;
+	}
+
+
+
+	public Integer getDays() {
+		return days;
+	}
+
+
+
+	public void setDays(Integer days) {
+		//TODO Implementar days
+		//this.days = days;
+	}
+
+
 
 	public Double getDiameter() {
 		return diameter;
 	}
 
+
+
 	public void setDiameter(Double diameter) {
 		this.diameter = diameter;
 	}
+
+
 
 	public Double getHeight() {
 		return height;
 	}
 
+
+
 	public void setHeight(Double height) {
 		this.height = height;
+	}
+
+
+
+	public Double getWeight() {
+		return weight;
+	}
+
+
+
+	public void setWeight(Double weight) {
+		this.weight = weight;
+	}
+
+
+
+	public Double getDensid() {
+		return densid;
+	}
+
+
+
+	public void setDensid(Double densid) {
+		//TODO Implementar densidade
+		//this.densid = densid;
+	}
+
+	public Double getTonRupture() {
+		return tonRupture;
+	}
+
+
+
+	public void setTonRupture(Double tonRupture) {
+		this.tonRupture = tonRupture;
+	}
+
+	public Double getFckRupture() {
+		return fckRupture;
+	}
+
+
+	public void setFckRupture(Double fckRupture) {
+		//TODO implementar
+		
+		//this.fckRupture = fckRupture;
 	}
 
 	@Override
@@ -107,7 +238,6 @@ public class CorpoDeProva {
 	public void setDataMolde(Date dataMolde) {
 		this.moldeDate = dataMolde;
 	}
-	
-	
+
 
 }

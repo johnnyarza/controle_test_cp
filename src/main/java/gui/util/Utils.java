@@ -14,6 +14,7 @@ public class Utils {
 	public static Stage getMenuBarStage(MenuBar myMenuBar) {
 		return (Stage) myMenuBar.getScene().getWindow();
 	}
+	
 
 	public static Integer tryParseToInt(String str) {
 		try {

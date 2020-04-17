@@ -30,12 +30,10 @@
             <Label text="iD" />
             <Label text="Cliente" GridPane.rowIndex="1" />
             <TextField fx:id="txtId" editable="false" maxWidth="40.0" GridPane.columnIndex="1" />
-            <Label textFill="RED" GridPane.columnIndex="2" />
-            <Label fx:id="labelErrorClient" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <Label text="Obra" GridPane.rowIndex="2" />
             <Label text="Ubicación" GridPane.rowIndex="3" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="txtObra" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="txtAddress" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <ComboBox fx:id="comboBoxClient" prefHeight="25.0" prefWidth="189.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <HBox prefHeight="29.0" prefWidth="182.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
@@ -46,6 +44,9 @@
                   <Insets top="5.0" />
                </GridPane.margin>
             </HBox>
+            <Label fx:id="labelErrorClient" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label fx:id="labelErrorObra" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Label fx:id="labelErrorAddress" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="3" />
          </children>
       </GridPane>
    </children>

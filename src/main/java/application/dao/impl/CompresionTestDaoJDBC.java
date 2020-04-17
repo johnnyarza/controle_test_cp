@@ -28,7 +28,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 	public void insert(CompresionTest obj) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("ININSERT INTO compresion_test " 
+			st = conn.prepareStatement("INSERT INTO compresion_test " 
 					+ "(client_id,ConcreteDesign_id,obra,address,creacionDate) " 
 					+ "VALUES "
 					+ "(?,?,?,?,?)",
