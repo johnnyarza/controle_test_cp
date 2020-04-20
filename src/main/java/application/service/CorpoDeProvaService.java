@@ -30,4 +30,8 @@ public class CorpoDeProvaService {
 	public CorpoDeProva findById (Integer id) {	
 		return dao.findById(id);
 	}
+	
+	public List<CorpoDeProva> findByCompresionTestId(Integer id) {
+		return dao.findByCompresionTestId(id);
+	}
 }

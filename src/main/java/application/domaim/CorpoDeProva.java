@@ -6,7 +6,7 @@ public class CorpoDeProva {
 	
 	private Integer id;
 	private String code;
-	private Cliente client;
+	//private Cliente client;
 	private CompresionTest compresionTest;
 	private Double slump;
 	private Date moldeDate;	
@@ -24,12 +24,11 @@ public class CorpoDeProva {
 	}
 		
 
-	public CorpoDeProva(Integer id, String code, Cliente client, CompresionTest compresionTest, Double slump,
+	public CorpoDeProva(Integer id, String code, CompresionTest compresionTest, Double slump,
 			Date moldeDate, Date ruptureDate, Double diameter, Double height, Double weight, Double tonRupture) {
 		super();
 		this.id = id;
 		this.code = code;
-		this.client = client;
 		this.compresionTest = compresionTest;
 		this.slump = slump;
 		this.moldeDate = moldeDate;
@@ -64,132 +63,85 @@ public class CorpoDeProva {
 	}
 
 
-
-	public Cliente getClient() {
-		return client;
-	}
-
-
-
-	public void setClient(Cliente client) {
-		this.client = client;
-	}
-
-
-
 	public CompresionTest getCompresionTest() {
 		return compresionTest;
 	}
-
-
 
 	public void setCompresionTest(CompresionTest compresionTest) {
 		this.compresionTest = compresionTest;
 	}
 
-
-
 	public Double getSlump() {
 		return slump;
 	}
-
-
 
 	public void setSlump(Double slump) {
 		this.slump = slump;
 	}
 
-
-
 	public Date getMoldeDate() {
 		return moldeDate;
 	}
-
-
 
 	public void setMoldeDate(Date moldeDate) {
 		this.moldeDate = moldeDate;
 	}
 
-
-
 	public Date getRuptureDate() {
 		return ruptureDate;
 	}
-
-
 
 	public void setRuptureDate(Date ruptureDate) {
 		this.ruptureDate = ruptureDate;
 	}
 
-
-
 	public Integer getDays() {
 		return days;
 	}
 
-
-
 	public void setDays(Integer days) {
-		//TODO Implementar days
-		//this.days = days;
+		this.days = days;
 	}
-
-
 
 	public Double getDiameter() {
 		return diameter;
 	}
 
-
-
 	public void setDiameter(Double diameter) {
 		this.diameter = diameter;
 	}
-
-
 
 	public Double getHeight() {
 		return height;
 	}
 
-
-
 	public void setHeight(Double height) {
 		this.height = height;
 	}
-
-
 
 	public Double getWeight() {
 		return weight;
 	}
 
-
-
 	public void setWeight(Double weight) {
 		this.weight = weight;
 	}
-
-
 
 	public Double getDensid() {
 		return densid;
 	}
 
-
-
-	public void setDensid(Double densid) {
-		//TODO Implementar densidade
-		//this.densid = densid;
+	public void setDensid() {
+		if ((this.diameter != null) & (this.diameter != 0) & (this.height != 0) & (this.height != null)) {
+			Double areaCirculoM2 = ((Math.PI * (this.diameter * this.diameter)) / 4) / 10000;
+			Double volM3 = areaCirculoM2 * (this.height / 100);
+			this.densid = this.weight / volM3;			
+		}
 	}
 
 	public Double getTonRupture() {
-		return tonRupture;
+		return this.tonRupture;
 	}
-
-
 
 	public void setTonRupture(Double tonRupture) {
 		this.tonRupture = tonRupture;
@@ -199,11 +151,12 @@ public class CorpoDeProva {
 		return fckRupture;
 	}
 
-
-	public void setFckRupture(Double fckRupture) {
-		//TODO implementar
-		
-		//this.fckRupture = fckRupture;
+	public void setFckRupture() {
+		if (((this.diameter != null) & (this.diameter != 0) & (this.tonRupture != 0) & (this.tonRupture != null))) {
+			Double areaCirculoM2 = ((Math.PI * (this.diameter * this.diameter)) / 4) / 10000;
+			Double tonMN = this.tonRupture * 0.00889644;
+			this.fckRupture = tonMN / areaCirculoM2;
+		}
 	}
 
 	@Override
@@ -238,6 +191,5 @@ public class CorpoDeProva {
 	public void setDataMolde(Date dataMolde) {
 		this.moldeDate = dataMolde;
 	}
-
 
 }

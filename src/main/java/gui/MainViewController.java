@@ -6,16 +6,17 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
 import application.Program;
+import application.domaim.CompresionTest;
 import application.service.ClientService;
+import application.service.CompresionTestListService;
 import application.service.CompresionTestService;
-import gui.util.Alerts;
+import application.service.CorpoDeProvaService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
@@ -26,8 +27,15 @@ import javafx.stage.Stage;
 
 public class MainViewController implements Initializable{
 	
+	private Boolean btCancelPressed; 
+	
+	private CompresionTest compresionTest;
+		
 	@FXML
 	private MenuItem onBtNewTestAction;
+	
+	@FXML
+	private MenuItem BtLoadTest;
 	
 	@FXML
 	private MenuItem onBtClientAction;
@@ -38,12 +46,35 @@ public class MainViewController implements Initializable{
 	@FXML
 	public void onBtNewTestAction(ActionEvent event) {
 		Stage parentStage = (Stage) Program.getMainScene().getWindow();//Utils.getMenuBarStage(myMenuBar);
-		createDialogForm("/gui/NewCompresionTestForm.fxml", parentStage, 
-				(NewCompresionTestFormController controller) -> {
-					controller.setCompresionTestService(new CompresionTestService());
-					controller.setClientService(new ClientService());
-					controller.loadAssociatedObjects();
-				});
+		btCancelPressed = false;
+		
+		createDialogFormNewCompresionTest("/gui/NewCompresionTestForm.fxml", parentStage);
+		
+		if  (!btCancelPressed) {
+		createDialogForm("/gui/CompresionTestForm.fxml", parentStage, (CompresionTestFormController controller) -> {
+			controller.setCorpoDeProvaService(new CorpoDeProvaService());
+			controller.setCompresionTestService(new CompresionTestService());
+			controller.setClientService(new ClientService());
+			controller.setCompresionTest(compresionTest);
+			controller.loadAssociatedObjects();
+			controller.updateFormData();
+			controller.updateTableView();
+			});
+		}
+	}
+	
+	public void onBtLoadTestAction(ActionEvent event) {
+			loadView("/gui/LoadCompresionTestView.fxml", (LoadCompresionTestViewController controller) -> {
+				controller.setCompresionTestService(new CompresionTestListService());
+				controller.setClientService(new ClientService());
+				controller.updateTableView();
+			});
+		
+		//TODO janela para escolher o ensaio existente
+		/*createDialogForm("/gui/CompresionTestForm.fxml", parentStage, (CompresionTestFormController controller) -> {
+			controller.setCorpoDeProvaService(new CorpoDeProvaService());
+			controller.updateTableView();
+			});*/
 	}
 	
 	public void onBtClientAction(ActionEvent event) {
@@ -53,6 +84,22 @@ public class MainViewController implements Initializable{
 		});
 	}
 	
+	public Boolean getBtCancelPressed() {
+		return btCancelPressed;
+	}
+
+	public void setBtCancelPressed(Boolean btNewTestForm) {
+		this.btCancelPressed = btNewTestForm;
+	}
+
+	public CompresionTest getCompresionTest() {
+		return compresionTest;
+	}
+
+	public void setCompresionTest(CompresionTest compresionTest) {
+		this.compresionTest = compresionTest;
+	}
+
 	private <T> void createDialogForm(String absoluteName, Stage parentStage,Consumer<T> initializingAction) {
 		try {
 			
@@ -70,8 +117,34 @@ public class MainViewController implements Initializable{
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.showAndWait();
 			
-
+		
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void createDialogFormNewCompresionTest(String absoluteName, Stage parentStage) {
+		try {
 			
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			Pane pane = loader.load();
+		
+			NewCompresionTestFormController controller = loader.getController();
+			controller.setCompresionTestService(new CompresionTestService());
+			controller.setClientService(new ClientService());
+			controller.loadAssociatedObjects();
+			controller.setBtCancelPressed(true);
+			
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Nueva rotura");
+			dialogStage.setScene(new Scene(pane));
+			dialogStage.setResizable(false);
+			dialogStage.initOwner(parentStage);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.showAndWait();
+			this.btCancelPressed = controller.getBtCancelPressed();
+			this.compresionTest = controller.getEntity();
+					
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -95,7 +168,8 @@ public class MainViewController implements Initializable{
 				initializingAction.accept(controller);
 			
 			} catch (IOException e) {
-				Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
+				e.printStackTrace();
+				//Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 			}
 	}
 	

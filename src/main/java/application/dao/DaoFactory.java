@@ -2,6 +2,7 @@ package application.dao;
 
 import application.dao.impl.ClientDaoJDBC;
 import application.dao.impl.CompresionTestDaoJDBC;
+import application.dao.impl.CompresionTestListJDBC;
 import application.dao.impl.CorpoDeProvaJDBC;
 import application.db.DB;
 
@@ -17,6 +18,10 @@ public class DaoFactory {
 	
 	public static CorpoDeProvaDao createCorpoDeProvaDao() {
 		return new CorpoDeProvaJDBC(DB.getConnection());
+	}
+	
+	public static CompresionTestListDao createCompresionTestListDao() {
+		return new CompresionTestListJDBC(DB.getConnection());
 	}
 
 }

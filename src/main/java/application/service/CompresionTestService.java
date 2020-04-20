@@ -14,9 +14,8 @@ public class CompresionTestService {
 		return dao.findAll();
 	}
 
-	public CompresionTest findById(int id) {
-		dao.findById(id);
-		return null;
+	public CompresionTest findById(int id) {		
+		return dao.findById(id);
 	}
 
 	public void saveOrUpdate(CompresionTest obj) {

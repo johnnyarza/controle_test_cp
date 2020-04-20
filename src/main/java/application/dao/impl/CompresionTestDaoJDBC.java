@@ -121,8 +121,8 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 			Cliente client = new Cliente();
 			ClientService clientService = new ClientService();
 			if (rs.next()) {
-				client = clientService.findById(rs.getInt(0));
-				return new CompresionTest(rs.getInt(0), client, rs.getString(3), rs.getString(4), rs.getDate(5));
+				client = clientService.findById(rs.getInt(2));
+				return new CompresionTest(rs.getInt(1), client, rs.getString(4), rs.getString(5), rs.getDate(6));
 			}
 			return null;
 		}

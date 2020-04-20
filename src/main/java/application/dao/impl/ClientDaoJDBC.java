@@ -114,7 +114,7 @@ public class ClientDaoJDBC implements ClientDao{
 			rs = st.executeQuery();
 			
 			if (rs.next()) {
-				return new Cliente(rs.getInt(0), rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
+				return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
 			}
 			return null;
 		}

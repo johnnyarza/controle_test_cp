@@ -12,10 +12,8 @@ import java.util.concurrent.TimeUnit;
 import application.dao.CorpoDeProvaDao;
 import application.db.DB;
 import application.db.DbException;
-import application.domaim.Cliente;
 import application.domaim.CompresionTest;
 import application.domaim.CorpoDeProva;
-import application.service.ClientService;
 import application.service.CompresionTestService;
 
 public class CorpoDeProvaJDBC implements CorpoDeProvaDao{
@@ -48,12 +46,12 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao{
 					Statement.RETURN_GENERATED_KEYS);
 			
 			st.setString(1, obj.getCode());
-			st.setInt(2, obj.getClient().getId());
+			st.setInt(2, obj.getCompresionTest().getClient().getId());
 			st.setInt(3, obj.getCompresionTest().getId());
 			st.setDouble(4, obj.getSlump());
 			st.setDate(5, new java.sql.Date(obj.getDataMolde().getTime()));
 			st.setDate(6, new java.sql.Date(obj.getRuptureDate().getTime()));
-			st.setInt(7, (int) TimeUnit.DAYS.convert((obj.getDataMolde().getTime()-obj.getRuptureDate().getTime()),TimeUnit.MILLISECONDS));
+			st.setInt(7, (int) TimeUnit.DAYS.convert((obj.getRuptureDate().getTime() - obj.getDataMolde().getTime()),TimeUnit.MILLISECONDS));
 			st.setDouble(8, obj.getDiameter());
 			st.setDouble(9, obj.getHeight());
 			st.setDouble(10, obj.getWeight());
@@ -97,12 +95,12 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao{
 					+ "WHERE id = ?)"); //12
 			
 			st.setString(1, obj.getCode());
-			st.setInt(2, obj.getClient().getId());
+			st.setInt(2, obj.getCompresionTest().getClient().getId());
 			st.setInt(3, obj.getCompresionTest().getId());
 			st.setDouble(4, obj.getSlump());
 			st.setDate(5, new java.sql.Date(obj.getDataMolde().getTime()));
 			st.setDate(6, new java.sql.Date(obj.getRuptureDate().getTime()));
-			st.setInt(7, (int) TimeUnit.DAYS.convert((obj.getDataMolde().getTime()-obj.getRuptureDate().getTime()),TimeUnit.MILLISECONDS));
+			st.setInt(7, (int) TimeUnit.DAYS.convert((obj.getRuptureDate().getTime()-obj.getDataMolde().getTime()),TimeUnit.MILLISECONDS));
 			st.setDouble(8, obj.getDiameter());
 			st.setDouble(9, obj.getHeight());
 			st.setDouble(10, obj.getWeight());
@@ -150,7 +148,11 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao{
 			rs = st.executeQuery();
 			
 			if (rs.next()) {
-				return instantiateCorpoDeProva(rs);
+				CorpoDeProva obj = instantiateCorpoDeProva(rs); 
+				obj.setDensid();
+				obj.setFckRupture();
+				obj.setDays(rs.getInt(8));
+				return obj;
 			}
 			return null;
 		}
@@ -174,7 +176,11 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao{
 			
 			List<CorpoDeProva> list = new ArrayList<>();
 			while (rs.next()) {			
-				list.add(instantiateCorpoDeProva(rs));
+				CorpoDeProva obj = instantiateCorpoDeProva(rs); 
+				obj.setDensid();
+				obj.setFckRupture();
+				obj.setDays(rs.getInt(8));
+				list.add(obj);
 			}
 			return list;
 		}
@@ -187,22 +193,51 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao{
 		}	
 	}
 
+	@Override
+	public List<CorpoDeProva> findByCompresionTestId(Integer id) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM corpo_de_provas WHERE "
+					+ "compresionTest_Id = ?");
+			
+			st.setInt(1, id);
+			
+			rs = st.executeQuery();
+			
+			List<CorpoDeProva> list = new ArrayList<>();
+			while (rs.next()) {	
+				CorpoDeProva obj = instantiateCorpoDeProva(rs); 
+				obj.setDensid();
+				obj.setFckRupture();
+				obj.setDays(rs.getInt(8));
+				list.add(obj);
+			}
+			return list;
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+	}
 	private CorpoDeProva instantiateCorpoDeProva(ResultSet rs) throws SQLException {
-		ClientService clientService = new ClientService();
 		CompresionTestService compresionTestService = new CompresionTestService();
-		Cliente client = clientService.findById(rs.getInt(3));
+		
 		CompresionTest compresionTest = compresionTestService.findById(rs.getInt(4));
-		return new CorpoDeProva(rs.getInt(1), 
-				rs.getString(2), 
-				client, 
+		CorpoDeProva obj = new CorpoDeProva(rs.getInt(1), 
+				rs.getString(2),
 				compresionTest, 
 				rs.getDouble(5), 
-				rs.getDate(6), 
-				rs.getDate(7), 
-				rs.getDouble(8), 
+				new java.util.Date(rs.getTimestamp(6).getTime()), 
+				new java.util.Date(rs.getTimestamp(7).getTime()), 
 				rs.getDouble(9), 
 				rs.getDouble(10), 
-				rs.getDouble(11));	
-	}
+				rs.getDouble(11), 
+				rs.getDouble(12));
 
+		return obj;
+	}
 }

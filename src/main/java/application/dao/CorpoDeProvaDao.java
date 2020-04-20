@@ -11,5 +11,6 @@ public interface CorpoDeProvaDao {
 	void deleteById(Integer id);
 	CorpoDeProva findById(Integer id);
 	List<CorpoDeProva> findAll();
+	List<CorpoDeProva> findByCompresionTestId(Integer id);
 
 }
