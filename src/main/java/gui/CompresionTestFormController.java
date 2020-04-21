@@ -201,7 +201,9 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 		tableColumnCodigo.setCellValueFactory(new PropertyValueFactory<>("code"));
 		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));
 		tableColumnFechaMoldeo.setCellValueFactory(new PropertyValueFactory<>("moldeDate"));
+		Utils.formatTableColumnDate(tableColumnFechaMoldeo, "dd/MM/yyyy");
 		tableColumnFechaRotura.setCellValueFactory(new PropertyValueFactory<>("ruptureDate"));
+		Utils.formatTableColumnDate(tableColumnFechaRotura, "dd/MM/yyyy");
 		tableColumnEdad.setCellValueFactory(new PropertyValueFactory<>("days"));
 		tableColumnDiameter.setCellValueFactory(new PropertyValueFactory<>("diameter"));
 		tableColumnHeight.setCellValueFactory(new PropertyValueFactory<>("height"));
@@ -209,6 +211,7 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 		tableColumnDensid.setCellValueFactory(new PropertyValueFactory<>("densid"));
 		tableColumnTonRupture.setCellValueFactory(new PropertyValueFactory<>("tonRupture"));
 		tableColumnfckRupture.setCellValueFactory(new PropertyValueFactory<>("fckRupture"));
+		Utils.formatTableColumnDouble(tableColumnfckRupture, 2);
 		
 		initializeComboBoxClient();
 			

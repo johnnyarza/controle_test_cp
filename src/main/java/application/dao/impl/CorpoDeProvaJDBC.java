@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import application.dao.CorpoDeProvaDao;
@@ -225,14 +227,15 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao{
 	}
 	private CorpoDeProva instantiateCorpoDeProva(ResultSet rs) throws SQLException {
 		CompresionTestService compresionTestService = new CompresionTestService();
+		Calendar cal = Calendar.getInstance(TimeZone.getDefault());
 		
 		CompresionTest compresionTest = compresionTestService.findById(rs.getInt(4));
 		CorpoDeProva obj = new CorpoDeProva(rs.getInt(1), 
 				rs.getString(2),
 				compresionTest, 
 				rs.getDouble(5), 
-				new java.util.Date(rs.getTimestamp(6).getTime()), 
-				new java.util.Date(rs.getTimestamp(7).getTime()), 
+				new java.util.Date(rs.getTimestamp(6,cal).getTime()), 
+				new java.util.Date(rs.getTimestamp(7,cal).getTime()), 
 				rs.getDouble(9), 
 				rs.getDouble(10), 
 				rs.getDouble(11), 
