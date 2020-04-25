@@ -1,6 +1,7 @@
 package application.dao;
 
 import java.util.List;
+import java.util.TimeZone;
 
 import application.domaim.CorpoDeProva;
 
@@ -12,5 +13,7 @@ public interface CorpoDeProvaDao {
 	CorpoDeProva findById(Integer id);
 	List<CorpoDeProva> findAll();
 	List<CorpoDeProva> findByCompresionTestId(Integer id);
+	List<CorpoDeProva> findByCompresionTestIdWithTimeZone(Integer id, TimeZone tZ);
+	Integer countCorpoDeProvasToTest();
 
 }

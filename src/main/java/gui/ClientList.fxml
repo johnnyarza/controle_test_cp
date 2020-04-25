@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="316.0" prefWidth="494.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ClientListController">
+<VBox minWidth="660.0" prefHeight="316.0" prefWidth="660.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ClientListController">
    <children>
       <Label text="Lista de Clientes">
          <font>
@@ -26,13 +26,13 @@
             <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" text="Apagar" />
         </items>
       </ToolBar>
-      <TableView fx:id="tableViewClient" prefHeight="200.0" prefWidth="200.0">
+      <TableView fx:id="tableViewClient" prefHeight="200.0" prefWidth="625.0">
         <columns>
-          <TableColumn fx:id="tableColumnId" prefWidth="75.0" text="iD" />
-          <TableColumn fx:id="tableColumnName" prefWidth="75.0" text="Nombre" />
-            <TableColumn fx:id="tableColumnPhone" prefWidth="75.0" text="Telefono" />
-            <TableColumn fx:id="tableColumnAddress" prefWidth="75.0" text="Ubicación" />
-            <TableColumn fx:id="tableColumnEmail" prefWidth="75.0" text="Correo E." />
+          <TableColumn fx:id="tableColumnId" minWidth="40.0" prefWidth="50.0" text="iD" />
+          <TableColumn fx:id="tableColumnName" minWidth="150.0" prefWidth="180.0" text="Nombre" />
+            <TableColumn fx:id="tableColumnPhone" minWidth="110.0" prefWidth="110.0" text="Telefono" />
+            <TableColumn fx:id="tableColumnAddress" minWidth="150.0" prefWidth="150.0" text="Ubicación" />
+            <TableColumn fx:id="tableColumnEmail" minWidth="120.0" prefWidth="120.0" text="Correo E." />
         </columns>
       </TableView>
    </children>

@@ -3,16 +3,23 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TimeZone;
 import java.util.function.Consumer;
 
 import application.db.DbException;
 import application.domaim.Cliente;
 import application.domaim.CompresionTest;
 import application.domaim.CorpoDeProva;
+import application.exceptions.ValidationException;
 import application.service.ClientService;
 import application.service.CompresionTestService;
 import application.service.CorpoDeProvaService;
@@ -26,15 +33,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -62,9 +71,6 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 	private TextField txtid;
 	
 	@FXML
-	private TextField txtCreationDate;
-	
-	@FXML
 	private TextField txtObra;
 	
 	@FXML
@@ -77,7 +83,13 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 	private Button btInserirProbeta;
 	
 	@FXML
+	private Button btEditarProbeta;
+	
+	@FXML
 	private Button btApagarProbeta;	
+	
+	@FXML
+	private Button btClose;	
 	
 	@FXML
 	private VBox vbox;
@@ -89,40 +101,58 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 	private TableView<CorpoDeProva> tableViewCorpoDeProva;
 	
 	@FXML 
-	TableColumn<CorpoDeProva, Integer> tableColumnId;
+	private TableColumn<CorpoDeProva, Integer> tableColumnId;
 	
 	@FXML 
-	TableColumn<CorpoDeProva, String> tableColumnCodigo;
+	private TableColumn<CorpoDeProva, String> tableColumnCodigo;
 	
 	@FXML 
-	TableColumn<CorpoDeProva, Double> tableColumnSlump;
+	private TableColumn<CorpoDeProva, Double> tableColumnSlump;
 	
 	@FXML 
-	TableColumn<CorpoDeProva, Date> tableColumnFechaMoldeo;
+	private TableColumn<CorpoDeProva, Date> tableColumnFechaMoldeo;
 	
 	@FXML 
-	TableColumn<CorpoDeProva, Date> tableColumnFechaRotura;
+	private TableColumn<CorpoDeProva, Date> tableColumnFechaRotura;
 	
 	@FXML 
-	TableColumn<CorpoDeProva, Integer> tableColumnEdad;
+	private TableColumn<CorpoDeProva, Integer> tableColumnEdad;
 	
 	@FXML 
-	TableColumn<CorpoDeProva, Double> tableColumnDiameter;
+	private TableColumn<CorpoDeProva, Double> tableColumnDiameter;
 	
 	@FXML 
-	TableColumn<CorpoDeProva, Double> tableColumnHeight;
+	private TableColumn<CorpoDeProva, Double> tableColumnHeight;
 	
 	@FXML 
-	TableColumn<CorpoDeProva, Double> tableColumnWeight;
+	private TableColumn<CorpoDeProva, Double> tableColumnWeight;
 	
 	@FXML 
-	TableColumn<CorpoDeProva, Double> tableColumnDensid;
+	private TableColumn<CorpoDeProva, Double> tableColumnDensid;
 	
 	@FXML 
-	TableColumn<CorpoDeProva, Double> tableColumnTonRupture;
+	private TableColumn<CorpoDeProva, Double> tableColumnTonRupture;
 	
 	@FXML 
-	TableColumn<CorpoDeProva, Double> tableColumnfckRupture;
+	private TableColumn<CorpoDeProva, Double> tableColumnfckRupture;
+	
+	@FXML
+	private DatePicker dpCreationDate;
+	
+	@FXML
+	private Label labelErrorClient;
+	
+	@FXML
+	private Label labelErrorDate;
+	
+	@FXML
+	private Label labelErrorObra;
+	
+	@FXML
+	private Label labelErrorAddress;
+	
+	@FXML
+	private Label labelMessages;
 	
 	public void onBtInserirProbetaAction (ActionEvent event) {	
 		Stage parentStage = Utils.currentStage(event);
@@ -137,15 +167,28 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 				
 	}
 	
+	public void onBtEditarProbetaAction(ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
+		CorpoDeProva obj = getCorpoDeProvaView();
+
+		createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage,
+				(CorpoDeProvaRegistrationController controller) -> {
+					controller.setCorpoDeProvaService(new CorpoDeProvaService());
+					controller.setCorpoDeProva(obj);
+					controller.updateFormData();
+					controller.subscribeDataChangeListener(this);
+				});
+	}
+	
 	public void onBtApagarProbetaAction() {
 		try {
 			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de accion",
-					"Segura que desea apagar probetta?", "Después de apagados los datos seran perdidos");
+					"Seguro que desea apagar probeta?", "Después de apagados los datos seran perdidos");
 			
 			if (result.get() == ButtonType.OK) {
 				CorpoDeProva obj = getCorpoDeProvaView();
 				corpoDeProvaService.deleteById(obj.getId());
-				updateTableView();
+				onDataChange();
 			}
 		} catch (DbException e) {
 			Alerts.showAlert("Error", "Error deleting probeta", e.getMessage(), AlertType.ERROR);
@@ -153,12 +196,22 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 
 	}
 	
-	/*
-	private CompresionTest getFormData() {		
-		List<CorpoDeProva> list = tableViewCorpoDeProva.getSelectionModel().getSelectedItems();
-		return null;
-	}*/
-
+	public void onBtEditarCadastroAction() {
+		try {
+			setCompresionTestFormData();
+			compresionTestService.saveOrUpdate(this.compresionTest);
+			onDataChange();
+		} catch (ValidationException e) {
+			setErrorMessages(e.getErrors());	
+		} catch (DbException e1) {
+			Alerts.showAlert("Error", "Error saving compresionTest", e1.getMessage(), AlertType.ERROR);
+		}		
+	}
+	
+	public void onBtCloseAction(ActionEvent event) {
+		Utils.currentStage(event).close();
+	}
+	
 	public CorpoDeProvaService getCorpoDeProvaService() {
 		return corpoDeProvaService;
 	}
@@ -199,17 +252,33 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 	private void initializeNodes() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnCodigo.setCellValueFactory(new PropertyValueFactory<>("code"));
+		
 		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));
+		Utils.formatTableColumnDouble(tableColumnSlump, 2);
+		
 		tableColumnFechaMoldeo.setCellValueFactory(new PropertyValueFactory<>("moldeDate"));
 		Utils.formatTableColumnDate(tableColumnFechaMoldeo, "dd/MM/yyyy");
+		
 		tableColumnFechaRotura.setCellValueFactory(new PropertyValueFactory<>("ruptureDate"));
 		Utils.formatTableColumnDate(tableColumnFechaRotura, "dd/MM/yyyy");
+		
 		tableColumnEdad.setCellValueFactory(new PropertyValueFactory<>("days"));
+		
 		tableColumnDiameter.setCellValueFactory(new PropertyValueFactory<>("diameter"));
+		Utils.formatTableColumnDouble(tableColumnDiameter, 2);
+		
 		tableColumnHeight.setCellValueFactory(new PropertyValueFactory<>("height"));
+		Utils.formatTableColumnDouble(tableColumnHeight, 2);
+		
 		tableColumnWeight.setCellValueFactory(new PropertyValueFactory<>("weight"));
+		Utils.formatTableColumnDouble(tableColumnWeight, 3);
+		
 		tableColumnDensid.setCellValueFactory(new PropertyValueFactory<>("densid"));
+		Utils.formatTableColumnDouble(tableColumnDensid, 2);
+		
 		tableColumnTonRupture.setCellValueFactory(new PropertyValueFactory<>("tonRupture"));
+		Utils.formatTableColumnDouble(tableColumnTonRupture, 2);
+		
 		tableColumnfckRupture.setCellValueFactory(new PropertyValueFactory<>("fckRupture"));
 		Utils.formatTableColumnDouble(tableColumnfckRupture, 2);
 		
@@ -222,9 +291,10 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 		if (corpoDeProvaService == null) {
 			throw new IllegalStateException("Service was null");
 		}	
-		List<CorpoDeProva> list =corpoDeProvaService.findByCompresionTestId(compresionTest.getId());
+		List<CorpoDeProva> list =corpoDeProvaService.findByCompresionTestIdWithTimeZone(compresionTest.getId(), TimeZone.getDefault());
 		obsList = FXCollections.observableArrayList(list);
 		tableViewCorpoDeProva.setItems(obsList);
+		Utils.formatCorpoDeProvaTableViewRowColor(tableViewCorpoDeProva);
 		tableViewCorpoDeProva.refresh();
 	}
 	
@@ -241,7 +311,10 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 			comboBoxClient.setValue(compresionTest.getClient());
 		}
 		
-		txtCreationDate.setText(compresionTest.getDate().toString());
+		if (compresionTest.getDate() != null) {
+			dpCreationDate.setValue(LocalDate.ofInstant(compresionTest.getDate().toInstant(),ZoneId.systemDefault()));
+			
+		}
 		txtObra.setText(compresionTest.getObra());
 		txtAddress.setText(compresionTest.getAddress());
 	}
@@ -298,9 +371,70 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 		return cp;
 	}
 	
+	public void setLabelMessageText() {
+		Integer cpCount = corpoDeProvaService.countCorpoDeProvasToTest();
+		if ( cpCount > 0 ) {
+			labelMessages.setText( "Hay " + Integer.toString(cpCount) + " probeta(s) para Romper");
+		} else {
+			labelMessages.setText("");
+		}
+	}
+	
 	@Override
 	public void onDataChange() {
-		updateTableView();		
+		updateFormData();
+		updateTableView();
+		setLabelMessageText();
+	}
+	
+	private void setCompresionTestFormData() {	
+		
+		ValidationException exception = new ValidationException("getCompresionTestFormData Error");
+		
+		if (comboBoxClient.getValue() == null) {
+			exception.addError("client", "vacío");
+		}
+		
+		if (dpCreationDate.getValue() == null) {
+			exception.addError("date", "vacío");
+		}		
+		
+		if (txtObra.getText() == null || txtObra.getText().trim().equals("")) {
+			exception.addError("obra", "vacío");
+		}
+		
+		if (txtAddress.getText() == null || txtAddress.getText().trim().equals("")) {
+			exception.addError("address", "vacío");
+		}
+		
+		if (exception.getErrors().size() > 0) {
+			throw exception;
+		}
+		
+		if (txtid.getText() != null) {
+			this.compresionTest.setId(Utils.tryParseToInt(txtid.getText()));
+		}
+		
+		this.compresionTest.setClient(comboBoxClient.getValue());
+		
+		if (dpCreationDate.getValue() != null) {
+			Instant instant = Instant.from(dpCreationDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			this.compresionTest.setDate(Date.from(instant));
+		}
+		
+		this.compresionTest.setObra(txtObra.getText());
+		
+		this.compresionTest.setAddress(txtAddress.getText());
+		
+	}
+	
+	private void setErrorMessages(Map<String, String> errors) {
+		Set<String> fields = errors.keySet();
+		
+		labelErrorClient.setText(fields.contains("client") ? errors.get("client") : "");
+		labelErrorDate.setText(fields.contains("date") ? errors.get("date") : "");
+		labelErrorObra.setText(fields.contains("obra") ? errors.get("obra") : "");
+		labelErrorAddress.setText(fields.contains("address") ? errors.get("address") : "");	
 	}
 
 }

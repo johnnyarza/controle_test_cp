@@ -4,17 +4,23 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
+import application.domaim.CorpoDeProva;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
@@ -78,7 +84,7 @@ public class Utils {
 	public static <T> void formatTableColumnDate(TableColumn<T, Date> tableColumn, String format) {
 		tableColumn.setCellFactory(column -> {
 			TableCell<T, Date> cell = new TableCell<T, Date>() {
-				private SimpleDateFormat sdf = new SimpleDateFormat(format);
+				SimpleDateFormat sdf = new SimpleDateFormat(format);
 
 				@Override
 				protected void updateItem(Date item, boolean empty) {
@@ -86,6 +92,7 @@ public class Utils {
 					if (empty) {
 						setText(null);
 					} else {
+						sdf.setTimeZone(TimeZone.getDefault());
 						setText(sdf.format(item));
 					}
 				}
@@ -103,12 +110,46 @@ public class Utils {
 					if (empty) {
 						setText(null);
 					} else {
-						df.applyPattern("#,###.00");
-						setText(df.format(item));
+						String strDecimalPlaces = ".";
+						for (int i=1; i <= decimalPlaces; i++) {
+							strDecimalPlaces = strDecimalPlaces + "0";
+						}
+						df.applyPattern("#,###" + strDecimalPlaces);
+						if (item != null) {
+							setText(df.format(item));
+						}
 					}
 				}
 			};
 			return cell;
 		});
+	}
+	
+	public static String doubleFormat(Double number) {
+		df.applyPattern("#,###.00");
+		return df.format(number);
+	}
+	
+	public static void formatCorpoDeProvaTableViewRowColor(TableView<CorpoDeProva> tableView) {
+		tableView.setRowFactory(row -> new TableRow<CorpoDeProva> (){
+			@Override
+			public void updateItem(CorpoDeProva item, boolean empty) {
+				super.updateItem(item,empty);
+				
+				if (item == null || empty) {
+					setStyle("");
+				} else {
+					if (item.getRuptureDate().compareTo(new Date()) < 0 && (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
+						setStyle("-fx-background-color: red");
+					} 
+				}
+			}
+		});
+	}
+	
+	
+	public static Instant getInsTantFromDatePicker(DatePicker dP) {
+		Instant instant = Instant.from(dP.getValue().atStartOfDay(ZoneId.systemDefault()));
+		return instant;
 	}
 }

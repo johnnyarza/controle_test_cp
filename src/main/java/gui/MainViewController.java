@@ -10,7 +10,10 @@ import application.domaim.CompresionTest;
 import application.service.ClientService;
 import application.service.CompresionTestListService;
 import application.service.CompresionTestService;
+import application.service.ConcreteDesignService;
 import application.service.CorpoDeProvaService;
+import application.service.MaterialService;
+import application.service.ProviderService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,6 +44,15 @@ public class MainViewController implements Initializable{
 	private MenuItem onBtClientAction;
 	
 	@FXML
+	private MenuItem btProvider;
+	
+	@FXML
+	private MenuItem btMaterial;
+	
+	@FXML
+	private MenuItem btDesign;
+	
+	@FXML
 	private MenuBar myMenuBar;
 	
 	@FXML
@@ -63,6 +75,7 @@ public class MainViewController implements Initializable{
 		}
 	}
 	
+	@FXML
 	public void onBtLoadTestAction(ActionEvent event) {
 			loadView("/gui/LoadCompresionTestView.fxml", (LoadCompresionTestViewController controller) -> {
 				controller.setCompresionTestService(new CompresionTestListService());
@@ -76,10 +89,35 @@ public class MainViewController implements Initializable{
 			controller.updateTableView();
 			});*/
 	}
-	
+	@FXML
 	public void onBtClientAction(ActionEvent event) {
 		loadView("/gui/ClientList.fxml", (ClientListController controller) -> {
 			controller.setClientService(new ClientService());
+			controller.updateTableView();
+		});
+	}
+	
+	@FXML
+	public void onBtProviderAction(ActionEvent event) {
+		loadView("/gui/ProveedoresView.fxml", (ProveedoresViewController controller) -> {
+			controller.setService(new ProviderService());
+			controller.updateTableView();
+		});
+	}
+	
+	@FXML
+	public void onBtMaterialAction(ActionEvent event) {
+		loadView("/gui/MateriaisView.fxml", (MateriaisViewController controller) -> {
+			controller.setService(new MaterialService());
+			controller.updateTableView();
+		});
+	}
+	
+	@FXML
+	public void onBtDesignAction(ActionEvent event) {
+		loadView("/gui/ConcreteDesignView.fxml", (ConcreteDesignViewController controller) -> {
+			controller.setService(new ConcreteDesignService());
+			controller.setCompresionTestService(new CompresionTestService());
 			controller.updateTableView();
 		});
 	}

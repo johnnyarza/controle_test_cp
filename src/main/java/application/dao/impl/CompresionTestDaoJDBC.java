@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import application.dao.CompresionTestDao;
 import application.db.DB;
@@ -118,11 +120,20 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			
+			//Calendar cal = Calendar.getInstance(TimeZone.getDefault());
 			Cliente client = new Cliente();
 			ClientService clientService = new ClientService();
 			if (rs.next()) {
 				client = clientService.findById(rs.getInt(2));
-				return new CompresionTest(rs.getInt(1), client, rs.getString(4), rs.getString(5), rs.getDate(6));
+				CompresionTest compresionTest = new CompresionTest();
+				
+				compresionTest.setId(rs.getInt(1));
+				compresionTest.setClient(client);
+				compresionTest.setObra(rs.getString(4));
+				compresionTest.setAddress(rs.getString(5));
+				compresionTest.setDate(new java.util.Date(rs.getTimestamp(6).getTime()));
+				
+				return compresionTest;
 			}
 			return null;
 		}
@@ -134,6 +145,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 			DB.closeResultSet(rs);
 		}	
 	}
+	
 	@Override
 	public List<CompresionTest> findAll() {
 		PreparedStatement st = null;
@@ -143,12 +155,15 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 			
 			rs = st.executeQuery();
 			
+			Calendar cal = Calendar.getInstance(TimeZone.getDefault());
 			Cliente client = new Cliente();
 			ClientService clientService = new ClientService();
 			List<CompresionTest> list = new ArrayList<>();
 			while (rs.next()) {
-				client = clientService.findById(rs.getInt(0));
-				list.add(new CompresionTest(rs.getInt(0), client, rs.getString(3), rs.getString(4), rs.getDate(5)));
+				client = clientService.findById(rs.getInt(2));
+				list.add(
+						new CompresionTest(
+								rs.getInt(1), client, rs.getString(4), rs.getString(5), new java.util.Date(rs.getTimestamp(6,cal).getTime())));
 			}
 			return list;
 		}
@@ -159,5 +174,77 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}	
+	}
+
+	@Override
+	public CompresionTest findByIdWithTimeZone(Integer id, TimeZone tZ) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM compresion_test where compresion_test.id = ?");
+			
+			st.setInt(1, id);
+			rs = st.executeQuery();
+			
+			Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+			Cliente client = new Cliente();
+			ClientService clientService = new ClientService();
+			if (rs.next()) {
+				client = clientService.findById(rs.getInt(2));
+				CompresionTest compresionTest = new CompresionTest();
+				
+				compresionTest.setId(rs.getInt(1));
+				compresionTest.setClient(client);
+				compresionTest.setObra(rs.getString(4));
+				compresionTest.setAddress(rs.getString(5));
+				compresionTest.setDate(new java.util.Date(rs.getTimestamp(6,cal).getTime()));
+				
+				return compresionTest;
+			}
+			return null;
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}	
+	}
+
+	@Override
+	public CompresionTest findByConcreteDesignId(Integer id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean compresionTestContainsConcreteDesingId(Integer concreteDesignId) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		Boolean result = null;
+		try {
+			st = conn.prepareStatement(
+					"SELECT COUNT(id) FROM compresion_test WHERE ConcreteDesign_id = ?");
+			st.setInt(1, concreteDesignId);
+			
+			rs = st.executeQuery();
+			if (rs.next()) {
+				int count = rs.getInt(1);
+				if (count > 0) {
+					result = true;
+				} else {
+					result = false;
+				}
+			} else {
+				throw new DbException("Result Set is empty on compresionTestContainsConcreteDesingIdcompresionTestContainsConcreteDesingId");
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DbException("Error on compresionTestContainsConcreteDesingId");
+		}finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
 	}
 }

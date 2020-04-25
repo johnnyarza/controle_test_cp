@@ -6,7 +6,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainViewController">
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="660.0" prefHeight="400.0" prefWidth="660.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainViewController">
    <content>
    
       <VBox prefHeight="318.0" prefWidth="514.0">   
@@ -23,6 +23,9 @@
                 <Menu mnemonicParsing="false" text="Registros">
                   <items>
                     <MenuItem fx:id="onBtClientAction" mnemonicParsing="false" onAction="#onBtClientAction" text="Clientes" />
+                        <MenuItem fx:id="btDesign" mnemonicParsing="false" onAction="#onBtDesignAction" text="Diseños" />
+                        <MenuItem fx:id="btMaterial" mnemonicParsing="false" onAction="#onBtMaterialAction" text="Materiales" />
+                        <MenuItem fx:id="btProvider" mnemonicParsing="false" onAction="#onBtProviderAction" text="Proveedores" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">

@@ -1,9 +1,11 @@
 package application.domaim;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class CompresionTest {
+public class CompresionTest implements Serializable{
+	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
 	private Cliente client;

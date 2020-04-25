@@ -7,7 +7,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -97,6 +96,7 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 	public void onBtSaveAction(ActionEvent event) {
 		try {
 			CorpoDeProva obj = getFormData();
+			obj.setFckRupture();
 			obj.setCompresionTest(this.corpoDeProva.getCompresionTest());
 
 			corpoDeProvaService.saveOrUpdate(obj);
@@ -152,8 +152,8 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 		if (dpMoldeDate.getValue() == null) {
 			exception.addError("moldeDate", "Fecha vacía");
 		} else {
-			Instant instantBefore = Instant.from(dpMoldeDate.getValue().atStartOfDay(ZoneId.systemDefault()));
-			Instant instantAfter = Instant.from(dpRuptureDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			Instant instantBefore = Utils.getInsTantFromDatePicker(dpMoldeDate);
+			Instant instantAfter = Utils.getInsTantFromDatePicker(dpRuptureDate);
 			if (instantBefore.compareTo(instantAfter) > 0) {
 				exception.addError("moldeDate", "Fecha posterior a rotura");
 			} else {
@@ -165,12 +165,20 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 			exception.addError("ruptureDate", "Fecha vacía");
 
 		} else {
-			Instant instantBefore = Instant.from(dpMoldeDate.getValue().atStartOfDay(ZoneId.systemDefault()));
-			Instant instantAfter = Instant.from(dpRuptureDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			Instant instantBefore = Utils.getInsTantFromDatePicker(dpMoldeDate);
+			Instant instantAfter = Utils.getInsTantFromDatePicker(dpRuptureDate);
 			if (instantAfter.compareTo(instantBefore) < 0) {
 				exception.addError("ruptureDate", "Fecha anterior a moldeo");
 			} else {
 				obj.setRuptureDate(Date.from(instantAfter));
+			}
+		}
+		
+		if (dpRuptureDate.getValue() != null && dpMoldeDate.getValue() != null) {
+			Instant instantBefore = Utils.getInsTantFromDatePicker(dpMoldeDate);
+			Instant instantNow = Instant.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()));
+			if (instantBefore.compareTo(instantNow) > 0) {
+				exception.addError("moldeDate", "Fecha posterior a hoy");
 			}
 		}
 
@@ -190,9 +198,10 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 		obj.setWeight(Utils.tryParseToDouble(txtWeight.getText()));
 
 		if (txtRuptureTon.getText() == null || txtRuptureTon.getText().trim().equals("")) {
-			exception.addError("ruptureTon", "Tonelada vacía");
+			obj.setTonRupture(0.0);
+		} else {
+			obj.setTonRupture(Utils.tryParseToDouble(txtRuptureTon.getText()));
 		}
-		obj.setTonRupture(Utils.tryParseToDouble(txtRuptureTon.getText()));
 
 		if (exception.getErrors().size() > 0) {
 			throw exception;
@@ -221,10 +230,10 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 			throw new NullPointerException();
 		}
 		// TODO tirar o if dentro dos setText
-		Locale.setDefault(Locale.US);
+		//Locale.setDefault(Locale.US);
 		txtId.setText(String.valueOf(corpoDeProva.getId()));
-		txtCode.setText(String.valueOf(corpoDeProva.getSlump()));
-		txtSlump.setText(String.valueOf(corpoDeProva.getSlump()));
+		txtCode.setText(String.valueOf(corpoDeProva.getCode()));
+		txtSlump.setText(String.format("%.2f",corpoDeProva.getSlump()));
 
 		if (corpoDeProva.getMoldeDate() != null) {
 			dpMoldeDate.setValue(LocalDate.ofInstant(corpoDeProva.getMoldeDate().toInstant(), ZoneId.systemDefault()));
@@ -234,9 +243,9 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 					.setValue(LocalDate.ofInstant(corpoDeProva.getRuptureDate().toInstant(), ZoneId.systemDefault()));
 		}
 
-		txtDiameter.setText(String.valueOf(corpoDeProva.getDiameter()));
-		txtHeight.setText(String.valueOf(corpoDeProva.getHeight()));
-		txtWeight.setText(String.format("%.2f", (corpoDeProva.getWeight())));
+		txtDiameter.setText(String.format("%.2f",corpoDeProva.getDiameter()));
+		txtHeight.setText(String.format("%.2f",corpoDeProva.getHeight()));
+		txtWeight.setText(String.format("%.3f", (corpoDeProva.getWeight())));
 		txtRuptureTon.setText(String.format("%.2f", corpoDeProva.getTonRupture()));
 	}
 

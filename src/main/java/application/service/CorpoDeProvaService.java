@@ -1,6 +1,7 @@
 package application.service;
 
 import java.util.List;
+import java.util.TimeZone;
 
 import application.dao.CorpoDeProvaDao;
 import application.dao.DaoFactory;
@@ -33,5 +34,12 @@ public class CorpoDeProvaService {
 	
 	public List<CorpoDeProva> findByCompresionTestId(Integer id) {
 		return dao.findByCompresionTestId(id);
+	}
+	
+	public List<CorpoDeProva> findByCompresionTestIdWithTimeZone(Integer id,TimeZone tZ) {
+		return dao.findByCompresionTestIdWithTimeZone(id, tZ);
+	}
+	public Integer countCorpoDeProvasToTest() {
+		return dao.countCorpoDeProvasToTest();
 	}
 }

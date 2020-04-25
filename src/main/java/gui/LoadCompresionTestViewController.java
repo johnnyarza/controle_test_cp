@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 import java.util.function.Consumer;
 
 import application.Program;
@@ -15,6 +16,7 @@ import application.service.CompresionTestListService;
 import application.service.CompresionTestService;
 import application.service.CorpoDeProvaService;
 import gui.listeners.DataChangeListener;
+import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,6 +28,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -36,6 +39,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	private CompresionTestListService service;
 	
 	private ClientService clientService;
+	
 
 	private ObservableList<CompresionTestList> obsList;
 
@@ -81,9 +85,11 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 						controller.loadAssociatedObjects();
 						controller.updateFormData();
 						controller.updateTableView();
+						controller.setLabelMessageText();
 					});
-		} catch (Exception e) {
-			e.printStackTrace();
+			updateTableView();
+		} catch (NullPointerException e) {
+			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -146,15 +152,11 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	private CompresionTest getCompresionTestFromTableView() {
 		CompresionTestList compresionTestList = tableViewClient.getSelectionModel().getSelectedItem();
+		CompresionTestService compresionTestService = new CompresionTestService();
 		if (compresionTestList == null) {
-			throw new NullPointerException();
-		}
-		CompresionTest compresionTest = new CompresionTest(
-				compresionTestList.getCompresionTestId(), 
-				clientService.findById((compresionTestList.getClientId())), 
-				compresionTestList.getObra(), 
-				compresionTestList.getAddress(), 
-				compresionTestList.getCreationDate());
+			throw new NullPointerException("compresionTestList was null");
+		}		
+		CompresionTest compresionTest = compresionTestService.findByIdWithTimeZone(compresionTestList.getCompresionTestId(), TimeZone.getDefault());
 		return compresionTest;
 	}
 	

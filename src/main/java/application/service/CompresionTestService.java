@@ -1,6 +1,7 @@
 package application.service;
 
 import java.util.List;
+import java.util.TimeZone;
 
 import application.dao.CompresionTestDao;
 import application.dao.DaoFactory;
@@ -28,5 +29,13 @@ public class CompresionTestService {
 
 	public void deleteById(Integer id) {
 		dao.deleteById(id);
+	}
+	
+	public CompresionTest findByIdWithTimeZone(Integer id, TimeZone tZ) {
+		return dao.findByIdWithTimeZone(id, tZ);
+	}
+	
+	public Boolean compresionTestContainsConcreteDesingId(Integer concreteDesignId) {
+		return dao.compresionTestContainsConcreteDesingId(concreteDesignId);
 	}
 }
