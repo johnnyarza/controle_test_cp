@@ -43,6 +43,13 @@ public class Material implements Serializable{
 		this.provider = provider;
 	}
 
+	public Boolean isAllNull() {
+		if (this.id == null && this.name == null && this.provider == null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

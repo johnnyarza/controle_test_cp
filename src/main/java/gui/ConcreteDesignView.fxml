@@ -29,7 +29,8 @@
       <TableView fx:id="tableViewConcreteDesing" minWidth="166.0" prefHeight="387.0" prefWidth="421.0">
         <columns>
           <TableColumn fx:id="tableColumnId" minWidth="30.0" prefWidth="30.0" text="iD" />
-          <TableColumn fx:id="tableColumnDesc" minWidth="110.0" prefWidth="661.0" resizable="false" text="Descripción" />
+            <TableColumn fx:id="tableColumnName" maxWidth="500.0" minWidth="65.0" prefWidth="65.0" text="Nombre" />
+          <TableColumn fx:id="tableColumnDesc" maxWidth="1.7976931348623157E308" minWidth="110.0" prefWidth="800.0" text="Descripción" />
         </columns>
       </TableView>
    </children>

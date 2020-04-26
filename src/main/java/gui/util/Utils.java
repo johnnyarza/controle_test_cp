@@ -126,7 +126,7 @@ public class Utils {
 	}
 	
 	public static String doubleFormat(Double number) {
-		df.applyPattern("#,###.00");
+		df.applyPattern("#.00");
 		return df.format(number);
 	}
 	

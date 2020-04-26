@@ -13,6 +13,7 @@ import application.domaim.MaterialProporcion;
 import application.service.CompresionTestService;
 import application.service.ConcreteDesignService;
 import application.service.MaterialService;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
@@ -32,7 +33,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ConcreteDesignViewController implements Initializable {
+public class ConcreteDesignViewController implements Initializable,DataChangeListener {
 
 	private ConcreteDesignService service;
 
@@ -57,18 +58,22 @@ public class ConcreteDesignViewController implements Initializable {
 
 	@FXML
 	private TableColumn<ConcreteDesign, MaterialProporcion> tableColumnDesc;
+	
+	@FXML
+	private TableColumn<ConcreteDesign, String> tableColumnName;
 
 	@FXML
 	public void onBtNewAction(ActionEvent event) {
 		try {
 			ConcreteDesign obj = new ConcreteDesign();
 			Stage parentStage = Utils.currentStage(event);
-			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", parentStage, 
+			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", parentStage,
 					(ConcreteDesignRegistrationFormController controller) -> {
 						controller.setMaterialService(new MaterialService());
 						controller.setService(new ConcreteDesignService());
 						controller.setEntity(obj);
-						controller.loadAssociatedObjects();						
+						controller.loadAssociatedObjects();
+						controller.subscribeDataChangeListener(this);
 					});
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -77,7 +82,21 @@ public class ConcreteDesignViewController implements Initializable {
 
 	@FXML
 	public void onBtEditAction(ActionEvent event) {
-		//TODO implementar
+		try {
+		ConcreteDesign obj = getFormData();
+		Stage parentStage = Utils.currentStage(event);
+		createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", parentStage,
+				(ConcreteDesignRegistrationFormController controller) -> {
+					controller.setMaterialService(new MaterialService());
+					controller.setService(new ConcreteDesignService());
+					controller.setEntity(obj);
+					controller.loadAssociatedObjects();
+					controller.updateFormData();
+					controller.subscribeDataChangeListener(this);
+				});
+		} catch (IllegalStateException e) {
+			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	@FXML
@@ -96,11 +115,10 @@ public class ConcreteDesignViewController implements Initializable {
 				}
 			} else {
 				Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacción de acción",
-						"Seguro que desea apagar?",
-						"");
+						"Seguro que desea apagar?", "");
 				if (result.get() == ButtonType.OK) {
 					service.deleteConcreteDesignById(obj.getId());
-				}				
+				}
 			}
 			updateTableView();
 		} catch (IllegalStateException e) {
@@ -164,6 +182,14 @@ public class ConcreteDesignViewController implements Initializable {
 	 * 
 	 * @FXML private TableColumn<ConcreteDesign, Double> tableColumnMat8Qtt;
 	 */
+	private ConcreteDesign getFormData() {
+		ConcreteDesign obj = tableViewConcreteDesing.getSelectionModel().getSelectedItem();
+		if (obj == null) {
+			throw new IllegalStateException("Diseño vacío o no seleccionado");
+		}
+		return obj;
+	}
+
 	public void updateTableView() {
 		List<ConcreteDesign> list = service.findAllConcreteDesign();
 		obsList = FXCollections.observableArrayList(list);
@@ -174,6 +200,7 @@ public class ConcreteDesignViewController implements Initializable {
 	private void initializeNodes() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnDesc.setCellValueFactory(new PropertyValueFactory<>("proporcion"));
+		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("description"));		
 	}
 
 	private ConcreteDesign getConcreteDesingFromTableView() {
@@ -184,6 +211,7 @@ public class ConcreteDesignViewController implements Initializable {
 			return obj;
 		}
 	}
+
 	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction) {
 		try {
 
@@ -205,9 +233,16 @@ public class ConcreteDesignViewController implements Initializable {
 			e.printStackTrace();
 		}
 	}
+
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		initializeNodes();
+	}
+
+	@Override
+	public void onDataChange() {
+		updateTableView();
+		
 	}
 
 }

@@ -70,9 +70,7 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 			}
 
 		} catch (SQLException e) {
-			// throw new DbException("Error inserting ConcreteDesing");
-			e.printStackTrace();
-
+			throw new DbException("Error inserting ConcreteDesing");
 		} finally {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
@@ -82,33 +80,16 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 	@Override
 	public void update(ConcreteDesign obj) {
 		PreparedStatement st = null;
-		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"UPDATE concretedesign SET" + "(description = ?, " + "fck = ?, " + "mat1_id = ?, " + "mat2_id = ?, "
+					"UPDATE concretedesign SET " + "description = ?, " + "fck = ?, " + "mat1_id = ?, " + "mat2_id = ?, "
 							+ "mat3_id = ?, " + "mat4_id = ?, " + "mat5_id = ?, " + "mat6_id = ?, " + "mat7_id = ?, "
 							+ "mat8_id = ?," + "mat1_qtt = ?," + "mat2_qtt = ?," + "mat3_qtt = ?," + "mat4_qtt = ?,"
-							+ "mat5_qtt = ?," + "mat6_qtt = ?," + "mat7_qtt = ?," + "mat8_qtt = ?) " + "WHERE id = ?",
+							+ "mat5_qtt = ?," + "mat6_qtt = ?," + "mat7_qtt = ?," + "mat8_qtt = ? " + "WHERE id = ?",
 					Statement.RETURN_GENERATED_KEYS);
 
 			setStatement(st, obj);
 			st.setInt(19, obj.getId());
-			/*
-			 * MaterialProporcion prop = obj.getProporcion(); st.setString(1,
-			 * obj.getDescription()); st.setDouble(2, obj.getFck()); if
-			 * (prop.getMat1().getId() == null) { st.setNull(3, Types.INTEGER); } else {
-			 * st.setInt(3, prop.getMat1().getId()); } st.setInt(4, prop.getMat2().getId());
-			 * st.setInt(5, prop.getMat3().getId()); st.setInt(6, prop.getMat4().getId());
-			 * st.setInt(7, prop.getMat5().getId()); st.setInt(8, prop.getMat6().getId());
-			 * st.setInt(9, prop.getMat7().getId()); st.setInt(10, prop.getMat8().getId());
-			 * 
-			 * st.setDouble(11, prop.getMat1Qtt()); st.setDouble(12, prop.getMat2Qtt());
-			 * st.setDouble(13, prop.getMat3Qtt()); st.setDouble(14, prop.getMat4Qtt());
-			 * st.setDouble(15, prop.getMat5Qtt()); st.setDouble(16, prop.getMat6Qtt());
-			 * st.setDouble(17, prop.getMat7Qtt()); st.setDouble(18, prop.getMat8Qtt());
-			 * 
-			 * st.setInt(19, obj.getId());
-			 */
 
 			int rows = st.executeUpdate();
 			if (rows == 0) {
@@ -118,7 +99,6 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 		} catch (SQLException e) {
 			throw new DbException("Error inserting ConcreteDesing");
 		} finally {
-			DB.closeResultSet(rs);
 			DB.closeStatement(st);
 		}
 	}
@@ -132,49 +112,49 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 		st.setString(1, obj.getDescription());
 		st.setDouble(2, obj.getFck());
 
-		if (prop.getMat1() == null) {
+		if (prop.getMat1() == null || prop.getMat1().isAllNull()) {
 			st.setNull(3, Types.INTEGER);
 		} else {
 			st.setInt(3, prop.getMat1().getId());
 		}
 
-		if (prop.getMat2() == null) {
+		if ( prop.getMat2() == null || prop.getMat2().isAllNull()) {
 			st.setNull(4, Types.INTEGER);
 		} else {
 			st.setInt(4, prop.getMat2().getId());
 		}
 
-		if (prop.getMat3() == null) {
+		if (prop.getMat3() == null || prop.getMat3().isAllNull()) {
 			st.setNull(5, Types.INTEGER);
 		} else {
 			st.setInt(5, prop.getMat3().getId());
 		}
 
-		if (prop.getMat4() == null) {
+		if (prop.getMat4() == null || prop.getMat4().isAllNull()) {
 			st.setNull(6, Types.INTEGER);
 		} else {
 			st.setInt(6, prop.getMat4().getId());
 		}
 
-		if (prop.getMat5() == null) {
+		if (prop.getMat5() == null || prop.getMat5().isAllNull()) {
 			st.setNull(7, Types.INTEGER);
 		} else {
 			st.setInt(7, prop.getMat5().getId());
 		}
 
-		if (prop.getMat6() == null) {
+		if (prop.getMat6() == null || prop.getMat6().isAllNull()) {
 			st.setNull(8, Types.INTEGER);
 		} else {
 			st.setInt(8, prop.getMat6().getId());
 		}
 
-		if (prop.getMat7() == null) {
+		if (prop.getMat7() == null || prop.getMat7().isAllNull()) {
 			st.setNull(9, Types.INTEGER);
 		} else {
 			st.setInt(9, prop.getMat7().getId());
 		}
 
-		if (prop.getMat8() == null) {
+		if (prop.getMat8() == null || prop.getMat8().isAllNull()) {
 			st.setNull(10, Types.INTEGER);
 		} else {
 			st.setInt(10, prop.getMat8().getId());

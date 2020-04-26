@@ -1,6 +1,7 @@
 package gui;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import application.domaim.MaterialProporcion;
 import application.exceptions.ValidationException;
 import application.service.ConcreteDesignService;
 import application.service.MaterialService;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
@@ -41,6 +43,8 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 	private Map<Integer, ComboBox<Material>> mapComboBoxMat = new HashMap<>();
 
 	private ObservableList<Material> obsListMaterial;
+	
+	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
 	@FXML
 	private TextField txtId;
@@ -119,6 +123,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 				throw new IllegalStateException("ConcreteDesign was null");
 			} else {
 				service.saveOrUpdate(obj);
+				notifyDataChangeListeners();
 				Utils.currentStage(event).close();
 			}
 		} catch (IllegalStateException e) {
@@ -197,7 +202,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 			throw exception;
 		}
 		prop.setMaterialService(this.materialService);
-
+		obj.setId(Utils.tryParseToInt(txtId.getText()));
 		obj.setFck(Utils.tryParseToDouble(txtFck.getText()));
 		obj.setDescription(txtName.getText());
 		obj.setProporcion(prop);
@@ -223,7 +228,8 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 			if (mapComboBoxMat.get(i).getValue() != null) {
 				for (int j = 0; j <= 7; j += 1) {
 					if (mapComboBoxMat.get(j).getValue() != null
-							&& mapComboBoxMat.get(j).getValue() == mapComboBoxMat.get(i).getValue()) {
+							&& mapComboBoxMat.get(j).getValue() == mapComboBoxMat.get(i).getValue()
+							&& mapComboBoxMat.get(j).getValue().getId() != null) {
 						repetead += 1;
 					}
 				}
@@ -341,10 +347,11 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 	public void updateFormData() {
 		txtId.setText(entity.getId().toString());
 		txtName.setText(entity.getDescription());
+		txtFck.setText(Utils.doubleFormat(entity.getFck()));
 		Double[] qtt = materialProporcionQttToArray(entity.getProporcion());
 		Material[] mat = materialProporcionMatToArray(entity.getProporcion());
 		for (int i = 0; i <= 7; i += 1) {
-			vecTextFieldQtt[i].setText(qtt[i].toString());
+			vecTextFieldQtt[i].setText((qtt[i] == null || qtt[i] == 0.0)? "" : Utils.doubleFormat(qtt[i]));
 			if (mat[i] != null) {
 				mapComboBoxMat.get(i).setValue(mat[i]);
 			}
@@ -391,6 +398,14 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 			str = str + errors.get(s) + ". ";
 		}
 		return str;
+	}
+	
+	public void subscribeDataChangeListener(DataChangeListener listener) {
+		dataChangeListeners.add(listener);
+	}
+	
+	private void notifyDataChangeListeners() {
+		dataChangeListeners.forEach((DataChangeListener x) -> x.onDataChange());	
 	}
 
 	@Override

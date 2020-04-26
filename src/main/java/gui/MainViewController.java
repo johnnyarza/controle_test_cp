@@ -82,12 +82,6 @@ public class MainViewController implements Initializable{
 				controller.setClientService(new ClientService());
 				controller.updateTableView();
 			});
-		
-		//TODO janela para escolher o ensaio existente
-		/*createDialogForm("/gui/CompresionTestForm.fxml", parentStage, (CompresionTestFormController controller) -> {
-			controller.setCorpoDeProvaService(new CorpoDeProvaService());
-			controller.updateTableView();
-			});*/
 	}
 	@FXML
 	public void onBtClientAction(ActionEvent event) {

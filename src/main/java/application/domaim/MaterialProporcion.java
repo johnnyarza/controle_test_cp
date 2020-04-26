@@ -215,28 +215,11 @@ public class MaterialProporcion implements Serializable {
 		Set<Material> matList = mapList.keySet();
 		String str = "";
 		for (Material m : matList) {
-			if (m.getId() != null) {
-				str += m.getName() + ": " + Utils.doubleFormat(mapList.get(m)) + "kg/m³ -- ";
+			if (!m.isAllNull()) {
+				str = m.getName() + ": " + Utils.doubleFormat(mapList.get(m)) + "kg/m³ -- " + str;
 			}
 		}
 		
 		return str;
-		
-		/* return
-
-		(materialService.findById(this.mat1.getId()) != null ? 
-				materialService.findById(this.mat1.getId()).getName() : "") 
-				+ " : " + this.mat1Qtt + "," 
-				+ (materialService.findById(this.mat2.getId()) != null ? 
-						materialService.findById(this.mat2.getId()).getName() : "")
-				+ " : "
-				+ this.mat2Qtt + "," 
-				+ (materialService.findById(this.mat3.getId())).getName() 
-				+ " : " + this.mat3Qtt
-				+ "," + (materialService.findById(this.mat4.getId())).getName() + " : " + this.mat4Qtt + ","
-				+ (materialService.findById(this.mat5.getId())).getName() + " : " + this.mat5Qtt + ","
-				+ (materialService.findById(this.mat6.getId())).getName() + " : " + this.mat6Qtt + ","
-				+ (materialService.findById(this.mat7.getId())).getName() + " : " + this.mat7Qtt + ","
-				+ (materialService.findById(this.mat8.getId())).getName() + " : " + this.mat8Qtt;*/
 	}
 }
