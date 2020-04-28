@@ -16,6 +16,7 @@ import application.db.DbException;
 import application.domaim.Cliente;
 import application.domaim.CompresionTest;
 import application.service.ClientService;
+import application.service.ConcreteDesignService;
 
 public class CompresionTestDaoJDBC implements CompresionTestDao{
 	
@@ -37,7 +38,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 					Statement.RETURN_GENERATED_KEYS);
 			
 			st.setInt(1, obj.getClient().getId());
-			st.setInt(2, 1);//TODO IMPLEMENTA CONCRETEDESIGN
+			st.setInt(2, obj.getConcreteDesign().getId());
 			st.setString(3, obj.getObra());
 			st.setString(4, obj.getAddress());
 			st.setDate(5, new java.sql.Date(obj.getDate().getTime()));
@@ -74,7 +75,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 					+"WHERE compresion_test.id = ?");
 			
 			st.setInt(1, obj.getClient().getId());
-			st.setInt(2, 1);//TODO implements design id
+			st.setInt(2, obj.getConcreteDesign().getId());
 			st.setString(3, obj.getObra());
 			st.setString(4, obj.getAddress());
 			st.setDate(5, new java.sql.Date(obj.getDate().getTime()));
@@ -95,7 +96,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("delete from clients where clients.id = ?");
+			st = conn.prepareStatement("delete from compresion_test where id = ?");
 			
 			st.setInt(1, id);
 			
@@ -120,15 +121,16 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			
-			//Calendar cal = Calendar.getInstance(TimeZone.getDefault());
 			Cliente client = new Cliente();
 			ClientService clientService = new ClientService();
+			ConcreteDesignService concreteDesignService = new ConcreteDesignService();
 			if (rs.next()) {
 				client = clientService.findById(rs.getInt(2));
 				CompresionTest compresionTest = new CompresionTest();
 				
 				compresionTest.setId(rs.getInt(1));
 				compresionTest.setClient(client);
+				compresionTest.setConcreteDesign(concreteDesignService.findConcreteDesignById(rs.getInt(3)));
 				compresionTest.setObra(rs.getString(4));
 				compresionTest.setAddress(rs.getString(5));
 				compresionTest.setDate(new java.util.Date(rs.getTimestamp(6).getTime()));
@@ -151,19 +153,22 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM clients");
+			st = conn.prepareStatement("SELECT * FROM compresion_test");
 			
 			rs = st.executeQuery();
 			
 			Calendar cal = Calendar.getInstance(TimeZone.getDefault());
 			Cliente client = new Cliente();
 			ClientService clientService = new ClientService();
+			ConcreteDesignService concreteDesignService = new ConcreteDesignService();
+			
 			List<CompresionTest> list = new ArrayList<>();
 			while (rs.next()) {
 				client = clientService.findById(rs.getInt(2));
 				list.add(
 						new CompresionTest(
-								rs.getInt(1), client, rs.getString(4), rs.getString(5), new java.util.Date(rs.getTimestamp(6,cal).getTime())));
+								rs.getInt(1), client, concreteDesignService.findConcreteDesignById(rs.getInt(3)),
+								rs.getString(4), rs.getString(5), new java.util.Date(rs.getTimestamp(6,cal).getTime())));
 			}
 			return list;
 		}
@@ -189,12 +194,15 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 			Calendar cal = Calendar.getInstance(TimeZone.getDefault());
 			Cliente client = new Cliente();
 			ClientService clientService = new ClientService();
+			ConcreteDesignService concreteDesignService = new ConcreteDesignService();
 			if (rs.next()) {
 				client = clientService.findById(rs.getInt(2));
+				
 				CompresionTest compresionTest = new CompresionTest();
 				
 				compresionTest.setId(rs.getInt(1));
 				compresionTest.setClient(client);
+				compresionTest.setConcreteDesign(concreteDesignService.findConcreteDesignById(rs.getInt(3)));
 				compresionTest.setObra(rs.getString(4));
 				compresionTest.setAddress(rs.getString(5));
 				compresionTest.setDate(new java.util.Date(rs.getTimestamp(6,cal).getTime()));
@@ -214,7 +222,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 
 	@Override
 	public CompresionTest findByConcreteDesignId(Integer id) {
-		// TODO Auto-generated method stub
+		// TODO Implementar
 		return null;
 	}
 
@@ -241,7 +249,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 			}
 			return result;
 		} catch (SQLException e) {
-			throw new DbException("Error on compresionTestContainsConcreteDesingId");
+			throw new DbException("Error on compresionTestContainsConcreteDesingId"  + e.getMessage());
 		}finally {
 			DB.closeResultSet(rs);
 			DB.closeStatement(st);

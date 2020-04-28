@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="vbox" minWidth="400.0" prefHeight="401.0" prefWidth="1155.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.CompresionTestFormController">
+<VBox fx:id="vbox" minWidth="400.0" prefHeight="401.0" prefWidth="1155.0" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.CompresionTestFormController">
    <children>
       <GridPane minHeight="90.0" prefHeight="90.0" vgap="2.0">
         <columnConstraints>
@@ -25,7 +25,9 @@
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="279.0" minWidth="80.0" prefWidth="75.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="462.0" minWidth="168.0" prefWidth="177.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="60.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="10.0" prefWidth="467.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="102.0" minWidth="90.0" prefWidth="90.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="10.0" prefWidth="301.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="10.0" prefWidth="126.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -70,13 +72,9 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <HBox prefHeight="100.0" prefWidth="265.0" spacing="2.0" GridPane.columnIndex="4" GridPane.rowIndex="2">
-               <children>
-                  <Button fx:id="btEditarCadastro" mnemonicParsing="false" onAction="#onBtEditarCadastroAction" text="Cambiar cadastro" />
-               </children>
-            </HBox>
-            <ComboBox fx:id="comboBoxClient" prefHeight="25.0" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <DatePicker fx:id="dpCreationDate" editable="false" prefHeight="25.0" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <HBox prefHeight="100.0" prefWidth="265.0" spacing="2.0" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+            <ComboBox fx:id="comboBoxClient" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <DatePicker fx:id="dpCreationDate" editable="false" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label fx:id="labelErrorClient" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" />
@@ -97,13 +95,27 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </Label>
-            <Label fx:id="labelMessages" textFill="RED" GridPane.columnIndex="6">
+            <Label fx:id="labelMessages" prefHeight="20.0" prefWidth="330.0" textFill="RED" GridPane.columnIndex="7" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>
                <font>
                   <Font size="14.0" />
                </font>
+            </Label>
+            <Label text="Diseño / m³" GridPane.columnIndex="6">
+               <GridPane.margin>
+                  <Insets left="5.0" />
+               </GridPane.margin>
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="comboBoxConcreteDesign" onAction="#onChangeCount" prefHeight="25.0" prefWidth="373.0" GridPane.columnIndex="7" />
+            <Label fx:id="labelErrorConcreteDesign" textFill="RED" GridPane.columnIndex="8">
+               <GridPane.margin>
+                  <Insets left="5.0" />
+               </GridPane.margin>
             </Label>
          </children>
          <padding>
@@ -131,6 +143,7 @@
             <Insets left="5.0" />
          </padding>
          <children>
+            <Button fx:id="btEditarCadastro" mnemonicParsing="false" onAction="#onBtEditarCadastroAction" text="Guardar Ensayo" textAlignment="CENTER" />
             <Button fx:id="btInserirProbeta" mnemonicParsing="false" onAction="#onBtInserirProbetaAction" text="Inserir Probeta" />
             <Button fx:id="btEditarProbeta" mnemonicParsing="false" onAction="#onBtEditarProbetaAction" text="Editar Probeta" />
             <Button fx:id="btApagarProbeta" mnemonicParsing="false" onAction="#onBtApagarProbetaAction" text="Apagar Probeta" />

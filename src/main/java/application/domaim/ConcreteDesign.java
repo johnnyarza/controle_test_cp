@@ -80,7 +80,7 @@ public class ConcreteDesign implements Serializable{
 
 	@Override
 	public String toString() {
-		return this.description;
+		return this.description + " - " + this.proporcion.toString();
 	}		
 
 }

@@ -9,6 +9,7 @@ public class CompresionTest implements Serializable{
 	
 	private Integer id;
 	private Cliente client;
+	private ConcreteDesign concreteDesign;
 	private String obra;
 	private String address;
 	private Date date;
@@ -17,9 +18,10 @@ public class CompresionTest implements Serializable{
 	public CompresionTest() {
 	}
 
-	public CompresionTest(Integer id,Cliente client, String obra,String address,Date date) {
+	public CompresionTest(Integer id,Cliente client, ConcreteDesign concreteDesign,String obra,String address,Date date) {
 		this.id = id;
 		this.client = client;
+		this.concreteDesign = concreteDesign;
 		this.setObra(obra);
 		this.setAddress(address);
 		this.date = date;
@@ -71,5 +73,19 @@ public class CompresionTest implements Serializable{
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	/**
+	 * @return the concreteDesign
+	 */
+	public ConcreteDesign getConcreteDesign() {
+		return concreteDesign;
+	}
+
+	/**
+	 * @param concreteDesign the concreteDesign to set
+	 */
+	public void setConcreteDesign(ConcreteDesign concreteDesign) {
+		this.concreteDesign = concreteDesign;
 	}
 }

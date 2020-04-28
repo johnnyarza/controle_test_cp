@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.Program;
+import application.Report.ClientReport;
 import application.db.DbException;
 import application.domaim.Cliente;
 import application.service.ClientService;
@@ -64,6 +65,9 @@ public class ClientListController implements Initializable,DataChangeListener{
 	private Button btEdit;
 	
 	@FXML
+	private Button btPrint;
+	
+	@FXML
 	public void onBtNewAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
 		Cliente obj = new Cliente();
@@ -96,7 +100,10 @@ public class ClientListController implements Initializable,DataChangeListener{
 			Alerts.showAlert("Error", "Ningun cliente seleccionado", e.getMessage(), AlertType.ERROR);
 		}
 	}
-
+	@FXML
+	public void onBtPrintAction() {
+		ClientReport.viewClientReport();
+	}
 	public void setClientService(ClientService service) {
 		this.service = service;
 	}

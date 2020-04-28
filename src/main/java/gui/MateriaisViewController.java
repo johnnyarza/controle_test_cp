@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
+import application.Report.MaterialReport;
 import application.db.DbException;
 import application.domaim.Material;
 import application.domaim.Provider;
@@ -46,6 +47,9 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 
 	@FXML
 	private Button btDelete;
+	
+	@FXML
+	private Button btPrint;
 
 	@FXML
 	private TableView<Material> tableViewMaterial;
@@ -112,6 +116,11 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 		} catch (DbException e) {
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
 		}
+	}
+	
+	@FXML
+	private void onBtPrintAction() {
+		MaterialReport.viewMaterialReport();
 	}
 
 	public MaterialService getService() {

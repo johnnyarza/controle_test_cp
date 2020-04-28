@@ -229,8 +229,7 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 		if (corpoDeProva == null) {
 			throw new NullPointerException();
 		}
-		// TODO tirar o if dentro dos setText
-		//Locale.setDefault(Locale.US);
+
 		txtId.setText(String.valueOf(corpoDeProva.getId()));
 		txtCode.setText(String.valueOf(corpoDeProva.getCode()));
 		txtSlump.setText(String.format("%.2f",corpoDeProva.getSlump()));

@@ -18,14 +18,18 @@ import java.util.function.Consumer;
 import application.db.DbException;
 import application.domaim.Cliente;
 import application.domaim.CompresionTest;
+import application.domaim.ConcreteDesign;
 import application.domaim.CorpoDeProva;
 import application.exceptions.ValidationException;
 import application.service.ClientService;
 import application.service.CompresionTestService;
+import application.service.ConcreteDesignService;
 import application.service.CorpoDeProvaService;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -51,122 +55,137 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-public class CompresionTestFormController implements Initializable,DataChangeListener{
-	
+public class CompresionTestFormController implements Initializable, DataChangeListener {
+
 	private ObservableList<CorpoDeProva> obsList;
-	
+
 	private ObservableList<Cliente> obsListClient;
-	
-	private CorpoDeProvaService  corpoDeProvaService; 
-	
+
+	private ObservableList<ConcreteDesign> obsListConcreteDesign;
+
+	private CorpoDeProvaService corpoDeProvaService;
+
 	private CompresionTestService compresionTestService;
-	
+
+	private ConcreteDesignService concreteDesignService;
+
 	private ClientService clientService;
-	
+
 	private CompresionTest compresionTest;
-	
+
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	
+
+	private Integer changesCount;
+
+	@FXML
+	private ComboBox<ConcreteDesign> comboBoxConcreteDesign;
+
 	@FXML
 	private TextField txtid;
-	
+
 	@FXML
 	private TextField txtObra;
-	
+
 	@FXML
 	private TextField txtAddress;
-	
+
 	@FXML
 	private Button btEditarCadastro;
-	
+
 	@FXML
 	private Button btInserirProbeta;
-	
+
 	@FXML
 	private Button btEditarProbeta;
-	
+
 	@FXML
-	private Button btApagarProbeta;	
-	
+	private Button btApagarProbeta;
+
 	@FXML
-	private Button btClose;	
-	
+	private Button btClose;
+
 	@FXML
 	private VBox vbox;
-	
+
 	@FXML
 	private ComboBox<Cliente> comboBoxClient;
-	
+
 	@FXML
 	private TableView<CorpoDeProva> tableViewCorpoDeProva;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<CorpoDeProva, Integer> tableColumnId;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<CorpoDeProva, String> tableColumnCodigo;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<CorpoDeProva, Double> tableColumnSlump;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<CorpoDeProva, Date> tableColumnFechaMoldeo;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<CorpoDeProva, Date> tableColumnFechaRotura;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<CorpoDeProva, Integer> tableColumnEdad;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<CorpoDeProva, Double> tableColumnDiameter;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<CorpoDeProva, Double> tableColumnHeight;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<CorpoDeProva, Double> tableColumnWeight;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<CorpoDeProva, Double> tableColumnDensid;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<CorpoDeProva, Double> tableColumnTonRupture;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<CorpoDeProva, Double> tableColumnfckRupture;
-	
+
 	@FXML
 	private DatePicker dpCreationDate;
-	
+
 	@FXML
 	private Label labelErrorClient;
-	
+
 	@FXML
 	private Label labelErrorDate;
-	
+
 	@FXML
 	private Label labelErrorObra;
-	
+
 	@FXML
 	private Label labelErrorAddress;
-	
+
+	@FXML
+	private Label labelErrorConcreteDesign;
+
 	@FXML
 	private Label labelMessages;
-	
-	public void onBtInserirProbetaAction (ActionEvent event) {	
+
+	@FXML
+	public void onBtInserirProbetaAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
 		CorpoDeProva obj = new CorpoDeProva();
 		obj.setCompresionTest(compresionTest);
-		
-		createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage, (CorpoDeProvaRegistrationController controller) -> {
-			controller.setCorpoDeProvaService(new CorpoDeProvaService());
-			controller.setCorpoDeProva(obj);
-			controller.subscribeDataChangeListener(this);
-		});
-				
+
+		createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage,
+				(CorpoDeProvaRegistrationController controller) -> {
+					controller.setCorpoDeProvaService(new CorpoDeProvaService());
+					controller.setCorpoDeProva(obj);
+					controller.subscribeDataChangeListener(this);
+				});
+
 	}
-	
+
+	@FXML
 	public void onBtEditarProbetaAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
 		CorpoDeProva obj = getCorpoDeProvaView();
@@ -179,12 +198,13 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 					controller.subscribeDataChangeListener(this);
 				});
 	}
-	
+
+	@FXML
 	public void onBtApagarProbetaAction() {
 		try {
 			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de accion",
 					"Seguro que desea apagar probeta?", "Después de apagados los datos seran perdidos");
-			
+
 			if (result.get() == ButtonType.OK) {
 				CorpoDeProva obj = getCorpoDeProvaView();
 				corpoDeProvaService.deleteById(obj.getId());
@@ -195,23 +215,40 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 		}
 
 	}
-	
+
+	@FXML
 	public void onBtEditarCadastroAction() {
 		try {
 			setCompresionTestFormData();
 			compresionTestService.saveOrUpdate(this.compresionTest);
 			onDataChange();
+			setChangesCount(0);
+			Alerts.showAlert("Acción conluida", "Cadastro actualizado", null, AlertType.INFORMATION);
 		} catch (ValidationException e) {
-			setErrorMessages(e.getErrors());	
+			setErrorMessages(e.getErrors());
 		} catch (DbException e1) {
 			Alerts.showAlert("Error", "Error saving compresionTest", e1.getMessage(), AlertType.ERROR);
-		}		
+		}
 	}
-	
+
+	@FXML
 	public void onBtCloseAction(ActionEvent event) {
-		Utils.currentStage(event).close();
+		if (this.changesCount > 0) {
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acción", "Segura que desea cerrar?",
+					"Hay datos no guardados!!");
+			if (result.get() == ButtonType.OK) {
+				Utils.currentStage(event).close();
+			}
+		} else {
+			Utils.currentStage(event).close();
+		}
 	}
-	
+
+	@FXML
+	public void onChangeCount() {
+		this.changesCount += 1;
+	}
+
 	public CorpoDeProvaService getCorpoDeProvaService() {
 		return corpoDeProvaService;
 	}
@@ -244,81 +281,134 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 		this.clientService = clientService;
 	}
 
+	/**
+	 * @return the concreteDesignService
+	 */
+	public ConcreteDesignService getConcreteDesignService() {
+		return concreteDesignService;
+	}
+
+	/**
+	 * @param concreteDesignService the concreteDesignService to set
+	 */
+	public void setConcreteDesignService(ConcreteDesignService concreteDesignService) {
+		this.concreteDesignService = concreteDesignService;
+	}
+
+	/**
+	 * @return the changesCount
+	 */
+	public Integer getChangesCount() {
+		return changesCount;
+	}
+
+	/**
+	 * @param changesCount the changesCount to set
+	 */
+	public void setChangesCount(Integer changesCount) {
+		this.changesCount = changesCount;
+	}
+
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		initializeNodes();	
+		initializeNodes();
+	}
+
+	private void initializeNodes() {	
+		setTableColumnsCellValueFactory();
+		initializeComboBoxClient();
+		tableViewCorpoDeProva.prefHeightProperty().bind(vbox.heightProperty());
 	}
 	
-	private void initializeNodes() {
+	private void setTableColumnsCellValueFactory() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnCodigo.setCellValueFactory(new PropertyValueFactory<>("code"));
-		
+
 		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));
 		Utils.formatTableColumnDouble(tableColumnSlump, 2);
-		
+
 		tableColumnFechaMoldeo.setCellValueFactory(new PropertyValueFactory<>("moldeDate"));
 		Utils.formatTableColumnDate(tableColumnFechaMoldeo, "dd/MM/yyyy");
-		
+
 		tableColumnFechaRotura.setCellValueFactory(new PropertyValueFactory<>("ruptureDate"));
 		Utils.formatTableColumnDate(tableColumnFechaRotura, "dd/MM/yyyy");
-		
+
 		tableColumnEdad.setCellValueFactory(new PropertyValueFactory<>("days"));
-		
+
 		tableColumnDiameter.setCellValueFactory(new PropertyValueFactory<>("diameter"));
 		Utils.formatTableColumnDouble(tableColumnDiameter, 2);
-		
+
 		tableColumnHeight.setCellValueFactory(new PropertyValueFactory<>("height"));
 		Utils.formatTableColumnDouble(tableColumnHeight, 2);
-		
+
 		tableColumnWeight.setCellValueFactory(new PropertyValueFactory<>("weight"));
 		Utils.formatTableColumnDouble(tableColumnWeight, 3);
-		
+
 		tableColumnDensid.setCellValueFactory(new PropertyValueFactory<>("densid"));
 		Utils.formatTableColumnDouble(tableColumnDensid, 2);
-		
+
 		tableColumnTonRupture.setCellValueFactory(new PropertyValueFactory<>("tonRupture"));
 		Utils.formatTableColumnDouble(tableColumnTonRupture, 2);
-		
+
 		tableColumnfckRupture.setCellValueFactory(new PropertyValueFactory<>("fckRupture"));
 		Utils.formatTableColumnDouble(tableColumnfckRupture, 2);
-		
-		initializeComboBoxClient();
-			
-		tableViewCorpoDeProva.prefHeightProperty().bind(vbox.heightProperty());	
 	}
-	
+	public void setTxtListeners() {
+		
+		txtObra.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				onChangeCount();				
+			}		
+		});
+		
+		txtAddress.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				onChangeCount();				
+			}		
+		});
+	}
+
 	public void updateTableView() {
 		if (corpoDeProvaService == null) {
 			throw new IllegalStateException("Service was null");
-		}	
-		List<CorpoDeProva> list =corpoDeProvaService.findByCompresionTestIdWithTimeZone(compresionTest.getId(), TimeZone.getDefault());
+		}
+		List<CorpoDeProva> list = corpoDeProvaService.findByCompresionTestIdWithTimeZone(compresionTest.getId(),
+				TimeZone.getDefault());
 		obsList = FXCollections.observableArrayList(list);
 		tableViewCorpoDeProva.setItems(obsList);
 		Utils.formatCorpoDeProvaTableViewRowColor(tableViewCorpoDeProva);
 		tableViewCorpoDeProva.refresh();
 	}
-	
+
 	public void updateFormData() {
 		if (compresionTest == null) {
 			throw new IllegalStateException("Service was null");
 		}
-		
+
 		txtid.setText((compresionTest.getId()).toString());
-		
+
 		if (compresionTest.getClient() == null) {
 			comboBoxClient.getSelectionModel().selectFirst();
 		} else {
 			comboBoxClient.setValue(compresionTest.getClient());
 		}
-		
+
+		if (compresionTest.getConcreteDesign() == null) {
+			comboBoxConcreteDesign.getSelectionModel().selectFirst();
+		} else {
+			comboBoxConcreteDesign.setValue(compresionTest.getConcreteDesign());
+		}
+
 		if (compresionTest.getDate() != null) {
-			dpCreationDate.setValue(LocalDate.ofInstant(compresionTest.getDate().toInstant(),ZoneId.systemDefault()));
-			
+			dpCreationDate.setValue(LocalDate.ofInstant(compresionTest.getDate().toInstant(), ZoneId.systemDefault()));
+
 		}
 		txtObra.setText(compresionTest.getObra());
 		txtAddress.setText(compresionTest.getAddress());
 	}
-	
+
 	private void initializeComboBoxClient() {
 		Callback<ListView<Cliente>, ListCell<Cliente>> factory = lv -> new ListCell<Cliente>() {
 			@Override
@@ -330,8 +420,13 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 		comboBoxClient.setCellFactory(factory);
 		comboBoxClient.setButtonCell(factory.call(null));
 	}
-	
+
 	public void loadAssociatedObjects() {
+		loadClientComboBox();
+		loadCompresionDesignComboBox();
+	}
+
+	private void loadClientComboBox() {
 		if (clientService == null) {
 			throw new IllegalStateException("ClientService was null");
 		}
@@ -339,16 +434,25 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 		obsListClient = FXCollections.observableArrayList(list);
 		comboBoxClient.setItems(obsListClient);
 	}
-	
-	private <T> void createDialogForm(String absoluteName, Stage parentStage,Consumer<T> initializingAction) {
+
+	private void loadCompresionDesignComboBox() {
+		if (concreteDesignService == null) {
+			throw new IllegalStateException("concreteDesignService was null");
+		}
+		List<ConcreteDesign> list = concreteDesignService.findAllConcreteDesign();
+		obsListConcreteDesign = FXCollections.observableArrayList(list);
+		comboBoxConcreteDesign.setItems(obsListConcreteDesign);
+	}
+
+	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction) {
 		try {
-			
+
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
-		
+
 			T controller = loader.getController();
 			initializingAction.accept(controller);
-			
+
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Nueva rotura");
 			dialogStage.setScene(new Scene(pane));
@@ -356,85 +460,92 @@ public class CompresionTestFormController implements Initializable,DataChangeLis
 			dialogStage.initOwner(parentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.showAndWait();
-					
-		}catch (IOException e) {
+
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private CorpoDeProva getCorpoDeProvaView() {
-		
+
 		CorpoDeProva cp = tableViewCorpoDeProva.getSelectionModel().getSelectedItem();
 		if (cp == null) {
 			throw new NullPointerException();
 		}
 		return cp;
 	}
-	
-	public void setLabelMessageText() {
-		Integer cpCount = corpoDeProvaService.countCorpoDeProvasToTest();
-		if ( cpCount > 0 ) {
-			labelMessages.setText( "Hay " + Integer.toString(cpCount) + " probeta(s) para Romper");
+
+	public void setLabelMessageText(Integer compresionTestId) {
+		Integer cpCount = corpoDeProvaService.countCorpoDeProvasToTestbyCompresionTestId(compresionTestId);
+		if (cpCount > 0) {
+			labelMessages.setText("Hay " + Integer.toString(cpCount) + " probeta(s) para Romper");
 		} else {
 			labelMessages.setText("");
 		}
 	}
-	
+
 	@Override
 	public void onDataChange() {
 		updateFormData();
 		updateTableView();
-		setLabelMessageText();
+		setLabelMessageText(this.compresionTest.getId());
 	}
-	
-	private void setCompresionTestFormData() {	
-		
+
+	private void setCompresionTestFormData() {
+
 		ValidationException exception = new ValidationException("getCompresionTestFormData Error");
-		
+
 		if (comboBoxClient.getValue() == null) {
 			exception.addError("client", "vacío");
 		}
-		
+
+		if (comboBoxConcreteDesign.getValue() == null) {
+			exception.addError("concreteDesign", "vacío");
+		}
+
 		if (dpCreationDate.getValue() == null) {
 			exception.addError("date", "vacío");
-		}		
-		
+		}
+
 		if (txtObra.getText() == null || txtObra.getText().trim().equals("")) {
 			exception.addError("obra", "vacío");
 		}
-		
+
 		if (txtAddress.getText() == null || txtAddress.getText().trim().equals("")) {
 			exception.addError("address", "vacío");
 		}
-		
+
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
-		
+
 		if (txtid.getText() != null) {
 			this.compresionTest.setId(Utils.tryParseToInt(txtid.getText()));
 		}
-		
+
 		this.compresionTest.setClient(comboBoxClient.getValue());
-		
+
+		this.compresionTest.setConcreteDesign(comboBoxConcreteDesign.getValue());
+
 		if (dpCreationDate.getValue() != null) {
 			Instant instant = Instant.from(dpCreationDate.getValue().atStartOfDay(ZoneId.systemDefault()));
 			this.compresionTest.setDate(Date.from(instant));
 		}
-		
+
 		this.compresionTest.setObra(txtObra.getText());
-		
+
 		this.compresionTest.setAddress(txtAddress.getText());
-		
+
 	}
-	
+
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
-		
+
 		labelErrorClient.setText(fields.contains("client") ? errors.get("client") : "");
 		labelErrorDate.setText(fields.contains("date") ? errors.get("date") : "");
 		labelErrorObra.setText(fields.contains("obra") ? errors.get("obra") : "");
-		labelErrorAddress.setText(fields.contains("address") ? errors.get("address") : "");	
+		labelErrorAddress.setText(fields.contains("address") ? errors.get("address") : "");
+		labelErrorConcreteDesign.setText(fields.contains("concreteDesign") ? errors.get("concreteDesign") : "");
 	}
 
 }

@@ -19,7 +19,7 @@
       <HBox alignment="CENTER_LEFT" minHeight="35.0" prefHeight="35.0" prefWidth="600.0" spacing="5.0">
          <children>
             <Button fx:id="btOpen" mnemonicParsing="false" onAction="#onbtOpenAction" text="Abrir" />
-            <Button fx:id="btCancel" mnemonicParsing="false" onAction="#onBtCancelAction" text="Cancelar" />
+            <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" text="Apagar" />
          </children>
          <padding>
             <Insets left="5.0" />

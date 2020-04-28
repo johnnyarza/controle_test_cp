@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
+import application.Report.ConcreteDesignReport;
 import application.db.DbException;
 import application.domaim.ConcreteDesign;
 import application.domaim.MaterialProporcion;
@@ -33,7 +34,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ConcreteDesignViewController implements Initializable,DataChangeListener {
+public class ConcreteDesignViewController implements Initializable, DataChangeListener {
 
 	private ConcreteDesignService service;
 
@@ -51,6 +52,9 @@ public class ConcreteDesignViewController implements Initializable,DataChangeLis
 	private Button btDelete;
 
 	@FXML
+	private Button btPrint;
+
+	@FXML
 	private TableView<ConcreteDesign> tableViewConcreteDesing;
 
 	@FXML
@@ -58,7 +62,7 @@ public class ConcreteDesignViewController implements Initializable,DataChangeLis
 
 	@FXML
 	private TableColumn<ConcreteDesign, MaterialProporcion> tableColumnDesc;
-	
+
 	@FXML
 	private TableColumn<ConcreteDesign, String> tableColumnName;
 
@@ -76,24 +80,24 @@ public class ConcreteDesignViewController implements Initializable,DataChangeLis
 						controller.subscribeDataChangeListener(this);
 					});
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 	}
 
 	@FXML
 	public void onBtEditAction(ActionEvent event) {
 		try {
-		ConcreteDesign obj = getFormData();
-		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", parentStage,
-				(ConcreteDesignRegistrationFormController controller) -> {
-					controller.setMaterialService(new MaterialService());
-					controller.setService(new ConcreteDesignService());
-					controller.setEntity(obj);
-					controller.loadAssociatedObjects();
-					controller.updateFormData();
-					controller.subscribeDataChangeListener(this);
-				});
+			ConcreteDesign obj = getFormData();
+			Stage parentStage = Utils.currentStage(event);
+			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", parentStage,
+					(ConcreteDesignRegistrationFormController controller) -> {
+						controller.setMaterialService(new MaterialService());
+						controller.setService(new ConcreteDesignService());
+						controller.setEntity(obj);
+						controller.loadAssociatedObjects();
+						controller.updateFormData();
+						controller.subscribeDataChangeListener(this);
+					});
 		} catch (IllegalStateException e) {
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		}
@@ -125,6 +129,20 @@ public class ConcreteDesignViewController implements Initializable,DataChangeLis
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		} catch (DbException e1) {
 			Alerts.showAlert("Error", "DbException", e1.getMessage(), AlertType.ERROR);
+		}
+
+	}
+
+	@FXML
+	public void onBtPrintAction() {
+		try {
+			if (service == null) {
+				throw new IllegalStateException("Service was null");
+			}
+			List<ConcreteDesign> list = service.findAllConcreteDesign();
+			ConcreteDesignReport.viewMaterialReport(list);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -200,7 +218,7 @@ public class ConcreteDesignViewController implements Initializable,DataChangeLis
 	private void initializeNodes() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnDesc.setCellValueFactory(new PropertyValueFactory<>("proporcion"));
-		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("description"));		
+		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("description"));
 	}
 
 	private ConcreteDesign getConcreteDesingFromTableView() {
@@ -242,7 +260,7 @@ public class ConcreteDesignViewController implements Initializable,DataChangeLis
 	@Override
 	public void onDataChange() {
 		updateTableView();
-		
+
 	}
 
 }

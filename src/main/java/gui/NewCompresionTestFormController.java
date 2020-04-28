@@ -10,9 +10,11 @@ import java.util.Set;
 import application.db.DbException;
 import application.domaim.Cliente;
 import application.domaim.CompresionTest;
+import application.domaim.ConcreteDesign;
 import application.exceptions.ValidationException;
 import application.service.ClientService;
 import application.service.CompresionTestService;
+import application.service.ConcreteDesignService;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
@@ -35,14 +37,21 @@ public class NewCompresionTestFormController implements Initializable {
 	
 	private CompresionTestService compresionTestService;
 	
+	private ConcreteDesignService concreteDesignService;
+	
 	private Boolean btCancelPressed;
 	
 	private CompresionTest entity;
 	
 	private ObservableList<Cliente> obsList;
+	
+	private ObservableList<ConcreteDesign> obsListConcreteDesign;
 
 	@FXML
 	private ComboBox<Cliente> comboBoxClient;
+	
+	@FXML
+	private ComboBox<ConcreteDesign> comboBoxConcreteDesign;
 
 	@FXML
 	private TextField txtId;
@@ -60,13 +69,16 @@ public class NewCompresionTestFormController implements Initializable {
 	private Button btCancel;
 
 	@FXML
-	Label labelErrorClient;
+	private Label labelErrorClient;
 
 	@FXML
-	Label labelErrorObra;
+	private Label labelErrorObra;
 
 	@FXML
-	Label labelErrorAddress;
+	private Label labelErrorAddress;
+	
+	@FXML
+	private Label labelErrorConcreteDesign;
 
 	public CompresionTestService getCompresionTestService() {
 		return compresionTestService;
@@ -100,11 +112,19 @@ public class NewCompresionTestFormController implements Initializable {
 		this.entity = entity;
 	}
 
+	public ConcreteDesignService getConcreteDesignService() {
+		return concreteDesignService;
+	}
+
+	public void setConcreteDesignService(ConcreteDesignService concreteDesignService) {
+		this.concreteDesignService = concreteDesignService;
+	}
+
 	@FXML
 	public void onBtCreateAction(ActionEvent event) {
 		try {			
 
-		if (clientService == null || compresionTestService == null) {
+		if (clientService == null || compresionTestService == null || concreteDesignService == null) {
 			throw new IllegalStateException("Service(s) was null");
 		}
 			entity = getFormData();
@@ -133,16 +153,35 @@ public class NewCompresionTestFormController implements Initializable {
 	}
 
 	private void initializeNodes() {
-		initializeComboBoxClient();
+		initializeComboBoxes();
 	}
 
 	public void loadAssociatedObjects() {
+		loadAssociatedObjectsComboBoxClient();
+		loadAssociatedObjectsComboBoxConcreteDesign();
+	}
+	
+	private void loadAssociatedObjectsComboBoxConcreteDesign() {
+		if (concreteDesignService == null) {
+			throw new IllegalStateException("concreteDesignService was null");
+		}
+		List<ConcreteDesign> list = concreteDesignService.findAllConcreteDesign();
+		obsListConcreteDesign = FXCollections.observableArrayList(list);
+		comboBoxConcreteDesign.setItems(obsListConcreteDesign);
+	}
+	
+	private void loadAssociatedObjectsComboBoxClient () {
 		if (clientService == null) {
 			throw new IllegalStateException("ClientService was null");
 		}
 		List<Cliente> list = clientService.findAll();
 		obsList = FXCollections.observableArrayList(list);
 		comboBoxClient.setItems(obsList);
+	}
+	
+	private void initializeComboBoxes() {
+		initializeComboBoxClient();
+		initializeComboBoxConcreteDesign();
 	}
 
 	private void initializeComboBoxClient() {
@@ -155,6 +194,18 @@ public class NewCompresionTestFormController implements Initializable {
 		};
 		comboBoxClient.setCellFactory(factory);
 		comboBoxClient.setButtonCell(factory.call(null));
+	}
+	
+	private void initializeComboBoxConcreteDesign() {
+		Callback<ListView<ConcreteDesign>, ListCell<ConcreteDesign>> factory = lv -> new ListCell<ConcreteDesign>() {
+			@Override
+			protected void updateItem(ConcreteDesign item, boolean empty) {
+				super.updateItem(item, empty);
+				setText(empty ? "" : item.toString());
+			}
+		};
+		comboBoxConcreteDesign.setCellFactory(factory);
+		comboBoxConcreteDesign.setButtonCell(factory.call(null));
 	}
 
 
@@ -181,6 +232,11 @@ public class NewCompresionTestFormController implements Initializable {
 		}
 		obj.setAddress(txtAddress.getText());
 		
+		if (comboBoxConcreteDesign.getValue() == null) {
+			exception.addError("design", "diseño vacío");
+		}
+		obj.setConcreteDesign(comboBoxConcreteDesign.getValue());
+		
 		obj.setDate(new Date());
 		
 		if (exception.getErrors().size() > 0) {
@@ -196,6 +252,7 @@ public class NewCompresionTestFormController implements Initializable {
 		labelErrorObra.setText(fields.contains("obra") ? errors.get("obra") : "");		
 		labelErrorClient.setText(fields.contains("client") ? errors.get("client") : "");
 		labelErrorAddress.setText(fields.contains("address") ? errors.get("address") : "");
+		labelErrorConcreteDesign.setText(fields.contains("design") ? errors.get("design") : "");
 
 	}
 

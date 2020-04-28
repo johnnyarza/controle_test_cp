@@ -298,13 +298,14 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao{
 	}
 
 	@Override
-	public Integer countCorpoDeProvasToTest() {
+	public Integer countCorpoDeProvasToTestbyCompresionTestId(Integer id) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		Integer count = null;
 		try {
 			st = conn.prepareStatement("SELECT COUNT(id) as days FROM corpo_de_provas  "
-					+ "WHERE ruptureDate <= curdate() and tonRupture = 0");
+					+ "WHERE ruptureDate <= curdate() and tonRupture = 0 and compresionTest_Id = ?");
+			st.setInt(1, id);
 			rs = st.executeQuery();
 			if (rs.next()) {
 				count = rs.getInt(1);

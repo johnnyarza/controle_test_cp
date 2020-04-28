@@ -155,7 +155,7 @@ public class CorpoDeProva {
 		if (this.diameter != null && this.tonRupture != null) {
 			if ((this.diameter != 0) && (this.tonRupture != 0)) {
 				Double areaCirculoM2 = ((Math.PI * (this.diameter * this.diameter)) / 4) / 10000;
-				Double tonMN = this.tonRupture * 0.00889644;
+				Double tonMN = this.tonRupture * 0.00980665;
 				this.fckRupture = tonMN / areaCirculoM2;
 			}
 		} else {

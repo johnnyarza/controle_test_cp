@@ -39,7 +39,7 @@ public class CorpoDeProvaService {
 	public List<CorpoDeProva> findByCompresionTestIdWithTimeZone(Integer id,TimeZone tZ) {
 		return dao.findByCompresionTestIdWithTimeZone(id, tZ);
 	}
-	public Integer countCorpoDeProvasToTest() {
-		return dao.countCorpoDeProvasToTest();
+	public Integer countCorpoDeProvasToTestbyCompresionTestId(Integer id) {
+		return dao.countCorpoDeProvasToTestbyCompresionTestId(id);
 	}
 }

@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import application.dao.CompresionTestListDao;
 import application.db.DB;
@@ -41,6 +43,7 @@ public class CompresionTestListJDBC implements CompresionTestListDao{
 			
 			rs = st.executeQuery();
 			
+			Calendar cal = Calendar.getInstance(TimeZone.getDefault());
 			List<CompresionTestList> list = new ArrayList<>();
 			while (rs.next()) {
 				list.add(new CompresionTestList(
@@ -49,7 +52,7 @@ public class CompresionTestListJDBC implements CompresionTestListDao{
 						rs.getString(2), 
 						rs.getString(3), 
 						rs.getString(4), 
-						rs.getDate(5)
+						new java.util.Date(rs.getTimestamp(5,cal).getTime())
 						));
 			}
 			return list;			
