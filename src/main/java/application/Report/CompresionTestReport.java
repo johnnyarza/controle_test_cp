@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import application.domaim.Cliente;
 import application.domaim.CorpoDeProva;
 import gui.util.Alerts;
 import javafx.scene.control.Alert.AlertType;
@@ -26,12 +28,19 @@ public class CompresionTestReport {
 
 	
 
-	public static void viewReport (List<CorpoDeProva> list) {
+	public static void viewReport (List<CorpoDeProva> list,Cliente client) {
 		try {
-			//TODO terminar report
+			//TODO terminar report (colocar detalhes do CompresionTest tais como obra, numero de ensaio etc)
 			JRBeanCollectionDataSource itemsJRBean = new JRBeanCollectionDataSource(list);
+			List<Cliente> clientList = new ArrayList<>();
+			clientList.add(client);
+			JRBeanCollectionDataSource itemsClientJRBean = new JRBeanCollectionDataSource(clientList);
+			
+			
 			Map<String, Object> data = new HashMap<>();
 			data.put("CorpoDeProvaCollecionBeanParam", itemsJRBean);
+			data.put("ClientCollecionBeanParam", itemsClientJRBean);
+			
 			
 			InputStream input = new FileInputStream(new File(".\\reports\\CompresionTestReport.jrxml"));
 			JasperDesign jasperDesign = JRXmlLoader.load(input);

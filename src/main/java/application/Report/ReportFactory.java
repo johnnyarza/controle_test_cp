@@ -2,6 +2,7 @@ package application.Report;
 
 import java.util.List;
 
+import application.domaim.Cliente;
 import application.domaim.ConcreteDesign;
 import application.domaim.CorpoDeProva;
 
@@ -23,7 +24,7 @@ public class ReportFactory {
 		ProviderReport.viewProviderReport();
 	}
 	
-	public void compresionTestReportView(List<CorpoDeProva> list) {
-		CompresionTestReport.viewReport(list);
+	public void compresionTestReportView(List<CorpoDeProva> list,Cliente client) {
+		CompresionTestReport.viewReport(list, client);
 	}
 }
