@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.Program;
-import application.Report.ClientReport;
+import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Cliente;
 import application.service.ClientService;
@@ -102,7 +102,8 @@ public class ClientListController implements Initializable,DataChangeListener{
 	}
 	@FXML
 	public void onBtPrintAction() {
-		ClientReport.viewClientReport();
+		ReportFactory rF = new ReportFactory();
+		rF.clientReportView();
 	}
 	public void setClientService(ClientService service) {
 		this.service = service;

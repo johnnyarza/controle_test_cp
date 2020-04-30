@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.function.Consumer;
 
+import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Cliente;
 import application.domaim.CompresionTest;
@@ -103,6 +104,9 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private Button btClose;
+	
+	@FXML
+	private Button btPrint;
 
 	@FXML
 	private VBox vbox;
@@ -242,6 +246,14 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		} else {
 			Utils.currentStage(event).close();
 		}
+	}
+	
+	@FXML
+	public void onbtPrintAction() {
+		ReportFactory rF = new ReportFactory();
+		List<CorpoDeProva> list = corpoDeProvaService.findByCompresionTestIdWithTimeZone(compresionTest.getId(),
+				TimeZone.getDefault());
+		rF.compresionTestReportView(list);
 	}
 
 	@FXML

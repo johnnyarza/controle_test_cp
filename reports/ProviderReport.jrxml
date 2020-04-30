@@ -43,11 +43,11 @@
 	<title>
 		<band height="63" splitType="Stretch">
 			<staticText>
-				<reportElement x="202" y="16" width="150" height="30" uuid="0c90088f-6269-4eff-b4ca-5ca93ba691c5"/>
+				<reportElement x="193" y="16" width="168" height="30" uuid="0c90088f-6269-4eff-b4ca-5ca93ba691c5"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Listado de Materiales]]></text>
+				<text><![CDATA[Listado de Proveedores]]></text>
 			</staticText>
 			<image>
 				<reportElement x="0" y="6" width="119" height="50" uuid="8c25af32-3845-4808-917e-dbd1f2fac5d5"/>

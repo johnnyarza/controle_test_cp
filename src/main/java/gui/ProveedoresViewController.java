@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
 import application.Program;
+import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Provider;
 import application.service.ProviderService;
@@ -45,6 +46,9 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 	
 	@FXML
 	private Button btDelete;
+	
+	@FXML
+	private Button btPrint;
 	
 	@FXML
 	private TableView<Provider> tableViewProvider;
@@ -108,7 +112,13 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 			Alerts.showAlert("Error", "IllegalStateException", e2.getMessage(), AlertType.ERROR);
 		}
 	}
-
+	
+	@FXML
+	public void onBtPrintAction() {
+		ReportFactory rF = new ReportFactory();
+		rF.providerReportView();
+	}
+	
 	public ProviderService getService() {
 		return service;
 	}

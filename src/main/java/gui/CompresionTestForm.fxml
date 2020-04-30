@@ -147,6 +147,7 @@
             <Button fx:id="btInserirProbeta" mnemonicParsing="false" onAction="#onBtInserirProbetaAction" text="Inserir Probeta" />
             <Button fx:id="btEditarProbeta" mnemonicParsing="false" onAction="#onBtEditarProbetaAction" text="Editar Probeta" />
             <Button fx:id="btApagarProbeta" mnemonicParsing="false" onAction="#onBtApagarProbetaAction" text="Apagar Probeta" />
+            <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onbtPrintAction" text="Imprimir" />
             <Button fx:id="btClose" mnemonicParsing="false" onAction="#onBtCloseAction" text="Cerrar" />
          </children>
       </HBox>

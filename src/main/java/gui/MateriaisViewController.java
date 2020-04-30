@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-import application.Report.MaterialReport;
+import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Material;
 import application.domaim.Provider;
@@ -23,11 +23,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -120,7 +120,8 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 	
 	@FXML
 	private void onBtPrintAction() {
-		MaterialReport.viewMaterialReport();
+		ReportFactory rF = new ReportFactory();
+		rF.materialReportView();
 	}
 
 	public MaterialService getService() {

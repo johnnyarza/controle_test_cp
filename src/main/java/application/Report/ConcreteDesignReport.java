@@ -24,9 +24,9 @@ public class ConcreteDesignReport {
 
 
 
-	public static void viewMaterialReport(List<ConcreteDesign> list) {
+	public static void viewConcreteDesignReport(List<ConcreteDesign> list) {
 		try {
-			//TODO Terminar report
+
 			JRBeanCollectionDataSource itemsJRBean = new JRBeanCollectionDataSource(list);
 			Map<String, Object> data = new HashMap<>();
 			data.put("CollectionBeanParam", itemsJRBean);

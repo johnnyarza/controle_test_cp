@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-import application.Report.ConcreteDesignReport;
+import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.ConcreteDesign;
 import application.domaim.MaterialProporcion;
@@ -140,7 +140,8 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 				throw new IllegalStateException("Service was null");
 			}
 			List<ConcreteDesign> list = service.findAllConcreteDesign();
-			ConcreteDesignReport.viewMaterialReport(list);
+			ReportFactory rF = new ReportFactory();
+			rF.concreteDesignReportView(list);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -6,7 +6,6 @@ public class CorpoDeProva {
 	
 	private Integer id;
 	private String code;
-	//private Cliente client;
 	private CompresionTest compresionTest;
 	private Double slump;
 	private Date moldeDate;	
