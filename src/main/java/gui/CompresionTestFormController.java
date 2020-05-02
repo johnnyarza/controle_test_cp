@@ -253,7 +253,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		ReportFactory rF = new ReportFactory();
 		List<CorpoDeProva> list = corpoDeProvaService.findByCompresionTestIdWithTimeZone(compresionTest.getId(),
 				TimeZone.getDefault());
-		rF.compresionTestReportView(list,this.compresionTest.getClient());
+		rF.compresionTestReportView(list,this.compresionTest);
 	}
 
 	@FXML

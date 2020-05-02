@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -152,4 +153,16 @@ public class Utils {
 		Instant instant = Instant.from(dP.getValue().atStartOfDay(ZoneId.systemDefault()));
 		return instant;
 	}
+	
+	public static Integer daysBetweenDates(Date futureDate, Date pastDay) {
+		int days = (Math.abs((int) ChronoUnit.DAYS.between(futureDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), 
+				pastDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())));
+		return days;	
+	}
+	
+	public static Integer daysBetweenLocalDates(LocalDate futureDate, LocalDate pastDay) {
+		int days = Math.abs((int) ChronoUnit.DAYS.between(futureDate,pastDay));
+		return days;	
+	}
+
 }

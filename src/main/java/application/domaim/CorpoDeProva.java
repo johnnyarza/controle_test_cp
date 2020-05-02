@@ -187,12 +187,5 @@ public class CorpoDeProva {
 		return true;
 	}
 
-	public Date getDataMolde() {
-		return moldeDate;
-	}
-
-	public void setDataMolde(Date dataMolde) {
-		this.moldeDate = dataMolde;
-	}
 
 }

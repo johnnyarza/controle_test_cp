@@ -133,7 +133,7 @@ public class MainViewController implements Initializable {
 		this.compresionTest = compresionTest;
 	}
 
-	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction) {
+	/*private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -153,7 +153,7 @@ public class MainViewController implements Initializable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	private void createDialogFormNewCompresionTest(String absoluteName, Stage parentStage) {
 		try {

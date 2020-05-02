@@ -9,7 +9,6 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -50,16 +49,13 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao{
 				"VALUES (? ,? , ? ,? ,? ,? ,? ,? ,? ,? ,? )",
 					Statement.RETURN_GENERATED_KEYS);
 			
-			int days = (Math.abs((int) ChronoUnit.DAYS.between((new Date()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), 
-					obj.getDataMolde().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())));
-			
 			st.setString(1, obj.getCode());
 			st.setInt(2, obj.getCompresionTest().getClient().getId());
 			st.setInt(3, obj.getCompresionTest().getId());
 			st.setDouble(4, obj.getSlump());
-			st.setDate(5, new java.sql.Date(obj.getDataMolde().getTime()));
+			st.setDate(5, new java.sql.Date(obj.getMoldeDate().getTime()));
 			st.setDate(6, new java.sql.Date(obj.getRuptureDate().getTime()));
-			st.setInt(7, days);
+			st.setInt(7, obj.getDays());
 			st.setDouble(8, obj.getDiameter());
 			st.setDouble(9, obj.getHeight());
 			st.setDouble(10, obj.getWeight());
@@ -101,16 +97,14 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao{
 					+ "weight = ?, " //10
 					+ "tonRupture = ? " //11
 					+ "WHERE id = ?"); //12
-			int days = (Math.abs((int) ChronoUnit.DAYS.between((new Date()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), 
-					obj.getDataMolde().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())));
 			
 			st.setString(1, obj.getCode());
 			st.setInt(2, obj.getCompresionTest().getClient().getId());
 			st.setInt(3, obj.getCompresionTest().getId());
 			st.setDouble(4, obj.getSlump());
-			st.setDate(5, new java.sql.Date(obj.getDataMolde().getTime()));
+			st.setDate(5, new java.sql.Date(obj.getMoldeDate().getTime()));
 			st.setDate(6, new java.sql.Date(obj.getRuptureDate().getTime()));
-			st.setInt(7, days);
+			st.setInt(7, obj.getDays());
 			st.setDouble(8, obj.getDiameter());
 			st.setDouble(9, obj.getHeight());
 			st.setDouble(10, obj.getWeight());
@@ -208,7 +202,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao{
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT corpo_de_provas.*,(curdate()-dateMolde) as days FROM corpo_de_provas WHERE "
+			st = conn.prepareStatement("SELECT corpo_de_provas.*,(ruptureDate-dateMolde) as days FROM corpo_de_provas WHERE "
 					+ "compresionTest_Id = ?");
 			
 			st.setInt(1, id);
@@ -279,8 +273,8 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao{
 						rs.getDouble(11), 
 						rs.getDouble(12));
 				int days = (Math.abs((int) ChronoUnit.DAYS.between(
-						(new Date()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-						obj.getDataMolde().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())));
+						obj.getRuptureDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+						obj.getMoldeDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())));
 				obj.setDensid();
 				obj.setFckRupture();
 				obj.setDays(days);
