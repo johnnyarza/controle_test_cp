@@ -57,7 +57,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class CompresionTestFormController implements Initializable, DataChangeListener {
-
+	//TODO Implmentar filtro para os corpos de prova
 	private ObservableList<CorpoDeProva> obsList;
 
 	private ObservableList<Cliente> obsListClient;
@@ -251,8 +251,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	@FXML
 	public void onbtPrintAction() {
 		ReportFactory rF = new ReportFactory();
-		List<CorpoDeProva> list = corpoDeProvaService.findByCompresionTestIdWithTimeZone(compresionTest.getId(),
-				TimeZone.getDefault());
+		List<CorpoDeProva> list = getCorpoDeProvaListFromTable();
 		rF.compresionTestReportView(list,this.compresionTest);
 	}
 
@@ -485,6 +484,14 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			throw new NullPointerException();
 		}
 		return cp;
+	}
+	
+	private List<CorpoDeProva> getCorpoDeProvaListFromTable() {
+		List<CorpoDeProva> list = tableViewCorpoDeProva.getItems();	
+		if (list == null) {
+			throw new IllegalStateException("Lista de probetas vacía");
+		}
+		return list;		
 	}
 
 	public void setLabelMessageText(Integer compresionTestId) {

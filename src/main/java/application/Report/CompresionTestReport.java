@@ -12,6 +12,7 @@ import java.util.Map;
 import application.domaim.CompresionTest;
 import application.domaim.CompresionTestChartData;
 import application.domaim.CorpoDeProva;
+import application.exceptions.ReportException;
 import gui.util.Alerts;
 import javafx.scene.control.Alert.AlertType;
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -31,7 +32,7 @@ public class CompresionTestReport {
 
 	public static void viewReport (List<CorpoDeProva> list,CompresionTest cTest) {
 		try {
-			//TODO terminar report criar uma classe para o grafico e um dataset exclusivo
+			
 			JRBeanCollectionDataSource itemsJRBean = new JRBeanCollectionDataSource(list);
 			List<CompresionTest> cTestList = new ArrayList<>();
 			cTestList.add(cTest);
@@ -56,8 +57,7 @@ public class CompresionTestReport {
 		} catch (FileNotFoundException e) {
 			Alerts.showAlert("Error", "Archivo no encontrado", e.getMessage(), AlertType.ERROR);
 		} catch (JRException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ReportException(e.getMessage());
 		}
 	}
 	

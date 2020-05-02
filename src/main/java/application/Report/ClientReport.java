@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import application.db.DB;
+import application.exceptions.ReportException;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -45,8 +46,7 @@ public class ClientReport {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (JRException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ReportException(e.getMessage());
 		}
 	}
 }

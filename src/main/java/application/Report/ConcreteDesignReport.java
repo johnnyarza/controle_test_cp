@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import application.domaim.ConcreteDesign;
+import application.exceptions.ReportException;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -43,8 +44,7 @@ public class ConcreteDesignReport {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (JRException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ReportException(e.getMessage());
 		}
 	}
 }
