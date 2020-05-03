@@ -81,6 +81,7 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 	}
 	
 	public void onBtEditAction(ActionEvent event) {
+		try {
 		Stage parentStage = Utils.currentStage(event);
 		Provider obj = getProviderFromTableView();
 		
@@ -90,6 +91,9 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 			controller.updateFormData();
 			controller.subscribeDataChangeListener(this);			
 		});
+		} catch (NullPointerException e) {
+			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+		}
 	}
 	
 	public void onBtDeleteAction(ActionEvent event) {

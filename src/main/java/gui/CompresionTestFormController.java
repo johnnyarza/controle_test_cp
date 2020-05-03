@@ -57,7 +57,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class CompresionTestFormController implements Initializable, DataChangeListener {
-	//TODO Implmentar filtro para os corpos de prova
+	
 	private ObservableList<CorpoDeProva> obsList;
 
 	private ObservableList<Cliente> obsListClient;
@@ -104,9 +104,15 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private Button btClose;
-	
+
 	@FXML
 	private Button btPrint;
+
+	@FXML
+	private Button btFilter;
+
+	@FXML
+	private Button btClearFilter;
 
 	@FXML
 	private VBox vbox;
@@ -176,31 +182,38 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	public void onBtInserirProbetaAction(ActionEvent event) {
+		try {
 		Stage parentStage = Utils.currentStage(event);
 		CorpoDeProva obj = new CorpoDeProva();
 		obj.setCompresionTest(compresionTest);
 
-		createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage,
+		createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage,"Inserir Probeta",
 				(CorpoDeProvaRegistrationController controller) -> {
 					controller.setCorpoDeProvaService(new CorpoDeProvaService());
 					controller.setCorpoDeProva(obj);
 					controller.subscribeDataChangeListener(this);
-				});
-
+				}, (CorpoDeProvaRegistrationController controller) -> {});
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "Exception", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	@FXML
 	public void onBtEditarProbetaAction(ActionEvent event) {
+		try {
 		Stage parentStage = Utils.currentStage(event);
 		CorpoDeProva obj = getCorpoDeProvaView();
 
-		createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage,
+		createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage,"Editar Probeta",
 				(CorpoDeProvaRegistrationController controller) -> {
 					controller.setCorpoDeProvaService(new CorpoDeProvaService());
 					controller.setCorpoDeProva(obj);
 					controller.updateFormData();
 					controller.subscribeDataChangeListener(this);
-				});
+				}, (CorpoDeProvaRegistrationController controller) -> {});
+		} catch (NullPointerException e) {
+			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	@FXML
@@ -216,6 +229,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			}
 		} catch (DbException e) {
 			Alerts.showAlert("Error", "Error deleting probeta", e.getMessage(), AlertType.ERROR);
+		} catch (NullPointerException e1) {
+			Alerts.showAlert("Error", "NullPointerException", e1.getMessage(), AlertType.ERROR);
 		}
 
 	}
@@ -247,12 +262,35 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			Utils.currentStage(event).close();
 		}
 	}
-	
+
 	@FXML
 	public void onbtPrintAction() {
 		ReportFactory rF = new ReportFactory();
 		List<CorpoDeProva> list = getCorpoDeProvaListFromTable();
-		rF.compresionTestReportView(list,this.compresionTest);
+		rF.compresionTestReportView(list, this.compresionTest);
+	}
+
+	public void onBtFilterAction(ActionEvent event) {
+		try {
+			Stage parentStage = Utils.currentStage(event);
+
+			createDialogForm("/gui/CorpoDeProvaFilterForm.fxml", parentStage,"Filtrar Probetas por Fecha",
+					(CorpoDeProvaFilterFormController controller) -> {
+						controller.setService(new CorpoDeProvaService());
+						controller.setCompresionTest(this.compresionTest);
+					}, (CorpoDeProvaFilterFormController controller) -> {
+						obsList = controller.getObsList();
+					});
+			tableViewCorpoDeProva.setItems(this.obsList);
+			tableViewCorpoDeProva.refresh();
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "Exception", e.getMessage(), AlertType.ERROR);
+		}
+	}
+
+	@FXML
+	public void onbtClearFilterAction() {
+		updateTableView();
 	}
 
 	@FXML
@@ -325,12 +363,12 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		initializeNodes();
 	}
 
-	private void initializeNodes() {	
+	private void initializeNodes() {
 		setTableColumnsCellValueFactory();
 		initializeComboBoxClient();
 		tableViewCorpoDeProva.prefHeightProperty().bind(vbox.heightProperty());
 	}
-	
+
 	private void setTableColumnsCellValueFactory() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnCodigo.setCellValueFactory(new PropertyValueFactory<>("code"));
@@ -364,20 +402,21 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		tableColumnfckRupture.setCellValueFactory(new PropertyValueFactory<>("fckRupture"));
 		Utils.formatTableColumnDouble(tableColumnfckRupture, 2);
 	}
+
 	public void setTxtListeners() {
-		
+
 		txtObra.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				onChangeCount();				
-			}		
+				onChangeCount();
+			}
 		});
-		
+
 		txtAddress.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				onChangeCount();				
-			}		
+				onChangeCount();
+			}
 		});
 	}
 
@@ -455,7 +494,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		comboBoxConcreteDesign.setItems(obsListConcreteDesign);
 	}
 
-	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction) {
+	private <T> void createDialogForm(String absoluteName, Stage parentStage,String fomrName ,Consumer<T> initializingAction,
+			Consumer<T> initializingActionFinal) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -465,12 +505,13 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			initializingAction.accept(controller);
 
 			Stage dialogStage = new Stage();
-			dialogStage.setTitle("Nueva rotura");
+			dialogStage.setTitle(fomrName);
 			dialogStage.setScene(new Scene(pane));
 			dialogStage.setResizable(false);
 			dialogStage.initOwner(parentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.showAndWait();
+			initializingActionFinal.accept(controller);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -481,17 +522,17 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 		CorpoDeProva cp = tableViewCorpoDeProva.getSelectionModel().getSelectedItem();
 		if (cp == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Probeta vacía o no seleccionada");
 		}
 		return cp;
 	}
-	
+
 	private List<CorpoDeProva> getCorpoDeProvaListFromTable() {
-		List<CorpoDeProva> list = tableViewCorpoDeProva.getItems();	
+		List<CorpoDeProva> list = tableViewCorpoDeProva.getItems();
 		if (list == null) {
 			throw new IllegalStateException("Lista de probetas vacía");
 		}
-		return list;		
+		return list;
 	}
 
 	public void setLabelMessageText(Integer compresionTestId) {

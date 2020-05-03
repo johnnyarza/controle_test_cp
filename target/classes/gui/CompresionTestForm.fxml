@@ -72,7 +72,14 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <HBox prefHeight="100.0" prefWidth="265.0" spacing="2.0" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="265.0" spacing="5.0" GridPane.columnIndex="7" GridPane.rowIndex="2">
+               <children>
+                  <Button fx:id="btFilter" mnemonicParsing="false" onAction="#onBtFilterAction" text="Filtrar Probetas" />
+                  <Button fx:id="btClearFilter" mnemonicParsing="false" onAction="#onbtClearFilterAction" text="Limpiar Filtros" />
+               </children>
+               <GridPane.margin>
+                  <Insets left="2.0" />
+               </GridPane.margin></HBox>
             <ComboBox fx:id="comboBoxClient" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <DatePicker fx:id="dpCreationDate" editable="false" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label fx:id="labelErrorClient" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1">

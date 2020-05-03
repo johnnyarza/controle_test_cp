@@ -97,7 +97,9 @@ public class ClientListController implements Initializable,DataChangeListener{
 				onDataChange();
 			}
 		} catch (DbException e) {
-			Alerts.showAlert("Error", "Ningun cliente seleccionado", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
+		} catch (NullPointerException e1) {
+			Alerts.showAlert("Error", "NullPointerException", e1.getMessage(), AlertType.ERROR);
 		}
 	}
 	@FXML
@@ -177,7 +179,7 @@ public class ClientListController implements Initializable,DataChangeListener{
 		Cliente client = tableViewClient.getSelectionModel().getSelectedItem();
 		//Integer id = tableColumnId.getCellData(row);
 		if (client == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Cliente vacío o no seleccionado");
 		}
 		return client;
 	}

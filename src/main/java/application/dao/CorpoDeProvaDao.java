@@ -1,5 +1,6 @@
 package application.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -14,6 +15,7 @@ public interface CorpoDeProvaDao {
 	List<CorpoDeProva> findAll();
 	List<CorpoDeProva> findByCompresionTestId(Integer id);
 	List<CorpoDeProva> findByCompresionTestIdWithTimeZone(Integer id, TimeZone tZ);
+	List<CorpoDeProva> findByDatesAndCompresionTestId(TimeZone tZ,Date initialDate, Date finalDate,Integer compresionTestId);
 	Integer countCorpoDeProvasToTestbyCompresionTestId(Integer id);
 
 }
