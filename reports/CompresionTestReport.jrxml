@@ -633,7 +633,8 @@ Moldeo]]></text>
 		<band height="164">
 			<xyLineChart>
 				<chart isShowLegend="false" evaluationTime="Report">
-					<reportElement stretchType="ContainerHeight" x="1" y="5" width="280" height="154" uuid="e33fd328-3bfa-41f7-aa53-face45efaf74">
+					<reportElement style="Table_CH" stretchType="ContainerHeight" x="20" y="5" width="280" height="154" uuid="e33fd328-3bfa-41f7-aa53-face45efaf74">
+						<property name="net.sf.jasperreports.chart.domain.axis.tick.interval" value="7"/>
 						<propertyExpression name="net.sf.jasperreports.chart.range.axis.tick.interval"><![CDATA[value]]></propertyExpression>
 					</reportElement>
 					<box>

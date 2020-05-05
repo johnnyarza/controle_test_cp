@@ -57,6 +57,9 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	private MenuItem btDesign;
+	 
+	@FXML
+	private MenuItem btAbout;
 
 	@FXML
 	private MenuBar myMenuBar;
@@ -115,6 +118,11 @@ public class MainViewController implements Initializable {
 			controller.setCompresionTestService(new CompresionTestService());
 			controller.updateTableView();
 		});
+	}
+	
+	@FXML
+	public void onBtAboutAction(ActionEvent event) {
+		loadView("/gui/AboutView.fxml", (ConcreteDesignViewController controller) -> {});
 	}
 
 	public Boolean getBtCancelPressed() {

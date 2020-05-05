@@ -18,6 +18,7 @@ public class DB {
 			try {
 				Properties props = loadProperties();
 				String url = props.getProperty("dburl");
+				DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
 				conn = DriverManager.getConnection(url, props);
 			}
 			catch (SQLException e) {

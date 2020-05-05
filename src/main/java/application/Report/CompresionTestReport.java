@@ -27,7 +27,6 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
 
 public class CompresionTestReport {
-	//TODO alterar o incremento do eixo X do grafico
 	
 
 	public static void viewReport (List<CorpoDeProva> list,CompresionTest cTest) {

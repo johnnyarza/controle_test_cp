@@ -57,7 +57,7 @@ public class MaterialDaoJDBC implements MaterialDao {
 	public void update(Material obj) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("UPDATE materials SET" + "(name = ?, " + "providerId = ?) " + "WHERE id = ? ");
+			st = conn.prepareStatement("UPDATE materials SET " + "name = ?, " + "providerId = ? " + "WHERE id = ? ");
 
 			st.setString(1, obj.getName());
 			st.setInt(2, obj.getProvider().getId());

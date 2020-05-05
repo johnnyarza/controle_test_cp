@@ -221,9 +221,45 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 	}
 
 	@Override
-	public CompresionTest findByConcreteDesignId(Integer id) {
-		// TODO Implementar
-		return null;
+	public List<CompresionTest> findByConcreteDesignId(TimeZone tZ,Integer id) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM cp_db.compresion_test WHERE ConcreteDesign_id = ?");
+			st.setInt(1, id);
+			
+			rs = st.executeQuery();
+			List<CompresionTest> list = new ArrayList<CompresionTest>();
+			while (rs.next()) {
+				list.add(instatiateCompresionTest(tZ,rs));
+			}
+					
+			return list;		
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+		
+	}
+	
+	private CompresionTest instatiateCompresionTest(TimeZone tZ, ResultSet rs) {
+		try {
+			Calendar cal = Calendar.getInstance(tZ);
+			ClientService clientService = new ClientService();
+			ConcreteDesignService concreteDesignService = new ConcreteDesignService();
+			CompresionTest obj = new CompresionTest();
+			obj.setId(rs.getInt(1));
+			obj.setClient(clientService.findById(rs.getInt(2)));
+			obj.setConcreteDesign(concreteDesignService.findConcreteDesignById(rs.getInt(3)));
+			obj.setObra(rs.getString(4));
+			obj.setAddress(rs.getString(5));
+			obj.setDate(rs.getTimestamp(6, cal));
+			return obj;
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
 	}
 
 	@Override

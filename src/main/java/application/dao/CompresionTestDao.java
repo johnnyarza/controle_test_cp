@@ -14,6 +14,6 @@ public interface CompresionTestDao {
 	Boolean compresionTestContainsConcreteDesingId(Integer concreteDesignId); 
 	CompresionTest findByIdWithTimeZone(Integer id,TimeZone tZ);
 	List<CompresionTest> findAll();
-	CompresionTest findByConcreteDesignId(Integer id);
+	List<CompresionTest> findByConcreteDesignId(TimeZone tZ,Integer id);
 
 }

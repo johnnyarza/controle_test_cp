@@ -11,6 +11,7 @@ import application.db.DB;
 
 public class DaoFactory {
 	
+	
 	public static ClientDao createClientDao() {
 		return new ClientDaoJDBC(DB.getConnection());
 	}
