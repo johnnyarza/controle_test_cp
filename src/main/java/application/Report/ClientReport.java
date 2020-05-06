@@ -1,8 +1,5 @@
 package application.Report;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.HashMap;
@@ -26,8 +23,7 @@ public class ClientReport {
 
 	public static void viewClientReport() {
 		try {
-			InputStream input = new FileInputStream(new File(".\\reports\\GetClients.jrxml"));
-			// InputStream inputImage = new FileInputStream(new File("./images/logo.png"));
+			InputStream input = ClientReport.class.getResourceAsStream("/reports/GetClients.jrxml");
 
 			JasperDesign jasperDesign = JRXmlLoader.load(input);
 
@@ -42,9 +38,6 @@ public class ClientReport {
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, data, conn);
 			JasperViewer.viewReport(jasperPrint, false);
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (JRException e) {
 			throw new ReportException(e.getMessage());
 		}

@@ -41,27 +41,24 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="63" splitType="Stretch">
+		<band height="50" splitType="Stretch">
 			<staticText>
-				<reportElement x="193" y="16" width="168" height="30" uuid="0c90088f-6269-4eff-b4ca-5ca93ba691c5"/>
+				<reportElement x="193" y="10" width="168" height="30" uuid="0c90088f-6269-4eff-b4ca-5ca93ba691c5"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Listado de Proveedores]]></text>
 			</staticText>
 			<image>
-				<reportElement x="0" y="6" width="119" height="50" uuid="8c25af32-3845-4808-917e-dbd1f2fac5d5"/>
-				<imageExpression><![CDATA["reports/logo.png"]]></imageExpression>
+				<reportElement x="0" y="0" width="119" height="50" uuid="8c25af32-3845-4808-917e-dbd1f2fac5d5"/>
+				<imageExpression><![CDATA["images/logo.png"]]></imageExpression>
 			</image>
 		</band>
 	</title>
-	<pageHeader>
-		<band height="35" splitType="Stretch"/>
-	</pageHeader>
 	<columnHeader>
-		<band height="20" splitType="Stretch">
+		<band height="32" splitType="Stretch">
 			<staticText>
-				<reportElement x="34" y="0" width="30" height="20" uuid="4b372287-0219-4d94-931b-c1ea2eaa06fc">
+				<reportElement mode="Opaque" x="34" y="12" width="30" height="20" backcolor="#00D0FF" uuid="4b372287-0219-4d94-931b-c1ea2eaa06fc">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7cf3dc01-82f1-442f-b3c6-b9d9fbbe37ba"/>
 				</reportElement>
 				<box>
@@ -76,7 +73,7 @@
 				<text><![CDATA[id]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="64" y="0" width="111" height="20" uuid="0bc66e9e-033a-4f8c-b92b-85eb7bbbcea1">
+				<reportElement mode="Opaque" x="64" y="12" width="111" height="20" backcolor="#00D0FF" uuid="0bc66e9e-033a-4f8c-b92b-85eb7bbbcea1">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8d95928f-4af1-431a-b97f-87adb9ce2864"/>
 				</reportElement>
 				<box>
@@ -91,7 +88,7 @@
 				<text><![CDATA[Nombre]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="175" y="0" width="111" height="20" uuid="6fad429d-6765-4a8d-80ad-3f28a198b61d">
+				<reportElement mode="Opaque" x="175" y="12" width="111" height="20" backcolor="#00D0FF" uuid="6fad429d-6765-4a8d-80ad-3f28a198b61d">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="29fd5dd5-1819-4b66-bd15-dc57e50a745b"/>
 				</reportElement>
 				<box>
@@ -106,7 +103,7 @@
 				<text><![CDATA[Telefono]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="286" y="0" width="148" height="20" uuid="56fb04b4-02b1-47f7-b2ec-aae08356df26">
+				<reportElement mode="Opaque" x="286" y="12" width="148" height="20" backcolor="#00D0FF" uuid="56fb04b4-02b1-47f7-b2ec-aae08356df26">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c826e571-bde9-438d-8cc6-bd6b68a509c9"/>
 				</reportElement>
 				<box>
@@ -121,7 +118,7 @@
 				<text><![CDATA[Ubicación]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="434" y="0" width="111" height="20" uuid="a2bdeed9-3c30-4bf9-b352-92c625541235">
+				<reportElement mode="Opaque" x="434" y="12" width="111" height="20" backcolor="#00D0FF" uuid="a2bdeed9-3c30-4bf9-b352-92c625541235">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6fd56507-55a5-49af-887d-2a18a215a4de"/>
 				</reportElement>
 				<box>
@@ -216,22 +213,18 @@
 			</textField>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="103" splitType="Stretch"/>
-	</columnFooter>
 	<pageFooter>
-		<band height="20" splitType="Stretch">
+		<band height="30" splitType="Stretch">
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="0" y="0" width="90" height="20" uuid="4828311f-9c80-4889-bc6f-fb4c7e71ed89"/>
+				<reportElement x="0" y="5" width="90" height="20" uuid="4828311f-9c80-4889-bc6f-fb4c7e71ed89"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="510" y="0" width="40" height="20" uuid="5739c0e3-5bd0-4be1-9689-0e90247213d0"/>
+				<reportElement x="515" y="5" width="40" height="20" uuid="5739c0e3-5bd0-4be1-9689-0e90247213d0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
-	<summary>
-		<band height="20" splitType="Stretch"/>
-	</summary>
 </jasperReport>

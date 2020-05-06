@@ -1,8 +1,5 @@
 package application.Report;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.HashMap;
@@ -26,13 +23,10 @@ public class ProviderReport {
 
 	public static void viewProviderReport() {
 		try {
-			InputStream input = new FileInputStream(new File(".\\reports\\MaterialsReport.jrxml"));
-
+			InputStream input = ProviderReport.class.getResourceAsStream("/reports/ProviderReport.jrxml");
 			JasperDesign jasperDesign = JRXmlLoader.load(input);
 
-			String sql = "SELECT materials.id,materials.name,(providers.name) "
-					+ "as proveedor FROM materials inner join providers "
-					+ "where materials.providerId = providers.id";
+			String sql = "SELECT * from providers";
 			JRDesignQuery newQuery = new JRDesignQuery();
 			newQuery.setText(sql);
 			jasperDesign.setQuery(newQuery);
@@ -43,9 +37,6 @@ public class ProviderReport {
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, data, conn);
 			JasperViewer.viewReport(jasperPrint, false);
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (JRException e) {
 			throw new ReportException(e.getMessage());
 		}

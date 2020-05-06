@@ -1,8 +1,5 @@
 package application.Report;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -23,26 +20,20 @@ import net.sf.jasperreports.view.JasperViewer;
 
 public class ConcreteDesignReport {
 
-
-
 	public static void viewConcreteDesignReport(List<ConcreteDesign> list) {
 		try {
 
 			JRBeanCollectionDataSource itemsJRBean = new JRBeanCollectionDataSource(list);
 			Map<String, Object> data = new HashMap<>();
 			data.put("CollectionBeanParam", itemsJRBean);
-			
-			InputStream input = new FileInputStream(new File(".\\reports\\ConcreteDesignReport.jrxml"));
+
+			InputStream input = ConcreteDesignReport.class.getResourceAsStream("/reports/ConcreteDesignReport.jrxml");
 			JasperDesign jasperDesign = JRXmlLoader.load(input);
 			JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-			
 
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, data, new JREmptyDataSource());
 			JasperViewer.viewReport(jasperPrint, false);
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (JRException e) {
 			throw new ReportException(e.getMessage());
 		}

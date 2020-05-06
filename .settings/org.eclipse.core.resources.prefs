@@ -1,6 +1,6 @@
 eclipse.preferences.version=1
-encoding//reports/CompresionTestReport.jrxml=UTF-8
-encoding//reports/ConcreteDesignReport.jrxml=UTF-8
-encoding//reports/GetClients.jrxml=UTF-8
-encoding//reports/MaterialsReport.jrxml=UTF-8
-encoding//reports/ProviderReport.jrxml=UTF-8
+encoding//src/main/resources/reports/CompresionTestReport.jrxml=UTF-8
+encoding//src/main/resources/reports/ConcreteDesignReport.jrxml=UTF-8
+encoding//src/main/resources/reports/GetClients.jrxml=UTF-8
+encoding//src/main/resources/reports/MaterialsReport.jrxml=UTF-8
+encoding//src/main/resources/reports/ProviderReport.jrxml=UTF-8
