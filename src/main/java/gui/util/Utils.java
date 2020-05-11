@@ -131,6 +131,7 @@ public class Utils {
 		return df.format(number);
 	}
 	
+	//TODO caso a data de ruptura seja HOJE colocar cor amarela
 	public static void formatCorpoDeProvaTableViewRowColor(TableView<CorpoDeProva> tableView) {
 		tableView.setRowFactory(row -> new TableRow<CorpoDeProva> (){
 			@Override
@@ -140,9 +141,16 @@ public class Utils {
 				if (item == null || empty) {
 					setStyle("");
 				} else {
-					if (item.getRuptureDate().compareTo(new Date()) < 0 && (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
-						setStyle("-fx-background-color: red");
-					} 
+					if (daysBetweenDates(item.getRuptureDate(), new Date()) == 0 && (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
+						setStyle("-fx-background-color: yellow");
+					} else if (item.getRuptureDate().compareTo(new Date()) < 0 && (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
+						setStyle("-fx-background-color: red");				
+					} else if (daysBetweenDates(item.getRuptureDate(), new Date()) == 1 && (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
+						setStyle("-fx-background-color: green");
+					}
+					else {
+						setStyle("");
+					}
 				}
 			}
 		});

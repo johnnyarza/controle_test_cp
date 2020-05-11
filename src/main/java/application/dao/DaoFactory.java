@@ -10,32 +10,32 @@ import application.dao.impl.ProviderDaoJDBC;
 import application.db.DB;
 
 public class DaoFactory {
-	
-	
+
 	public static ClientDao createClientDao() {
-		return new ClientDaoJDBC(DB.getConnection());
+		ClientDao obj = new ClientDaoJDBC(DB.getConnection());
+		return obj;
 	}
-	
+
 	public static CompresionTestDao createCompresionTestDao() {
 		return new CompresionTestDaoJDBC(DB.getConnection());
 	}
-	
+
 	public static CorpoDeProvaDao createCorpoDeProvaDao() {
 		return new CorpoDeProvaJDBC(DB.getConnection());
 	}
-	
+
 	public static CompresionTestListDao createCompresionTestListDao() {
 		return new CompresionTestListJDBC(DB.getConnection());
 	}
-	
+
 	public static ProviderDao createProviderDao() {
 		return new ProviderDaoJDBC(DB.getConnection());
 	}
-	
+
 	public static MaterialDao createMaterialDao() {
 		return new MaterialDaoJDBC(DB.getConnection());
 	}
-	
+
 	public static ConcreteDesignDao ConcreteDesignlDao() {
 		return new ConcreteDesignDaoJDBC(DB.getConnection());
 	}

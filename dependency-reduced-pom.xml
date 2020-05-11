@@ -12,7 +12,7 @@
         <directory>src/main/resources/</directory>
       </resource>
     </resources>
-    <finalName>${project.artifactId}</finalName>
+    <finalName>${project.artifactId}${project.version}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -27,16 +27,29 @@
         <version>3.2.3</version>
         <executions>
           <execution>
-            <phase>install</phase>
+            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
             <configuration>
-              <excludes>META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA</excludes>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <transformers>
+                <transformer>
+                  <mainClass>application.ProgramStarter</mainClass>
+                </transformer>
+              </transformers>
             </configuration>
           </execution>
         </executions>
-        <configuration />
       </plugin>
     </plugins>
   </build>

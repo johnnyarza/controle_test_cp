@@ -57,7 +57,16 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class CompresionTestFormController implements Initializable, DataChangeListener {
-	
+
+	// TODO verificar o pq mais de uma linha ficar vermelha quando clica no nome da
+	// coluna e a tabela ordena as linhas
+	// TODO acrescentar cor verde na linha quando estiver 1 dias antes da ruptura,
+	// amarela no dia e vermelha quando atrasada
+	// TODO diminuir o tamanho do chart para entra na folha
+	// TODO mudar as label escrita codigo para descrição
+	// TODO acrescentar mais um field referente a quem está fornecendo o concreto
+	// TODO Criar uma função para fazer um relatorio com todos os CPs de um cliente
+
 	private ObservableList<CorpoDeProva> obsList;
 
 	private ObservableList<Cliente> obsListClient;
@@ -183,16 +192,17 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	@FXML
 	public void onBtInserirProbetaAction(ActionEvent event) {
 		try {
-		Stage parentStage = Utils.currentStage(event);
-		CorpoDeProva obj = new CorpoDeProva();
-		obj.setCompresionTest(compresionTest);
+			Stage parentStage = Utils.currentStage(event);
+			CorpoDeProva obj = new CorpoDeProva();
+			obj.setCompresionTest(compresionTest);
 
-		createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage,"Inserir Probeta",
-				(CorpoDeProvaRegistrationController controller) -> {
-					controller.setCorpoDeProvaService(new CorpoDeProvaService());
-					controller.setCorpoDeProva(obj);
-					controller.subscribeDataChangeListener(this);
-				}, (CorpoDeProvaRegistrationController controller) -> {});
+			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage, "Inserir Probeta",
+					(CorpoDeProvaRegistrationController controller) -> {
+						controller.setCorpoDeProvaService(new CorpoDeProvaService());
+						controller.setCorpoDeProva(obj);
+						controller.subscribeDataChangeListener(this);
+					}, (CorpoDeProvaRegistrationController controller) -> {
+					});
 		} catch (Exception e) {
 			Alerts.showAlert("Error", "Exception", e.getMessage(), AlertType.ERROR);
 		}
@@ -201,16 +211,17 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	@FXML
 	public void onBtEditarProbetaAction(ActionEvent event) {
 		try {
-		Stage parentStage = Utils.currentStage(event);
-		CorpoDeProva obj = getCorpoDeProvaView();
+			Stage parentStage = Utils.currentStage(event);
+			CorpoDeProva obj = getCorpoDeProvaView();
 
-		createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage,"Editar Probeta",
-				(CorpoDeProvaRegistrationController controller) -> {
-					controller.setCorpoDeProvaService(new CorpoDeProvaService());
-					controller.setCorpoDeProva(obj);
-					controller.updateFormData();
-					controller.subscribeDataChangeListener(this);
-				}, (CorpoDeProvaRegistrationController controller) -> {});
+			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage, "Editar Probeta",
+					(CorpoDeProvaRegistrationController controller) -> {
+						controller.setCorpoDeProvaService(new CorpoDeProvaService());
+						controller.setCorpoDeProva(obj);
+						controller.updateFormData();
+						controller.subscribeDataChangeListener(this);
+					}, (CorpoDeProvaRegistrationController controller) -> {
+					});
 		} catch (NullPointerException e) {
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
@@ -274,7 +285,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		try {
 			Stage parentStage = Utils.currentStage(event);
 
-			createDialogForm("/gui/CorpoDeProvaFilterForm.fxml", parentStage,"Filtrar Probetas por Fecha",
+			createDialogForm("/gui/CorpoDeProvaFilterForm.fxml", parentStage, "Filtrar Probetas por Fecha",
 					(CorpoDeProvaFilterFormController controller) -> {
 						controller.setService(new CorpoDeProvaService());
 						controller.setCompresionTest(this.compresionTest);
@@ -296,6 +307,11 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	@FXML
 	public void onChangeCount() {
 		this.changesCount += 1;
+	}
+	
+	@FXML
+	public void onTableViewSort() {
+		Utils.formatCorpoDeProvaTableViewRowColor(tableViewCorpoDeProva);
 	}
 
 	public CorpoDeProvaService getCorpoDeProvaService() {
@@ -330,30 +346,20 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		this.clientService = clientService;
 	}
 
-	/**
-	 * @return the concreteDesignService
-	 */
 	public ConcreteDesignService getConcreteDesignService() {
 		return concreteDesignService;
 	}
 
-	/**
-	 * @param concreteDesignService the concreteDesignService to set
-	 */
 	public void setConcreteDesignService(ConcreteDesignService concreteDesignService) {
 		this.concreteDesignService = concreteDesignService;
 	}
 
-	/**
-	 * @return the changesCount
-	 */
+
 	public Integer getChangesCount() {
 		return changesCount;
 	}
 
-	/**
-	 * @param changesCount the changesCount to set
-	 */
+
 	public void setChangesCount(Integer changesCount) {
 		this.changesCount = changesCount;
 	}
@@ -494,8 +500,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		comboBoxConcreteDesign.setItems(obsListConcreteDesign);
 	}
 
-	private <T> void createDialogForm(String absoluteName, Stage parentStage,String fomrName ,Consumer<T> initializingAction,
-			Consumer<T> initializingActionFinal) {
+	private <T> void createDialogForm(String absoluteName, Stage parentStage, String fomrName,
+			Consumer<T> initializingAction, Consumer<T> initializingActionFinal) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));

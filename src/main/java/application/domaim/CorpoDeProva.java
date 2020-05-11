@@ -3,12 +3,12 @@ package application.domaim;
 import java.util.Date;
 
 public class CorpoDeProva {
-	
+
 	private Integer id;
 	private String code;
 	private CompresionTest compresionTest;
 	private Double slump;
-	private Date moldeDate;	
+	private Date moldeDate;
 	private Date ruptureDate;
 	private Integer days;
 	private Double diameter;
@@ -18,13 +18,11 @@ public class CorpoDeProva {
 	private Double tonRupture;
 	private Double fckRupture;
 
-	
 	public CorpoDeProva() {
 	}
-		
 
-	public CorpoDeProva(Integer id, String code, CompresionTest compresionTest, Double slump,
-			Date moldeDate, Date ruptureDate, Double diameter, Double height, Double weight, Double tonRupture) {
+	public CorpoDeProva(Integer id, String code, CompresionTest compresionTest, Double slump, Date moldeDate,
+			Date ruptureDate, Double diameter, Double height, Double weight, Double tonRupture) {
 		super();
 		this.id = id;
 		this.code = code;
@@ -38,29 +36,21 @@ public class CorpoDeProva {
 		this.tonRupture = tonRupture;
 	}
 
-
 	public Integer getId() {
 		return id;
 	}
-
-
 
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-
-
 	public String getCode() {
 		return code;
 	}
 
-
-
 	public void setCode(String code) {
 		this.code = code;
 	}
-
 
 	public CompresionTest getCompresionTest() {
 		return compresionTest;
@@ -134,7 +124,7 @@ public class CorpoDeProva {
 		if ((this.diameter != null) & (this.diameter != 0) & (this.height != 0) & (this.height != null)) {
 			Double areaCirculoM2 = ((Math.PI * (this.diameter * this.diameter)) / 4) / 10000;
 			Double volM3 = areaCirculoM2 * (this.height / 100);
-			this.densid = this.weight / volM3;			
+			this.densid = this.weight / volM3;
 		}
 	}
 
@@ -151,12 +141,10 @@ public class CorpoDeProva {
 	}
 
 	public void setFckRupture() {
-		if (this.diameter != null && this.tonRupture != null) {
-			if ((this.diameter != 0) && (this.tonRupture != 0)) {
-				Double areaCirculoM2 = ((Math.PI * (this.diameter * this.diameter)) / 4) / 10000;
-				Double tonMN = this.tonRupture * 0.00980665;
-				this.fckRupture = tonMN / areaCirculoM2;
-			}
+		if ((this.diameter != null && this.tonRupture != null) && ((this.diameter != 0) && (this.tonRupture != 0))) {
+			Double areaCirculoM2 = ((Math.PI * (this.diameter * this.diameter)) / 4) / 10000;
+			Double tonMN = this.tonRupture * 0.00980665;
+			this.fckRupture = tonMN / areaCirculoM2;
 		} else {
 			this.fckRupture = 0.0;
 		}
@@ -186,6 +174,5 @@ public class CorpoDeProva {
 			return false;
 		return true;
 	}
-
 
 }

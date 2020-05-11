@@ -32,7 +32,7 @@ import javafx.scene.control.TextField;
 import javafx.util.Callback;
 
 public class NewCompresionTestFormController implements Initializable {
-
+//TODO criar um buscador de clientes, uma vez que quando existam muitos clientes fica inviavel a busca manual dentro do combo box
 	private ClientService clientService;
 	
 	private CompresionTestService compresionTestService;
