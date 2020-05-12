@@ -40,11 +40,6 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label text="Cliente" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
             <Label text="Fecha creación" GridPane.rowIndex="2">
                <font>
                   <Font name="System Bold" size="14.0" />
@@ -124,6 +119,16 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </Label>
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
+               <children>
+                  <Label text="Cliente:">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="btSearchClient" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtSearchClientAction" prefHeight="20.0" prefWidth="20.0" />
+               </children>
+            </HBox>
          </children>
          <padding>
             <Insets left="5.0" top="5.0" />

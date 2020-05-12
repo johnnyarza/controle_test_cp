@@ -51,6 +51,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -121,6 +122,9 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private Button btClearFilter;
+	
+	@FXML
+	private Button btSearchClient;
 
 	@FXML
 	private VBox vbox;
@@ -187,6 +191,21 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private Label labelMessages;
+	
+	@FXML
+	public void onBtSearchClientAction(ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
+		createDialogForm("/gui/FindClientForm.fxml", parentStage, "Busca Cliente", 
+				(FindClientFormController controller) -> {
+					controller.setEntity(null);
+					controller.setService(new ClientService());
+				}, 
+				(FindClientFormController controller) -> {	
+					if (controller.getEntity() != null) {
+						comboBoxClient.setValue(controller.getEntity());
+					}
+				});
+	}
 
 	@FXML
 	public void onBtInserirProbetaAction(ActionEvent event) {
@@ -372,6 +391,16 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		setTableColumnsCellValueFactory();
 		initializeComboBoxClient();
 		tableViewCorpoDeProva.prefHeightProperty().bind(vbox.heightProperty());
+		setButtonsGraphics();
+	}
+	
+	private void setButtonsGraphics() {
+		setButtonClientSearchGraphic();	
+	}
+	
+	private void setButtonClientSearchGraphic() {
+		ImageView imgView = Utils.createImageView("/images/lupa.png", 10.0, 10.0);
+		btSearchClient.setGraphic(imgView);	
 	}
 
 	private void setTableColumnsCellValueFactory() {

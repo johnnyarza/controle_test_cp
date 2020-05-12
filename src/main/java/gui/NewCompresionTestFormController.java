@@ -35,7 +35,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
@@ -43,7 +42,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class NewCompresionTestFormController implements Initializable {
-//TODO criar um buscador de clientes, uma vez que quando existam muitos clientes fica inviavel a busca manual dentro do combo box
+
 	private ClientService clientService;
 	
 	private CompresionTestService compresionTestService;
@@ -193,10 +192,7 @@ public class NewCompresionTestFormController implements Initializable {
 	}
 	
 	private void setButtonFindClientGraphic() {
-		Image image = new Image (NewCompresionTestFormController.class.getResourceAsStream("/images/lupa.png"));
-		ImageView imgView = new ImageView(image);
-		imgView.setFitHeight(15.0);
-		imgView.setFitWidth(15.0);
+		ImageView imgView = Utils.createImageView("/images/lupa.png", 15.0, 15.0);
 		btSearchClient.setGraphic(imgView);		
 	}
 	

@@ -22,13 +22,15 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 public class Utils {
 
 	private static NumberFormat format = NumberFormat.getInstance(new Locale("pt", "BR"));
-	private static DecimalFormat df = (DecimalFormat)format;
+	private static DecimalFormat df = (DecimalFormat) format;
 
 	public static Stage currentStage(ActionEvent event) {
 		return (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -112,7 +114,7 @@ public class Utils {
 						setText(null);
 					} else {
 						String strDecimalPlaces = ".";
-						for (int i=1; i <= decimalPlaces; i++) {
+						for (int i = 1; i <= decimalPlaces; i++) {
 							strDecimalPlaces = strDecimalPlaces + "0";
 						}
 						df.applyPattern("#,###" + strDecimalPlaces);
@@ -125,51 +127,63 @@ public class Utils {
 			return cell;
 		});
 	}
-	
+
 	public static String doubleFormat(Double number) {
 		df.applyPattern("#.00");
 		return df.format(number);
 	}
-	
+
 	public static void formatCorpoDeProvaTableViewRowColor(TableView<CorpoDeProva> tableView) {
-		tableView.setRowFactory(row -> new TableRow<CorpoDeProva> (){
+		tableView.setRowFactory(row -> new TableRow<CorpoDeProva>() {
 			@Override
 			public void updateItem(CorpoDeProva item, boolean empty) {
-				super.updateItem(item,empty);
-				
+				super.updateItem(item, empty);
+
 				if (item == null || empty) {
 					setStyle("");
 				} else {
-					if (daysBetweenDates(item.getRuptureDate(), new Date()) == 0 && (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
+					if (daysBetweenDates(item.getRuptureDate(), new Date()) == 0
+							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
 						setStyle("-fx-background-color: yellow");
-					} else if (item.getRuptureDate().compareTo(new Date()) < 0 && (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
-						setStyle("-fx-background-color: red");				
-					} else if (daysBetweenDates(item.getRuptureDate(), new Date()) == 1 && (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
+					} else if (item.getRuptureDate().compareTo(new Date()) < 0
+							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
+						setStyle("-fx-background-color: red");
+					} else if (daysBetweenDates(item.getRuptureDate(), new Date()) == 1
+							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
 						setStyle("-fx-background-color: green");
-					}
-					else {
+					} else {
 						setStyle("");
 					}
 				}
 			}
 		});
 	}
-	
-	
+
 	public static Instant getInsTantFromDatePicker(DatePicker dP) {
 		Instant instant = Instant.from(dP.getValue().atStartOfDay(ZoneId.systemDefault()));
 		return instant;
 	}
-	
+
 	public static Integer daysBetweenDates(Date futureDate, Date pastDay) {
-		int days = (Math.abs((int) ChronoUnit.DAYS.between(futureDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), 
-				pastDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())));
-		return days;	
+		int days = (Math
+				.abs((int) ChronoUnit.DAYS.between(futureDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+						pastDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())));
+		return days;
 	}
-	
+
 	public static Integer daysBetweenLocalDates(LocalDate futureDate, LocalDate pastDay) {
-		int days = Math.abs((int) ChronoUnit.DAYS.between(futureDate,pastDay));
-		return days;	
+		int days = Math.abs((int) ChronoUnit.DAYS.between(futureDate, pastDay));
+		return days;
+	}
+
+	public static ImageView createImageView(String path, Double height, Double width) {
+		Image image = new Image(Utils.class.getResourceAsStream(path));
+		ImageView imgView = new ImageView(image);
+		if (height != null && height != 0 && width != null && width != 0) {
+			imgView.setFitHeight(height);
+			imgView.setFitWidth(width);
+		}
+		return imgView;
 	}
 
 }
