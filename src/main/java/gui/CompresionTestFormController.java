@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -58,10 +59,6 @@ import javafx.util.Callback;
 
 public class CompresionTestFormController implements Initializable, DataChangeListener {
 
-	// TODO verificar o pq mais de uma linha ficar vermelha quando clica no nome da
-	// coluna e a tabela ordena as linhas
-	// TODO acrescentar cor verde na linha quando estiver 1 dias antes da ruptura,
-	// amarela no dia e vermelha quando atrasada
 	// TODO diminuir o tamanho do chart para entra na folha
 	// TODO mudar as label escrita codigo para descrição
 	// TODO acrescentar mais um field referente a quem está fornecendo o concreto
@@ -86,6 +83,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 	private Integer changesCount;
+	
+	List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
 	@FXML
 	private ComboBox<ConcreteDesign> comboBoxConcreteDesign;
@@ -612,6 +611,10 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		labelErrorObra.setText(fields.contains("obra") ? errors.get("obra") : "");
 		labelErrorAddress.setText(fields.contains("address") ? errors.get("address") : "");
 		labelErrorConcreteDesign.setText(fields.contains("concreteDesign") ? errors.get("concreteDesign") : "");
+	}
+	
+	public void dataChangeListenerSubscribe (DataChangeListener dataChangeListener) {
+		this.dataChangeListeners.add(dataChangeListener);
 	}
 
 }

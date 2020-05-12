@@ -169,21 +169,21 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="68" splitType="Stretch">
+		<band height="60" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
 			<image>
-				<reportElement x="0" y="0" width="268" height="68" uuid="0aec08cd-1004-48e9-bc95-7643722d5596"/>
+				<reportElement x="0" y="0" width="268" height="60" uuid="0aec08cd-1004-48e9-bc95-7643722d5596"/>
 				<imageExpression><![CDATA["images/logo.png"]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="268" y="0" width="267" height="68" uuid="44bb0d3d-5b3f-4b2b-8319-e292bb701cff"/>
+				<reportElement x="268" y="0" width="267" height="60" uuid="44bb0d3d-5b3f-4b2b-8319-e292bb701cff"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Relatório de Rotura]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="535" y="0" width="267" height="68" uuid="532f5893-9e01-470c-9fc8-d87f9f3e52e9"/>
+				<reportElement x="535" y="0" width="267" height="60" uuid="532f5893-9e01-470c-9fc8-d87f9f3e52e9"/>
 				<textElement textAlignment="Right" markup="html"/>
 				<textFieldExpression><![CDATA["COMERCIO Y CONSTRUCCIONES HJVA  LTDA <br> TEL: 3-978-2323 / FAX: 3-978-2818 <br> Pto. Quijarro, Av. Bolivia, 210 <br>" + new SimpleDateFormat("dd/MM/yyyy").format(new Date())]]></textFieldExpression>
 			</textField>
@@ -441,12 +441,12 @@ Moldeo]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
-								<textField pattern="#,##0.0##;(#,##0.0##-)">
+								<textField pattern="#,##0.0##;(#,##0.0##-)" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="50" height="20" uuid="b7c7678e-a990-47be-9936-79399ffe28cc"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="10"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{tonRupture}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[($F{tonRupture} == 0.0 ? null : $F{tonRupture})]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -463,12 +463,12 @@ Moldeo]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
-								<textField pattern="#,##0.00#;(#,##0.00#-)">
+								<textField pattern="#,##0.00#;(#,##0.00#-)" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="60" height="20" uuid="a4d17b45-c769-47eb-bd8f-1f22faec0cc8"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="10"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{fckRupture}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[($F{fckRupture} == 0.0 ?  null : $F{fckRupture})]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -630,10 +630,10 @@ Moldeo]]></text>
 				</jr:table>
 			</componentElement>
 		</band>
-		<band height="164">
+		<band height="141">
 			<xyLineChart>
 				<chart isShowLegend="false" evaluationTime="Report">
-					<reportElement style="Table_CH" stretchType="ContainerHeight" x="20" y="5" width="280" height="154" uuid="e33fd328-3bfa-41f7-aa53-face45efaf74">
+					<reportElement style="Table_CH" stretchType="ContainerHeight" x="20" y="3" width="280" height="135" uuid="e33fd328-3bfa-41f7-aa53-face45efaf74">
 						<property name="net.sf.jasperreports.chart.domain.axis.tick.interval" value="7"/>
 						<propertyExpression name="net.sf.jasperreports.chart.range.axis.tick.interval"><![CDATA[value]]></propertyExpression>
 					</reportElement>

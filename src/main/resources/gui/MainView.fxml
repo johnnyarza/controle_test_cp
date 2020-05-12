@@ -16,8 +16,8 @@
               <menus>
                   <Menu mnemonicParsing="false" text="Archivo">
                     <items>
-                      <MenuItem fx:id="onBtNewTestAction" mnemonicParsing="false" onAction="#onBtNewTestAction" text="Nueva rotura" />
-                        <MenuItem fx:id="BtLoadTest" mnemonicParsing="false" onAction="#onBtLoadTestAction" text="Cargar rotura" />
+                        <MenuItem fx:id="BtTest" mnemonicParsing="false" onAction="#onBtTestAction" text="Roturas" />
+                      <MenuItem mnemonicParsing="false" text="bt" />
                     </items>
                   </Menu>
                 <Menu mnemonicParsing="false" text="Registros">

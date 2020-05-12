@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
+import java.util.function.Consumer;
 
 import application.Program;
 import application.db.DbException;
@@ -48,6 +49,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	private CompresionTestService compresionTestService;
 
 	private ObservableList<CompresionTestList> obsList;
+	
+	private CompresionTest entity;
+	
+	private Boolean btCancelPressed;
 
 	@FXML
 	private TableView<CompresionTestList> tableViewClient;
@@ -74,12 +79,40 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	private Button btDelete;
 
 	@FXML
+	private Button btNew;
+
+	@FXML
+	public void onbtNewAction(ActionEvent event) {
+		try {
+		Stage parentStage = Utils.currentStage(event);
+		createDialogForm("/gui/NewCompresionTestForm.fxml", parentStage, 
+				(NewCompresionTestFormController controller) -> {
+					controller.setCompresionTestService(new CompresionTestService());
+					controller.setClientService(new ClientService());
+					controller.setConcreteDesignService(new ConcreteDesignService());
+					controller.loadAssociatedObjects();
+					controller.subscribeDataChangeListener(this);
+				}, 
+				(NewCompresionTestFormController controller) -> {
+					this.entity = controller.getEntity();
+					this.btCancelPressed = controller.getBtCancelPressed();
+				});
+		if (!btCancelPressed) {
+			createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, this.entity);
+			updateTableView();
+		}
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
 	public void onbtOpenAction(ActionEvent event) {
 		try {
 			CompresionTest obj = getCompresionTestFromTableView();
 			Stage parentStage = Utils.currentStage(event);
-
-			createDialogForm("/gui/CompresionTestForm.fxml", parentStage, obj);
+			createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, obj);
 			updateTableView();
 		} catch (NullPointerException e) {
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
@@ -174,7 +207,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		return compresionTest;
 	}
 
-	private void createDialogForm(String absoluteName, Stage parentStage, CompresionTest obj) {
+	private void createDialogFormCompresionTest(String absoluteName, Stage parentStage, CompresionTest obj) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -220,29 +253,38 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		}
 	}
 
-	/*
-	 * private <T> void createDialogForm(String absoluteName, Stage parentStage,
-	 * Consumer<T> initializingAction) { try {
-	 * 
-	 * FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-	 * Pane pane = loader.load();
-	 * 
-	 * T controller = loader.getController(); initializingAction.accept(controller);
-	 * 
-	 * Stage dialogStage = new Stage(); dialogStage.setTitle("Nueva rotura");
-	 * dialogStage.setScene(new Scene(pane)); dialogStage.setResizable(true);
-	 * dialogStage.initOwner(parentStage);
-	 * dialogStage.initModality(Modality.WINDOW_MODAL);
-	 * dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-	 * 
-	 * @Override public void handle(WindowEvent we) { Optional<ButtonType> result =
-	 * Alerts.showConfirmationDialog("Confirmar acción", "Segura que desea cerrar?",
-	 * "Los datos no guardados sera perdidos!!"); if (result.get() != ButtonType.OK)
-	 * { we.consume(); }
-	 * 
-	 * } }); dialogStage.showAndWait();
-	 * 
-	 * } catch (IOException e) { e.printStackTrace(); } }
-	 */
+	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction,
+			Consumer<T> finalAction) {
+		try {
+
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			Pane pane = loader.load();
+
+			T controller = loader.getController();
+			initializingAction.accept(controller);
+
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Nueva rotura");
+			dialogStage.setScene(new Scene(pane));
+			dialogStage.setResizable(true);
+			dialogStage.initOwner(parentStage);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			/*
+			 * dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			 * 
+			 * @Override public void handle(WindowEvent we) { Optional<ButtonType> result =
+			 * Alerts.showConfirmationDialog("Confirmar acción", "Segura que desea cerrar?",
+			 * "Los datos no guardados sera perdidos!!"); if (result.get() != ButtonType.OK)
+			 * { we.consume(); }
+			 * 
+			 * } });
+			 */
+			dialogStage.showAndWait();
+			finalAction.accept(controller);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 }

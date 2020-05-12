@@ -131,7 +131,6 @@ public class Utils {
 		return df.format(number);
 	}
 	
-	//TODO caso a data de ruptura seja HOJE colocar cor amarela
 	public static void formatCorpoDeProvaTableViewRowColor(TableView<CorpoDeProva> tableView) {
 		tableView.setRowFactory(row -> new TableRow<CorpoDeProva> (){
 			@Override

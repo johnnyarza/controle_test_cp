@@ -1,6 +1,7 @@
 package gui;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import application.exceptions.ValidationException;
 import application.service.ClientService;
 import application.service.CompresionTestService;
 import application.service.ConcreteDesignService;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
@@ -39,13 +41,15 @@ public class NewCompresionTestFormController implements Initializable {
 	
 	private ConcreteDesignService concreteDesignService;
 	
-	private Boolean btCancelPressed;
-	
 	private CompresionTest entity;
 	
 	private ObservableList<Cliente> obsList;
 	
 	private ObservableList<ConcreteDesign> obsListConcreteDesign;
+	
+	private List<DataChangeListener> dataChangeListener = new ArrayList<DataChangeListener>();
+	
+	private Boolean btCancelPressed;
 
 	@FXML
 	private ComboBox<Cliente> comboBoxClient;
@@ -96,14 +100,6 @@ public class NewCompresionTestFormController implements Initializable {
 		this.clientService = clientService;
 	}
 
-	public Boolean getBtCancelPressed() {
-		return btCancelPressed;
-	}
-
-	public void setBtCancelPressed(Boolean btCancelPressed) {
-		this.btCancelPressed = btCancelPressed;
-	}
-
 	public CompresionTest getEntity() {
 		return entity;
 	}
@@ -120,6 +116,14 @@ public class NewCompresionTestFormController implements Initializable {
 		this.concreteDesignService = concreteDesignService;
 	}
 
+	public Boolean getBtCancelPressed() {
+		return btCancelPressed;
+	}
+
+	public void setBtCancelPressed(Boolean btCancelPressed) {
+		this.btCancelPressed = btCancelPressed;
+	}
+
 	@FXML
 	public void onBtCreateAction(ActionEvent event) {
 		try {			
@@ -129,8 +133,8 @@ public class NewCompresionTestFormController implements Initializable {
 		}
 			entity = getFormData();
 			compresionTestService.saveOrUpdate(entity);
-			btCancelPressed = false;
-			
+			notifyDataChangeListeners();
+			this.btCancelPressed = false;
 			Utils.currentStage(event).close();
 		} catch (DbException e) {
 			Alerts.showAlert("Error saving object", null, e.getMessage(), AlertType.ERROR);
@@ -141,9 +145,8 @@ public class NewCompresionTestFormController implements Initializable {
 
 	@FXML
 	public void onBtCancelAction(ActionEvent event) {
-		btCancelPressed = true;
-		Utils.currentStage(event).close();
-		
+		this.btCancelPressed = true;
+		Utils.currentStage(event).close();		
 	}
 
 	@Override
@@ -154,6 +157,7 @@ public class NewCompresionTestFormController implements Initializable {
 
 	private void initializeNodes() {
 		initializeComboBoxes();
+		this.btCancelPressed = false;
 	}
 
 	public void loadAssociatedObjects() {
@@ -254,6 +258,14 @@ public class NewCompresionTestFormController implements Initializable {
 		labelErrorAddress.setText(fields.contains("address") ? errors.get("address") : "");
 		labelErrorConcreteDesign.setText(fields.contains("design") ? errors.get("design") : "");
 
+	}
+	
+	public void subscribeDataChangeListener (DataChangeListener dataChangeListener) {
+		this.dataChangeListener.add(dataChangeListener);
+	}
+	
+	private void notifyDataChangeListeners () {
+		dataChangeListener.forEach((DataChangeListener x) -> x.onDataChange());
 	}
 
 

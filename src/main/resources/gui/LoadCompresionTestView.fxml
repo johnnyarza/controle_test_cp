@@ -18,6 +18,7 @@
       </Label>
       <HBox alignment="CENTER_LEFT" minHeight="35.0" prefHeight="35.0" prefWidth="600.0" spacing="5.0">
          <children>
+            <Button fx:id="btNew" mnemonicParsing="false" onAction="#onbtNewAction" text="Nuevo" />
             <Button fx:id="btOpen" mnemonicParsing="false" onAction="#onbtOpenAction" text="Abrir" />
             <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" text="Apagar" />
          </children>

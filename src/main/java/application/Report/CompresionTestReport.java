@@ -56,6 +56,7 @@ public class CompresionTestReport {
 	private static List<CompresionTestChartData> compresionTestChartData(List<CorpoDeProva> list) {
 		List<CompresionTestChartData> chartData = new ArrayList<CompresionTestChartData>();
 		for (CorpoDeProva cp : list) {
+			if ((cp.getTonRupture() != 0.0) && (cp.getFckRupture() != 0.0))
 			chartData.add(new CompresionTestChartData("SERIES 1", cp.getDays(), cp.getFckRupture()));
 		}		
 		return chartData;		
