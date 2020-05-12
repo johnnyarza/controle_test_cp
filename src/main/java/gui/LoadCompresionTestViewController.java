@@ -35,6 +35,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -49,9 +50,9 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	private CompresionTestService compresionTestService;
 
 	private ObservableList<CompresionTestList> obsList;
-	
+
 	private CompresionTest entity;
-	
+
 	private Boolean btCancelPressed;
 
 	@FXML
@@ -84,24 +85,25 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	@FXML
 	public void onbtNewAction(ActionEvent event) {
 		try {
-		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/NewCompresionTestForm.fxml", parentStage, 
-				(NewCompresionTestFormController controller) -> {
-					controller.setCompresionTestService(new CompresionTestService());
-					controller.setClientService(new ClientService());
-					controller.setConcreteDesignService(new ConcreteDesignService());
-					controller.loadAssociatedObjects();
-					controller.subscribeDataChangeListener(this);
-				}, 
-				(NewCompresionTestFormController controller) -> {
-					this.entity = controller.getEntity();
-					this.btCancelPressed = controller.getBtCancelPressed();
-				});
-		if (!btCancelPressed) {
-			createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, this.entity);
-			updateTableView();
-		}
-		
+			Stage parentStage = Utils.currentStage(event);
+			createDialogForm("/gui/NewCompresionTestForm.fxml","Nueva Rotura" ,parentStage,
+					(NewCompresionTestFormController controller) -> {
+						controller.setCompresionTestService(new CompresionTestService());
+						controller.setClientService(new ClientService());
+						controller.setConcreteDesignService(new ConcreteDesignService());
+						controller.loadAssociatedObjects();
+						controller.subscribeDataChangeListener(this);
+					}, (NewCompresionTestFormController controller) -> {
+						controller.setBtCancelPressed(true);
+					} , (NewCompresionTestFormController controller) -> {
+						this.entity = controller.getEntity();
+						this.btCancelPressed = controller.getBtCancelPressed();
+					});
+			if (!btCancelPressed) {
+				createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, this.entity);
+				updateTableView();
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -253,32 +255,32 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		}
 	}
 
-	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction,
-			Consumer<T> finalAction) {
+	private <T> void createDialogForm(String absoluteName,String title ,Stage parentStage, Consumer<T> initializingAction,
+			Consumer<T> windowEventAction,Consumer<T> finalAction) {
 		try {
-
+			
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			Pane pane = loader.load();
+			AnchorPane pane = loader.load();
 
 			T controller = loader.getController();
 			initializingAction.accept(controller);
 
 			Stage dialogStage = new Stage();
-			dialogStage.setTitle("Nueva rotura");
+			dialogStage.setTitle(title);
 			dialogStage.setScene(new Scene(pane));
 			dialogStage.setResizable(true);
 			dialogStage.initOwner(parentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);
-			/*
-			 * dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			 * 
-			 * @Override public void handle(WindowEvent we) { Optional<ButtonType> result =
-			 * Alerts.showConfirmationDialog("Confirmar acción", "Segura que desea cerrar?",
-			 * "Los datos no guardados sera perdidos!!"); if (result.get() != ButtonType.OK)
-			 * { we.consume(); }
-			 * 
-			 * } });
-			 */
+
+			dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+				@Override
+				public void handle(WindowEvent we) {
+					windowEventAction.accept(controller);
+
+				}
+			});
+
 			dialogStage.showAndWait();
 			finalAction.accept(controller);
 

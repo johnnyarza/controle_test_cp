@@ -46,10 +46,6 @@
                   <Insets top="5.0" />
                </GridPane.margin>
             </HBox>
-            <Label fx:id="labelErrorClient" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin></Label>
             <Label fx:id="labelErrorObra" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets left="5.0" />
@@ -64,6 +60,16 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </Label>
+            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <children>
+                  <Label fx:id="labelErrorClient" textFill="RED" />
+                  <Button fx:id="btSearchClient" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onBtSearchClientAction" prefHeight="25.0" prefWidth="25.0">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
          </children>
       </GridPane>
    </children>

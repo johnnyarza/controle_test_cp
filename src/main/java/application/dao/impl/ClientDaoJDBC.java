@@ -149,4 +149,28 @@ public class ClientDaoJDBC implements ClientDao{
 			DB.closeResultSet(rs);
 		}	
 	}
+
+	@Override
+	public List<Cliente> findByLikeName(String str) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM clients WHERE name LIKE '%" + str + "%'");
+			
+			rs = st.executeQuery();
+			
+			List<Cliente> list = new ArrayList<>();
+			while (rs.next()) {
+				list.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5)));
+			}
+			return list;
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}	
+	}
 }
