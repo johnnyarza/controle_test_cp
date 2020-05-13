@@ -63,6 +63,9 @@ public class NewCompresionTestFormController implements Initializable {
 	private ComboBox<Cliente> comboBoxClient;
 	
 	@FXML
+	private ComboBox<Cliente> comboBoxConcreteProvider;
+	
+	@FXML
 	private ComboBox<ConcreteDesign> comboBoxConcreteDesign;
 
 	@FXML
@@ -82,9 +85,15 @@ public class NewCompresionTestFormController implements Initializable {
 	
 	@FXML
 	private Button btSearchClient;
+	
+	@FXML
+	private Button btSearchConcreteProvider;
 
 	@FXML
 	private Label labelErrorClient;
+	
+	@FXML
+	private Label labelErrorConcreteProvider;
 
 	@FXML
 	private Label labelErrorObra;
@@ -174,6 +183,20 @@ public class NewCompresionTestFormController implements Initializable {
 					}
 				});		
 	}
+	
+	public void onBtSearchConcreteProvider (ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
+		createDialogForm("/gui/FindClientForm.fxml","Buscar Clientes" ,parentStage, 
+				(FindClientFormController controller) -> {
+					controller.setEntity(null);
+					controller.setService(new ClientService());
+				}, 
+				(FindClientFormController controller) -> {
+					if (controller.getEntity() != null) {
+						comboBoxConcreteProvider.setValue(controller.getEntity());
+					}
+				});		
+	}
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -193,7 +216,9 @@ public class NewCompresionTestFormController implements Initializable {
 	
 	private void setButtonFindClientGraphic() {
 		ImageView imgView = Utils.createImageView("/images/lupa.png", 15.0, 15.0);
-		btSearchClient.setGraphic(imgView);		
+		btSearchClient.setGraphic(imgView);	
+		ImageView imgView2 = Utils.createImageView("/images/lupa.png", 15.0, 15.0);
+		btSearchConcreteProvider.setGraphic(imgView2);
 	}
 	
 	public void loadAssociatedObjects() {
@@ -217,6 +242,7 @@ public class NewCompresionTestFormController implements Initializable {
 		List<Cliente> list = clientService.findAll();
 		obsList = FXCollections.observableArrayList(list);
 		comboBoxClient.setItems(obsList);
+		comboBoxConcreteProvider.setItems(obsList);
 	}
 	
 	private void initializeComboBoxes() {
@@ -234,6 +260,8 @@ public class NewCompresionTestFormController implements Initializable {
 		};
 		comboBoxClient.setCellFactory(factory);
 		comboBoxClient.setButtonCell(factory.call(null));
+		comboBoxConcreteProvider.setCellFactory(factory);
+		comboBoxConcreteProvider.setButtonCell(factory.call(null));
 	}
 	
 	private void initializeComboBoxConcreteDesign() {
@@ -261,6 +289,11 @@ public class NewCompresionTestFormController implements Initializable {
 			exception.addError("client","cliente vacío");
 		}
 		obj.setClient(comboBoxClient.getValue());
+		
+		if (comboBoxConcreteProvider.getValue() == null) {
+			exception.addError("provider","Proveedor vacío");
+		}
+		obj.setConcreteProvider(comboBoxClient.getValue());
 		
 		if (txtObra.getText() == null || txtObra.getText().trim().equals("")) {
 			exception.addError("obra","obra vacía");
@@ -293,6 +326,7 @@ public class NewCompresionTestFormController implements Initializable {
 		labelErrorClient.setText(fields.contains("client") ? errors.get("client") : "");
 		labelErrorAddress.setText(fields.contains("address") ? errors.get("address") : "");
 		labelErrorConcreteDesign.setText(fields.contains("design") ? errors.get("design") : "");
+		labelErrorConcreteProvider.setText(fields.contains("provider") ? errors.get("provider") : "");
 
 	}
 	

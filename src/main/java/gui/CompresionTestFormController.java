@@ -60,9 +60,7 @@ import javafx.util.Callback;
 
 public class CompresionTestFormController implements Initializable, DataChangeListener {
 
-	// TODO diminuir o tamanho do chart para entra na folha
 	// TODO mudar as label escrita codigo para descrição
-	// TODO acrescentar mais um field referente a quem está fornecendo o concreto
 	// TODO Criar uma função para fazer um relatorio com todos os CPs de um cliente
 
 	private ObservableList<CorpoDeProva> obsList;
@@ -125,12 +123,18 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	
 	@FXML
 	private Button btSearchClient;
+	
+	@FXML
+	private Button btSearchConcreteProvider;
 
 	@FXML
 	private VBox vbox;
 
 	@FXML
 	private ComboBox<Cliente> comboBoxClient;
+	
+	@FXML
+	private ComboBox<Cliente> comboBoxConcreteProvider;
 
 	@FXML
 	private TableView<CorpoDeProva> tableViewCorpoDeProva;
@@ -188,6 +192,9 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private Label labelErrorConcreteDesign;
+	
+	@FXML
+	private Label labelErrorConcreteProvider;
 
 	@FXML
 	private Label labelMessages;
@@ -203,6 +210,21 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 				(FindClientFormController controller) -> {	
 					if (controller.getEntity() != null) {
 						comboBoxClient.setValue(controller.getEntity());
+					}
+				});
+	}
+	
+	@FXML
+	public void onBtSearchConcreteProviderAction(ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
+		createDialogForm("/gui/FindClientForm.fxml", parentStage, "Busca Cliente", 
+				(FindClientFormController controller) -> {
+					controller.setEntity(null);
+					controller.setService(new ClientService());
+				}, 
+				(FindClientFormController controller) -> {	
+					if (controller.getEntity() != null) {
+						comboBoxConcreteProvider.setValue(controller.getEntity());
 					}
 				});
 	}
@@ -395,12 +417,18 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 	
 	private void setButtonsGraphics() {
-		setButtonClientSearchGraphic();	
+		setButtonClientSearchGraphic();
+		setButtonConcreteProviderGraphic();
 	}
 	
 	private void setButtonClientSearchGraphic() {
 		ImageView imgView = Utils.createImageView("/images/lupa.png", 10.0, 10.0);
 		btSearchClient.setGraphic(imgView);	
+	}
+	
+	private void setButtonConcreteProviderGraphic() {
+		ImageView imgView = Utils.createImageView("/images/lupa.png", 10.0, 10.0);
+		btSearchConcreteProvider.setGraphic(imgView);	
 	}
 
 	private void setTableColumnsCellValueFactory() {
@@ -478,6 +506,12 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		} else {
 			comboBoxClient.setValue(compresionTest.getClient());
 		}
+		
+		if (compresionTest.getConcreteProvider() == null) {
+			comboBoxConcreteProvider.getSelectionModel().selectFirst();
+		} else {
+			comboBoxConcreteProvider.setValue(compresionTest.getConcreteProvider());
+		}
 
 		if (compresionTest.getConcreteDesign() == null) {
 			comboBoxConcreteDesign.getSelectionModel().selectFirst();
@@ -503,6 +537,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		};
 		comboBoxClient.setCellFactory(factory);
 		comboBoxClient.setButtonCell(factory.call(null));
+		comboBoxConcreteProvider.setCellFactory(factory);
+		comboBoxConcreteProvider.setButtonCell(factory.call(null));
 	}
 
 	public void loadAssociatedObjects() {
@@ -517,6 +553,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		List<Cliente> list = clientService.findAll();
 		obsListClient = FXCollections.observableArrayList(list);
 		comboBoxClient.setItems(obsListClient);
+		comboBoxConcreteProvider.setItems(obsListClient);
 	}
 
 	private void loadCompresionDesignComboBox() {
@@ -592,6 +629,11 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		if (comboBoxClient.getValue() == null) {
 			exception.addError("client", "vacío");
 		}
+		
+		if (comboBoxConcreteProvider.getValue() == null) {
+			exception.addError("provider", "vacío");
+		}
+
 
 		if (comboBoxConcreteDesign.getValue() == null) {
 			exception.addError("concreteDesign", "vacío");
@@ -618,6 +660,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		}
 
 		this.compresionTest.setClient(comboBoxClient.getValue());
+		
+		this.compresionTest.setConcreteProvider(comboBoxConcreteProvider.getValue());
 
 		this.compresionTest.setConcreteDesign(comboBoxConcreteDesign.getValue());
 
