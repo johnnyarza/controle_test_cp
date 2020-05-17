@@ -35,6 +35,10 @@ public class CorpoDeProvaService {
 	public List<CorpoDeProva> findByCompresionTestId(Integer id) {
 		return dao.findByCompresionTestId(id);
 	}
+	
+	public List<CorpoDeProva> findByClientId(Integer id) {
+		return dao.findByClientId(id);
+	}
 
 	public List<CorpoDeProva> findByCompresionTestIdWithTimeZone(Integer id, TimeZone tZ) {
 		return dao.findByCompresionTestIdWithTimeZone(id, tZ);

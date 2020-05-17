@@ -34,6 +34,8 @@ public class FindClientFormController implements Initializable {
 	private ObservableList<Cliente> obsListClient;
 	
 	private Cliente entity;
+	
+	private Boolean pressedCancelButton;
 
 	@FXML
 	private TextField txtId;
@@ -91,6 +93,14 @@ public class FindClientFormController implements Initializable {
 		this.entity = entity;
 	}
 
+	public Boolean getPressedCancelButton() {
+		return pressedCancelButton;
+	}
+
+	public void setPressedCancelButton(Boolean pressedCancelButton) {
+		this.pressedCancelButton = pressedCancelButton;
+	}
+
 	public void onBtSelectAction (ActionEvent event) {
 		try {
 			this.entity = getClientFromTableView();
@@ -129,6 +139,7 @@ public class FindClientFormController implements Initializable {
 	
 	public void onBtCloseAction (ActionEvent event) {
 		Utils.currentStage(event).close();
+		this.pressedCancelButton = true;
 	}
 
 	private Cliente getClientFromTableView() {

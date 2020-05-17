@@ -411,30 +411,8 @@ Moldeo]]></text>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="60" uuid="812acbd0-ca30-42ea-b6ba-e33261031912">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column10"/>
-							<jr:columnHeader style="Table_CH" height="26" rowSpan="1">
-								<staticText>
-									<reportElement x="0" y="0" width="60" height="26" uuid="7735637a-5dbf-4b3a-9261-d5b8699e15e7"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="10" isBold="true"/>
-									</textElement>
-									<text><![CDATA[Densidad
-(kg/m³)]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="13">
-								<textField pattern="#,##0.00#;(#,##0.00#-)">
-									<reportElement x="0" y="0" width="60" height="13" uuid="3fd45cdf-39f9-416b-84d4-1dab84e3aed8"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{densid}]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
 						<jr:column width="50" uuid="62ca41ee-329d-4751-8ed4-bf24266307b6">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column11"/>
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column10"/>
 							<jr:columnHeader style="Table_CH" height="26" rowSpan="1">
 								<staticText>
 									<reportElement x="0" y="0" width="50" height="26" uuid="b120134b-14ef-4fea-8d12-38812f7a6a85"/>
@@ -456,7 +434,7 @@ Moldeo]]></text>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="60" uuid="d59d0d7b-093d-4167-bf68-26b841e9eb77">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column12"/>
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column11"/>
 							<jr:columnHeader style="Table_CH" height="26" rowSpan="1">
 								<staticText>
 									<reportElement x="0" y="0" width="60" height="26" uuid="f9dc2d29-91f0-4421-978b-4625df91b2e8"/>
@@ -474,6 +452,28 @@ Moldeo]]></text>
 										<font fontName="Arial" size="9"/>
 									</textElement>
 									<textFieldExpression><![CDATA[($F{fckRupture} == 0.0 ?  null : $F{fckRupture})]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="60" uuid="812acbd0-ca30-42ea-b6ba-e33261031912">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column12"/>
+							<jr:columnHeader style="Table_CH" height="26" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="60" height="26" uuid="7735637a-5dbf-4b3a-9261-d5b8699e15e7"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="10" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Densidad
+(kg/m³)]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="13">
+								<textField pattern="#,##0.00#;(#,##0.00#-)">
+									<reportElement x="0" y="0" width="60" height="13" uuid="3fd45cdf-39f9-416b-84d4-1dab84e3aed8"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{densid}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>

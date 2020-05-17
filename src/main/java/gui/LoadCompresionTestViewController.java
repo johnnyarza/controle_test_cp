@@ -10,9 +10,12 @@ import java.util.TimeZone;
 import java.util.function.Consumer;
 
 import application.Program;
+import application.Report.ReportFactory;
 import application.db.DbException;
+import application.domaim.Cliente;
 import application.domaim.CompresionTest;
 import application.domaim.CompresionTestList;
+import application.exceptions.ReportException;
 import application.service.ClientService;
 import application.service.CompresionTestListService;
 import application.service.CompresionTestService;
@@ -53,6 +56,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	private CompresionTest entity;
 
+	private Cliente client;
+
 	private Boolean btCancelPressed;
 
 	@FXML
@@ -83,10 +88,13 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	private Button btNew;
 
 	@FXML
+	private Button btReport;
+
+	@FXML
 	public void onbtNewAction(ActionEvent event) {
 		try {
 			Stage parentStage = Utils.currentStage(event);
-			createDialogForm("/gui/NewCompresionTestForm.fxml","Nueva Rotura" ,parentStage,
+			createDialogForm("/gui/NewCompresionTestForm.fxml", "Nueva Rotura", parentStage,
 					(NewCompresionTestFormController controller) -> {
 						controller.setCompresionTestService(new CompresionTestService());
 						controller.setClientService(new ClientService());
@@ -95,7 +103,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 						controller.subscribeDataChangeListener(this);
 					}, (NewCompresionTestFormController controller) -> {
 						controller.setBtCancelPressed(true);
-					} , (NewCompresionTestFormController controller) -> {
+					}, (NewCompresionTestFormController controller) -> {
 						this.entity = controller.getEntity();
 						this.btCancelPressed = controller.getBtCancelPressed();
 					});
@@ -142,6 +150,45 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			Alerts.showAlert("Error", "IllegalStateException", e1.getMessage(), AlertType.ERROR);
 		}
 
+	}
+
+	public void onBtReportAction(ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
+		this.client = null;
+		try {
+			createDialogForm("/gui/FindClientForm.fxml", "Elegir cliente para el reporte...", parentStage,
+					(FindClientFormController controller) -> {// initial
+						controller.setEntity(null);
+						controller.setService(new ClientService());
+						controller.setPressedCancelButton(false);
+					}, 
+					(FindClientFormController controller) -> {
+						controller.setPressedCancelButton(true);
+					}, // window close event
+					(FindClientFormController controller) -> {
+						if (controller.getEntity() != null) {
+							this.client = controller.getEntity();
+						}
+						this.btCancelPressed = controller.getPressedCancelButton();
+					});// final
+			if (!this.btCancelPressed) {
+				if (this.client == null) {
+					throw new IllegalStateException("Cliente vacío");
+				}
+				showCompresionTestReportByClient(this.client.getId());
+			}
+		} catch (IllegalStateException e) {
+			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
+		} catch (ReportException e1) {
+			Alerts.showAlert("Error", "ReportException", e1.getMessage(), AlertType.ERROR);
+		}
+
+	}
+
+	private void showCompresionTestReportByClient(Integer id) {
+		CorpoDeProvaService service = new CorpoDeProvaService();
+		ReportFactory rF = new ReportFactory();
+		rF.compresionTestReportViewByClient(service.findByClientId(id), client);
 	}
 
 	public void setCompresionTestListService(CompresionTestListService service) {
@@ -255,10 +302,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		}
 	}
 
-	private <T> void createDialogForm(String absoluteName,String title ,Stage parentStage, Consumer<T> initializingAction,
-			Consumer<T> windowEventAction,Consumer<T> finalAction) {
+	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction) {
 		try {
-			
+
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			AnchorPane pane = loader.load();
 

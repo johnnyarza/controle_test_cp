@@ -85,17 +85,16 @@ public class CompresionTest implements Serializable{
 		this.address = address;
 	}
 
-	/**
-	 * @return the concreteDesign
-	 */
 	public ConcreteDesign getConcreteDesign() {
 		return concreteDesign;
 	}
 
-	/**
-	 * @param concreteDesign the concreteDesign to set
-	 */
 	public void setConcreteDesign(ConcreteDesign concreteDesign) {
 		this.concreteDesign = concreteDesign;
+	}
+
+	@Override
+	public String toString() {
+		return  id + ", obra: " + obra;
 	}
 }

@@ -315,6 +315,31 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 		}
 	}
 
+	@Override
+	public List<CorpoDeProva> findByClientId(Integer id) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM cp_db.corpo_de_provas WHERE client_id = ?");
+
+			st.setInt(1, id);
+
+			rs = st.executeQuery();
+			List<CorpoDeProva> list = new ArrayList<>();
+			TimeZone tZ = TimeZone.getDefault();
+
+			while (rs.next()) {
+				list.add(instantiateCorpoDeProvaWithTimeZone(tZ, rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+	}
+
 	private CorpoDeProva instantiateCorpoDeProvaWithTimeZone(TimeZone tZ, ResultSet rs) {
 		try {
 			Calendar cal = Calendar.getInstance(tZ);
@@ -338,4 +363,5 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 			throw new DbException(e.getMessage());
 		}
 	}
+
 }

@@ -17,7 +17,6 @@
                   <Menu mnemonicParsing="false" text="Archivo">
                     <items>
                         <MenuItem fx:id="BtTest" mnemonicParsing="false" onAction="#onBtTestAction" text="Roturas" />
-                      <MenuItem mnemonicParsing="false" text="bt" />
                     </items>
                   </Menu>
                 <Menu mnemonicParsing="false" text="Registros">

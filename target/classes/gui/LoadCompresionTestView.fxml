@@ -21,6 +21,7 @@
             <Button fx:id="btNew" mnemonicParsing="false" onAction="#onbtNewAction" text="Nuevo" />
             <Button fx:id="btOpen" mnemonicParsing="false" onAction="#onbtOpenAction" text="Abrir" />
             <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" text="Apagar" />
+            <Button fx:id="btReport" mnemonicParsing="false" onAction="#onBtReportAction" text="Reporte" />
          </children>
          <padding>
             <Insets left="5.0" />

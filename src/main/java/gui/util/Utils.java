@@ -144,7 +144,7 @@ public class Utils {
 				} else {
 					if (daysBetweenDates(item.getRuptureDate(), new Date()) == 0
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
-						setStyle("-fx-background-color: yellow");
+						setStyle("-fx-background-color: blue");
 					} else if (item.getRuptureDate().compareTo(new Date()) < 0
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
 						setStyle("-fx-background-color: red");

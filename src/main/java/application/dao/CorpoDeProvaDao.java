@@ -14,6 +14,7 @@ public interface CorpoDeProvaDao {
 	CorpoDeProva findById(Integer id);
 	List<CorpoDeProva> findAll();
 	List<CorpoDeProva> findByCompresionTestId(Integer id);
+	List<CorpoDeProva> findByClientId(Integer id);
 	List<CorpoDeProva> findByCompresionTestIdWithTimeZone(Integer id, TimeZone tZ);
 	List<CorpoDeProva> findByDatesAndCompresionTestId(TimeZone tZ,Date initialDate, Date finalDate,Integer compresionTestId);
 	Integer countCorpoDeProvasToTestbyCompresionTestId(Integer id);
