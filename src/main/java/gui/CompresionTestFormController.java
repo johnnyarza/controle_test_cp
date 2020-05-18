@@ -61,7 +61,7 @@ import javafx.util.Callback;
 public class CompresionTestFormController implements Initializable, DataChangeListener {
 
 	// TODO mudar as label escrita codigo para descrição
-	// TODO Criar uma função para fazer um relatorio com todos os CPs de um cliente
+
 
 	private ObservableList<CorpoDeProva> obsList;
 
