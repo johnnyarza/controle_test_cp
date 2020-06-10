@@ -1,5 +1,7 @@
 package gui.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -24,6 +26,8 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
@@ -185,5 +189,24 @@ public class Utils {
 		}
 		return imgView;
 	}
-
+	
+	public static Image createImage(String absolutePath) throws FileNotFoundException {
+		File file = new File(absolutePath);
+		if (file == null || !(file.isFile())) {
+			throw new FileNotFoundException("Error al Cargar Imagen(es). Es posible que la(s) imagene(s) no exista(n)!");
+		}
+		Image image = new Image(file.toURI().toString());
+		return image;
+	}
+	
+	public static String getFileAbsolutePath(Stage dialogParentStage, ExtensionFilter filter) throws FileNotFoundException {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().addAll(filter);
+		File file = fileChooser.showOpenDialog(dialogParentStage);
+		if (file == null || !(file.isFile())) {
+			throw new FileNotFoundException("Error al Cargar Imagen");
+		}
+		return file.getAbsolutePath();
+	}
+	
 }

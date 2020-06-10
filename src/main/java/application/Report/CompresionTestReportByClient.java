@@ -1,5 +1,6 @@
 package application.Report;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,10 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import application.domaim.Cliente;
-import application.domaim.CompresionTest;
-import application.domaim.CompresionTestChartData;
 import application.domaim.CorpoDeProva;
 import application.exceptions.ReportException;
+import application.util.FileUtils;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -34,8 +34,8 @@ public class CompresionTestReportByClient {
 			Map<String, Object> data = new HashMap<>();
 			data.put("CorpoDeProvaBeanPar", itemsJRBean);
 			data.put("ClientBeanPar", clientJRBean);
-			data.put("logo", "images/logo.png");
-			data.put("carimbo", "images/carimbo.png");
+			data.put("logo", FileUtils.getLogoPath());
+			data.put("carimbo", FileUtils.getCarimboPath());
 			
 
 			InputStream input = CompresionTestReportByClient.class
@@ -48,15 +48,21 @@ public class CompresionTestReportByClient {
 
 		} catch (JRException e) {
 			throw new ReportException(e.getMessage());
+		} catch (IOException e1) {
+			throw new ReportException(e1.getMessage());
 		}
 	}
 
-	private static List<CompresionTestChartData> compresionTestChartData(List<CorpoDeProva> list) {
-		List<CompresionTestChartData> chartData = new ArrayList<CompresionTestChartData>();
-		for (CorpoDeProva cp : list) {
-			if ((cp.getTonRupture() != 0.0) && (cp.getFckRupture() != 0.0))
-				chartData.add(new CompresionTestChartData("SERIES 1", cp.getDays(), cp.getFckRupture()));
-		}
-		return chartData;
-	}
+
+
+
+	/*
+	 * private static List<CompresionTestChartData>
+	 * compresionTestChartData(List<CorpoDeProva> list) {
+	 * List<CompresionTestChartData> chartData = new
+	 * ArrayList<CompresionTestChartData>(); for (CorpoDeProva cp : list) { if
+	 * ((cp.getTonRupture() != 0.0) && (cp.getFckRupture() != 0.0))
+	 * chartData.add(new CompresionTestChartData("SERIES 1", cp.getDays(),
+	 * cp.getFckRupture())); } return chartData; }
+	 */
 }

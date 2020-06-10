@@ -3,6 +3,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="GetData" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="94c310c3-9866-4876-b375-c60166fc8349">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter "/>
+	<parameter name="logo" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[select * from clients]]>
 	</queryString>
@@ -40,7 +41,7 @@
 			</staticText>
 			<image>
 				<reportElement x="0" y="0" width="120" height="49" uuid="f165b437-cfb6-4f60-85e6-74dcf91e9a39"/>
-				<imageExpression><![CDATA["images/logo.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>

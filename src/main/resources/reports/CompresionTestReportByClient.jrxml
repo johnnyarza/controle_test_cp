@@ -118,8 +118,8 @@ on compresion_test.id = corpo_de_provas.compresionTest_Id]]>
 		<band height="60" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<image>
-				<reportElement x="0" y="0" width="268" height="60" uuid="0f0aea53-f1ed-4ec8-b635-91678b6e0af8"/>
+			<image scaleImage="RetainShape" vAlign="Middle" onErrorType="Blank">
+				<reportElement stretchType="ContainerHeight" x="0" y="0" width="268" height="60" uuid="0f0aea53-f1ed-4ec8-b635-91678b6e0af8"/>
 				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
 			</image>
 			<staticText>
@@ -561,22 +561,22 @@ Moldeo]]></text>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="50" splitType="Stretch">
+		<band height="59" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<image>
-				<reportElement x="0" y="0" width="268" height="50" uuid="d5d2c511-3230-43d7-adf9-bca2d3e3aae6"/>
+			<image scaleImage="RetainShape" vAlign="Middle" onErrorType="Blank">
+				<reportElement stretchType="ContainerHeight" x="0" y="0" width="268" height="59" uuid="d5d2c511-3230-43d7-adf9-bca2d3e3aae6"/>
 				<imageExpression><![CDATA[$P{carimbo}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="268" y="0" width="267" height="50" uuid="1bbc69a5-2474-493b-8d90-da61ba68abe3"/>
+				<reportElement x="268" y="0" width="267" height="59" uuid="1bbc69a5-2474-493b-8d90-da61ba68abe3"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER} + " / " + $V{PAGE_COUNT}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="535" y="0" width="267" height="50" uuid="f6524816-c4cf-41e6-9f1d-93632d9e54ae"/>
+				<reportElement x="535" y="0" width="267" height="59" uuid="f6524816-c4cf-41e6-9f1d-93632d9e54ae"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>

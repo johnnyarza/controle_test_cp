@@ -1,9 +1,12 @@
 package gui;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+
+
 
 import application.Program;
 import application.domaim.CompresionTest;
@@ -35,6 +38,9 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	private MenuItem BtTest;
+	
+	@FXML
+	private MenuItem BtConfigReport;
 
 	@FXML
 	private MenuItem onBtClientAction;
@@ -101,6 +107,15 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void onBtAboutAction(ActionEvent event) {
 		loadView("/gui/AboutView.fxml", (ConcreteDesignViewController controller) -> {});
+	}
+	
+	@FXML
+	public void onBtConfigReportAction(ActionEvent event) {
+		//TODO terminar de implementar
+		loadView("/gui/ReportConfigView.fxml", (ReportConfigViewController controller) -> {
+			controller.setImagesProp(new File("src/main/resources/config/ReportImage.properties"));
+			controller.loadImages();
+		});
 	}
 
 	public Boolean getBtCancelPressed() {

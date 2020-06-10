@@ -1,0 +1,3 @@
+jdbc:mysql://192.168.1.14:3333/?user=johnny
+
+jdbc:mysql://kkreco.duckdns.org:3333/?user=johnny

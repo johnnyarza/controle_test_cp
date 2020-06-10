@@ -27,6 +27,11 @@
                         <MenuItem fx:id="btProvider" mnemonicParsing="false" onAction="#onBtProviderAction" text="Proveedores" />
                   </items>
                 </Menu>
+                  <Menu mnemonicParsing="false" text="Configuraciones">
+                    <items>
+                      <MenuItem fx:id="BtConfigReport" mnemonicParsing="false" onAction="#onBtConfigReportAction" text="Relatorios" />
+                    </items>
+                  </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                   <items>
                     <MenuItem fx:id="btAbout" mnemonicParsing="false" onAction="#onBtAboutAction" text="About" />

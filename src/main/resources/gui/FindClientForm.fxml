@@ -16,8 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="296.0" prefWidth="396.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="gui.FindClientFormController">
+<AnchorPane prefHeight="296.0" prefWidth="396.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.FindClientFormController">
    <children>
       <VBox prefHeight="238.0" prefWidth="407.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
          <children>
@@ -42,7 +41,6 @@
               </rowConstraints>
                <children>
                   <TextField fx:id="txtId" />
-                  <TextField fx:id="txtName" disable="true" GridPane.rowIndex="1" />
                   <RadioButton fx:id="rdId" mnemonicParsing="false" onAction="#onRdIdAction" selected="true" text="Buscar por iD" GridPane.columnIndex="2">
                      <toggleGroup>
                         <ToggleGroup fx:id="searchOpt" />

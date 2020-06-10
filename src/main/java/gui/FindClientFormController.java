@@ -11,20 +11,21 @@ import application.domaim.Cliente;
 import application.exceptions.ValidationException;
 import application.service.ClientService;
 import gui.util.Alerts;
-import gui.util.Constraints;
 import gui.util.Utils;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class FindClientFormController implements Initializable {
@@ -32,10 +33,20 @@ public class FindClientFormController implements Initializable {
 	private ClientService service;
 
 	private ObservableList<Cliente> obsListClient;
-	
+
 	private Cliente entity;
-	
+
 	private Boolean pressedCancelButton;
+	
+	private ChangeListener<String> setTextFieldInteger = new ChangeListener<>() { 
+		@Override
+		public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+	        if (newValue != null && !newValue.matches("\\d*")) {
+	        	txtId.setText(oldValue);
+	        }
+		}
+		
+	};
 
 	@FXML
 	private TextField txtId;
@@ -51,10 +62,10 @@ public class FindClientFormController implements Initializable {
 
 	@FXML
 	private Button btSearch;
-	
+
 	@FXML
 	private Button btSelect;
-	
+
 	@FXML
 	private Button btClose;
 
@@ -101,15 +112,15 @@ public class FindClientFormController implements Initializable {
 		this.pressedCancelButton = pressedCancelButton;
 	}
 
-	public void onBtSelectAction (ActionEvent event) {
+	public void onBtSelectAction(ActionEvent event) {
 		try {
 			this.entity = getClientFromTableView();
 			Utils.currentStage(event).close();
 		} catch (NullPointerException e) {
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
-		}		
+		}
 	}
-	
+
 	@FXML
 	public void onBtSearchAction(ActionEvent event) {
 		try {
@@ -126,18 +137,15 @@ public class FindClientFormController implements Initializable {
 
 	@FXML
 	public void onRdIdAction(ActionEvent event) {
-		txtName.setDisable(true);
-		txtId.setDisable(false);
-
+		formatTxtId();
 	}
 
 	@FXML
 	public void onRdNameAction(ActionEvent event) {
-		txtId.setDisable(true);
-		txtName.setDisable(false);
+		formatTxtId();		
 	}
-	
-	public void onBtCloseAction (ActionEvent event) {
+
+	public void onBtCloseAction(ActionEvent event) {
 		Utils.currentStage(event).close();
 		this.pressedCancelButton = true;
 	}
@@ -149,7 +157,7 @@ public class FindClientFormController implements Initializable {
 		}
 		return client;
 	}
-	
+
 	private List<Cliente> getFormData() {
 		List<Cliente> list = new ArrayList<Cliente>();
 		ValidationException exception = new ValidationException("ValidationException");
@@ -160,22 +168,21 @@ public class FindClientFormController implements Initializable {
 		if (!rdId.isSelected() && !rdName.isSelected()) {
 			throw new ValidationException("Seleccionar opción de busca");
 		}
-		if (rdId.isSelected()) {
-			if (txtId.getText() == null || txtId.getText().trim().equals("")) {
-				exception.addError("id", "vacío");
-			} else {
-				list.add(service.findById(Utils.tryParseToInt(txtId.getText())));
-			}
+		
+		if (txtId.getText() == null || txtId.getText().trim().equals("")) {
+			exception.addError("id", "vacío");
 		} else {
-			if (txtName.getText() == null || txtName.getText().trim().equals("")) {
-				exception.addError("name", "vacío");
+			if (rdId.isSelected()) {
+				list.add(service.findById(Utils.tryParseToInt(txtId.getText())));
 			} else {
-				list = service.findByNameLike(txtName.getText());
+				list = service.findByNameLike(txtId.getText());
 			}
 		}
+		
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
+		labelErrorId.setText("");
 
 		return list;
 	}
@@ -185,10 +192,8 @@ public class FindClientFormController implements Initializable {
 
 		errorNames.forEach((String x) -> {
 			labelErrorId.setText(x.equals("id") ? errors.get(x) : "");
-			labelErrorName.setText(x.equals("name") ? errors.get(x) : "");
 		});
 	}
-	
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -198,8 +203,17 @@ public class FindClientFormController implements Initializable {
 
 	private void initializeNodes() {
 		setCellValueFactory();
-		Constraints.setTextFieldInteger(txtId);
+		formatTxtId();
+	}
 
+	private void formatTxtId() {
+		txtId.setText("");
+		if (rdId.isSelected()) {
+			txtId.textProperty().addListener(setTextFieldInteger);
+		}
+		if(rdName.isSelected()) {
+			txtId.textProperty().removeListener(setTextFieldInteger);
+		}
 	}
 
 	private void setCellValueFactory() {
