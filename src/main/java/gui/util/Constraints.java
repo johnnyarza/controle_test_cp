@@ -17,7 +17,7 @@ public class Constraints {
 		};
 
 		txt.textProperty().addListener(setTextFieldInteger);
-		//txt.textProperty().removeListener(setTextFieldInteger);
+		// txt.textProperty().removeListener(setTextFieldInteger);
 	}
 
 	public static void setTextFieldMaxLength(TextField txt, int max) {
@@ -36,4 +36,19 @@ public class Constraints {
 			}
 		});
 	}
+
+	public static void setTextFieldIPV4(TextField txt) {
+		String regex = makePartialIPRegex();
+		txt.textProperty().addListener((obs, oldValue, newValue) -> {
+			if (newValue != null && !newValue.matches(regex)) {
+				txt.setText(oldValue);
+			}
+		});
+	}
+    public static String makePartialIPRegex() {
+        String partialBlock = "(([01]?[0-9]{0,2})|(2[0-4][0-9])|(25[0-5]))" ;
+        String subsequentPartialBlock = "(\\."+partialBlock+")" ;
+        String ipAddress = partialBlock+"?"+subsequentPartialBlock+"{0,3}";
+        return "^"+ipAddress ;
+    }
 }

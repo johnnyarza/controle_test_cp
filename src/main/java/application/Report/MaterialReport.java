@@ -1,11 +1,14 @@
 package application.Report;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
 import application.db.DB;
+import application.exceptions.ReportException;
+import application.util.FileUtils;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -26,21 +29,23 @@ public class MaterialReport {
 			JasperDesign jasperDesign = JRXmlLoader.load(input);
 
 			String sql = "SELECT materials.id,materials.name,(providers.name) "
-					+ "as proveedor FROM materials inner join providers "
-					+ "where materials.providerId = providers.id";
+					+ "as proveedor FROM materials inner join providers " + "where materials.providerId = providers.id";
 			JRDesignQuery newQuery = new JRDesignQuery();
+			
 			newQuery.setText(sql);
 			jasperDesign.setQuery(newQuery);
 			JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+			
 			Map<String, Object> data = new HashMap<>();
-			// data.put("imagesDir",
-			// "D:/NextCloud/CursoJava/ws-Programa_lab_concreto/Controle_de_CP/cp_project/images");
+			data.put("logo", FileUtils.getLogoPath());
+
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, data, conn);
 			JasperViewer.viewReport(jasperPrint, false);
 
 		} catch (JRException e) {
-			//throw new ReportException(e.getMessage());
-			e.printStackTrace();
+			throw new ReportException(e.getMessage());
+		} catch (IOException e1) {
+			throw new ReportException(e1.getMessage());
 		}
 	}
 }

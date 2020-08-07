@@ -39,6 +39,7 @@
 		<field name="proporcion" class="application.domaim.MaterialProporcion"/>
 	</subDataset>
 	<parameter name="CollectionBeanParam" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="logo" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -56,7 +57,7 @@
 			</staticText>
 			<image>
 				<reportElement x="0" y="4" width="139" height="55" uuid="13980d3c-3c24-4020-adc0-652d3e655750"/>
-				<imageExpression><![CDATA["images/logo.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>

@@ -1,15 +1,21 @@
 package gui;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
+import application.util.FileUtils;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.event.ActionEvent;
@@ -50,18 +56,20 @@ public class ReportConfigViewController implements Initializable{
 
 	}
 	
-	private void saveImagePaths() {
+	private void saveImagePaths()  {
+		try {
 		File file = imagesProp;
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-			if (!file.exists() || file == null) {
-				throw new FileNotFoundException("Archivo ReportImage.properties no encontrado");
-			}
-			bw.write(logoPath == null || logoPath.trim().equals("") ? "" : "1:" + logoPath);
-			bw.newLine();
-			bw.write(carimboPath == null || carimboPath.trim().equals("")? "" : "2:" + carimboPath);
+		Map <String,String> mapProps = new HashMap<>();
+		Properties newProps = new Properties();
+		
+		mapProps.put("logoPath",logoPath == null || logoPath.trim().equals("") ? "" : logoPath);
+		mapProps.put("carimboPath",carimboPath == null || carimboPath.trim().equals("")? "" : carimboPath);
+		
+		newProps.putAll(mapProps);
+		newProps.store(new FileOutputStream(file),null);
 		} catch (IOException e) {
-			Alerts.showAlert("Error", "IOException", e.getMessage(), AlertType.ERROR);
-		} 
+			Alerts.showAlert("Error in saveImagePaths", "IOException", e.getMessage(), AlertType.ERROR);
+		}
 		
 	}
 	
@@ -74,7 +82,7 @@ public class ReportConfigViewController implements Initializable{
 			imgLogo.setImage(Utils.createImage(logoPath));
 			saveImagePaths();
 		} catch (FileNotFoundException e) {
-			Alerts.showAlert("Error", "FileNotFoundException", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error in onBtLogoAction", "FileNotFoundException", e.getMessage(), AlertType.ERROR);
 		}
 	}
 	
@@ -86,7 +94,7 @@ public class ReportConfigViewController implements Initializable{
 			imgCarimbo.setImage(Utils.createImage(carimboPath));
 			saveImagePaths();
 		} catch (FileNotFoundException e) {
-			Alerts.showAlert("Error", "FileNotFoundException", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error in onBtCarimboAction", "FileNotFoundException", e.getMessage(), AlertType.ERROR);
 		}
 	}
 	
@@ -101,33 +109,34 @@ public class ReportConfigViewController implements Initializable{
 	}
 	
 	public void loadImages() {
-		File file = imagesProp;
-		String line;
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-			
-			if (!file.isFile()) {
-				throw new FileNotFoundException("Archivo ReportImage.properties no encontrado");
-			}
-			line = br.readLine();
-			while (line != null) {
-				if (line.substring(0, 2).equals("1:")) {
-					logoPath = line.substring(2);
-				}
-				if (line.substring(0, 2).equals("2:")) {
-					carimboPath = line.substring(2);
-				}
-				line = br.readLine();
-			}
+		try {
+			Properties props = loadReportImageProperties();
+			logoPath = props.containsKey("logoPath") ? props.getProperty("logoPath") : "";
+			carimboPath = props.containsKey("carimboPath") ? props.getProperty("carimboPath") : "";
 			setImagesInView ();
-
-		} catch (IOException e) {
-			Alerts.showAlert("Error", "IOException", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e1) {
+			Alerts.showAlert("Error in loadImages", "IOException", e1.getMessage(), AlertType.ERROR);
 		}
+		
+	}
+	
+	private Properties loadReportImageProperties() throws IOException {
+		File file = imagesProp;
+		if (file == null || !file.isFile()) {			
+			Path path = FileUtils.writeProperties("ReportImage.properties", new HashMap<String, String>());
+			file = path.toFile();
+			setImagesProp(file);
+		}	
+		FileInputStream fs = new FileInputStream(file);
+		Properties props = new Properties();
+		props.load(fs);
+		return props;
 	}
 	
 	private void setImagesInView () throws IOException  {
+		//
 		try {
-		imgLogo.setImage(logoPath != null && !logoPath.trim().equals("") ? Utils.createImage(logoPath.substring(2))
+		imgLogo.setImage(logoPath != null && !logoPath.trim().equals("") ? Utils.createImage(logoPath)
 				: new Image(ReportConfigViewController.class.getResourceAsStream("/images/logo.png")));
 
 		imgCarimbo.setImage(carimboPath != null && !carimboPath.trim().equals("") ? Utils.createImage(carimboPath)
@@ -135,13 +144,7 @@ public class ReportConfigViewController implements Initializable{
 		} catch (IOException e) {
 			
 			imgLogo.setImage(new Image(ReportConfigViewController.class.getResourceAsStream("/images/logo.png")));
-			imgCarimbo.setImage(new Image(ReportConfigViewController.class.getResourceAsStream("/images/carimbo.png")));
-			
-			try (BufferedWriter bw = new BufferedWriter(new FileWriter(imagesProp))) {
-				//erase file
-			} catch (IOException e1) {
-				Alerts.showAlert("Error", "IOException", e.getMessage(), AlertType.ERROR);
-			}		
+			imgCarimbo.setImage(new Image(ReportConfigViewController.class.getResourceAsStream("/images/carimbo.png")));	
 			throw e;
 		}
 	}
@@ -175,8 +178,8 @@ public class ReportConfigViewController implements Initializable{
 	}
 
 
-	public void setImagesProp(File imagesProp) {
-		this.imagesProp = imagesProp;
+	public void setImagesProp(File file) {
+		this.imagesProp = file;
 	}
 	
 }

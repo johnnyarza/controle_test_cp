@@ -115,6 +115,8 @@
 	<parameter name="ClientCollecionBeanParam" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="CompresionTestCollectionBeanParam" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="CorpoDeProvaChartCollectionBeanParam" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="carimbo" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT * FROM cp_db.corpo_de_provas where compresionTest_Id = 32]]>
 	</queryString>
@@ -171,21 +173,21 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="60" splitType="Stretch">
+		<band height="75" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
 			<image>
-				<reportElement x="0" y="0" width="268" height="60" uuid="0aec08cd-1004-48e9-bc95-7643722d5596"/>
-				<imageExpression><![CDATA["images/logo.png"]]></imageExpression>
+				<reportElement x="0" y="0" width="268" height="75" uuid="4db3cf90-7db0-437b-a4bc-df492bb698fd"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="268" y="0" width="267" height="60" uuid="44bb0d3d-5b3f-4b2b-8319-e292bb701cff"/>
+				<reportElement x="268" y="0" width="267" height="75" uuid="44bb0d3d-5b3f-4b2b-8319-e292bb701cff"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Relatório de Rotura]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="535" y="0" width="267" height="60" uuid="532f5893-9e01-470c-9fc8-d87f9f3e52e9"/>
+				<reportElement x="535" y="0" width="267" height="75" uuid="532f5893-9e01-470c-9fc8-d87f9f3e52e9"/>
 				<textElement textAlignment="Right" markup="html"/>
 				<textFieldExpression><![CDATA["COMERCIO Y CONSTRUCCIONES HJVA  LTDA <br> TEL: 3-978-2323 / FAX: 3-978-2818 <br> Pto. Quijarro, Av. Bolivia, 210 <br>" + new SimpleDateFormat("dd/MM/yyyy").format(new Date())]]></textFieldExpression>
 			</textField>
@@ -725,7 +727,7 @@ Moldeo]]></text>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<image>
 				<reportElement x="0" y="0" width="268" height="50" uuid="56348a74-99b1-4dd6-9be8-30f6a588bc5f"/>
-				<imageExpression><![CDATA["images/carimbo.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{carimbo}]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement x="268" y="0" width="267" height="50" uuid="27b413d1-fd15-4351-9592-4f3d22ca87fc"/>

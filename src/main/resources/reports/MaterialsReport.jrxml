@@ -14,6 +14,7 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="logo" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[SELECT materials.id,materials.name,(providers.name) as proveedor FROM materials inner join providers where materials.providerId = providers.id]]>
 	</queryString>
@@ -43,7 +44,7 @@
 			</staticText>
 			<image>
 				<reportElement x="0" y="0" width="119" height="50" uuid="8c25af32-3845-4808-917e-dbd1f2fac5d5"/>
-				<imageExpression><![CDATA["images/logo.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
 			</image>
 		</band>
 	</title>

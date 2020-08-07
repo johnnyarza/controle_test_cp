@@ -65,6 +65,9 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 
 	@FXML
 	private TableColumn<ConcreteDesign, String> tableColumnName;
+	
+	@FXML
+	private TableColumn<ConcreteDesign, Double> tableColumnSlump;
 
 	@FXML
 	public void onBtNewAction(ActionEvent event) {
@@ -220,6 +223,8 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnDesc.setCellValueFactory(new PropertyValueFactory<>("proporcion"));
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("description"));
+		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));
+		Utils.formatTableColumnDouble(tableColumnSlump, 2);
 	}
 
 	private ConcreteDesign getConcreteDesingFromTableView() {

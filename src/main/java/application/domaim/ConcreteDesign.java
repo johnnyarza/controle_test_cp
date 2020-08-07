@@ -9,12 +9,13 @@ public class ConcreteDesign implements Serializable{
 	private Integer id;
 	private String description;
 	private Double fck;
+	private Double slump;
 	private MaterialProporcion proporcion;
 	
 	public ConcreteDesign() {
 	}
 
-	public ConcreteDesign(Integer id, String description, Double fck,MaterialProporcion proporcion) {
+	public ConcreteDesign(Integer id, String description, Double fck,MaterialProporcion proporcion,Double slump) {
 		this.id = id;
 		this.description = description;
 		this.fck = fck;
@@ -53,6 +54,14 @@ public class ConcreteDesign implements Serializable{
 		this.proporcion = proporcion;
 	}
 
+	public Double getSlump() {
+		return slump;
+	}
+
+	public void setSlump(Double slump) {
+		this.slump = slump;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -80,7 +89,7 @@ public class ConcreteDesign implements Serializable{
 
 	@Override
 	public String toString() {
-		return this.description + " - " + this.proporcion.toString();
+		return this.description +" - slump: " +this.slump +" - " + this.proporcion.toString();
 	}		
 
 }

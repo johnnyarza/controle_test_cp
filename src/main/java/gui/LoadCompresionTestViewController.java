@@ -277,7 +277,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			controller.setChangesCount(0);
 
 			Stage dialogStage = new Stage();
-			dialogStage.setTitle("Nueva rotura");
+			dialogStage.setTitle("Ensayo de Rotura");
 			dialogStage.setScene(new Scene(pane));
 			dialogStage.setResizable(true);
 			dialogStage.initOwner(parentStage);

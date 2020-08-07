@@ -30,6 +30,7 @@
                   <Menu mnemonicParsing="false" text="Configuraciones">
                     <items>
                       <MenuItem fx:id="BtConfigReport" mnemonicParsing="false" onAction="#onBtConfigReportAction" text="Relatorios" />
+                        <MenuItem fx:id="btConfigConnection" mnemonicParsing="false" onAction="#onBtConfigConnectionAction" text="Conexion" />
                     </items>
                   </Menu>
                 <Menu mnemonicParsing="false" text="Help">

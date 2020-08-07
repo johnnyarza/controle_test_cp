@@ -33,7 +33,8 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 					"INSERT INTO concretedesign " + "(description, " + "fck, " + "mat1_id, " + "mat2_id, " + "mat3_id, "
 							+ "mat4_id, " + "mat5_id, " + "mat6_id, " + "mat7_id, " + "mat8_id," + "mat1_qtt,"
 							+ "mat2_qtt," + "mat3_qtt," + "mat4_qtt," + "mat5_qtt," + "mat6_qtt," + "mat7_qtt,"
-							+ "mat8_qtt" + ") " + "VALUES " + "(? ,? ,? ,? ,? ,? ,? ,? ,? ,?,? ,? ,? ,? ,? ,? ,? ,?)",
+							+ "mat8_qtt," + "slump" + ") " + "VALUES "
+							+ "(? ,? ,? ,? ,? ,? ,? ,? ,? ,?,? ,? ,? ,? ,? ,? ,? ,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 
 			setStatement(st, obj);
@@ -85,11 +86,11 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 					"UPDATE concretedesign SET " + "description = ?, " + "fck = ?, " + "mat1_id = ?, " + "mat2_id = ?, "
 							+ "mat3_id = ?, " + "mat4_id = ?, " + "mat5_id = ?, " + "mat6_id = ?, " + "mat7_id = ?, "
 							+ "mat8_id = ?," + "mat1_qtt = ?," + "mat2_qtt = ?," + "mat3_qtt = ?," + "mat4_qtt = ?,"
-							+ "mat5_qtt = ?," + "mat6_qtt = ?," + "mat7_qtt = ?," + "mat8_qtt = ? " + "WHERE id = ?",
+							+ "mat5_qtt = ?," + "mat6_qtt = ?," + "mat7_qtt = ?," + "mat8_qtt = ?," +"slump = ? "+ "WHERE id = ?"  ,
 					Statement.RETURN_GENERATED_KEYS);
 
 			setStatement(st, obj);
-			st.setInt(19, obj.getId());
+			st.setInt(20, obj.getId());
 
 			int rows = st.executeUpdate();
 			if (rows == 0) {
@@ -118,7 +119,7 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 			st.setInt(3, prop.getMat1().getId());
 		}
 
-		if ( prop.getMat2() == null || prop.getMat2().isAllNull()) {
+		if (prop.getMat2() == null || prop.getMat2().isAllNull()) {
 			st.setNull(4, Types.INTEGER);
 		} else {
 			st.setInt(4, prop.getMat2().getId());
@@ -168,6 +169,8 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 		st.setDouble(16, prop.getMat6Qtt());
 		st.setDouble(17, prop.getMat7Qtt());
 		st.setDouble(18, prop.getMat8Qtt());
+
+		st.setDouble(19, obj.getSlump());
 
 	}
 
@@ -265,6 +268,8 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 		matProp.setMat6Qtt(rs.getDouble(17));
 		matProp.setMat7Qtt(rs.getDouble(18));
 		matProp.setMat8Qtt(rs.getDouble(19));
+		
+		obj.setSlump(rs.getDouble(20));
 
 		obj.setProporcion(matProp);
 

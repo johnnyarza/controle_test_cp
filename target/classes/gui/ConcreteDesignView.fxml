@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minWidth="417.0" prefHeight="347.0" prefWidth="692.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ConcreteDesignViewController">
+<VBox minWidth="417.0" prefHeight="347.0" prefWidth="896.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ConcreteDesignViewController">
    <children>
       <Label text="Lista de Disenõs">
          <font>
@@ -31,6 +31,7 @@
         <columns>
           <TableColumn fx:id="tableColumnId" minWidth="30.0" prefWidth="30.0" text="iD" />
             <TableColumn fx:id="tableColumnName" maxWidth="500.0" minWidth="65.0" prefWidth="65.0" text="Nombre" />
+            <TableColumn fx:id="tableColumnSlump" prefWidth="75.0" text="Slump" />
           <TableColumn fx:id="tableColumnDesc" maxWidth="1.7976931348623157E308" minWidth="110.0" prefWidth="800.0" text="Descripción" />
         </columns>
       </TableView>

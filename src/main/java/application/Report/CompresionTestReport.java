@@ -1,5 +1,6 @@
 package application.Report;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import application.domaim.CompresionTest;
 import application.domaim.CompresionTestChartData;
 import application.domaim.CorpoDeProva;
 import application.exceptions.ReportException;
+import application.util.FileUtils;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -38,6 +40,8 @@ public class CompresionTestReport {
 			data.put("CorpoDeProvaCollecionBeanParam", itemsJRBean);
 			data.put("CompresionTestCollectionBeanParam", itemsCTEstRBean);
 			data.put("CorpoDeProvaChartCollectionBeanParam", itemsCorpoDeProvaChartRBEan);
+			data.put("logo", FileUtils.getLogoPath());
+			data.put("carimbo", FileUtils.getCarimboPath());
 			
 
 			InputStream input = CompresionTestReport.class.getResourceAsStream("/reports/CompresionTestReport.jrxml");
@@ -50,6 +54,8 @@ public class CompresionTestReport {
 
 		} catch (JRException e) {
 			throw new ReportException(e.getMessage());
+		} catch (IOException e1) {
+			throw new ReportException(e1.getMessage());
 		}
 	}
 	

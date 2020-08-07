@@ -45,6 +45,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 	private ObservableList<Material> obsListMaterial;
 	
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
+	
 
 	@FXML
 	private TextField txtId;
@@ -54,6 +55,9 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 
 	@FXML
 	private TextField txtFck;
+	
+	@FXML
+	private TextField txtSlump;
 
 	@FXML
 	private TextField txtQtt1;
@@ -189,6 +193,10 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		if (txtFck.getText() == null || txtFck.getText().trim().equals("")) {
 			exception.addError("resistencia", "Campo resistencia no puede ser vacío");
 		}
+		
+		if (txtSlump.getText() == null || txtSlump.getText().trim().equals("")) {
+			exception.addError("slump", "Campo slump no puede ser vacío");
+		}
 
 		if (this.materialService == null) {
 			throw new IllegalStateException("ConcreteDesignRegistrationFormController: materialService was null");
@@ -204,6 +212,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		prop.setMaterialService(this.materialService);
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
 		obj.setFck(Utils.tryParseToDouble(txtFck.getText()));
+		obj.setSlump(Utils.tryParseToDouble(txtSlump.getText()));
 		obj.setDescription(txtName.getText());
 		obj.setProporcion(prop);
 
@@ -292,6 +301,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 
 	private void initializeNodes() {
 		Constraints.setTextFieldDouble(txtFck);
+		Constraints.setTextFieldDouble(txtSlump);
 		setVecTxtFieldsQtt();
 		setComboBoxesMat();
 		formatTextFields();
@@ -348,6 +358,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		txtId.setText(entity.getId().toString());
 		txtName.setText(entity.getDescription());
 		txtFck.setText(Utils.doubleFormat(entity.getFck()));
+		txtSlump.setText(Utils.doubleFormat(entity.getSlump()));
 		Double[] qtt = materialProporcionQttToArray(entity.getProporcion());
 		Material[] mat = materialProporcionMatToArray(entity.getProporcion());
 		for (int i = 0; i <= 7; i += 1) {
@@ -393,6 +404,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		String str = "";
 		labelErrorName.setText(fields.contains("name") ? errors.get("name") : "");
 		labelErrorFck.setText(fields.contains("resistencia") ? errors.get("resistencia") : "");
+		labelErrorFck.setText(fields.contains("slump") ? errors.get("slump") : "");
 
 		for (String s : fields) {
 			str = str + errors.get(s) + ". ";

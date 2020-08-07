@@ -1,5 +1,6 @@
 package application.Report;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import application.domaim.ConcreteDesign;
 import application.exceptions.ReportException;
+import application.util.FileUtils;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -26,6 +28,7 @@ public class ConcreteDesignReport {
 			JRBeanCollectionDataSource itemsJRBean = new JRBeanCollectionDataSource(list);
 			Map<String, Object> data = new HashMap<>();
 			data.put("CollectionBeanParam", itemsJRBean);
+			data.put("logo", FileUtils.getLogoPath());
 
 			InputStream input = ConcreteDesignReport.class.getResourceAsStream("/reports/ConcreteDesignReport.jrxml");
 			JasperDesign jasperDesign = JRXmlLoader.load(input);
@@ -35,6 +38,8 @@ public class ConcreteDesignReport {
 			JasperViewer.viewReport(jasperPrint, false);
 
 		} catch (JRException e) {
+			throw new ReportException(e.getMessage());
+		} catch (IOException e) {
 			throw new ReportException(e.getMessage());
 		}
 	}

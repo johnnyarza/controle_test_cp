@@ -36,6 +36,8 @@ public class ClientReport {
 			JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
 			Map<String, Object> data = new HashMap<>();
 			data.put("logo", FileUtils.getLogoPath());
+
+
 			
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, data, conn);
 			JasperViewer.viewReport(jasperPrint, false);

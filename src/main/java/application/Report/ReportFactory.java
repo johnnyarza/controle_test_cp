@@ -8,7 +8,7 @@ import application.domaim.ConcreteDesign;
 import application.domaim.CorpoDeProva;
 
 public class ReportFactory {
-	//TODO implementar alteração de logo para os demais report
+
 	public void clientReportView() {
 		ClientReport.viewClientReport();
 	}
