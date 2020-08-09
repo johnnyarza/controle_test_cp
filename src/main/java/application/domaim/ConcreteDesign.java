@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class ConcreteDesign implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
-	//TODO implementar slump
+	
 	private Integer id;
 	private String description;
 	private Double fck;

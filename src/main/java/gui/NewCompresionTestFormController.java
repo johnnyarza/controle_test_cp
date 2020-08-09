@@ -293,7 +293,7 @@ public class NewCompresionTestFormController implements Initializable {
 		if (comboBoxConcreteProvider.getValue() == null) {
 			exception.addError("provider","Proveedor vacío");
 		}
-		obj.setConcreteProvider(comboBoxClient.getValue());
+		obj.setConcreteProvider(comboBoxConcreteProvider.getValue());
 		
 		if (txtObra.getText() == null || txtObra.getText().trim().equals("")) {
 			exception.addError("obra","obra vacía");
