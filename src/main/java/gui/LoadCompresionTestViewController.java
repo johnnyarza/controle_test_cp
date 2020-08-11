@@ -15,6 +15,7 @@ import application.db.DbException;
 import application.domaim.Cliente;
 import application.domaim.CompresionTest;
 import application.domaim.CompresionTestList;
+import application.domaim.CorpoDeProva;
 import application.exceptions.ReportException;
 import application.service.ClientService;
 import application.service.CompresionTestListService;
@@ -52,13 +53,19 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	private CompresionTestService compresionTestService;
 
+	private CorpoDeProvaService corpoDeProvaService;
+
 	private ObservableList<CompresionTestList> obsList;
+
+	private List<CompresionTestList> compresionTestListList;
 
 	private CompresionTest entity;
 
 	private Cliente client;
 
 	private Boolean btCancelPressed;
+
+	private List<CorpoDeProva> lateCorpoDeProvaList;
 
 	@FXML
 	private TableView<CompresionTestList> tableViewClient;
@@ -91,6 +98,9 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	private Button btReport;
 
 	@FXML
+	private Button btWarning;
+
+	@FXML
 	public void onbtNewAction(ActionEvent event) {
 		try {
 			Stage parentStage = Utils.currentStage(event);
@@ -108,12 +118,16 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 						this.btCancelPressed = controller.getBtCancelPressed();
 					});
 			if (!btCancelPressed) {
-				createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, this.entity);
-				updateTableView();
+				createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, this.entity,
+						"/gui/CompresionTestForm.css");
+				updateViewData();
+				if (lateCorpoDeProvaList.size() > 0) {
+					Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
+				}
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			Alerts.showAlert("Error", "Error Desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -122,8 +136,11 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		try {
 			CompresionTest obj = getCompresionTestFromTableView();
 			Stage parentStage = Utils.currentStage(event);
-			createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, obj);
-			updateTableView();
+			createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, obj, "/gui/CompresionTestForm.css");
+			updateViewData();
+			if (lateCorpoDeProvaList.size() > 0) {
+				Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
+			}
 		} catch (NullPointerException e) {
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
@@ -152,6 +169,24 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	}
 
+	@FXML
+	public void onBtWarningACtion(ActionEvent event) {
+		try {
+
+			createDialogForm("/gui/WarningDialog.fxml", "Aviso", Utils.currentStage(event),
+					(WarningDialogController controller) -> {
+						controller.setCompresionTestListList(compresionTestListList);
+						controller.setLateCorpoDeProvaList(lateCorpoDeProvaList);
+						controller.updateDialogData();
+					}, (WarningDialogController) -> {
+					}, (WarningDialogController) -> {
+					}, "/gui/WarningDialog.css");
+		} catch (Exception e) {
+			e.printStackTrace();
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+		}
+	}
+
 	public void onBtReportAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
 		this.client = null;
@@ -161,8 +196,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 						controller.setEntity(null);
 						controller.setService(new ClientService());
 						controller.setPressedCancelButton(false);
-					}, 
-					(FindClientFormController controller) -> {
+					}, (FindClientFormController controller) -> {
 						controller.setPressedCancelButton(true);
 					}, // window close event
 					(FindClientFormController controller) -> {
@@ -199,6 +233,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		return clientService;
 	}
 
+	public List<CorpoDeProva> getLateCorpoDeProvaList() {
+		return lateCorpoDeProvaList;
+	}
+
 	public void setClientService(ClientService clientService) {
 		this.clientService = clientService;
 	}
@@ -209,6 +247,14 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	public void setCompresionTestService(CompresionTestService compresionTestService) {
 		this.compresionTestService = compresionTestService;
+	}
+
+	public CorpoDeProvaService getCorpoDeProvaService() {
+		return corpoDeProvaService;
+	}
+
+	public void setCorpoDeProvaService(CorpoDeProvaService corpoDeProvaService) {
+		this.corpoDeProvaService = corpoDeProvaService;
 	}
 
 	@Override
@@ -227,22 +273,54 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 		Stage stage = (Stage) Program.getMainScene().getWindow();
 		tableViewClient.prefHeightProperty().bind(stage.heightProperty());
+
 	}
 
-	public void updateTableView() {
+	public void updateViewData() {
+		updateTableView();
+		updateLateCorpoDeProva();
+
+	}
+
+	private void updateTableView() {
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
 		}
 
-		List<CompresionTestList> list = service.findAll();
-		obsList = FXCollections.observableArrayList(list);
+		compresionTestListList = service.findAll();
+		obsList = FXCollections.observableArrayList(compresionTestListList);
 		tableViewClient.setItems(obsList);
 		tableViewClient.refresh();
 	}
 
+	private void updateLateCorpoDeProva() {
+		try {
+			if (corpoDeProvaService == null)
+				throw new IllegalStateException("corpoDeProvaService was null");
+			lateCorpoDeProvaList = corpoDeProvaService.findLateCorpoDeProva(TimeZone.getDefault());
+			formatWarningBtn(lateCorpoDeProvaList);
+		} catch (IllegalStateException e) {
+			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
+		}
+
+	}
+
+	private void formatWarningBtn(List<CorpoDeProva> list) {
+		if (list.size() > 0) {
+			btWarning.setStyle("-fx-background-color:#e74c3c");
+			btWarning.setVisible(true);
+			btWarning.setDisable(false);
+			return;
+		}
+		btWarning.setStyle("");
+		btWarning.setVisible(false);
+		btWarning.setDisable(true);
+
+	}
+
 	@Override
 	public void onDataChange() {
-		updateTableView();
+		updateViewData();
 	}
 
 	private CompresionTest getCompresionTestFromTableView() {
@@ -251,12 +329,12 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		if (compresionTestList == null) {
 			throw new NullPointerException("compresionTestList was null");
 		}
-		CompresionTest compresionTest = compresionTestService
-				.findByIdWithTimeZone(compresionTestList.getCompresionTestId(), TimeZone.getDefault());
+		CompresionTest compresionTest = compresionTestService.findByIdWithTimeZone(compresionTestList.getCompresionTestId(),
+				TimeZone.getDefault());
 		return compresionTest;
 	}
 
-	private void createDialogFormCompresionTest(String absoluteName, Stage parentStage, CompresionTest obj) {
+	private void createDialogFormCompresionTest(String absoluteName, Stage parentStage, CompresionTest obj, String css) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -279,6 +357,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Ensayo de Rotura");
 			dialogStage.setScene(new Scene(pane));
+			if (!css.trim().contentEquals(""))
+				dialogStage.getScene().getStylesheets().add(css);
 			dialogStage.setResizable(true);
 			dialogStage.initOwner(parentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);
@@ -287,8 +367,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				@Override
 				public void handle(WindowEvent we) {
 					if (controller.getChangesCount() > 0) {
-						Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acción",
-								"Segura que desea cerrar?", "Hay datos no guardados!!");
+						Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acción", "Segura que desea cerrar?",
+								"Hay datos no guardados!!");
 						if (result.get() != ButtonType.OK) {
 							we.consume();
 						}
@@ -298,7 +378,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			dialogStage.showAndWait();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
 		}
 	}
 
@@ -332,7 +412,45 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			finalAction.accept(controller);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
+		}
+	}
+
+	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css) {
+		try {
+
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			AnchorPane pane = loader.load();
+
+			T controller = loader.getController();
+			initializingAction.accept(controller);
+
+			Stage dialogStage = new Stage();
+
+			dialogStage.setTitle(title);
+			dialogStage.setScene(new Scene(pane));
+			if (!css.trim().equals("")) {
+				dialogStage.getScene().getStylesheets().add(css);
+			}
+			dialogStage.setResizable(true);
+			dialogStage.initOwner(parentStage);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+
+			dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+				@Override
+				public void handle(WindowEvent we) {
+					windowEventAction.accept(controller);
+
+				}
+			});
+
+			dialogStage.showAndWait();
+			finalAction.accept(controller);
+
+		} catch (IOException e) {
+			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
 		}
 	}
 

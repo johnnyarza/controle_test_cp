@@ -434,6 +434,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	private void setTableColumnsCellValueFactory() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnCodigo.setCellValueFactory(new PropertyValueFactory<>("code"));
+		tableColumnCodigo.getStyleClass().add("description-column-style");
+		
 
 		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));
 		Utils.formatTableColumnDouble(tableColumnSlump, 2);

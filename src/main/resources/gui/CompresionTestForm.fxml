@@ -152,11 +152,11 @@
       </GridPane>
       <TableView fx:id="tableViewCorpoDeProva" minWidth="400.0" prefHeight="276.0">
         <columns>
-          <TableColumn fx:id="tableColumnId" prefWidth="72.0" text="Probeta iD" />
+          <TableColumn fx:id="tableColumnId" prefWidth="72.0" styleClass="custom-align" text="Probeta iD" />
           <TableColumn fx:id="tableColumnCodigo" prefWidth="200.0" text="Descripción" />
-            <TableColumn fx:id="tableColumnSlump" prefWidth="75.0" text="Slump" />
-            <TableColumn fx:id="tableColumnFechaMoldeo" prefWidth="110.0" text="Fecha de Moldeo" />
-            <TableColumn fx:id="tableColumnFechaRotura" prefWidth="110.0" text="Fecha de Rotura" />
+            <TableColumn fx:id="tableColumnSlump" prefWidth="75.0" styleClass="custom-align" text="Slump" />
+            <TableColumn fx:id="tableColumnFechaMoldeo" prefWidth="110.0" styleClass="custom-align" text="Fecha de Moldeo" />
+            <TableColumn fx:id="tableColumnFechaRotura" prefWidth="110.0" styleClass="custom-align" text="Fecha de Rotura" />
             <TableColumn fx:id="tableColumnEdad" prefWidth="60.0" text="Edad" />
             <TableColumn fx:id="tableColumnDiameter" prefWidth="60.33331298828125" text="Ø (cm)" />
             <TableColumn fx:id="tableColumnHeight" prefWidth="75.3333740234375" text="Altura (cm)" />

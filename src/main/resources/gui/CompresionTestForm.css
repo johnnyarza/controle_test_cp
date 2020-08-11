@@ -1,0 +1,7 @@
+.description-column-style .label {
+  -fx-alignment: CENTER_LEFT;
+}
+
+.custom-align { 
+  -fx-alignment: CENTER; 
+} 

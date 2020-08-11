@@ -22,6 +22,18 @@
             <Button fx:id="btOpen" mnemonicParsing="false" onAction="#onbtOpenAction" text="Abrir" />
             <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" text="Apagar" />
             <Button fx:id="btReport" mnemonicParsing="false" onAction="#onBtReportAction" text="Reporte" />
+            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="btWarning" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onBtWarningACtion" text="Avisos!">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets right="8.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
          </children>
          <padding>
             <Insets left="5.0" />

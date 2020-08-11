@@ -138,8 +138,8 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement(
-					"SELECT corpo_de_provas.*,(curdate()-dateMolde) as days FROM corpo_de_provas where id = ?");
+			st = conn
+					.prepareStatement("SELECT corpo_de_provas.*,(curdate()-dateMolde) as days FROM corpo_de_provas where id = ?");
 
 			st.setInt(1, id);
 			rs = st.executeQuery();
@@ -191,9 +191,8 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement(
-					"SELECT corpo_de_provas.*,(ruptureDate-dateMolde) as days FROM corpo_de_provas WHERE "
-							+ "compresionTest_Id = ?");
+			st = conn.prepareStatement("SELECT corpo_de_provas.*,(ruptureDate-dateMolde) as days FROM corpo_de_provas WHERE "
+					+ "compresionTest_Id = ?");
 
 			st.setInt(1, id);
 
@@ -245,11 +244,11 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 				CompresionTest compresionTest = compresionTestService.findById(rs.getInt(4));
 				CorpoDeProva obj = new CorpoDeProva(rs.getInt(1), rs.getString(2), compresionTest, rs.getDouble(5),
 						new java.util.Date(rs.getTimestamp(6, cal).getTime()),
-						new java.util.Date(rs.getTimestamp(7, cal).getTime()), rs.getDouble(9), rs.getDouble(10),
-						rs.getDouble(11), rs.getDouble(12));
-				int days = (Math.abs((int) ChronoUnit.DAYS.between(
-						obj.getRuptureDate().toInstant().atZone(tZ.toZoneId()).toLocalDate(),
-						obj.getMoldeDate().toInstant().atZone(tZ.toZoneId()).toLocalDate())));
+						new java.util.Date(rs.getTimestamp(7, cal).getTime()), rs.getDouble(9), rs.getDouble(10), rs.getDouble(11),
+						rs.getDouble(12));
+				int days = (Math
+						.abs((int) ChronoUnit.DAYS.between(obj.getRuptureDate().toInstant().atZone(tZ.toZoneId()).toLocalDate(),
+								obj.getMoldeDate().toInstant().atZone(tZ.toZoneId()).toLocalDate())));
 				obj.setDensid();
 				obj.setFckRupture();
 				obj.setDays(days);
@@ -348,9 +347,8 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 			CompresionTest compresionTest = compresionTestService.findById(rs.getInt(4));
 
 			CorpoDeProva obj = new CorpoDeProva(rs.getInt(1), rs.getString(2), compresionTest, rs.getDouble(5),
-					new java.util.Date(rs.getTimestamp(6, cal).getTime()),
-					new java.util.Date(rs.getTimestamp(7, cal).getTime()), rs.getDouble(9), rs.getDouble(10),
-					rs.getDouble(11), rs.getDouble(12));
+					new java.util.Date(rs.getTimestamp(6, cal).getTime()), new java.util.Date(rs.getTimestamp(7, cal).getTime()),
+					rs.getDouble(9), rs.getDouble(10), rs.getDouble(11), rs.getDouble(12));
 
 			int days = Utils.daysBetweenDates(obj.getRuptureDate(), obj.getMoldeDate());
 
@@ -362,6 +360,27 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		}
+	}
+
+	@Override
+	public List<CorpoDeProva> findLateCorpoDeProva(TimeZone tZ) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM cp_db.corpo_de_provas "
+					+ "where tonRupture = 0 and (ruptureDate < now() or datediff( now(),ruptureDate) = -1) "
+					+ "group by compresionTest_Id");
+			rs = st.executeQuery();
+			List<CorpoDeProva> list = new ArrayList<CorpoDeProva>();
+
+			while (rs.next()) {
+				list.add(instantiateCorpoDeProvaWithTimeZone(tZ, rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+
 	}
 
 }

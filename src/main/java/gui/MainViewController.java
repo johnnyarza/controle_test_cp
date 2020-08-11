@@ -12,6 +12,7 @@ import application.service.ClientService;
 import application.service.CompresionTestListService;
 import application.service.CompresionTestService;
 import application.service.ConcreteDesignService;
+import application.service.CorpoDeProvaService;
 import application.service.MaterialService;
 import application.service.ProviderService;
 import gui.util.Alerts;
@@ -67,8 +68,12 @@ public class MainViewController implements Initializable {
 		loadView("/gui/LoadCompresionTestView.fxml", (LoadCompresionTestViewController controller) -> {
 			controller.setCompresionTestListService(new CompresionTestListService());
 			controller.setClientService(new ClientService());
+			controller.setCorpoDeProvaService(new CorpoDeProvaService());
 			controller.setCompresionTestService(new CompresionTestService());
-			controller.updateTableView();
+			controller.updateViewData();
+			if (controller.getLateCorpoDeProvaList().size() > 0) {
+				Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
+			}
 		});
 	}
 
