@@ -1,3 +1,4 @@
+
 .description-column-style .label {
   -fx-alignment: CENTER_LEFT;
 }
@@ -5,3 +6,16 @@
 .custom-align { 
   -fx-alignment: CENTER; 
 } 
+
+.close-button:hover {
+	-fx-background-color:#e74c3c;
+}
+
+.delete-button:hover {
+	-fx-background-color:#e74c3c;
+}
+
+.fitwidth {
+    width: 1px;
+    white-space: nowrap;
+}

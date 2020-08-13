@@ -410,10 +410,15 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	private void initializeNodes() {
-		setTableColumnsCellValueFactory();
+		formatTableView();
 		initializeComboBoxClient();
 		tableViewCorpoDeProva.prefHeightProperty().bind(vbox.heightProperty());
 		setButtonsGraphics();
+	}
+	
+	private void formatTableView() {
+		setTableColumnsCellValueFactory();
+		tableColumnCodigo.getStyleClass().add("description-column-style");
 	}
 	
 	private void setButtonsGraphics() {
@@ -434,7 +439,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	private void setTableColumnsCellValueFactory() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnCodigo.setCellValueFactory(new PropertyValueFactory<>("code"));
-		tableColumnCodigo.getStyleClass().add("description-column-style");
+		
 		
 
 		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));

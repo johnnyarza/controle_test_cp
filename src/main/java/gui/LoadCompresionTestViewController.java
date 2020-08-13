@@ -307,7 +307,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	private void formatWarningBtn(List<CorpoDeProva> list) {
 		if (list.size() > 0) {
-			btWarning.setStyle("-fx-background-color:#e74c3c");
+			
 			btWarning.setVisible(true);
 			btWarning.setDisable(false);
 			return;

@@ -1,0 +1,18 @@
+.description-column-style .label {
+  -fx-alignment: CENTER_LEFT;
+}
+
+.custom-align { 
+  -fx-alignment: CENTER; 
+} 
+
+.warning-button{
+	-fx-opacity: 1;
+	-fx-background-color:#e74c3c;	
+	-fx-transaction: 0.3s;
+	
+}
+
+.warning-button:hover {
+	-fx-opacity: 0.9;
+}

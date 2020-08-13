@@ -33,11 +33,10 @@ public class MainViewController implements Initializable {
 	private Boolean btCancelPressed;
 
 	private CompresionTest compresionTest;
-	
 
 	@FXML
 	private MenuItem BtTest;
-	
+
 	@FXML
 	private MenuItem BtConfigReport;
 
@@ -52,16 +51,15 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	private MenuItem btDesign;
-	
+
 	@FXML
 	private MenuItem btConfigConnection;
-	 
+
 	@FXML
 	private MenuItem btAbout;
 
 	@FXML
 	private MenuBar myMenuBar;
-
 
 	@FXML
 	public void onBtTestAction(ActionEvent event) {
@@ -74,7 +72,7 @@ public class MainViewController implements Initializable {
 			if (controller.getLateCorpoDeProvaList().size() > 0) {
 				Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
 			}
-		});
+		},"/gui/LoadCompresionTestView.css");
 	}
 
 	@FXML
@@ -109,21 +107,23 @@ public class MainViewController implements Initializable {
 			controller.updateTableView();
 		});
 	}
-	
+
 	@FXML
 	public void onBtAboutAction(ActionEvent event) {
-		loadView("/gui/AboutView.fxml", (ConcreteDesignViewController controller) -> {});
+		loadView("/gui/AboutView.fxml", (ConcreteDesignViewController controller) -> {
+		});
 	}
-	
+
 	@FXML
 	public void onBtConfigReportAction(ActionEvent event) {
 		loadView("/gui/ReportConfigView.fxml", (ReportConfigViewController controller) -> {
-			
-			controller.setImagesProp(Paths.get(System.getProperty("user.home"), "cp_configs", "ReportImage.properties").toFile());
+
+			controller
+					.setImagesProp(Paths.get(System.getProperty("user.home"), "cp_configs", "ReportImage.properties").toFile());
 			controller.loadImages();
 		});
 	}
-	
+
 	@FXML
 	public void onBtConfigConnectionAction(ActionEvent event) {
 		loadView("/gui/ConnectionConfigView.fxml", (ConnectionConfigViewController controller) -> {
@@ -146,57 +146,45 @@ public class MainViewController implements Initializable {
 	public void setCompresionTest(CompresionTest compresionTest) {
 		this.compresionTest = compresionTest;
 	}
-	
 
-	/*private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction) {
-		try {
-
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			Pane pane = loader.load();
-
-			T controller = loader.getController();
-			initializingAction.accept(controller);
-
-			Stage dialogStage = new Stage();
-			dialogStage.setTitle("Nueva rotura");
-			dialogStage.setScene(new Scene(pane));
-			dialogStage.setResizable(false);
-			dialogStage.initOwner(parentStage);
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-			dialogStage.showAndWait();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void createDialogFormNewCompresionTest(String absoluteName, Stage parentStage) {
-		try {
-
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			Pane pane = loader.load();
-
-			NewCompresionTestFormController controller = loader.getController();
-			controller.setCompresionTestService(new CompresionTestService());
-			controller.setClientService(new ClientService());
-			controller.setConcreteDesignService(new ConcreteDesignService());
-			controller.loadAssociatedObjects();
-
-
-			Stage dialogStage = new Stage();
-			dialogStage.setTitle("Nueva rotura");
-			dialogStage.setScene(new Scene(pane));
-			dialogStage.setResizable(false);
-			dialogStage.initOwner(parentStage);
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-			dialogStage.showAndWait();
-
-			this.compresionTest = controller.getEntity();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}*/
+	/*
+	 * private <T> void createDialogForm(String absoluteName, Stage parentStage,
+	 * Consumer<T> initializingAction) { try {
+	 * 
+	 * FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+	 * Pane pane = loader.load();
+	 * 
+	 * T controller = loader.getController(); initializingAction.accept(controller);
+	 * 
+	 * Stage dialogStage = new Stage(); dialogStage.setTitle("Nueva rotura");
+	 * dialogStage.setScene(new Scene(pane)); dialogStage.setResizable(false);
+	 * dialogStage.initOwner(parentStage);
+	 * dialogStage.initModality(Modality.WINDOW_MODAL); dialogStage.showAndWait();
+	 * 
+	 * } catch (IOException e) { e.printStackTrace(); } }
+	 * 
+	 * private void createDialogFormNewCompresionTest(String absoluteName, Stage
+	 * parentStage) { try {
+	 * 
+	 * FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+	 * Pane pane = loader.load();
+	 * 
+	 * NewCompresionTestFormController controller = loader.getController();
+	 * controller.setCompresionTestService(new CompresionTestService());
+	 * controller.setClientService(new ClientService());
+	 * controller.setConcreteDesignService(new ConcreteDesignService());
+	 * controller.loadAssociatedObjects();
+	 * 
+	 * 
+	 * Stage dialogStage = new Stage(); dialogStage.setTitle("Nueva rotura");
+	 * dialogStage.setScene(new Scene(pane)); dialogStage.setResizable(false);
+	 * dialogStage.initOwner(parentStage);
+	 * dialogStage.initModality(Modality.WINDOW_MODAL); dialogStage.showAndWait();
+	 * 
+	 * this.compresionTest = controller.getEntity();
+	 * 
+	 * } catch (IOException e) { e.printStackTrace(); } }
+	 */
 
 	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
 
@@ -216,13 +204,39 @@ public class MainViewController implements Initializable {
 			initializingAction.accept(controller);
 
 		} catch (IOException e) {
-			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(),AlertType.ERROR);
+			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
+		}
+	}
+
+	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction, String css) {
+
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			VBox newVbox = loader.load();
+
+			Scene mainScene = Program.getMainScene();
+			
+			if (!css.trim().equals("")) {
+				mainScene.getStylesheets().add(css);
+			}
+			
+			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
+
+			Node mainMenu = mainVBox.getChildren().get(0);
+			mainVBox.getChildren().clear();
+			mainVBox.getChildren().add(mainMenu);
+			mainVBox.getChildren().addAll(newVbox.getChildren());
+
+			T controller = loader.getController();
+			initializingAction.accept(controller);
+
+		} catch (IOException e) {
+			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
 	@Override
 	public void initialize(URL uri, ResourceBundle rb) {
-
 
 	}
 

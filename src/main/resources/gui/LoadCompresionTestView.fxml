@@ -24,7 +24,7 @@
             <Button fx:id="btReport" mnemonicParsing="false" onAction="#onBtReportAction" text="Reporte" />
             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="btWarning" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onBtWarningACtion" text="Avisos!">
+                  <Button fx:id="btWarning" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onBtWarningACtion" styleClass="warning-button" text="Avisos!">
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
@@ -41,11 +41,11 @@
       </HBox>
       <TableView fx:id="tableViewClient" prefHeight="387.0" prefWidth="421.0">
         <columns>
-          <TableColumn fx:id="tableColumnId" prefWidth="75.0" text="iD" />
-          <TableColumn fx:id="tableColumnClientName" prefWidth="75.0" text="Cliente" />
-            <TableColumn fx:id="tableColumnObra" prefWidth="75.0" text="Obra" />
-            <TableColumn fx:id="tableColumnAddress" prefWidth="75.0" text="Ubicación" />
-            <TableColumn fx:id="tableColumnCreationDate" prefWidth="117.0" text="Data de Creacción" />
+          <TableColumn fx:id="tableColumnId" prefWidth="75.0" styleClass="custom-align" text="iD" />
+          <TableColumn fx:id="tableColumnClientName" prefWidth="75.0" styleClass="description-column-style" text="Cliente" />
+            <TableColumn fx:id="tableColumnObra" prefWidth="75.0" styleClass="custom-align" text="Obra" />
+            <TableColumn fx:id="tableColumnAddress" prefWidth="75.0" styleClass="custom-align" text="Ubicación" />
+            <TableColumn fx:id="tableColumnCreationDate" prefWidth="117.0" styleClass="custom-align" text="Fecha de Creacción" />
         </columns>
       </TableView>
    </children>

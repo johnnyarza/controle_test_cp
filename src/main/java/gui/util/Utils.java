@@ -148,13 +148,13 @@ public class Utils {
 				} else {
 					if (daysBetweenDates(item.getRuptureDate(), new Date()) == 0
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
-						setStyle("-fx-background-color: blue");
+						setStyle("-fx-background-color: #f1c40f");
 					} else if (item.getRuptureDate().compareTo(new Date()) < 0
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
-						setStyle("-fx-background-color: red");
+						setStyle("-fx-background-color: #e74c3c");
 					} else if (daysBetweenDates(item.getRuptureDate(), new Date()) == 1
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
-						setStyle("-fx-background-color: green");
+						setStyle("-fx-background-color: #2ecc71");
 					} else {
 						setStyle("");
 					}

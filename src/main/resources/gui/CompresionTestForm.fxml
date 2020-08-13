@@ -153,17 +153,17 @@
       <TableView fx:id="tableViewCorpoDeProva" minWidth="400.0" prefHeight="276.0">
         <columns>
           <TableColumn fx:id="tableColumnId" prefWidth="72.0" styleClass="custom-align" text="Probeta iD" />
-          <TableColumn fx:id="tableColumnCodigo" prefWidth="200.0" text="Descripción" />
+          <TableColumn fx:id="tableColumnCodigo" prefWidth="200.0" styleClass="fitwidth" text="Descripción" />
             <TableColumn fx:id="tableColumnSlump" prefWidth="75.0" styleClass="custom-align" text="Slump" />
             <TableColumn fx:id="tableColumnFechaMoldeo" prefWidth="110.0" styleClass="custom-align" text="Fecha de Moldeo" />
             <TableColumn fx:id="tableColumnFechaRotura" prefWidth="110.0" styleClass="custom-align" text="Fecha de Rotura" />
-            <TableColumn fx:id="tableColumnEdad" prefWidth="60.0" text="Edad" />
-            <TableColumn fx:id="tableColumnDiameter" prefWidth="60.33331298828125" text="Ø (cm)" />
-            <TableColumn fx:id="tableColumnHeight" prefWidth="75.3333740234375" text="Altura (cm)" />
-            <TableColumn fx:id="tableColumnWeight" prefWidth="78.0" text="Peso (kg)" />
-            <TableColumn fx:id="tableColumnDensid" prefWidth="101.33331298828125" text="Desidad (kg/m³)" />
-            <TableColumn fx:id="tableColumnTonRupture" prefWidth="85.66668701171875" text="Rotura (ton)" />
-            <TableColumn fx:id="tableColumnfckRupture" prefWidth="120.0" text="Resistencia (MPa)" />
+            <TableColumn fx:id="tableColumnEdad" prefWidth="60.0" styleClass="custom-align" text="Edad" />
+            <TableColumn fx:id="tableColumnDiameter" prefWidth="60.33331298828125" styleClass="custom-align" text="Ø (cm)" />
+            <TableColumn fx:id="tableColumnHeight" prefWidth="75.3333740234375" styleClass="custom-align" text="Altura (cm)" />
+            <TableColumn fx:id="tableColumnWeight" prefWidth="78.0" styleClass="custom-align" text="Peso (kg)" />
+            <TableColumn fx:id="tableColumnDensid" prefWidth="101.33331298828125" styleClass="custom-align" text="Desidad (kg/m³)" />
+            <TableColumn fx:id="tableColumnTonRupture" prefWidth="85.66668701171875" styleClass="custom-align" text="Rotura (ton)" />
+            <TableColumn fx:id="tableColumnfckRupture" prefWidth="120.0" styleClass="custom-align" text="Resistencia (MPa)" />
         </columns>
       </TableView>
       <HBox alignment="CENTER_LEFT" minHeight="35.0" prefHeight="35.0" prefWidth="719.0" spacing="5.0">
@@ -174,9 +174,9 @@
             <Button fx:id="btEditarCadastro" mnemonicParsing="false" onAction="#onBtEditarCadastroAction" text="Guardar Ensayo" textAlignment="CENTER" />
             <Button fx:id="btInserirProbeta" mnemonicParsing="false" onAction="#onBtInserirProbetaAction" text="Inserir Probeta" />
             <Button fx:id="btEditarProbeta" mnemonicParsing="false" onAction="#onBtEditarProbetaAction" text="Editar Probeta" />
-            <Button fx:id="btApagarProbeta" mnemonicParsing="false" onAction="#onBtApagarProbetaAction" text="Apagar Probeta" />
+            <Button fx:id="btApagarProbeta" mnemonicParsing="false" onAction="#onBtApagarProbetaAction" styleClass="delete-button" text="Apagar Probeta" />
             <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onbtPrintAction" text="Imprimir" />
-            <Button fx:id="btClose" mnemonicParsing="false" onAction="#onBtCloseAction" text="Cerrar" />
+            <Button fx:id="btClose" mnemonicParsing="false" onAction="#onBtCloseAction" styleClass="close-button" text="Cerrar" />
          </children>
       </HBox>
    </children>

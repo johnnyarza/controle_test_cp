@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import application.domaim.Cliente;
 import application.domaim.CompresionTest;
 import application.domaim.CompresionTestChartData;
 import application.domaim.CorpoDeProva;
@@ -31,15 +32,19 @@ public class CompresionTestReport {
 			
 			JRBeanCollectionDataSource itemsJRBean = new JRBeanCollectionDataSource(list);
 			List<CompresionTest> cTestList = new ArrayList<>();
+			List<Cliente> clientList = new ArrayList<>();
 			cTestList.add(cTest);
+			clientList.add(cTest.getClient());
+			
 			JRBeanCollectionDataSource itemsCTEstRBean = new JRBeanCollectionDataSource(cTestList);
 			JRBeanCollectionDataSource itemsCorpoDeProvaChartRBEan =new JRBeanCollectionDataSource(compresionTestChartData(list));
+			JRBeanCollectionDataSource itemsClientRBean = new JRBeanCollectionDataSource(clientList);
 			
-			//CorpoDeProvaChartCollectionBeanParam
 			Map<String, Object> data = new HashMap<>();
 			data.put("CorpoDeProvaCollecionBeanParam", itemsJRBean);
 			data.put("CompresionTestCollectionBeanParam", itemsCTEstRBean);
 			data.put("CorpoDeProvaChartCollectionBeanParam", itemsCorpoDeProvaChartRBEan);
+			data.put("ClientCollecionBeanParam", itemsClientRBean);
 			data.put("logo", FileUtils.getLogoPath());
 			data.put("carimbo", FileUtils.getCarimboPath());
 			
