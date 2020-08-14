@@ -10,6 +10,8 @@
 	-fx-opacity: 1;
 	-fx-background-color:#e74c3c;	
 	-fx-transaction: 0.3s;
+	-fx-color: white;
+	-fx-font-weight: bold;
 	
 }
 

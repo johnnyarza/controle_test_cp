@@ -80,7 +80,7 @@ public class MainViewController implements Initializable {
 		loadView("/gui/ClientList.fxml", (ClientListController controller) -> {
 			controller.setClientService(new ClientService());
 			controller.updateTableView();
-		});
+		},"/gui/ClientList.css");
 	}
 
 	@FXML

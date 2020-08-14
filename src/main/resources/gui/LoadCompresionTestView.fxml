@@ -24,7 +24,7 @@
             <Button fx:id="btReport" mnemonicParsing="false" onAction="#onBtReportAction" text="Reporte" />
             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="btWarning" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onBtWarningACtion" styleClass="warning-button" text="Avisos!">
+                  <Button fx:id="btWarning" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onBtWarningACtion" styleClass="warning-button" text="Avisos!" textFill="#fdfdfd">
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
