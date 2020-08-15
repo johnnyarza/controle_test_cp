@@ -169,7 +169,13 @@ public class ProviderRegistrationFormController implements Initializable {
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		initializeNodes ();
 
+	}
+	
+	public void initializeNodes () {
+		btCadastrar.getStyleClass().add("custom-button");
+		btCancelar.getStyleClass().add("close-button");
 	}
 
 }

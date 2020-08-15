@@ -4,13 +4,23 @@
 
 .custom-button:hover {
 	-fx-background-color:#2ecc71;
-	
 }
+
+.custom-button:focus{
+	-fx-outline:none;
+}	
 
 .description-column-style .label {
   -fx-alignment: CENTER_LEFT;
+  -fx-width: 100%;
 }
 
 .custom-align { 
   -fx-alignment: CENTER; 
 } 
+
+#id-column {
+	-fx-width: 50px;
+	-fx-width-min: 50px;
+	-fx-width-max: 50px;
+}

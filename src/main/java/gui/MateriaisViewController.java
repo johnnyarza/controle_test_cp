@@ -75,7 +75,7 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 					controller.setEntity(obj);
 					controller.loadAssociatedObjects();
 					controller.subscribeDataChangeListener(this);
-				});
+				},"/gui/MaterialRegistrationForm.css");
 	}
 
 	@FXML
@@ -92,7 +92,7 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 						controller.loadAssociatedObjects();
 						controller.updateFormData();
 						controller.subscribeDataChangeListener(this);
-					});
+					},"/gui/MaterialRegistrationForm.css");
 		} catch (NullPointerException e) {
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
@@ -163,7 +163,7 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 		tableColumnProvider.setCellValueFactory(new PropertyValueFactory<>("provider"));
 	}
 
-	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction) {
+	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction,String css) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -175,6 +175,9 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Insertar datos del material");
 			dialogStage.setScene(new Scene(pane));
+			if (!css.trim().equals("")) {
+				dialogStage.getScene().getStylesheets().add(css);
+			}
 			dialogStage.setResizable(false);
 			dialogStage.initOwner(parentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);

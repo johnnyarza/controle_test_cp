@@ -1,0 +1,7 @@
+.close-button:hover {
+	-fx-background-color:#e74c3c;
+}
+
+.save-button:hover {
+	-fx-background-color:#2ecc71;
+}

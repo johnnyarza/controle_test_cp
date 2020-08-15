@@ -42,11 +42,11 @@
       </ToolBar>
       <TableView fx:id="tableViewClient" prefHeight="200.0" prefWidth="625.0">
         <columns>
-          <TableColumn fx:id="tableColumnId" minWidth="40.0" prefWidth="50.0" text="iD" />
-          <TableColumn fx:id="tableColumnName" minWidth="150.0" prefWidth="180.0" text="Nombre" />
-            <TableColumn fx:id="tableColumnPhone" minWidth="110.0" prefWidth="110.0" text="Telefono" />
-            <TableColumn fx:id="tableColumnAddress" minWidth="150.0" prefWidth="150.0" text="Ubicación" />
-            <TableColumn fx:id="tableColumnEmail" minWidth="120.0" prefWidth="120.0" text="Correo E." />
+          <TableColumn fx:id="tableColumnId" minWidth="40.0" prefWidth="50.0" styleClass="custom-style" text="iD" />
+          <TableColumn fx:id="tableColumnName" minWidth="150.0" prefWidth="180.0" styleClass="description-column-style" text="Nombre" />
+            <TableColumn fx:id="tableColumnPhone" minWidth="110.0" prefWidth="110.0" styleClass="custom-style" text="Telefono" />
+            <TableColumn fx:id="tableColumnAddress" minWidth="150.0" prefWidth="150.0" styleClass="custom-style" text="Ubicación" />
+            <TableColumn fx:id="tableColumnEmail" minWidth="120.0" prefWidth="120.0" styleClass="custom-style" text="Correo E." />
         </columns>
       </TableView>
    </children>

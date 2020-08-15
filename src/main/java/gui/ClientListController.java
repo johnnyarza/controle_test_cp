@@ -71,7 +71,7 @@ public class ClientListController implements Initializable,DataChangeListener{
 	public void onBtNewAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
 		Cliente obj = new Cliente();
-		createDialogForm(obj,"/gui/ClienteRegistrationForm.fxml", parentStage);
+		createDialogForm(obj,"/gui/ClienteRegistrationForm.fxml", parentStage,"/gui/ClienteRegistrationForm.css");
 	}
 	
 	@FXML
@@ -79,7 +79,7 @@ public class ClientListController implements Initializable,DataChangeListener{
 		try {
 			Stage parentStage = Utils.currentStage(event);
 			Cliente obj = getClientFromTableView();
-			createDialogForm(obj,"/gui/ClienteRegistrationForm.fxml", parentStage);
+			createDialogForm(obj,"/gui/ClienteRegistrationForm.fxml", parentStage,"");
 			
 		} catch (NullPointerException e) {
 			Alerts.showAlert("Error", "Ningun cliente seleccionado", e.getMessage(), AlertType.ERROR);
@@ -118,14 +118,28 @@ public class ClientListController implements Initializable,DataChangeListener{
 	}
 
 	private void initializeNodes() {
+		formatTableVIiewClient();
+			
+	}
+	
+	private void formatTableVIiewClient() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
+		tableColumnId.getStyleClass().add("custom-align");
+		
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
+		tableColumnName.getStyleClass().add(".description-column-style");
+		
 		tableColumnAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+		tableColumnAddress.getStyleClass().add("custom-align");
+		
 		tableColumnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+		tableColumnEmail.getStyleClass().add("custom-align");
+		
 		tableColumnPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
+		tableColumnPhone.getStyleClass().add("custom-align");
 		
 		Stage stage =(Stage) Program.getMainScene().getWindow();
-		tableViewClient.prefHeightProperty().bind(stage.heightProperty());	
+		tableViewClient.prefHeightProperty().bind(stage.heightProperty());
 	}
 
 	public void updateTableView() {
@@ -142,7 +156,7 @@ public class ClientListController implements Initializable,DataChangeListener{
 		tableViewClient.refresh();
 	}
 	
-	public  void createDialogForm(Cliente obj, String absoluteName, Stage parentStage) {
+	public  void createDialogForm(Cliente obj, String absoluteName, Stage parentStage,String css) {
 		try {
 			
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -157,6 +171,11 @@ public class ClientListController implements Initializable,DataChangeListener{
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Cliente");
 			dialogStage.setScene(new Scene(pane));
+			
+			if (!css.trim().equals("")) {
+				dialogStage.getScene().getStylesheets().add(css);
+			}
+		
 			dialogStage.setResizable(false);
 			dialogStage.initOwner(parentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);

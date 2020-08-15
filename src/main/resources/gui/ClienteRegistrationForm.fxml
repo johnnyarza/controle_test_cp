@@ -39,8 +39,8 @@
             <TextField fx:id="txtEmail" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                <children>
-                  <Button fx:id="btCadastrar" mnemonicParsing="false" onAction="#onBtCadastrarAction" text="Cadastrar" />
-                  <Button fx:id="btCancelar" mnemonicParsing="false" onAction="#onBtCancelarAction" text="Cancelar" />
+                  <Button fx:id="btCadastrar" mnemonicParsing="false" onAction="#onBtCadastrarAction" styleClass="custom-button" text="Aceptar" />
+                  <Button fx:id="btCancelar" mnemonicParsing="false" onAction="#onBtCancelarAction" styleClass="close-button" text="Cerrar" />
                </children>
                <GridPane.margin>
                   <Insets top="5.0" />

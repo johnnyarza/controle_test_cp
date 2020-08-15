@@ -18,3 +18,11 @@
 .warning-button:hover {
 	-fx-opacity: 0.9;
 }
+
+.delete-button:hover {
+	-fx-background-color:#e74c3c;
+}
+
+.custom-button:hover {
+	-fx-background-color:#2ecc71;
+}

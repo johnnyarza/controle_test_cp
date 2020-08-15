@@ -21,6 +21,12 @@
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="8.0" />
+               </padding>
             </Label>
             <GridPane prefHeight="17.0" prefWidth="434.0">
               <columnConstraints>
@@ -179,8 +185,8 @@
             </GridPane>
             <HBox alignment="CENTER" prefHeight="40.0" prefWidth="517.0" spacing="10.0">
                <children>
-                  <Button fx:id="btSave" minWidth="62.0" mnemonicParsing="false" onAction="#onBtSaveAction" text="Salvar" />
-                  <Button fx:id="btCancel" mnemonicParsing="false" onAction="#onBtCancelAction" text="Cancelar" />
+                  <Button fx:id="btSave" minWidth="62.0" mnemonicParsing="false" onAction="#onBtSaveAction" styleClass="save-button" text="Salvar" />
+                  <Button fx:id="btCancel" mnemonicParsing="false" onAction="#onBtCancelAction" styleClass="close-button" text="Cerrar" />
                </children>
                <padding>
                   <Insets bottom="5.0" />

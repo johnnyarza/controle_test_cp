@@ -116,7 +116,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 					}, (NewCompresionTestFormController controller) -> {
 						this.entity = controller.getEntity();
 						this.btCancelPressed = controller.getBtCancelPressed();
-					});
+					},"/gui/NewCompresionTestForm.css");
 			if (!btCancelPressed) {
 				createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, this.entity,
 						"/gui/CompresionTestForm.css");
@@ -204,7 +204,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 							this.client = controller.getEntity();
 						}
 						this.btCancelPressed = controller.getPressedCancelButton();
-					});// final
+					},"");// final
 			if (!this.btCancelPressed) {
 				if (this.client == null) {
 					throw new IllegalStateException("Cliente vacío");
@@ -376,40 +376,6 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				}
 			});
 			dialogStage.showAndWait();
-
-		} catch (IOException e) {
-			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
-		}
-	}
-
-	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction) {
-		try {
-
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			AnchorPane pane = loader.load();
-
-			T controller = loader.getController();
-			initializingAction.accept(controller);
-
-			Stage dialogStage = new Stage();
-			dialogStage.setTitle(title);
-			dialogStage.setScene(new Scene(pane));
-			dialogStage.setResizable(true);
-			dialogStage.initOwner(parentStage);
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-
-			dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
-				@Override
-				public void handle(WindowEvent we) {
-					windowEventAction.accept(controller);
-
-				}
-			});
-
-			dialogStage.showAndWait();
-			finalAction.accept(controller);
 
 		} catch (IOException e) {
 			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);

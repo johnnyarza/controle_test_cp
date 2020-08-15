@@ -15,25 +15,28 @@
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
+         <padding>
+            <Insets left="8.0" />
+         </padding>
       </Label>
       <HBox alignment="CENTER_LEFT" minHeight="35.0" prefHeight="42.0" prefWidth="496.0" spacing="5.0">
          <children>
-            <Button fx:id="btNew" mnemonicParsing="false" onAction="#onBtNewAction" text="Nuevo" />
-            <Button fx:id="btEdit" mnemonicParsing="false" onAction="#onBtEditAction" text="Editar" />
-            <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" text="Apagar" />
-            <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onBtPrintAction" text="Imprimir" />
+            <Button fx:id="btNew" mnemonicParsing="false" onAction="#onBtNewAction" styleClass="custom-button" text="Nuevo" />
+            <Button fx:id="btEdit" mnemonicParsing="false" onAction="#onBtEditAction" styleClass="custom-button" text="Editar" />
+            <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" styleClass="delete-button" text="Apagar" />
+            <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onBtPrintAction" styleClass="custom-button" text="Imprimir" />
          </children>
          <padding>
-            <Insets left="5.0" />
+            <Insets left="8.0" />
          </padding>
       </HBox>
       <TableView fx:id="tableViewProvider" prefHeight="387.0" prefWidth="421.0">
         <columns>
-          <TableColumn fx:id="tableColumnId" prefWidth="75.0" text="iD" />
-          <TableColumn fx:id="tableColumnName" prefWidth="75.0" text="Nombre" />
-            <TableColumn fx:id="tableColumnPhone" prefWidth="75.0" text="Telefono" />
-            <TableColumn fx:id="tableColumnAddress" prefWidth="75.0" text="Ubicación" />
-            <TableColumn fx:id="tableColumnEmail" prefWidth="75.0" text="Correo E." />
+          <TableColumn id="id-column" fx:id="tableColumnId" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" styleClass="custom-align" text="iD" />
+          <TableColumn fx:id="tableColumnName" prefWidth="110.0" styleClass="description-column-style" text="Nombre" />
+            <TableColumn fx:id="tableColumnPhone" prefWidth="110.0" styleClass="custom-align" text="Telefono" />
+            <TableColumn fx:id="tableColumnAddress" prefWidth="110.0" styleClass="custom-align" text="Ubicación" />
+            <TableColumn fx:id="tableColumnEmail" minWidth="100.0" prefWidth="110.0" styleClass="custom-align" text="Correo E." />
         </columns>
       </TableView>
    </children>

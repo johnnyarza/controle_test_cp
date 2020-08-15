@@ -69,8 +69,8 @@
             </Label>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="265.0" spacing="5.0" GridPane.columnIndex="7" GridPane.rowIndex="2">
                <children>
-                  <Button fx:id="btFilter" mnemonicParsing="false" onAction="#onBtFilterAction" text="Filtrar Probetas" />
-                  <Button fx:id="btClearFilter" mnemonicParsing="false" onAction="#onbtClearFilterAction" text="Limpiar Filtros" />
+                  <Button fx:id="btFilter" mnemonicParsing="false" onAction="#onBtFilterAction" styleClass="custom-button" text="Filtrar Probetas" />
+                  <Button fx:id="btClearFilter" mnemonicParsing="false" onAction="#onbtClearFilterAction" styleClass="custom-button" text="Limpiar Filtros" />
                </children>
                <GridPane.margin>
                   <Insets left="2.0" />
@@ -171,11 +171,11 @@
             <Insets left="5.0" />
          </padding>
          <children>
-            <Button fx:id="btEditarCadastro" mnemonicParsing="false" onAction="#onBtEditarCadastroAction" text="Guardar Ensayo" textAlignment="CENTER" />
-            <Button fx:id="btInserirProbeta" mnemonicParsing="false" onAction="#onBtInserirProbetaAction" text="Inserir Probeta" />
-            <Button fx:id="btEditarProbeta" mnemonicParsing="false" onAction="#onBtEditarProbetaAction" text="Editar Probeta" />
+            <Button fx:id="btEditarCadastro" mnemonicParsing="false" onAction="#onBtEditarCadastroAction" styleClass="custom-button" text="Guardar Ensayo" textAlignment="CENTER" />
+            <Button fx:id="btInserirProbeta" mnemonicParsing="false" onAction="#onBtInserirProbetaAction" styleClass="custom-button" text="Inserir Probeta" />
+            <Button fx:id="btEditarProbeta" mnemonicParsing="false" onAction="#onBtEditarProbetaAction" styleClass="custom-button" text="Editar Probeta" />
             <Button fx:id="btApagarProbeta" mnemonicParsing="false" onAction="#onBtApagarProbetaAction" styleClass="delete-button" text="Apagar Probeta" />
-            <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onbtPrintAction" text="Imprimir" />
+            <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onbtPrintAction" styleClass="custom-button" text="Imprimir" />
             <Button fx:id="btClose" mnemonicParsing="false" onAction="#onBtCloseAction" styleClass="close-button" text="Cerrar" />
          </children>
       </HBox>

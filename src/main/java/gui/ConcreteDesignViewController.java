@@ -81,7 +81,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.setEntity(obj);
 						controller.loadAssociatedObjects();
 						controller.subscribeDataChangeListener(this);
-					});
+					},"/gui/ConcreteDesignRegistrationForm.css");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -100,7 +100,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.loadAssociatedObjects();
 						controller.updateFormData();
 						controller.subscribeDataChangeListener(this);
-					});
+					},"");
 		} catch (IllegalStateException e) {
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		}
@@ -222,6 +222,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	private void initializeNodes() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnDesc.setCellValueFactory(new PropertyValueFactory<>("proporcion"));
+		tableColumnDesc.getStyleClass().add("description-column-style");
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("description"));
 		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));
 		Utils.formatTableColumnDouble(tableColumnSlump, 2);
@@ -236,7 +237,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		}
 	}
 
-	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction) {
+	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction,String css) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -248,6 +249,11 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Insertar datos del diseño");
 			dialogStage.setScene(new Scene(pane));
+			
+			if (!css.trim().equals("")) {
+				dialogStage.getScene().getStylesheets().add(css);
+			}
+			
 			dialogStage.setResizable(false);
 			dialogStage.initOwner(parentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);

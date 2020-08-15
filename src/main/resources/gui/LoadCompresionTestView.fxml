@@ -15,13 +15,16 @@
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
+         <padding>
+            <Insets left="8.0" />
+         </padding>
       </Label>
       <HBox alignment="CENTER_LEFT" minHeight="35.0" prefHeight="35.0" prefWidth="600.0" spacing="5.0">
          <children>
-            <Button fx:id="btNew" mnemonicParsing="false" onAction="#onbtNewAction" text="Nuevo" />
-            <Button fx:id="btOpen" mnemonicParsing="false" onAction="#onbtOpenAction" text="Abrir" />
-            <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" text="Apagar" />
-            <Button fx:id="btReport" mnemonicParsing="false" onAction="#onBtReportAction" text="Reporte" />
+            <Button fx:id="btNew" mnemonicParsing="false" onAction="#onbtNewAction" styleClass="custom-button" text="Nuevo" />
+            <Button fx:id="btOpen" mnemonicParsing="false" onAction="#onbtOpenAction" styleClass="custom-button" text="Abrir" />
+            <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" styleClass="delete-button" text="Apagar" />
+            <Button fx:id="btReport" mnemonicParsing="false" onAction="#onBtReportAction" styleClass="custom-button" text="Reporte" />
             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                <children>
                   <Button fx:id="btWarning" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onBtWarningACtion" styleClass="warning-button" text="Avisos!" textFill="#fdfdfd">
@@ -41,10 +44,10 @@
       </HBox>
       <TableView fx:id="tableViewClient" prefHeight="387.0" prefWidth="421.0">
         <columns>
-          <TableColumn fx:id="tableColumnId" prefWidth="75.0" styleClass="custom-align" text="iD" />
-          <TableColumn fx:id="tableColumnClientName" prefWidth="75.0" styleClass="description-column-style" text="Cliente" />
-            <TableColumn fx:id="tableColumnObra" prefWidth="75.0" styleClass="custom-align" text="Obra" />
-            <TableColumn fx:id="tableColumnAddress" prefWidth="75.0" styleClass="custom-align" text="Ubicación" />
+          <TableColumn fx:id="tableColumnId" minWidth="50.0" prefWidth="50.0" styleClass="custom-align" text="iD" />
+          <TableColumn fx:id="tableColumnClientName" minWidth="100.0" prefWidth="100.0" styleClass="description-column-style" text="Cliente" />
+            <TableColumn fx:id="tableColumnObra" minWidth="100.0" prefWidth="100.0" styleClass="custom-align" text="Obra" />
+            <TableColumn fx:id="tableColumnAddress" minWidth="100.0" prefWidth="100.0" styleClass="custom-align" text="Ubicación" />
             <TableColumn fx:id="tableColumnCreationDate" prefWidth="117.0" styleClass="custom-align" text="Fecha de Creacción" />
         </columns>
       </TableView>

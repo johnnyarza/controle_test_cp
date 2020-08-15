@@ -1,4 +1,4 @@
-package gui;
+  package gui;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -168,6 +168,8 @@ public class MaterialRegistrationFormController implements Initializable {
 
 	private void initializeNodes() {
 		Constraints.setTextFieldInteger(txtId);
+		btCadastrar.getStyleClass().add("custom-button");
+		btCancelar.getStyleClass().add("close-button");
 		initializeComboBoxClient();
 	}
 

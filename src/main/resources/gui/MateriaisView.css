@@ -4,11 +4,15 @@
 
 .custom-button:hover {
 	-fx-background-color:#2ecc71;
-	
 }
+
+.custom-button:focus{
+	-fx-outline:none;
+}	
 
 .description-column-style .label {
   -fx-alignment: CENTER_LEFT;
+  -fx-width: 100%;
 }
 
 .custom-align { 

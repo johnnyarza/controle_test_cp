@@ -88,7 +88,7 @@ public class MainViewController implements Initializable {
 		loadView("/gui/ProveedoresView.fxml", (ProveedoresViewController controller) -> {
 			controller.setService(new ProviderService());
 			controller.updateTableView();
-		});
+		},"/gui/ProveedoresView.css");
 	}
 
 	@FXML
@@ -96,7 +96,7 @@ public class MainViewController implements Initializable {
 		loadView("/gui/MateriaisView.fxml", (MateriaisViewController controller) -> {
 			controller.setService(new MaterialService());
 			controller.updateTableView();
-		});
+		},"/gui/MateriaisView.css");
 	}
 
 	@FXML
@@ -105,7 +105,7 @@ public class MainViewController implements Initializable {
 			controller.setService(new ConcreteDesignService());
 			controller.setCompresionTestService(new CompresionTestService());
 			controller.updateTableView();
-		});
+		},"/gui/ConcreteDesignView.css");
 	}
 
 	@FXML

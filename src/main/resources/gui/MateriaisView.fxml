@@ -18,10 +18,10 @@
       </Label>
       <HBox alignment="CENTER_LEFT" minHeight="35.0" prefHeight="42.0" prefWidth="496.0" spacing="5.0">
          <children>
-            <Button fx:id="btNew" mnemonicParsing="false" onAction="#onBtNewAction" text="Nuevo" />
-            <Button fx:id="btEdit" mnemonicParsing="false" onAction="#onBtEditAction" text="Editar" />
-            <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" text="Apagar" />
-            <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onBtPrintAction" text="imprimir" />
+            <Button fx:id="btNew" mnemonicParsing="false" onAction="#onBtNewAction" styleClass="custom-button" text="Nuevo" />
+            <Button fx:id="btEdit" mnemonicParsing="false" onAction="#onBtEditAction" styleClass="custom-button" text="Editar" />
+            <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" styleClass="delete-button" text="Apagar" />
+            <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onBtPrintAction" styleClass="custom-button" text="imprimir" />
          </children>
          <padding>
             <Insets left="5.0" />
@@ -29,9 +29,9 @@
       </HBox>
       <TableView fx:id="tableViewMaterial" prefHeight="387.0" prefWidth="421.0">
         <columns>
-          <TableColumn fx:id="tableColumnId" prefWidth="50.0" text="iD" />
-          <TableColumn fx:id="tableColumnName" minWidth="110.0" prefWidth="110.0" text="Nombre" />
-            <TableColumn fx:id="tableColumnProvider" minWidth="110.0" prefWidth="110.0" text="Proveedor" />
+          <TableColumn fx:id="tableColumnId" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" styleClass="custom-align" text="iD" />
+          <TableColumn fx:id="tableColumnName" minWidth="110.0" prefWidth="110.0" styleClass="description-column-style" text="Nombre" />
+            <TableColumn fx:id="tableColumnProvider" maxWidth="-1.0" minWidth="110.0" prefWidth="150.0" styleClass="custom-align" text="Proveedor" />
         </columns>
       </TableView>
    </children>

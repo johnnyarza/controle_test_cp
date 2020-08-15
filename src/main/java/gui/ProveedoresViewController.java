@@ -77,7 +77,7 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 			controller.setService(new ProviderService());
 			controller.setEntity(obj);
 			controller.subscribeDataChangeListener(this);			
-		});
+		},"/gui/ProviderRegistrationForm.css");
 	}
 	
 	public void onBtEditAction(ActionEvent event) {
@@ -90,7 +90,7 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 			controller.setEntity(obj);
 			controller.updateFormData();
 			controller.subscribeDataChangeListener(this);			
-		});
+		},"/gui/ProviderRegistrationForm.css");
 		} catch (NullPointerException e) {
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
@@ -131,7 +131,7 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 		this.service = service;
 	}
 	
-	private <T> void createDialogForm(String absoluteName, Stage parentStage,Consumer<T> initializingAction) {
+	private <T> void createDialogForm(String absoluteName, Stage parentStage,Consumer<T> initializingAction, String css) {
 		try {
 			
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -143,6 +143,9 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Entre con los datos del Proveedor");
 			dialogStage.setScene(new Scene(pane));
+			if (!css.trim().equals("")) {
+				dialogStage.getScene().getStylesheets().add(css);
+			}
 			dialogStage.setResizable(false);
 			dialogStage.initOwner(parentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);

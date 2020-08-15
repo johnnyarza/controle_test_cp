@@ -1,0 +1,6 @@
+.custom-button:hover {
+	-fx-background-color:#2ecc71;
+}
+.close-button:hover {
+	-fx-background-color:#e74c3c;
+}
