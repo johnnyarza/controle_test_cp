@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 import application.Program;
 import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Provider;
+import application.log.LogUtils;
 import application.service.ProviderService;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
@@ -37,6 +39,8 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 	private ProviderService service;
 	
 	private ObservableList<Provider> obsList;
+	
+	private LogUtils logger;
 	
 	@FXML
 	private Button btNew;
@@ -76,6 +80,7 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 		createDialogForm("/gui/ProviderRegistrationForm.fxml", parentStage, (ProviderRegistrationFormController controller) -> {
 			controller.setService(new ProviderService());
 			controller.setEntity(obj);
+			controller.setLogger(logger);
 			controller.subscribeDataChangeListener(this);			
 		},"/gui/ProviderRegistrationForm.css");
 	}
@@ -88,10 +93,12 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 		createDialogForm("/gui/ProviderRegistrationForm.fxml", parentStage, (ProviderRegistrationFormController controller) -> {
 			controller.setService(new ProviderService());
 			controller.setEntity(obj);
+			controller.setLogger(logger);
 			controller.updateFormData();
 			controller.subscribeDataChangeListener(this);			
 		},"/gui/ProviderRegistrationForm.css");
 		} catch (NullPointerException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -110,10 +117,13 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 			}
 				updateTableView();
 		} catch (DbException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error deleting probeta", e.getMessage(), AlertType.ERROR);
 		} catch (NullPointerException e1) {
+			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "NullPointerException", e1.getMessage(), AlertType.ERROR);
 		} catch (IllegalStateException e2) {
+			logger.doLog(Level.WARNING, e2.getMessage(), e2);
 			Alerts.showAlert("Error", "IllegalStateException", e2.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -132,6 +142,14 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 		this.service = service;
 	}
 	
+	public LogUtils getLogger() {
+		return logger;
+	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
+	}
+
 	private <T> void createDialogForm(String absoluteName, Stage parentStage,Consumer<T> initializingAction, String css) {
 		try {
 			
@@ -153,7 +171,8 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 			dialogStage.showAndWait();
 					
 		}catch (IOException e) {
-			e.printStackTrace();
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error al cargar ventana",e.getMessage() , AlertType.ERROR);
 		}
 	}
 	

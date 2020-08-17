@@ -9,12 +9,14 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 import application.db.DbException;
 import application.domaim.Cliente;
 import application.domaim.CompresionTest;
 import application.domaim.ConcreteDesign;
 import application.exceptions.ValidationException;
+import application.log.LogUtils;
 import application.service.ClientService;
 import application.service.CompresionTestService;
 import application.service.ConcreteDesignService;
@@ -58,6 +60,8 @@ public class NewCompresionTestFormController implements Initializable {
 	private List<DataChangeListener> dataChangeListener = new ArrayList<DataChangeListener>();
 	
 	private Boolean btCancelPressed;
+	
+	private LogUtils logger;
 
 	@FXML
 	private ComboBox<Cliente> comboBoxClient;
@@ -128,6 +132,10 @@ public class NewCompresionTestFormController implements Initializable {
 		this.entity = entity;
 	}
 
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
+	}
+
 	public ConcreteDesignService getConcreteDesignService() {
 		return concreteDesignService;
 	}
@@ -157,6 +165,7 @@ public class NewCompresionTestFormController implements Initializable {
 			this.btCancelPressed = false;
 			Utils.currentStage(event).close();
 		} catch (DbException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error saving object", null, e.getMessage(), AlertType.ERROR);
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());

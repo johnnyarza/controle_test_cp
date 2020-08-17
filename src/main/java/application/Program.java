@@ -30,6 +30,7 @@ public class Program extends Application {
 			mainScene = new Scene(scrollPane);
 			mainScene.getStylesheets().add("/gui/application.css");
 			primaryStage.setScene(mainScene);
+			
 			primaryStage.setTitle("Probeta Control");
 			primaryStage.show();
 			
@@ -67,5 +68,7 @@ public class Program extends Application {
 			
 			FileUtils.writeProperties("db.properties", initialProps);
 		}
+	
+		
 	}
 }

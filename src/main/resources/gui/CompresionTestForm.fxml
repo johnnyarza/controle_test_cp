@@ -154,7 +154,7 @@
             <Insets left="8.0" right="8.0" top="5.0" />
          </padding>
       </GridPane>
-      <TableView fx:id="tableViewCorpoDeProva" minWidth="400.0" prefHeight="276.0" styleClass="tableView">
+      <TableView fx:id="tableViewCorpoDeProva" minWidth="400.0" prefHeight="276.0">
         <columns>
           <TableColumn fx:id="tableColumnId" prefWidth="72.0" styleClass="custom-align" text="Probeta iD" />
           <TableColumn fx:id="tableColumnCodigo" prefWidth="200.0" styleClass="fitwidth" text="Descripción" />

@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Material;
 import application.domaim.Provider;
+import application.log.LogUtils;
 import application.service.MaterialService;
 import application.service.ProviderService;
 import gui.listeners.DataChangeListener;
@@ -38,6 +40,8 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 	MaterialService service;
 
 	ObservableList<Material> obsList;
+	
+	LogUtils logger;
 
 	@FXML
 	private Button btNew;
@@ -73,6 +77,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 					controller.setService(new MaterialService());
 					controller.setProviderService(new ProviderService());
 					controller.setEntity(obj);
+					controller.setLogger(logger);
 					controller.loadAssociatedObjects();
 					controller.subscribeDataChangeListener(this);
 				}, "/gui/MaterialRegistrationForm.css");
@@ -94,6 +99,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 						controller.subscribeDataChangeListener(this);
 					}, "/gui/MaterialRegistrationForm.css");
 		} catch (NullPointerException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -113,10 +119,13 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 				updateTableView();
 			}
 		} catch (IllegalStateException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		} catch (DbException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
 		}catch (NullPointerException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -133,6 +142,14 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 
 	public void setService(MaterialService service) {
 		this.service = service;
+	}
+
+	public LogUtils getLogger() {
+		return logger;
+	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
 	}
 
 	private Material getMarialFromTableView() {
@@ -188,7 +205,8 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 			dialogStage.showAndWait();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error al abrir ventana", e.getMessage(), AlertType.ERROR);
 		}
 	}
 

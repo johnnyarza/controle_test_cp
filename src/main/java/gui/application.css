@@ -14,3 +14,10 @@
 	-fx-background-color: transparent;
 	
 }
+
+.table-view:focused {
+  -fx-background-color: transparent;
+  -fx-background-insets: -1.4, 0, 1;
+  -fx-background-radius: 1.4, 0, 0;
+
+}

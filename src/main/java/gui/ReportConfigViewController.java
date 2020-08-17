@@ -11,7 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
+import application.log.LogUtils;
 import application.util.FileUtils;
 import gui.util.Alerts;
 import gui.util.Utils;
@@ -32,6 +34,8 @@ public class ReportConfigViewController implements Initializable{
 	private String carimboPath;
 	
 	private File imagesProp;
+	
+	private LogUtils logger;
 	
 	@FXML
 	private Button btSave;
@@ -65,6 +69,7 @@ public class ReportConfigViewController implements Initializable{
 		newProps.putAll(mapProps);
 		newProps.store(new FileOutputStream(file),null);
 		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error in saveImagePaths", "IOException", e.getMessage(), AlertType.ERROR);
 		}
 		
@@ -79,6 +84,7 @@ public class ReportConfigViewController implements Initializable{
 			imgLogo.setImage(Utils.createImage(logoPath));
 			saveImagePaths();
 		} catch (FileNotFoundException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error in onBtLogoAction", "FileNotFoundException", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -91,6 +97,7 @@ public class ReportConfigViewController implements Initializable{
 			imgCarimbo.setImage(Utils.createImage(carimboPath));
 			saveImagePaths();
 		} catch (FileNotFoundException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error in onBtCarimboAction", "FileNotFoundException", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -111,8 +118,9 @@ public class ReportConfigViewController implements Initializable{
 			logoPath = props.containsKey("logoPath") ? props.getProperty("logoPath") : "";
 			carimboPath = props.containsKey("carimboPath") ? props.getProperty("carimboPath") : "";
 			setImagesInView ();
-		} catch (IOException e1) {
-			Alerts.showAlert("Error in loadImages", "IOException", e1.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error in loadImages", "IOException", e.getMessage(), AlertType.ERROR);
 		}
 		
 	}
@@ -177,6 +185,10 @@ public class ReportConfigViewController implements Initializable{
 
 	public void setImagesProp(File file) {
 		this.imagesProp = file;
+	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
 	}
 	
 }

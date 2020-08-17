@@ -29,33 +29,34 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="iD" />
-            <Label text="Cliente" GridPane.rowIndex="1" />
-            <TextField fx:id="txtId" editable="false" maxWidth="40.0" GridPane.columnIndex="1" />
-            <Label text="Obra" GridPane.rowIndex="3" />
-            <Label text="Ubicación" GridPane.rowIndex="4" />
+            <ComboBox fx:id="comboBoxClient" prefHeight="25.0" prefWidth="189.0" promptText="Cliente" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="comboBoxConcreteProvider" prefHeight="25.0" prefWidth="181.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="txtObra" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <TextField fx:id="txtAddress" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <ComboBox fx:id="comboBoxClient" prefHeight="25.0" prefWidth="189.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label text="Diseño" GridPane.rowIndex="5" />
+            <ComboBox fx:id="comboBoxConcreteDesign" prefHeight="25.0" prefWidth="184.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <HBox alignment="CENTER" prefHeight="29.0" prefWidth="182.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <children>
-                  <Button fx:id="btCreate" mnemonicParsing="false" onAction="#onBtCreateAction" text="Crear" />
-                  <Button fx:id="btCancel" mnemonicParsing="false" onAction="#onBtCancelAction" text="Cancelar" />
+                  <Button fx:id="btCreate" defaultButton="true" mnemonicParsing="false" onAction="#onBtCreateAction" text="Crear" />
+                  <Button fx:id="btCancel" cancelButton="true" mnemonicParsing="false" onAction="#onBtCancelAction" text="Cancelar" />
                </children>
                <GridPane.margin>
                   <Insets top="5.0" />
                </GridPane.margin>
             </HBox>
-            <Label fx:id="labelErrorObra" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin></Label>
             <Label fx:id="labelErrorAddress" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin></Label>
-            <ComboBox fx:id="comboBoxConcreteDesign" prefHeight="25.0" prefWidth="184.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label text="iD" />
+            <Label text="Cliente" GridPane.rowIndex="1" />
+            <TextField fx:id="txtId" editable="false" maxWidth="40.0" GridPane.columnIndex="1" />
+            <Label text="Obra" GridPane.rowIndex="3" />
+            <Label text="Ubicación" GridPane.rowIndex="4" />
+            <Label text="Diseño" GridPane.rowIndex="5" />
+            <Label fx:id="labelErrorObra" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="5.0" />
+               </GridPane.margin></Label>
             <Label fx:id="labelErrorConcreteDesign" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="5.0" />
@@ -71,7 +72,6 @@
                   </Button>
                </children>
             </HBox>
-            <ComboBox fx:id="comboBoxConcreteProvider" prefHeight="25.0" prefWidth="181.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Prov. Hormigon" GridPane.rowIndex="2" />
             <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <children>

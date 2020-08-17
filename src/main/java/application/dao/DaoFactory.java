@@ -6,6 +6,7 @@ import application.dao.impl.CompresionTestListJDBC;
 import application.dao.impl.ConcreteDesignDaoJDBC;
 import application.dao.impl.CorpoDeProvaJDBC;
 import application.dao.impl.MaterialDaoJDBC;
+import application.dao.impl.MigrationDaoJDBC;
 import application.dao.impl.ProviderDaoJDBC;
 import application.db.DB;
 
@@ -38,6 +39,10 @@ public class DaoFactory {
 
 	public static ConcreteDesignDao ConcreteDesignlDao() {
 		return new ConcreteDesignDaoJDBC(DB.getConnection());
+	}
+	
+	public static MigrationDao createMigrationDao() {
+		return new MigrationDaoJDBC(DB.getConnection());
 	}
 
 }

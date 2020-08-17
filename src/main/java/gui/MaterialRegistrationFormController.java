@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
 
 import application.db.DbException;
 import application.domaim.Material;
 import application.domaim.Provider;
 import application.exceptions.ValidationException;
+import application.log.LogUtils;
 import application.service.MaterialService;
 import application.service.ProviderService;
 import gui.listeners.DataChangeListener;
@@ -42,6 +44,8 @@ public class MaterialRegistrationFormController implements Initializable {
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
 	private ObservableList<Provider> obsList;
+	
+	private LogUtils logger;
 
 	@FXML
 	private Button btCadastrar;
@@ -80,10 +84,12 @@ public class MaterialRegistrationFormController implements Initializable {
 			Utils.currentStage(event).close();
 			
 		} catch (DbException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
 		}catch (IllegalStateException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -107,6 +113,10 @@ public class MaterialRegistrationFormController implements Initializable {
 
 	public void setProviderService(ProviderService providerService) {
 		this.providerService = providerService;
+	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
 	}
 
 	public void subscribeDataChangeListener(DataChangeListener listener) {

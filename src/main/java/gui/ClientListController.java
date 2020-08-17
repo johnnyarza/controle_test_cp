@@ -10,6 +10,7 @@ import application.Program;
 import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Cliente;
+import application.log.LogUtils;
 import application.service.ClientService;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
@@ -36,6 +37,7 @@ public class ClientListController implements Initializable, DataChangeListener {
 	private ClientService service;
 
 	private ObservableList<Cliente> obsList;
+	
 
 	@FXML
 	private TableView<Cliente> tableViewClient;
@@ -117,7 +119,6 @@ public class ClientListController implements Initializable, DataChangeListener {
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		initializeNodes();
-
 	}
 
 	private void initializeNodes() {
@@ -166,6 +167,7 @@ public class ClientListController implements Initializable, DataChangeListener {
 			Pane pane = loader.load();
 
 			ClienteRegistrationFormController controller = loader.getController();
+			controller.setLogger(new LogUtils());
 			controller.setEntity(obj);
 			controller.setService(new ClientService());
 			controller.subscribeDataChangeListener(this);
@@ -185,7 +187,9 @@ public class ClientListController implements Initializable, DataChangeListener {
 			dialogStage.showAndWait();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			Alerts.showAlert("Error", "Error al abrir ventana", null, AlertType.ERROR);
+		} catch (SecurityException e) {
+			Alerts.showAlert("Error", "Error inesperado", e.getMessage(), AlertType.ERROR);
 		}
 	}
 

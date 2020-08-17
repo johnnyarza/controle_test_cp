@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
 
 import application.db.DbException;
 import application.domaim.ConcreteDesign;
 import application.domaim.Material;
 import application.domaim.MaterialProporcion;
 import application.exceptions.ValidationException;
+import application.log.LogUtils;
 import application.service.ConcreteDesignService;
 import application.service.MaterialService;
 import gui.listeners.DataChangeListener;
@@ -45,6 +47,8 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 	private ObservableList<Material> obsListMaterial;
 	
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
+	
+	private LogUtils logger;
 	
 
 	@FXML
@@ -131,10 +135,13 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 				Utils.currentStage(event).close();
 			}
 		} catch (IllegalStateException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		} catch (DbException e1) {
+			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "IllegalStateException", e1.getMessage(), AlertType.ERROR);
 		} catch (ValidationException e2) {
+			logger.doLog(Level.WARNING, e2.getMessage(), e2);
 			Alerts.showAlert("Error", "ValidationException", setErrorMessages(e2.getErrors()), AlertType.ERROR);
 		}
 	}
@@ -154,6 +161,10 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 
 	public ConcreteDesignService getService() {
 		return service;
+	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
 	}
 
 	public void setService(ConcreteDesignService service) {

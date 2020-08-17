@@ -5,9 +5,11 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 import application.Program;
 import application.domaim.CompresionTest;
+import application.log.LogUtils;
 import application.service.ClientService;
 import application.service.CompresionTestListService;
 import application.service.CompresionTestService;
@@ -33,6 +35,8 @@ public class MainViewController implements Initializable {
 	private Boolean btCancelPressed;
 
 	private CompresionTest compresionTest;
+	
+	private LogUtils logger;
 
 	@FXML
 	private MenuItem BtTest;
@@ -69,6 +73,7 @@ public class MainViewController implements Initializable {
 			controller.setClientService(new ClientService());
 			controller.setCorpoDeProvaService(new CorpoDeProvaService());
 			controller.setCompresionTestService(new CompresionTestService());
+			controller.setLogger(logger);
 
 			controller.updateViewData();
 
@@ -90,6 +95,7 @@ public class MainViewController implements Initializable {
 	public void onBtProviderAction(ActionEvent event) {
 		loadView("/gui/ProveedoresView.fxml", (ProveedoresViewController controller) -> {
 			controller.setService(new ProviderService());
+			controller.setLogger(logger);
 			controller.updateTableView();
 		}, "/gui/ProveedoresView.css");
 	}
@@ -98,6 +104,7 @@ public class MainViewController implements Initializable {
 	public void onBtMaterialAction(ActionEvent event) {
 		loadView("/gui/MateriaisView.fxml", (MateriaisViewController controller) -> {
 			controller.setService(new MaterialService());
+			controller.setLogger(logger);
 			controller.updateTableView();
 		}, "/gui/MateriaisView.css");
 	}
@@ -106,6 +113,7 @@ public class MainViewController implements Initializable {
 	public void onBtDesignAction(ActionEvent event) {
 		loadView("/gui/ConcreteDesignView.fxml", (ConcreteDesignViewController controller) -> {
 			controller.setService(new ConcreteDesignService());
+			controller.setLogger(logger);
 			controller.setCompresionTestService(new CompresionTestService());
 			controller.updateTableView();
 		}, "/gui/ConcreteDesignView.css");
@@ -120,7 +128,7 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void onBtConfigReportAction(ActionEvent event) {
 		loadView("/gui/ReportConfigView.fxml", (ReportConfigViewController controller) -> {
-
+			controller.setLogger(logger);
 			controller
 					.setImagesProp(Paths.get(System.getProperty("user.home"), "cp_configs", "ReportImage.properties").toFile());
 			controller.loadImages();
@@ -130,6 +138,7 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void onBtConfigConnectionAction(ActionEvent event) {
 		loadView("/gui/ConnectionConfigView.fxml", (ConnectionConfigViewController controller) -> {
+			controller.setLogger(logger);
 			controller.updateViewData();
 		});
 	}
@@ -150,45 +159,6 @@ public class MainViewController implements Initializable {
 		this.compresionTest = compresionTest;
 	}
 
-	/*
-	 * private <T> void createDialogForm(String absoluteName, Stage parentStage,
-	 * Consumer<T> initializingAction) { try {
-	 * 
-	 * FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-	 * Pane pane = loader.load();
-	 * 
-	 * T controller = loader.getController(); initializingAction.accept(controller);
-	 * 
-	 * Stage dialogStage = new Stage(); dialogStage.setTitle("Nueva rotura");
-	 * dialogStage.setScene(new Scene(pane)); dialogStage.setResizable(false);
-	 * dialogStage.initOwner(parentStage);
-	 * dialogStage.initModality(Modality.WINDOW_MODAL); dialogStage.showAndWait();
-	 * 
-	 * } catch (IOException e) { e.printStackTrace(); } }
-	 * 
-	 * private void createDialogFormNewCompresionTest(String absoluteName, Stage
-	 * parentStage) { try {
-	 * 
-	 * FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-	 * Pane pane = loader.load();
-	 * 
-	 * NewCompresionTestFormController controller = loader.getController();
-	 * controller.setCompresionTestService(new CompresionTestService());
-	 * controller.setClientService(new ClientService());
-	 * controller.setConcreteDesignService(new ConcreteDesignService());
-	 * controller.loadAssociatedObjects();
-	 * 
-	 * 
-	 * Stage dialogStage = new Stage(); dialogStage.setTitle("Nueva rotura");
-	 * dialogStage.setScene(new Scene(pane)); dialogStage.setResizable(false);
-	 * dialogStage.initOwner(parentStage);
-	 * dialogStage.initModality(Modality.WINDOW_MODAL); dialogStage.showAndWait();
-	 * 
-	 * this.compresionTest = controller.getEntity();
-	 * 
-	 * } catch (IOException e) { e.printStackTrace(); } }
-	 */
-
 	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
 
 		try {
@@ -207,6 +177,7 @@ public class MainViewController implements Initializable {
 			initializingAction.accept(controller);
 
 		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -234,14 +205,14 @@ public class MainViewController implements Initializable {
 			initializingAction.accept(controller);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
 	@Override
 	public void initialize(URL uri, ResourceBundle rb) {
-
+		logger = new LogUtils();
 	}
 
 }

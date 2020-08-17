@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 import application.Program;
 import application.Report.ReportFactory;
@@ -17,6 +18,7 @@ import application.domaim.CompresionTest;
 import application.domaim.CompresionTestList;
 import application.domaim.CorpoDeProva;
 import application.exceptions.ReportException;
+import application.log.LogUtils;
 import application.service.ClientService;
 import application.service.CompresionTestListService;
 import application.service.CompresionTestService;
@@ -66,6 +68,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	private Boolean btCancelPressed;
 
 	private List<CorpoDeProva> lateCorpoDeProvaList;
+	
+	private LogUtils logger;
 
 	@FXML
 	private TableView<CompresionTestList> tableViewClient;
@@ -109,6 +113,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 						controller.setCompresionTestService(new CompresionTestService());
 						controller.setClientService(new ClientService());
 						controller.setConcreteDesignService(new ConcreteDesignService());
+						controller.setLogger(logger);
 						controller.loadAssociatedObjects();
 						controller.subscribeDataChangeListener(this);
 					}, (NewCompresionTestFormController controller) -> {
@@ -122,6 +127,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			}
 
 		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error Desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -137,6 +143,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
 			}
 		} catch (NullPointerException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -158,10 +165,13 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				}
 			}
 		} catch (DbException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
 		} catch (IllegalStateException e1) {
+			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "IllegalStateException", e1.getMessage(), AlertType.ERROR);
 		} catch (NullPointerException e2) {
+			logger.doLog(Level.WARNING, e2.getMessage(), e2);
 			Alerts.showAlert("Error", "NullPointerException", e2.getMessage(), AlertType.ERROR);
 		}
 
@@ -189,7 +199,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				showCompresionTestForm(parentStage);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -219,8 +229,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				showCompresionTestReportByClient(this.client.getId());
 			}
 		} catch (IllegalStateException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		} catch (ReportException e1) {
+			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "ReportException", e1.getMessage(), AlertType.ERROR);
 		}
 
@@ -262,8 +274,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		Utils.formatTableColumnDate(tableColumnCreationDate, "dd/MM/yyyy");
 		tableColumnObra.setCellValueFactory(new PropertyValueFactory<>("obra"));
 
-		Stage stage = (Stage) Program.getMainScene().getWindow();
-		
+		Stage stage = (Stage) Program.getMainScene().getWindow();	
 		
 		tableViewClient.prefHeightProperty().bind(stage.heightProperty());
 	}
@@ -273,7 +284,6 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	public void updateViewData() {
 		updateTableView();
 		updateLateCorpoDeProva();
-
 	}
 
 	private void updateTableView() {
@@ -294,8 +304,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			lateCorpoDeProvaList = corpoDeProvaService.findLateCorpoDeProva(TimeZone.getDefault());
 			formatWarningBtn(lateCorpoDeProvaList);
 		} catch (IllegalStateException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		} catch (DbException e1) {
+			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "SQLException", e1.getMessage(), AlertType.ERROR);
 		}
 
@@ -344,6 +356,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			controller.setClientService(new ClientService());
 			controller.setConcreteDesignService(new ConcreteDesignService());
 			controller.setCompresionTest(obj);
+			controller.setLogger(logger);
 			controller.loadAssociatedObjects();
 			controller.updateFormData();
 			controller.updateTableView();
@@ -375,6 +388,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			dialogStage.showAndWait();
 
 		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
 		}
 	}
@@ -414,6 +428,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			finalAction.accept(controller);
 
 		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
 		}
 	}
@@ -453,5 +468,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	public TableView<CompresionTestList> getTableViewClient() {
 		return tableViewClient;
 	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
+	}
+
 
 }

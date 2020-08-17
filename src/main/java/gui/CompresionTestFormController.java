@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 import application.Report.ReportFactory;
 import application.db.DbException;
@@ -22,7 +23,9 @@ import application.domaim.Cliente;
 import application.domaim.CompresionTest;
 import application.domaim.ConcreteDesign;
 import application.domaim.CorpoDeProva;
+import application.exceptions.ReportException;
 import application.exceptions.ValidationException;
+import application.log.LogUtils;
 import application.service.ClientService;
 import application.service.CompresionTestService;
 import application.service.ConcreteDesignService;
@@ -84,6 +87,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 	private Integer changesCount;
+
+	private LogUtils logger;
 
 	List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
@@ -244,7 +249,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					}, (CorpoDeProvaRegistrationController controller) -> {
 					});
 		} catch (Exception e) {
-			Alerts.showAlert("Error", "Exception", e.getMessage(), AlertType.ERROR);
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -263,6 +269,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					}, (CorpoDeProvaRegistrationController controller) -> {
 					});
 		} catch (NullPointerException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -279,8 +286,10 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 				onDataChange();
 			}
 		} catch (DbException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error deleting probeta", e.getMessage(), AlertType.ERROR);
 		} catch (NullPointerException e1) {
+			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "NullPointerException", e1.getMessage(), AlertType.ERROR);
 		}
 
@@ -297,7 +306,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
 		} catch (DbException e1) {
-			Alerts.showAlert("Error", "Error saving compresionTest", e1.getMessage(), AlertType.ERROR);
+			logger.doLog(Level.WARNING, e1.getMessage(), e1);
+			Alerts.showAlert("Error", "Error al salvar el ensayo", e1.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -316,9 +326,15 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private void onbtPrintAction() {
-		ReportFactory rF = new ReportFactory();
-		List<CorpoDeProva> list = getCorpoDeProvaListFromTable();
-		rF.compresionTestReportView(list, this.compresionTest);
+		try {
+			ReportFactory rF = new ReportFactory();
+			List<CorpoDeProva> list = getCorpoDeProvaListFromTable();
+			rF.compresionTestReportView(list, this.compresionTest);
+		} catch (ReportException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error al abrir el reporte", e.getMessage(), AlertType.ERROR);
+		}
+
 	}
 
 	@FXML
@@ -340,7 +356,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			tableViewCorpoDeProva.setItems(this.obsList);
 			tableViewCorpoDeProva.refresh();
 		} catch (Exception e) {
-			Alerts.showAlert("Error", "Exception", e.getMessage(), AlertType.ERROR);
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -405,6 +422,10 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	public void setChangesCount(Integer changesCount) {
 		this.changesCount = changesCount;
+	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
 	}
 
 	@Override
@@ -593,7 +614,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			initializingActionFinal.accept(controller);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error al abrir ventana", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -632,6 +654,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			finalAction.accept(controller);
 
 		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
 		}
 	}

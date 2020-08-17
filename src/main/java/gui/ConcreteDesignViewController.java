@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.ConcreteDesign;
 import application.domaim.MaterialProporcion;
+import application.exceptions.ReportException;
+import application.log.LogUtils;
 import application.service.CompresionTestService;
 import application.service.ConcreteDesignService;
 import application.service.MaterialService;
@@ -41,6 +44,8 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	private CompresionTestService compresionTestService;
 
 	private ObservableList<ConcreteDesign> obsList;
+	
+	private LogUtils logger;
 
 	@FXML
 	private Button btNew;
@@ -79,11 +84,13 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.setMaterialService(new MaterialService());
 						controller.setService(new ConcreteDesignService());
 						controller.setEntity(obj);
+						controller.setLogger(logger);
 						controller.loadAssociatedObjects();
 						controller.subscribeDataChangeListener(this);
 					},"/gui/ConcreteDesignRegistrationForm.css");
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -102,6 +109,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.subscribeDataChangeListener(this);
 					},"");
 		} catch (IllegalStateException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -129,8 +137,10 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 			}
 			updateTableView();
 		} catch (IllegalStateException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		} catch (DbException e1) {
+			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "DbException", e1.getMessage(), AlertType.ERROR);
 		}
 
@@ -145,8 +155,9 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 			List<ConcreteDesign> list = service.findAllConcreteDesign();
 			ReportFactory rF = new ReportFactory();
 			rF.concreteDesignReportView(list);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (ReportException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error al abrir reporte", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
@@ -165,6 +176,10 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 
 	public void setCompresionTestService(CompresionTestService compresionTestService) {
 		this.compresionTestService = compresionTestService;
+	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
 	}
 
 	/*
@@ -260,7 +275,8 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 			dialogStage.showAndWait();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error al abrir ventana", e.getMessage(), AlertType.ERROR);
 		}
 	}
 

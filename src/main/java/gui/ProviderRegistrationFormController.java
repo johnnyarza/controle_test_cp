@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
 
 import application.db.DbException;
 import application.domaim.Provider;
 import application.exceptions.ValidationException;
+import application.log.LogUtils;
 import application.service.ProviderService;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
@@ -27,6 +29,8 @@ public class ProviderRegistrationFormController implements Initializable {
 	private ProviderService service;
 
 	private Provider entity;
+	
+	private LogUtils logger;
 
 	List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
@@ -77,8 +81,10 @@ public class ProviderRegistrationFormController implements Initializable {
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
 		} catch (DbException e1) {
+			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "DbException", e1.getMessage(), AlertType.ERROR);
 		} catch (IllegalStateException e2) {
+			logger.doLog(Level.WARNING, e2.getMessage(), e2);
 			Alerts.showAlert("Error", "IllegalStateException", e2.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -136,6 +142,14 @@ public class ProviderRegistrationFormController implements Initializable {
 
 	public void setEntity(Provider entity) {
 		this.entity = entity;
+	}
+
+	public LogUtils getLogger() {
+		return logger;
+	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
 	}
 
 	public void subscribeDataChangeListener(DataChangeListener listener) {

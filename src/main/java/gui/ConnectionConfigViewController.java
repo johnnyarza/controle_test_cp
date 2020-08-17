@@ -7,10 +7,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import application.exceptions.ValidationException;
+import application.log.LogUtils;
 import application.util.EncriptaDecriptaApacheCodec;
 import application.util.FileUtils;
 import gui.util.Alerts;
@@ -24,6 +26,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class ConnectionConfigViewController implements Initializable {
+	
+	private LogUtils logger;
 
 	@FXML
 	private TextField txtIp;
@@ -63,6 +67,7 @@ public class ConnectionConfigViewController implements Initializable {
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
 		} catch (IOException e1) {
+			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "IOException", e1.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -123,6 +128,7 @@ public class ConnectionConfigViewController implements Initializable {
 					: getPortFromProperties(props.getProperty("dburl")));
 			txtUser.setText(props.getProperty("user").trim().equals("") ? "" : props.getProperty("user"));
 		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IOException", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -157,6 +163,10 @@ public class ConnectionConfigViewController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		initializeNodes();
 
+	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
 	}
 
 }

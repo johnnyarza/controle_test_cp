@@ -26,6 +26,9 @@ public class ProviderDaoJDBC implements ProviderDao{
 	public void insert(Provider obj) {
 		PreparedStatement st = null;
 		try {
+			
+			
+			
 			st = conn.prepareStatement("INSERT INTO providers " 
 					+ "(name,phone,address,email) " 
 					+ "VALUES "  
@@ -36,7 +39,7 @@ public class ProviderDaoJDBC implements ProviderDao{
 			st.setString(2, obj.getPhone());
 			st.setString(3, obj.getAddress());
 			st.setString(4, obj.getEmail());
-			
+						
 			int rowsAffected = st.executeUpdate();
 			
 			if (rowsAffected > 0) {

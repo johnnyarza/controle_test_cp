@@ -4,6 +4,7 @@ import java.util.List;
 
 import application.dao.ClientDao;
 import application.dao.DaoFactory;
+import application.db.DbException;
 import application.domaim.Cliente;
 
 public class ClientService {
@@ -16,6 +17,9 @@ public class ClientService {
 	
 	public void saveOrUpdate(Cliente obj) {
 		if(obj.getId() == null) {
+			if (findByName(obj.getName()) != null) {
+				throw new DbException("El cliente: " + obj.getName() + " ya existe");
+			}
 			dao.insert(obj);
 		}
 		else {

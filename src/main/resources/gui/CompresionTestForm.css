@@ -24,6 +24,12 @@
     -fx-white-space: nowrap;
 }
 
+.table-view:focused {
+  -fx-background-color: transparent;
+  -fx-background-insets: -1.4, 0, 1;
+  -fx-background-radius: 1.4, 0, 0;
+}
+
 .table-row-cell:hover {
     -fx-background-color: #bdc3c7;
 }
@@ -38,7 +44,6 @@
 	-fx-border-color: #3498db;
 	-fx-table-cell-border-color:transparent;
 }
-
 
 .late-row{
 	-fx-background-color: #e74c3c;

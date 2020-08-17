@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
 
 import application.db.DbException;
 import application.domaim.Cliente;
 import application.exceptions.ValidationException;
+import application.log.LogException;
+import application.log.LogUtils;
 import application.service.ClientService;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
@@ -30,6 +33,8 @@ public class ClienteRegistrationFormController implements Initializable {
 	private ClientService service;
 
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
+
+	private LogUtils logger;
 
 	@FXML
 	private Button btCadastrar;
@@ -66,25 +71,32 @@ public class ClienteRegistrationFormController implements Initializable {
 
 	@FXML
 	public void onBtCadastrarAction(ActionEvent event) {
-		if (entity == null) {
-			throw new IllegalStateException("Entity was null");
-		}
-
-		if (service == null) {
-			throw new IllegalStateException("Service was null");
-		}
 		try {
-			entity = getFormData();
-			if (service.findByName(entity.getName()) != null) {
-				throw new DbException("El cliente: " + entity.getName() + " ya existe");
+			if (entity == null) {
+				throw new IllegalStateException("Entity was null");
 			}
+
+			if (service == null) {
+				throw new IllegalStateException("Service was null");
+			}
+			if (logger == null) {
+				throw new LogException("Logger was null");
+			}
+			entity = getFormData();
+			
 			service.saveOrUpdate(entity);
 			notifyDataChangeListeners();
 			Utils.currentStage(event).close();
 		} catch (DbException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error saving object", null, e.getMessage(), AlertType.ERROR);
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
+		} catch (LogException e) {
+			Alerts.showAlert("Error inesperado", null, e.getMessage(), AlertType.ERROR);
+		} catch (IllegalStateException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
@@ -172,5 +184,9 @@ public class ClienteRegistrationFormController implements Initializable {
 		labelErrorAddress.setText(fields.contains("address") ? errors.get("address") : "");
 		labelErrorEmail.setText(fields.contains("email") ? errors.get("email") : "");
 
+	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
 	}
 }
