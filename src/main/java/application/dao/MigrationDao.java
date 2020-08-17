@@ -8,5 +8,6 @@ public interface MigrationDao {
 	void compresionTestMigration();
 	void concreteDesignMigration();
 	void corpoDeProvaMigration();
+	void userMigration();
 
 }

@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import application.db.DB;
+import application.service.MigrationService;
 import application.util.EncriptaDecriptaApacheCodec;
 import application.util.FileUtils;
+import gui.util.Alerts;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ScrollPane;
 import javafx.stage.Stage;
 
@@ -36,9 +39,12 @@ public class Program extends Application {
 			
 			createConfigFiles();
 
-			DB.testConnection();
+			if (!DB.testConnection()) {
+				initiateTables();
+			}
+			
 		} catch (IOException e) {
-			e.printStackTrace();
+			Alerts.showAlert("Error", "Error al abrir ventana", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -50,7 +56,16 @@ public class Program extends Application {
 		launch(args);
 
 	}
-
+	private static void initiateTables()  {
+		MigrationService service = new MigrationService();
+		try {
+			service.initiateDB();	
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "Error al iniciar el DB", e.getMessage(), AlertType.ERROR);
+		}
+		
+	}
+	
 	private static void createConfigFiles() throws IOException {
 		if (!Paths.get(System.getProperty("user.home"), "cp_configs", "ReportImage.properties").toFile().isFile()) {
 			Map<String, String> initialProps = new HashMap<>();

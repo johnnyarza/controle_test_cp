@@ -33,5 +33,15 @@ public class MigrationService {
 	public void corpoDeProvaMigration() {
 		dao.corpoDeProvaMigration();
 	}
+	
+	public void initiateDB() {
+	schemaMigration();
+	clientsTableMigration();
+	providersMigration();
+	materialsMigration();		
+	concreteDesignMigration();
+	compresionTestMigration();			
+	corpoDeProvaMigration();
+	}
 
 }

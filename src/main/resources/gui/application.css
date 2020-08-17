@@ -21,3 +21,10 @@
   -fx-background-radius: 1.4, 0, 0;
 
 }
+
+.safe-button:hover {
+	-fx-background-color:#2ecc71;
+}
+.dangerous-button:hover {
+	-fx-background-color:#e74c3c;
+}

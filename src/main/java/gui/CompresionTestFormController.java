@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +17,8 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+
+import org.apache.commons.collections.map.HashedMap;
 
 import application.Report.ReportFactory;
 import application.db.DbException;
@@ -90,6 +93,10 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	private LogUtils logger;
 
+	private Boolean isLocked = true;
+
+	Map<String, ImageView> imgViewMap = new HashMap<>();
+
 	List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
 	@FXML
@@ -130,6 +137,9 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private Button btSearchClient;
+
+	@FXML
+	private Button btLock;
 
 	@FXML
 	private Button btSearchConcreteProvider;
@@ -207,7 +217,37 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	private Label labelMessages;
 
 	@FXML
-	public void onBtSearchClientAction(ActionEvent event) {
+	private void onBtLockAction(ActionEvent event) {
+		if (isLocked) {
+			btLock.setGraphic(imgViewMap.get("btUnlock"));
+//			ObservableList<String> styleCalss = btLock.getStyleClass();
+//			btLock.getStyleClass().clear();
+//			btLock.getStyleClass().addAll(styleCalss);
+//			btLock.getStyleClass().add("custom-button");
+			isLocked = false;
+
+		} else {
+			btLock.setGraphic(imgViewMap.get("btLock"));
+//			btLock.getStyleClass().clear();
+//			btLock.getStyleClass().add("close-button");
+			isLocked = true;
+		}
+		setNodesDisable();
+	}
+
+	private void setNodesDisable() {
+		comboBoxClient.setDisable(isLocked);
+		comboBoxConcreteProvider.setDisable(isLocked);
+		btSearchClient.setDisable(isLocked);
+		btSearchConcreteProvider.setDisable(isLocked);
+		txtObra.setDisable(isLocked);
+		txtAddress.setDisable(isLocked);
+		dpCreationDate.setDisable(isLocked);
+		comboBoxConcreteDesign.setDisable(isLocked);
+	}
+
+	@FXML
+	private void onBtSearchClientAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
 		createDialogForm("/gui/FindClientForm.fxml", "Busca Cliente", parentStage,
 				(FindClientFormController controller) -> {
@@ -446,18 +486,17 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	private void setButtonsGraphics() {
-		setButtonClientSearchGraphic();
-		setButtonConcreteProviderGraphic();
+		imgViewMap.put("btLock", Utils.createImageView("/images/lock.png", 10.0, 10.0));
+		imgViewMap.put("btUnlock", Utils.createImageView("/images/unlock.png", 10.0, 10.0));
+		btLock.setGraphic(imgViewMap.get("btLock"));
+
+		setButtonGraphic("/images/lupa.png", btSearchClient);
+		setButtonGraphic("/images/lupa.png", btSearchConcreteProvider);
 	}
 
-	private void setButtonClientSearchGraphic() {
-		ImageView imgView = Utils.createImageView("/images/lupa.png", 10.0, 10.0);
-		btSearchClient.setGraphic(imgView);
-	}
-
-	private void setButtonConcreteProviderGraphic() {
-		ImageView imgView = Utils.createImageView("/images/lupa.png", 10.0, 10.0);
-		btSearchConcreteProvider.setGraphic(imgView);
+	private void setButtonGraphic(String path, Button button) {
+		ImageView imgView = Utils.createImageView(path, 10.0, 10.0);
+		button.setGraphic(imgView);
 	}
 
 	private void setTableColumnsCellValueFactory() {

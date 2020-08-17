@@ -50,8 +50,8 @@
                </padding>
             </Label>
             <TextField fx:id="txtid" editable="false" maxWidth="50.0" GridPane.columnIndex="1" />
-            <TextField fx:id="txtObra" promptText="Obra" GridPane.columnIndex="4" />
-            <TextField fx:id="txtAddress" promptText="Ubicación" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <TextField fx:id="txtObra" disable="true" promptText="Obra" GridPane.columnIndex="4" />
+            <TextField fx:id="txtAddress" disable="true" promptText="Ubicación" GridPane.columnIndex="4" GridPane.rowIndex="1" />
             <Label text="Obra:" GridPane.columnIndex="3">
                <padding>
                   <Insets left="5.0" />
@@ -79,8 +79,8 @@
                <GridPane.margin>
                   <Insets left="2.0" />
                </GridPane.margin></HBox>
-            <ComboBox fx:id="comboBoxClient" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" promptText="Cliente" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <DatePicker fx:id="dpCreationDate" editable="false" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" promptText="fecha" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+            <ComboBox fx:id="comboBoxClient" disable="true" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" promptText="Cliente" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <DatePicker fx:id="dpCreationDate" disable="true" editable="false" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" promptText="fecha" GridPane.columnIndex="4" GridPane.rowIndex="2" />
             <Label fx:id="labelErrorClient" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" />
@@ -117,7 +117,7 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <ComboBox fx:id="comboBoxConcreteDesign" onAction="#onChangeCount" prefHeight="25.0" prefWidth="373.0" GridPane.columnIndex="7" />
+            <ComboBox fx:id="comboBoxConcreteDesign" disable="true" onAction="#onChangeCount" prefHeight="25.0" prefWidth="373.0" GridPane.columnIndex="7" />
             <Label fx:id="labelErrorConcreteDesign" textFill="RED" GridPane.columnIndex="8">
                <GridPane.margin>
                   <Insets left="5.0" />
@@ -130,7 +130,7 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Button fx:id="btSearchClient" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtSearchClientAction" prefHeight="20.0" prefWidth="20.0" />
+                  <Button fx:id="btSearchClient" disable="true" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtSearchClientAction" prefHeight="20.0" prefWidth="20.0" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.rowIndex="2">
@@ -140,10 +140,10 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Button fx:id="btSearchConcreteProvider" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtSearchConcreteProviderAction" prefHeight="20.0" prefWidth="20.0" />
+                  <Button fx:id="btSearchConcreteProvider" disable="true" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtSearchConcreteProviderAction" prefHeight="20.0" prefWidth="20.0" />
                </children>
             </HBox>
-            <ComboBox fx:id="comboBoxConcreteProvider" onAction="#onChangeCount" prefWidth="150.0" promptText="Prov. Hormigón" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ComboBox fx:id="comboBoxConcreteProvider" disable="true" onAction="#onChangeCount" prefWidth="150.0" promptText="Prov. Hormigón" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label fx:id="labelErrorConcreteProvider" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets left="5.0" />
@@ -181,6 +181,7 @@
             <Button fx:id="btApagarProbeta" mnemonicParsing="false" onAction="#onBtApagarProbetaAction" styleClass="delete-button" text="Apagar Probeta" />
             <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onbtPrintAction" styleClass="custom-button" text="Imprimir" />
             <Button fx:id="btClose" mnemonicParsing="false" onAction="#onBtCloseAction" styleClass="close-button" text="Cerrar" />
+            <Button fx:id="btLock" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onBtLockAction" prefHeight="25.6" prefWidth="25.6" />
             <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="222.0" spacing="5.0">
                <HBox.margin>
                   <Insets />

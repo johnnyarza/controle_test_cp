@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -17,16 +18,18 @@ import application.util.EncriptaDecriptaApacheCodec;
 import application.util.FileUtils;
 import gui.util.Alerts;
 import gui.util.Constraints;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class ConnectionConfigViewController implements Initializable {
-	
+
 	private LogUtils logger;
 
 	@FXML
@@ -60,10 +63,17 @@ public class ConnectionConfigViewController implements Initializable {
 	public void onBtSaveAction() {
 
 		try {
+
+			Optional<ButtonType> option = (Alerts.showConfirmationDialog("Aviso", "Seguro que desea continuar?",
+					"El programa será cerrado para aplicar las configuraciones"));
+			if (option.get() != ButtonType.OK) {
+				return;
+			}
 			Map<String, String> configs = getViewData();
 
 			FileUtils.writeConnectionProperties(configs);
 			Alerts.showAlert("Confimarción", "Configuraciones guardadas!", "", AlertType.INFORMATION);
+			Platform.exit();
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
 		} catch (IOException e1) {
@@ -93,8 +103,7 @@ public class ConnectionConfigViewController implements Initializable {
 		if (txtPort.getText() != null && txtPort.getText().trim().equals("")) {
 			exception.addError("port", "vacío");
 		}
-		dburl = "jdbc:mysql://" + txtIp.getText() + ":" + txtPort.getText()
-				+ "/cp_db?useTimezone=true&serverTimezone=UTC";
+		dburl = "jdbc:mysql://" + txtIp.getText() + ":" + txtPort.getText() + "/cp_db?useTimezone=true&serverTimezone=UTC";
 		configs.put("dburl", dburl);
 
 		if (txtUser.getText() != null && txtUser.getText().trim().equals("")) {
@@ -122,10 +131,9 @@ public class ConnectionConfigViewController implements Initializable {
 	public void updateViewData() {
 		try {
 			Properties props = FileUtils.loadConnetionProperties();
-			txtIp.setText(
-					props.getProperty("dburl").trim().equals("") ? "" : getIpFromDbUrl(props.getProperty("dburl")));
-			txtPort.setText(props.getProperty("dburl").trim().equals("") ? ""
-					: getPortFromProperties(props.getProperty("dburl")));
+			txtIp.setText(props.getProperty("dburl").trim().equals("") ? "" : getIpFromDbUrl(props.getProperty("dburl")));
+			txtPort.setText(
+					props.getProperty("dburl").trim().equals("") ? "" : getPortFromProperties(props.getProperty("dburl")));
 			txtUser.setText(props.getProperty("user").trim().equals("") ? "" : props.getProperty("user"));
 		} catch (IOException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);

@@ -34,6 +34,7 @@ public class DB {
 			return false;
 		}
 	}
+	
 
 	public static Connection getConnection() {
 		try {

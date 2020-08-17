@@ -218,4 +218,25 @@ public class MigrationDaoJDBC implements MigrationDao {
 		
 	}
 
+	@Override
+	public void userMigration() {
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("CREATE TABLE IF NOT EXISTS `users` (" + 
+					"  `id` INT NOT NULL AUTO_INCREMENT," + 
+					"  `name` VARCHAR(45) NOT NULL," + 
+					"  `password` VARCHAR(45) NOT NULL," + 
+					"  PRIMARY KEY (`id`)," + 
+					"  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE," + 
+					"  UNIQUE INDEX `password_UNIQUE` (`password` ASC) VISIBLE)");
+			st.executeUpdate();
+			
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
+		
+	}
+
 }
