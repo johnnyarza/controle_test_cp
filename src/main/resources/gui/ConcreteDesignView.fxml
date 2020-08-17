@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minWidth="417.0" prefHeight="347.0" prefWidth="896.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ConcreteDesignViewController">
+<VBox minWidth="417.0" prefHeight="316.0" prefWidth="896.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ConcreteDesignViewController">
    <children>
       <Label text="Lista de Disenõs">
          <font>
@@ -19,7 +19,7 @@
             <Insets left="8.0" />
          </VBox.margin>
       </Label>
-      <HBox alignment="CENTER_LEFT" minHeight="35.0" minWidth="166.0" prefHeight="42.0" prefWidth="496.0" spacing="5.0">
+      <HBox alignment="CENTER_LEFT" minWidth="166.0" prefWidth="496.0" spacing="5.0">
          <children>
             <Button fx:id="btNew" mnemonicParsing="false" onAction="#onBtNewAction" styleClass="custom-button" text="Nuevo" />
             <Button fx:id="btEdit" mnemonicParsing="false" onAction="#onBtEditAction" styleClass="custom-button" text="Editar" />
@@ -27,7 +27,7 @@
             <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onBtPrintAction" styleClass="custom-button" text="Imprimir" />
          </children>
          <padding>
-            <Insets left="8.0" />
+            <Insets bottom="8.0" left="8.0" top="8.0" />
          </padding>
       </HBox>
       <TableView fx:id="tableViewConcreteDesing" minWidth="166.0" prefHeight="387.0" prefWidth="421.0">

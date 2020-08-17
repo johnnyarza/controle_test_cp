@@ -33,7 +33,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class MateriaisViewController implements Initializable,DataChangeListener {
+public class MateriaisViewController implements Initializable, DataChangeListener {
 
 	MaterialService service;
 
@@ -47,7 +47,7 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 
 	@FXML
 	private Button btDelete;
-	
+
 	@FXML
 	private Button btPrint;
 
@@ -75,7 +75,7 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 					controller.setEntity(obj);
 					controller.loadAssociatedObjects();
 					controller.subscribeDataChangeListener(this);
-				},"/gui/MaterialRegistrationForm.css");
+				}, "/gui/MaterialRegistrationForm.css");
 	}
 
 	@FXML
@@ -92,7 +92,7 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 						controller.loadAssociatedObjects();
 						controller.updateFormData();
 						controller.subscribeDataChangeListener(this);
-					},"/gui/MaterialRegistrationForm.css");
+					}, "/gui/MaterialRegistrationForm.css");
 		} catch (NullPointerException e) {
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
@@ -104,10 +104,11 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 			if (service == null) {
 				throw new IllegalStateException("Material service was null");
 			}
+			Material obj = getMarialFromTableView();
 			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de acción",
 					"Seguro que desea apagar material?", "Los datos seleccionados seran perdidos");
 			if (result.get() == ButtonType.OK) {
-				Material obj = getMarialFromTableView();
+
 				service.deleteById(obj.getId());
 				updateTableView();
 			}
@@ -115,9 +116,11 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		} catch (DbException e) {
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
+		}catch (NullPointerException e) {
+			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
 	}
-	
+
 	@FXML
 	private void onBtPrintAction() {
 		ReportFactory rF = new ReportFactory();
@@ -163,7 +166,8 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 		tableColumnProvider.setCellValueFactory(new PropertyValueFactory<>("provider"));
 	}
 
-	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction,String css) {
+	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction,
+			String css) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -190,7 +194,7 @@ public class MateriaisViewController implements Initializable,DataChangeListener
 
 	@Override
 	public void onDataChange() {
-		updateTableView();		
+		updateTableView();
 	}
 
 }

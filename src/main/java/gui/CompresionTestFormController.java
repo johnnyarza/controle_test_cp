@@ -1,4 +1,4 @@
-	package gui;
+package gui;
 
 import java.io.IOException;
 import java.net.URL;
@@ -35,6 +35,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -52,16 +53,17 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 
 public class CompresionTestFormController implements Initializable, DataChangeListener {
 
 	// TODO mudar as label escrita codigo para descrição
-
 
 	private ObservableList<CorpoDeProva> obsList;
 
@@ -82,7 +84,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 	private Integer changesCount;
-	
+
 	List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
 	@FXML
@@ -120,10 +122,10 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private Button btClearFilter;
-	
+
 	@FXML
 	private Button btSearchClient;
-	
+
 	@FXML
 	private Button btSearchConcreteProvider;
 
@@ -132,7 +134,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private ComboBox<Cliente> comboBoxClient;
-	
+
 	@FXML
 	private ComboBox<Cliente> comboBoxConcreteProvider;
 
@@ -192,37 +194,35 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private Label labelErrorConcreteDesign;
-	
+
 	@FXML
 	private Label labelErrorConcreteProvider;
 
 	@FXML
 	private Label labelMessages;
-	
+
 	@FXML
 	public void onBtSearchClientAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/FindClientForm.fxml", parentStage, "Busca Cliente", 
+		createDialogForm("/gui/FindClientForm.fxml", "Busca Cliente", parentStage,
 				(FindClientFormController controller) -> {
 					controller.setEntity(null);
 					controller.setService(new ClientService());
-				}, 
-				(FindClientFormController controller) -> {	
+				}, (FindClientFormController controller) -> {
 					if (controller.getEntity() != null) {
 						comboBoxClient.setValue(controller.getEntity());
 					}
 				});
 	}
-	
+
 	@FXML
 	public void onBtSearchConcreteProviderAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/FindClientForm.fxml", parentStage, "Busca Cliente", 
+		createDialogForm("/gui/FindClientForm.fxml", "Busca Cliente", parentStage,
 				(FindClientFormController controller) -> {
 					controller.setEntity(null);
 					controller.setService(new ClientService());
-				}, 
-				(FindClientFormController controller) -> {	
+				}, (FindClientFormController controller) -> {
 					if (controller.getEntity() != null) {
 						comboBoxConcreteProvider.setValue(controller.getEntity());
 					}
@@ -230,13 +230,13 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	@FXML
-	public void onBtInserirProbetaAction(ActionEvent event) {
+	private void onBtInserirProbetaAction(ActionEvent event) {
 		try {
 			Stage parentStage = Utils.currentStage(event);
 			CorpoDeProva obj = new CorpoDeProva();
 			obj.setCompresionTest(compresionTest);
 
-			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage, "Inserir Probeta",
+			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", "Inserir Probeta", parentStage,
 					(CorpoDeProvaRegistrationController controller) -> {
 						controller.setCorpoDeProvaService(new CorpoDeProvaService());
 						controller.setCorpoDeProva(obj);
@@ -249,12 +249,12 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	@FXML
-	public void onBtEditarProbetaAction(ActionEvent event) {
+	private void onBtEditarProbetaAction(ActionEvent event) {
 		try {
 			Stage parentStage = Utils.currentStage(event);
 			CorpoDeProva obj = getCorpoDeProvaView();
 
-			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", parentStage, "Editar Probeta",
+			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", "Editar Probeta", parentStage,
 					(CorpoDeProvaRegistrationController controller) -> {
 						controller.setCorpoDeProvaService(new CorpoDeProvaService());
 						controller.setCorpoDeProva(obj);
@@ -268,7 +268,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	@FXML
-	public void onBtApagarProbetaAction() {
+	private void onBtApagarProbetaAction() {
 		try {
 			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de accion",
 					"Seguro que desea apagar probeta?", "Después de apagados los datos seran perdidos");
@@ -287,7 +287,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	@FXML
-	public void onBtEditarCadastroAction() {
+	private void onBtEditarCadastroAction() {
 		try {
 			setCompresionTestFormData();
 			compresionTestService.saveOrUpdate(this.compresionTest);
@@ -302,7 +302,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	@FXML
-	public void onBtCloseAction(ActionEvent event) {
+	private void onBtCloseAction(ActionEvent event) {
 		if (this.changesCount > 0) {
 			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acción", "Segura que desea cerrar?",
 					"Hay datos no guardados!!");
@@ -315,23 +315,28 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	@FXML
-	public void onbtPrintAction() {
+	private void onbtPrintAction() {
 		ReportFactory rF = new ReportFactory();
 		List<CorpoDeProva> list = getCorpoDeProvaListFromTable();
 		rF.compresionTestReportView(list, this.compresionTest);
 	}
 
-	public void onBtFilterAction(ActionEvent event) {
+	@FXML
+	private void onBtFilterAction(ActionEvent event) {
 		try {
 			Stage parentStage = Utils.currentStage(event);
 
-			createDialogForm("/gui/CorpoDeProvaFilterForm.fxml", parentStage, "Filtrar Probetas por Fecha",
+			createDialogForm("/gui/CorpoDeProvaFilterForm.fxml", "Filtrar Probetas por Fecha", parentStage,
 					(CorpoDeProvaFilterFormController controller) -> {
 						controller.setService(new CorpoDeProvaService());
 						controller.setCompresionTest(this.compresionTest);
 					}, (CorpoDeProvaFilterFormController controller) -> {
-						obsList = controller.getObsList();
-					});
+						controller.setIsCancelButtonPressed(true);
+					}, (CorpoDeProvaFilterFormController controller) -> {
+						if (!controller.getIsCancelButtonPressed()) {
+							obsList = controller.getObsList();
+						}
+					}, "/gui/GlobalStyle.css");
 			tableViewCorpoDeProva.setItems(this.obsList);
 			tableViewCorpoDeProva.refresh();
 		} catch (Exception e) {
@@ -348,7 +353,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	public void onChangeCount() {
 		this.changesCount += 1;
 	}
-	
+
 	@FXML
 	public void onTableViewSort() {
 		Utils.formatCorpoDeProvaTableViewRowColor(tableViewCorpoDeProva);
@@ -394,11 +399,9 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		this.concreteDesignService = concreteDesignService;
 	}
 
-
 	public Integer getChangesCount() {
 		return changesCount;
 	}
-
 
 	public void setChangesCount(Integer changesCount) {
 		this.changesCount = changesCount;
@@ -415,32 +418,30 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		tableViewCorpoDeProva.prefHeightProperty().bind(vbox.heightProperty());
 		setButtonsGraphics();
 	}
-	
+
 	private void formatTableView() {
 		setTableColumnsCellValueFactory();
 		tableColumnCodigo.getStyleClass().add("description-column-style");
 	}
-	
+
 	private void setButtonsGraphics() {
 		setButtonClientSearchGraphic();
 		setButtonConcreteProviderGraphic();
 	}
-	
+
 	private void setButtonClientSearchGraphic() {
 		ImageView imgView = Utils.createImageView("/images/lupa.png", 10.0, 10.0);
-		btSearchClient.setGraphic(imgView);	
+		btSearchClient.setGraphic(imgView);
 	}
-	
+
 	private void setButtonConcreteProviderGraphic() {
 		ImageView imgView = Utils.createImageView("/images/lupa.png", 10.0, 10.0);
-		btSearchConcreteProvider.setGraphic(imgView);	
+		btSearchConcreteProvider.setGraphic(imgView);
 	}
 
 	private void setTableColumnsCellValueFactory() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnCodigo.setCellValueFactory(new PropertyValueFactory<>("code"));
-		
-		
 
 		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));
 		Utils.formatTableColumnDouble(tableColumnSlump, 2);
@@ -513,7 +514,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		} else {
 			comboBoxClient.setValue(compresionTest.getClient());
 		}
-		
+
 		if (compresionTest.getConcreteProvider() == null) {
 			comboBoxConcreteProvider.getSelectionModel().selectFirst();
 		} else {
@@ -572,7 +573,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		comboBoxConcreteDesign.setItems(obsListConcreteDesign);
 	}
 
-	private <T> void createDialogForm(String absoluteName, Stage parentStage, String fomrName,
+	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
 			Consumer<T> initializingAction, Consumer<T> initializingActionFinal) {
 		try {
 
@@ -583,7 +584,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			initializingAction.accept(controller);
 
 			Stage dialogStage = new Stage();
-			dialogStage.setTitle(fomrName);
+			dialogStage.setTitle(title);
 			dialogStage.setScene(new Scene(pane));
 			dialogStage.setResizable(false);
 			dialogStage.initOwner(parentStage);
@@ -593,6 +594,45 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css) {
+		try {
+
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			AnchorPane pane = loader.load();
+
+			T controller = loader.getController();
+			initializingAction.accept(controller);
+
+			Stage dialogStage = new Stage();
+
+			dialogStage.setTitle(title);
+			dialogStage.setScene(new Scene(pane));
+			dialogStage.getScene().getStylesheets().add("/gui/GlobalStyle.css");
+			if (!css.trim().equals("")) {
+				dialogStage.getScene().getStylesheets().add(css);
+			}
+			dialogStage.setResizable(true);
+			dialogStage.initOwner(parentStage);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+
+			dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+				@Override
+				public void handle(WindowEvent we) {
+					windowEventAction.accept(controller);
+
+				}
+			});
+
+			dialogStage.showAndWait();
+			finalAction.accept(controller);
+
+		} catch (IOException e) {
+			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
 		}
 	}
 
@@ -636,11 +676,10 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		if (comboBoxClient.getValue() == null) {
 			exception.addError("client", "vacío");
 		}
-		
+
 		if (comboBoxConcreteProvider.getValue() == null) {
 			exception.addError("provider", "vacío");
 		}
-
 
 		if (comboBoxConcreteDesign.getValue() == null) {
 			exception.addError("concreteDesign", "vacío");
@@ -667,7 +706,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		}
 
 		this.compresionTest.setClient(comboBoxClient.getValue());
-		
+
 		this.compresionTest.setConcreteProvider(comboBoxConcreteProvider.getValue());
 
 		this.compresionTest.setConcreteDesign(comboBoxConcreteDesign.getValue());
@@ -692,8 +731,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		labelErrorAddress.setText(fields.contains("address") ? errors.get("address") : "");
 		labelErrorConcreteDesign.setText(fields.contains("concreteDesign") ? errors.get("concreteDesign") : "");
 	}
-	
-	public void dataChangeListenerSubscribe (DataChangeListener dataChangeListener) {
+
+	public void dataChangeListenerSubscribe(DataChangeListener dataChangeListener) {
 		this.dataChangeListeners.add(dataChangeListener);
 	}
 

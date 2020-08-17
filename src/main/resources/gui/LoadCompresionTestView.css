@@ -26,3 +26,20 @@
 .custom-button:hover {
 	-fx-background-color:#2ecc71;
 }
+
+.table-row-cell:hover {
+    -fx-background-color: #bdc3c7;
+}
+
+.table-row-cell:selected .text {
+	-fx-fill: #1e272e;
+    -fx-font-weight: bold;
+    
+}
+
+.table-row-cell:selected {
+	-fx-border-color: #3498db;
+	-fx-table-cell-border-color:transparent;
+	-fx-background-color: transparent;
+	
+}

@@ -20,6 +20,34 @@
 
 
 .fitwidth {
-    width: 1px;
-    white-space: nowrap;
+    -fx-width: 1.0px;
+    -fx-white-space: nowrap;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #bdc3c7;
+}
+
+.table-row-cell:selected .text {
+	-fx-fill: #1e272e;
+    -fx-font-weight: bold;
+    
+}
+
+.table-row-cell:selected {
+	-fx-border-color: #3498db;
+	-fx-table-cell-border-color:transparent;
+}
+
+
+.late-row{
+	-fx-background-color: #e74c3c;
+}
+
+.today-row{
+	-fx-background-color: #f1c40f;
+}
+
+.tomorrow-row {
+	-fx-background-color: #2ecc71;
 }

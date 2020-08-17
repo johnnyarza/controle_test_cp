@@ -194,15 +194,15 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="64" splitType="Stretch">
+		<band height="48" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<image>
-				<reportElement x="0" y="0" width="268" height="64" uuid="4db3cf90-7db0-437b-a4bc-df492bb698fd"/>
+				<reportElement x="0" y="0" width="268" height="48" uuid="4db3cf90-7db0-437b-a4bc-df492bb698fd"/>
 				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
 			</image>
 			<componentElement>
-				<reportElement x="268" y="0" width="267" height="64" uuid="98bd0eb9-c1f5-4ec9-9205-ffaaa33e8ff0">
+				<reportElement x="268" y="0" width="267" height="48" uuid="98bd0eb9-c1f5-4ec9-9205-ffaaa33e8ff0">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 2_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 2_CH"/>
@@ -214,7 +214,8 @@
 					</datasetRun>
 					<jr:column width="267" uuid="ed4ba044-d26f-4741-a881-7ba363f7d279">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
-						<jr:columnHeader style="Table 2_CH" height="30" rowSpan="1">
+						<jr:columnHeader style="Table 2_CH" height="16" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<box>
 								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -222,14 +223,14 @@
 								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 							</box>
 							<staticText>
-								<reportElement x="0" y="0" width="267" height="30" uuid="debcfa2f-b39f-431d-b760-e9717ea14d9a"/>
+								<reportElement x="0" y="0" width="267" height="16" uuid="debcfa2f-b39f-431d-b760-e9717ea14d9a"/>
 								<box>
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
-								<textElement textAlignment="Center">
+								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="11" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Relatorio De Roturas]]></text>
@@ -255,16 +256,16 @@
 				</jr:table>
 			</componentElement>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="535" y="0" width="267" height="64" uuid="532f5893-9e01-470c-9fc8-d87f9f3e52e9"/>
+				<reportElement x="535" y="0" width="267" height="48" uuid="532f5893-9e01-470c-9fc8-d87f9f3e52e9"/>
 				<textElement textAlignment="Right" markup="html"/>
-				<textFieldExpression><![CDATA["COMERCIO Y CONSTRUCCIONES HJVA  LTDA <br> TEL: 3-978-2323 / FAX: 3-978-2818 <br> Pto. Quijarro, Av. Bolivia, 210 <br>" + new SimpleDateFormat("dd/MM/yyyy").format(new Date())]]></textFieldExpression>
+				<textFieldExpression><![CDATA["COMERCIO Y CONSTRUCCIONES HJVA  LTDA <br> TEL: 3-978-2323 / FAX: 3-978-2818 <br> Pto. Quijarro, Av. Bolivia, 210 <br>"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="65">
+		<band height="89">
 			<componentElement>
-				<reportElement x="0" y="8" width="802" height="49" uuid="20b5c56b-c7fa-47ee-8da2-14fdf90deb2c">
+				<reportElement x="0" y="6" width="802" height="72" uuid="20b5c56b-c7fa-47ee-8da2-14fdf90deb2c">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
@@ -274,359 +275,438 @@
 					<datasetRun subDataset="CompresionTestDataSet" uuid="9a453065-92f2-4b25-bf0c-1bc4117bbb7a">
 						<dataSourceExpression><![CDATA[$P{CompresionTestCollectionBeanParam}]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="65" uuid="ddf29bec-41ad-4503-825d-827529e00431">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
-						<jr:tableHeader style="Table 1_TH" height="23" rowSpan="2">
-							<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-							<staticText>
-								<reportElement x="0" y="0" width="65" height="23" uuid="629da8b8-b894-4a4a-a838-3807716af5da"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="11" isBold="true"/>
-								</textElement>
-								<text><![CDATA[Provedor]]></text>
-							</staticText>
-						</jr:tableHeader>
-						<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
-							<property name="com.jaspersoft.studio.unit.width" value="px"/>
-							<staticText>
-								<reportElement x="0" y="0" width="65" height="13" uuid="d7f59665-988c-4d6f-9638-099875dbfb40"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="11" isBold="true"/>
-								</textElement>
-								<text><![CDATA[Hormigón]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:detailCell style="Table 1_TD" height="13">
+					<jr:columnGroup width="804" uuid="78ed65cb-f83a-4f7b-8d31-f8ba4394992b">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [12]"/>
+						<jr:columnFooter style="Table 1_CH" height="13" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
-							<textField textAdjust="StretchHeight">
-								<reportElement stretchType="ContainerHeight" x="0" y="0" width="65" height="13" uuid="81e45f84-921f-46f9-9fab-d5d369de5c2f"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{concreteProvider}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:columnGroup width="500" uuid="db1eb607-4ac6-4e24-a5b1-033155ac82d5">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [8]"/>
-						<jr:tableHeader style="Table 1_TH" height="13" rowSpan="1">
-							<property name="com.jaspersoft.studio.unit.height" value="px"/>
-							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="500" height="13" uuid="d3472f57-c3a4-4728-86fb-bae05485c8a7"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="11" isBold="true"/>
+								<reportElement x="0" y="0" width="804" height="13" uuid="24c69b2a-bb94-4fb3-8bfa-b5a8cf71afde"/>
+								<textElement textAlignment="Center">
+									<font fontName="Arial" isBold="true"/>
 								</textElement>
-								<text><![CDATA[Dosificación]]></text>
+								<text><![CDATA[Proveedores  Materiales]]></text>
 							</staticText>
-						</jr:tableHeader>
-						<jr:column width="63" uuid="278f2a49-c3f9-42cb-8025-1145b7db5742">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
-							<jr:tableHeader style="Table 1_TH" height="10" rowSpan="1">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="63" height="10" uuid="4e5edaa7-8578-4778-a3fd-4cce5429235b"/>
-									<textElement textAlignment="Center" verticalAlignment="Top"/>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat1Qtt() == 0.0 ? null : "1"]]></textFieldExpression>
+						</jr:columnFooter>
+						<jr:column width="65" uuid="ddf29bec-41ad-4503-825d-827529e00431">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+							<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<textField textAdjust="ScaleFont">
+									<reportElement x="0" y="0" width="65" height="13" uuid="098dcfd9-6d2d-4861-b82b-1aaef0b2753b"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{concreteProvider}]]></textFieldExpression>
 								</textField>
-							</jr:tableHeader>
+							</jr:tableFooter>
 							<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+								<staticText>
+									<reportElement x="0" y="0" width="65" height="13" uuid="d7f59665-988c-4d6f-9638-099875dbfb40"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="10" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Hormigón]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="13">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<textField textAdjust="ScaleFont">
+									<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="65" height="13" uuid="b891934f-66dc-4164-823f-c26009fbc678"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{concreteDesign}.getDescription()]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:columnGroup width="500" uuid="db1eb607-4ac6-4e24-a5b1-033155ac82d5">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [8]"/>
+							<jr:tableHeader style="Table 1_TH" height="13" rowSpan="1">
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="63" height="13" uuid="b9002ccb-b010-42fc-9f1b-5bd3603d29d2"/>
-									<textElement textAlignment="Center">
-										<font fontName="Arial" size="11" isBold="true"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat1().getName()]]></textFieldExpression>
-								</textField>
-							</jr:columnHeader>
-							<jr:detailCell style="Table 1_TD" height="13">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-									<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="ce736690-fcb5-4d7c-8977-71253a1184b2"/>
+								<staticText>
+									<reportElement x="0" y="0" width="500" height="13" uuid="d3472f57-c3a4-4728-86fb-bae05485c8a7"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="10"/>
+										<font fontName="Arial" size="10" isBold="true"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat1Qtt()]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="63" uuid="a74b8f92-7e1b-4e3c-adef-421acd05e6bb">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
-							<jr:tableHeader style="Table 1_TH" height="10" rowSpan="1">
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="63" height="10" uuid="6808e11b-9a84-4423-ae25-c1be857c1464"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat2Qtt() == 0.0 ? null : "2"]]></textFieldExpression>
-								</textField>
+									<text><![CDATA[Dosificación (kg /m³)]]></text>
+								</staticText>
 							</jr:tableHeader>
+							<jr:column width="63" uuid="278f2a49-c3f9-42cb-8025-1145b7db5742">
+								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+								<jr:tableHeader style="Table 1_TH" height="9" rowSpan="1">
+									<property name="com.jaspersoft.studio.unit.width" value="px"/>
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="9" uuid="4e5edaa7-8578-4778-a3fd-4cce5429235b"/>
+										<textElement textAlignment="Center" verticalAlignment="Top"/>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat1Qtt() == 0.0 ? null : "1"]]></textFieldExpression>
+									</textField>
+								</jr:tableHeader>
+								<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="13" uuid="50de1927-79df-402c-98a7-ca4bbf14d3aa"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="10" isBold="false"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat1().getProvider().getName()]]></textFieldExpression>
+									</textField>
+								</jr:tableFooter>
+								<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
+									<property name="com.jaspersoft.studio.unit.height" value="px"/>
+									<property name="com.jaspersoft.studio.unit.width" value="px"/>
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="13" uuid="b9002ccb-b010-42fc-9f1b-5bd3603d29d2"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="10" isBold="true"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat1().getName()]]></textFieldExpression>
+									</textField>
+								</jr:columnHeader>
+								<jr:detailCell style="Table 1_TD" height="13">
+									<property name="com.jaspersoft.studio.unit.width" value="px"/>
+									<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+										<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="ce736690-fcb5-4d7c-8977-71253a1184b2"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat1Qtt()]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="63" uuid="a74b8f92-7e1b-4e3c-adef-421acd05e6bb">
+								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+								<jr:tableHeader style="Table 1_TH" height="9" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="9" uuid="6808e11b-9a84-4423-ae25-c1be857c1464"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle"/>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat2Qtt() == 0.0 ? null : "2"]]></textFieldExpression>
+									</textField>
+								</jr:tableHeader>
+								<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="13" uuid="3b45ffc5-2d84-448f-8c43-3818b3c06b05"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="10" isBold="false"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat2().getProvider().getName()]]></textFieldExpression>
+									</textField>
+								</jr:tableFooter>
+								<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
+									<property name="com.jaspersoft.studio.unit.width" value="px"/>
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="13" uuid="a78f83ac-6adc-433e-8a68-2b4c7269e7b6"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10" isBold="true"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat2().getName()]]></textFieldExpression>
+									</textField>
+								</jr:columnHeader>
+								<jr:detailCell style="Table 1_TD" height="13">
+									<property name="com.jaspersoft.studio.unit.width" value="px"/>
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="06c77063-4c4f-4c90-abf6-a7554d79928d"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat2Qtt()]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="63" uuid="8c070213-c726-43bc-9c1f-0167aee93c88">
+								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+								<jr:tableHeader style="Table 1_TH" height="9" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="9" uuid="cc165459-9272-4d26-8469-b3bbd9397450"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle"/>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat3Qtt() == 0.0 ? null : "3"]]></textFieldExpression>
+									</textField>
+								</jr:tableHeader>
+								<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="13" uuid="20ec2e63-ded7-49f1-b934-e050bfdbafff"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="10" isBold="false"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat3().getProvider().getName()]]></textFieldExpression>
+									</textField>
+								</jr:tableFooter>
+								<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
+									<property name="com.jaspersoft.studio.unit.width" value="px"/>
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="13" uuid="f73e0959-1374-4e25-9af9-56e6fa170575"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10" isBold="true"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat3().getName()]]></textFieldExpression>
+									</textField>
+								</jr:columnHeader>
+								<jr:detailCell style="Table 1_TD" height="13">
+									<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+										<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="cbd3ba54-5c5e-40a7-ad86-cf3c5af16b25"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat3Qtt() == 0.0 ? null : $F{concreteDesign}.getProporcion().getMat3Qtt()]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="63" uuid="c818e6d6-08af-4349-9770-0200007e7c23">
+								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+								<jr:tableHeader style="Table 1_TH" height="9" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="9" uuid="beb59ce8-353f-4b09-97b6-e7cf86df3fa2"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle"/>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat4Qtt() == 0.0 ? null : "4"]]></textFieldExpression>
+									</textField>
+								</jr:tableHeader>
+								<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="13" uuid="9898e561-d444-4194-a790-40e8f1cde674"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="10" isBold="false"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat4().getProvider().getName()]]></textFieldExpression>
+									</textField>
+								</jr:tableFooter>
+								<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
+									<property name="com.jaspersoft.studio.unit.width" value="px"/>
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="13" uuid="a349a604-c401-4047-9a79-76ca31b7b728"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10" isBold="true"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat4().getName()]]></textFieldExpression>
+									</textField>
+								</jr:columnHeader>
+								<jr:detailCell style="Table 1_TD" height="13">
+									<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+										<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="8a40a6d5-4ae7-4f19-a04a-fdcfcbc0a45d"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat4Qtt() == 0.0 ? null : $F{concreteDesign}.getProporcion().getMat4Qtt()]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="63" uuid="27b077ce-cb0d-4c4a-a931-51f290171d26">
+								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+								<jr:tableHeader style="Table 1_TH" height="9" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="9" uuid="405090f4-51ea-4ddb-a7c2-cb81d9015076"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle"/>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat5Qtt() == 0.0 ? null : "5"]]></textFieldExpression>
+									</textField>
+								</jr:tableHeader>
+								<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="13" uuid="f642b7d8-be74-4841-9513-fed7a8884451"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="10" isBold="false"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat5().getProvider().getName()]]></textFieldExpression>
+									</textField>
+								</jr:tableFooter>
+								<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
+									<property name="com.jaspersoft.studio.unit.width" value="px"/>
+									<property name="com.jaspersoft.studio.unit.height" value="px"/>
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="13" uuid="ef1d10f7-07a0-4b18-bf3e-628d2a4717ea"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10" isBold="true"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat5().getName()]]></textFieldExpression>
+									</textField>
+								</jr:columnHeader>
+								<jr:detailCell style="Table 1_TD" height="13">
+									<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+										<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="ff737e51-ff9c-452f-a8d7-18a5210c5387"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat5Qtt() == 0.0 ? null : $F{concreteDesign}.getProporcion().getMat5Qtt()]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="63" uuid="9c6f1a25-8cd7-4393-b20e-6682226f31ca">
+								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
+								<jr:tableHeader style="Table 1_TH" height="9" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="9" uuid="7ee35252-83ed-400f-a1c4-971c4be57eda"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle"/>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat6Qtt() == 0.0 ? null : "6"]]></textFieldExpression>
+									</textField>
+								</jr:tableHeader>
+								<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="13" uuid="9a8ecc8a-b322-4f8b-88db-0d088c050ca6"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="10" isBold="false"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat6().getProvider().getName()]]></textFieldExpression>
+									</textField>
+								</jr:tableFooter>
+								<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
+									<property name="com.jaspersoft.studio.unit.width" value="px"/>
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="63" height="13" uuid="e06c8439-5f27-4a39-90f8-a629a1ae46b0"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10" isBold="true"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat6().getName()]]></textFieldExpression>
+									</textField>
+								</jr:columnHeader>
+								<jr:detailCell style="Table 1_TD" height="13">
+									<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+										<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="c9492f9d-ad14-439e-b97a-cbb4acfedc41"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat6Qtt() == 0.0 ? null : $F{concreteDesign}.getProporcion().getMat6Qtt()]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="62" uuid="faa6edff-c59a-4383-bedb-445b0894f21b">
+								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
+								<jr:tableHeader style="Table 1_TH" height="9" rowSpan="1">
+									<textField isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="62" height="9" uuid="957da455-e6aa-4a2b-a86e-cee4ada23c9e"/>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat7Qtt()== 0 ? null : "7"]]></textFieldExpression>
+									</textField>
+								</jr:tableHeader>
+								<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="62" height="13" uuid="c0dad758-00eb-484b-8f77-0f7568c624f8"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="10" isBold="false"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat7().getProvider().getName()]]></textFieldExpression>
+									</textField>
+								</jr:tableFooter>
+								<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
+									<property name="com.jaspersoft.studio.unit.width" value="px"/>
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="62" height="13" uuid="58e4673e-db79-49c3-aee3-6f220d10d931"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="10" isBold="true"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat7().getName()]]></textFieldExpression>
+									</textField>
+								</jr:columnHeader>
+								<jr:detailCell style="Table 1_TD" height="13">
+									<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+										<reportElement stretchType="ContainerHeight" x="0" y="0" width="62" height="13" uuid="5b7b0239-8d8b-476b-9ab4-a51b1ce003ee"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat7Qtt() == 0.0 ? null : $F{concreteDesign}.getProporcion().getMat7Qtt()]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="60" uuid="274d859e-568c-461a-bb82-befef38c93a5">
+								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column9"/>
+								<jr:tableHeader style="Table 1_TH" height="9" rowSpan="1">
+									<textField isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="60" height="9" uuid="2845f6f7-a663-4ff0-9480-696d93f92b4d"/>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat8Qtt()== 0 ? null : "8"]]></textFieldExpression>
+									</textField>
+								</jr:tableHeader>
+								<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="60" height="13" uuid="8c4098f5-12f3-4923-af4f-27009822c601"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="10" isBold="false"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat8().getProvider().getName()]]></textFieldExpression>
+									</textField>
+								</jr:tableFooter>
+								<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
+									<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+									<property name="com.jaspersoft.studio.unit.width" value="px"/>
+									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="60" height="13" uuid="a8f6efb0-db91-494a-b2d6-bee5a2a9c5e6"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="10" isBold="true"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat8().getName()]]></textFieldExpression>
+									</textField>
+								</jr:columnHeader>
+								<jr:detailCell style="Table 1_TD" height="13">
+									<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+										<reportElement stretchType="ContainerHeight" x="0" y="0" width="60" height="13" uuid="0cae2f4d-af3b-491c-9ea5-bc50640b2f9f"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="10"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat8Qtt() == 0.0 ? null : $F{concreteDesign}.getProporcion().getMat8Qtt()]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+						</jr:columnGroup>
+						<jr:column width="89" uuid="4e0270be-b305-41b6-a76b-9f23cc301470">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column10"/>
 							<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="63" height="13" uuid="a78f83ac-6adc-433e-8a68-2b4c7269e7b6"/>
+								<staticText>
+									<reportElement x="0" y="0" width="89" height="13" uuid="dfd1fee7-cca0-49c9-ab23-d2674ec744ef"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="11" isBold="true"/>
+										<font fontName="Arial" size="10" isBold="true"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat2().getName()]]></textFieldExpression>
-								</textField>
+									<text><![CDATA[Obra]]></text>
+								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table 1_TD" height="13">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="06c77063-4c4f-4c90-abf6-a7554d79928d"/>
+								<textField textAdjust="StretchHeight">
+									<reportElement stretchType="ContainerHeight" x="0" y="0" width="89" height="13" uuid="a39dd213-af20-44ff-b29c-5b5bfc0b8f94"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="10"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat2Qtt()]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$F{obra}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="63" uuid="8c070213-c726-43bc-9c1f-0167aee93c88">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
-							<jr:tableHeader style="Table 1_TH" height="10" rowSpan="1">
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="63" height="10" uuid="cc165459-9272-4d26-8469-b3bbd9397450"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat3Qtt() == 0.0 ? null : "3"]]></textFieldExpression>
-								</textField>
-							</jr:tableHeader>
+						<jr:column width="89" uuid="43c0bedd-dbff-463d-a78b-6a855cc0c6e7">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column11"/>
 							<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="63" height="13" uuid="f73e0959-1374-4e25-9af9-56e6fa170575"/>
+								<staticText>
+									<reportElement x="0" y="0" width="89" height="13" uuid="ab6831e0-1702-46e1-8ac3-b21c5cda3939"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="11" isBold="true"/>
+										<font fontName="Arial" size="10" isBold="true"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat3().getName()]]></textFieldExpression>
-								</textField>
+									<text><![CDATA[Ubicación]]></text>
+								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table 1_TD" height="13">
-								<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-									<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="cbd3ba54-5c5e-40a7-ad86-cf3c5af16b25"/>
+								<textField textAdjust="StretchHeight">
+									<reportElement stretchType="ContainerHeight" x="0" y="0" width="89" height="13" uuid="e801e425-2c63-48d6-a88d-c6c4b0754df7"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="10"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat3Qtt() == 0.0 ? null : $F{concreteDesign}.getProporcion().getMat3Qtt()]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$F{address}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="63" uuid="c818e6d6-08af-4349-9770-0200007e7c23">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
-							<jr:tableHeader style="Table 1_TH" height="10" rowSpan="1">
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="63" height="10" uuid="beb59ce8-353f-4b09-97b6-e7cf86df3fa2"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat4Qtt() == 0.0 ? null : "4"]]></textFieldExpression>
-								</textField>
-							</jr:tableHeader>
+						<jr:column width="61" uuid="db449e58-9bd5-400b-80dd-15b317588910">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column12"/>
 							<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="63" height="13" uuid="a349a604-c401-4047-9a79-76ca31b7b728"/>
+								<staticText>
+									<reportElement x="0" y="0" width="61" height="13" uuid="e97f48fd-6c0e-4295-af79-f885e69cd17e"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="11" isBold="true"/>
+										<font fontName="Arial" size="10" isBold="true"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat4().getName()]]></textFieldExpression>
-								</textField>
+									<text><![CDATA[Fecha]]></text>
+								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table 1_TD" height="13">
-								<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-									<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="8a40a6d5-4ae7-4f19-a04a-fdcfcbc0a45d"/>
+								<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy">
+									<reportElement stretchType="ContainerHeight" x="0" y="0" width="61" height="13" uuid="d5b3bedb-2b6a-461e-a556-5a5cf645f760"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="10"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat4Qtt() == 0.0 ? null : $F{concreteDesign}.getProporcion().getMat4Qtt()]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="63" uuid="27b077ce-cb0d-4c4a-a931-51f290171d26">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
-							<jr:tableHeader style="Table 1_TH" height="10" rowSpan="1">
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="63" height="10" uuid="405090f4-51ea-4ddb-a7c2-cb81d9015076"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat5Qtt() == 0.0 ? null : "5"]]></textFieldExpression>
-								</textField>
-							</jr:tableHeader>
-							<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<property name="com.jaspersoft.studio.unit.height" value="px"/>
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="63" height="13" uuid="ef1d10f7-07a0-4b18-bf3e-628d2a4717ea"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="11" isBold="true"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat5().getName()]]></textFieldExpression>
-								</textField>
-							</jr:columnHeader>
-							<jr:detailCell style="Table 1_TD" height="13">
-								<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-									<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="ff737e51-ff9c-452f-a8d7-18a5210c5387"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="10"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat5Qtt() == 0.0 ? null : $F{concreteDesign}.getProporcion().getMat5Qtt()]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="63" uuid="9c6f1a25-8cd7-4393-b20e-6682226f31ca">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
-							<jr:tableHeader style="Table 1_TH" height="10" rowSpan="1">
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="63" height="10" uuid="7ee35252-83ed-400f-a1c4-971c4be57eda"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat6Qtt() == 0.0 ? null : "6"]]></textFieldExpression>
-								</textField>
-							</jr:tableHeader>
-							<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="63" height="13" uuid="e06c8439-5f27-4a39-90f8-a629a1ae46b0"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="11" isBold="true"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat6().getName()]]></textFieldExpression>
-								</textField>
-							</jr:columnHeader>
-							<jr:detailCell style="Table 1_TD" height="13">
-								<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-									<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="c9492f9d-ad14-439e-b97a-cbb4acfedc41"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="10"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat6Qtt() == 0.0 ? null : $F{concreteDesign}.getProporcion().getMat6Qtt()]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="62" uuid="faa6edff-c59a-4383-bedb-445b0894f21b">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
-							<jr:tableHeader style="Table 1_TH" height="10" rowSpan="1">
-								<textField isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="62" height="10" uuid="957da455-e6aa-4a2b-a86e-cee4ada23c9e"/>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat7Qtt()== 0 ? null : "7"]]></textFieldExpression>
-								</textField>
-							</jr:tableHeader>
-							<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="62" height="13" uuid="58e4673e-db79-49c3-aee3-6f220d10d931"/>
-									<textElement textAlignment="Center">
-										<font fontName="Arial" size="11" isBold="true"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat7().getName()]]></textFieldExpression>
-								</textField>
-							</jr:columnHeader>
-							<jr:detailCell style="Table 1_TD" height="13">
-								<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-									<reportElement stretchType="ContainerHeight" x="0" y="0" width="62" height="13" uuid="5b7b0239-8d8b-476b-9ab4-a51b1ce003ee"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="10"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat7Qtt() == 0.0 ? null : $F{concreteDesign}.getProporcion().getMat7Qtt()]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="60" uuid="274d859e-568c-461a-bb82-befef38c93a5">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column9"/>
-							<jr:tableHeader style="Table 1_TH" height="10">
-								<textField isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="60" height="10" uuid="2845f6f7-a663-4ff0-9480-696d93f92b4d"/>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat8Qtt()== 0 ? null : "8"]]></textFieldExpression>
-								</textField>
-							</jr:tableHeader>
-							<jr:columnHeader style="Table 1_CH" height="13">
-								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="60" height="13" uuid="a8f6efb0-db91-494a-b2d6-bee5a2a9c5e6"/>
-									<textElement textAlignment="Center">
-										<font fontName="Arial" size="11" isBold="true"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat8().getName()]]></textFieldExpression>
-								</textField>
-							</jr:columnHeader>
-							<jr:detailCell style="Table 1_TD" height="13">
-								<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-									<reportElement stretchType="ContainerHeight" x="0" y="0" width="60" height="13" uuid="0cae2f4d-af3b-491c-9ea5-bc50640b2f9f"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="10"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat8Qtt() == 0.0 ? null : $F{concreteDesign}.getProporcion().getMat8Qtt()]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 					</jr:columnGroup>
-					<jr:column width="89" uuid="4e0270be-b305-41b6-a76b-9f23cc301470">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column10"/>
-						<jr:tableHeader style="Table 1_TH" height="23" rowSpan="2">
-							<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						</jr:tableHeader>
-						<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="89" height="13" uuid="dfd1fee7-cca0-49c9-ab23-d2674ec744ef"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="11" isBold="true"/>
-								</textElement>
-								<text><![CDATA[Obra]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:detailCell style="Table 1_TD" height="13">
-							<textField textAdjust="StretchHeight">
-								<reportElement stretchType="ContainerHeight" x="0" y="0" width="89" height="13" uuid="a39dd213-af20-44ff-b29c-5b5bfc0b8f94"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{obra}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="89" uuid="43c0bedd-dbff-463d-a78b-6a855cc0c6e7">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column11"/>
-						<jr:tableHeader style="Table 1_TH" height="23" rowSpan="2">
-							<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						</jr:tableHeader>
-						<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="89" height="13" uuid="ab6831e0-1702-46e1-8ac3-b21c5cda3939"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="11" isBold="true"/>
-								</textElement>
-								<text><![CDATA[Ubicación]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:detailCell style="Table 1_TD" height="13">
-							<textField textAdjust="StretchHeight">
-								<reportElement stretchType="ContainerHeight" x="0" y="0" width="89" height="13" uuid="e801e425-2c63-48d6-a88d-c6c4b0754df7"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{address}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="61" uuid="db449e58-9bd5-400b-80dd-15b317588910">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column12"/>
-						<jr:tableHeader style="Table 1_TH" height="23" rowSpan="2"/>
-						<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="61" height="13" uuid="e97f48fd-6c0e-4295-af79-f885e69cd17e"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="11" isBold="true"/>
-								</textElement>
-								<text><![CDATA[Fecha]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:detailCell style="Table 1_TD" height="13">
-							<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy">
-								<reportElement stretchType="ContainerHeight" x="0" y="0" width="61" height="13" uuid="d5b3bedb-2b6a-461e-a556-5a5cf645f760"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
 				</jr:table>
 			</componentElement>
 		</band>
@@ -647,12 +727,12 @@
 					</datasetRun>
 					<jr:columnGroup width="799" uuid="ec72915c-afa7-453a-aff2-03863b0b79c4">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [12]"/>
-						<jr:tableHeader style="Table_TH" height="20" rowSpan="1">
+						<jr:tableHeader style="Table_TH" height="16" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="799" height="20" uuid="33dff9c9-e698-48e4-9f6d-54b898df97bf"/>
+								<reportElement x="0" y="0" width="799" height="16" uuid="33dff9c9-e698-48e4-9f6d-54b898df97bf"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="12" isBold="true"/>
+									<font fontName="Arial" size="11" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Detalhes de Roturas]]></text>
 							</staticText>
@@ -985,12 +1065,12 @@ Moldeo]]></text>
 				<reportElement x="0" y="0" width="268" height="50" uuid="56348a74-99b1-4dd6-9be8-30f6a588bc5f"/>
 				<imageExpression><![CDATA[$P{carimbo}]]></imageExpression>
 			</image>
-			<textField>
+			<textField pattern="&quot;&quot;">
 				<reportElement x="268" y="0" width="267" height="50" uuid="27b413d1-fd15-4351-9592-4f3d22ca87fc"/>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="html">
 					<font fontName="Arial"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER} + " / " + $V{PAGE_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Hoja: " + $V{PAGE_NUMBER} + " / " + $V{PAGE_COUNT} +"<br/> "+ "Impresso em: " +(new SimpleDateFormat("dd/MM/yyyy").format(new Date()))]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="535" y="0" width="267" height="50" uuid="ced19377-ace7-430f-8e75-e2370152e73a"/>

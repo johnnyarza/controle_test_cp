@@ -12,8 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<VBox prefHeight="347.0" prefWidth="496.0" spacing="5.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="gui.ConnectionConfigViewController">
+<VBox prefHeight="347.0" prefWidth="496.0" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ConnectionConfigViewController">
    <children>
       <Label text="Configuraciones de Conexión">
          <VBox.margin>
@@ -25,7 +24,7 @@
       </Label>
       <HBox prefHeight="26.0" prefWidth="496.0" style="-fx-background-color: #e0dede;">
          <children>
-            <Button fx:id="btSave" mnemonicParsing="false" onAction="#onBtSaveAction" text="Guardar" />
+            <Button fx:id="btSave" mnemonicParsing="false" onAction="#onBtSaveAction" styleClass="safe-button" text="Guardar" />
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

@@ -154,4 +154,31 @@ public class ProviderDaoJDBC implements ProviderDao{
 			throw new DbException(e.getMessage());
 		}
 	}
+
+	@Override
+	public Provider findByName(String name) {
+
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		Provider obj = new Provider();
+		try {
+			st = conn.prepareStatement("SELECT * FROM cp_db.providers where name= ?");
+			st.setString(1,name);
+			
+			rs = st.executeQuery();
+			
+			if (rs.next()) {
+				obj.setId(rs.getInt(1));
+				obj.setName(rs.getString(2));
+				obj.setPhone(rs.getString(3));
+				obj.setAddress(rs.getString(4));
+				obj.setEmail(rs.getString(5));
+				return obj;
+			}
+			return null;
+			
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+	}
 }

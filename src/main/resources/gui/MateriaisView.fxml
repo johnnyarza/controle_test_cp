@@ -15,8 +15,11 @@
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
+         <VBox.margin>
+            <Insets left="8.0" />
+         </VBox.margin>
       </Label>
-      <HBox alignment="CENTER_LEFT" minHeight="35.0" prefHeight="42.0" prefWidth="496.0" spacing="5.0">
+      <HBox alignment="CENTER_LEFT" prefWidth="496.0" spacing="5.0">
          <children>
             <Button fx:id="btNew" mnemonicParsing="false" onAction="#onBtNewAction" styleClass="custom-button" text="Nuevo" />
             <Button fx:id="btEdit" mnemonicParsing="false" onAction="#onBtEditAction" styleClass="custom-button" text="Editar" />
@@ -24,7 +27,7 @@
             <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onBtPrintAction" styleClass="custom-button" text="imprimir" />
          </children>
          <padding>
-            <Insets left="5.0" />
+            <Insets bottom="8.0" left="8.0" top="8.0" />
          </padding>
       </HBox>
       <TableView fx:id="tableViewMaterial" prefHeight="387.0" prefWidth="421.0">

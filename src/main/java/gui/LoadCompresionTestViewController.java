@@ -116,14 +116,9 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 					}, (NewCompresionTestFormController controller) -> {
 						this.entity = controller.getEntity();
 						this.btCancelPressed = controller.getBtCancelPressed();
-					},"/gui/NewCompresionTestForm.css");
+					}, "/gui/NewCompresionTestForm.css");
 			if (!btCancelPressed) {
-				createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, this.entity,
-						"/gui/CompresionTestForm.css");
-				updateViewData();
-				if (lateCorpoDeProvaList.size() > 0) {
-					Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
-				}
+				showCompresionTestForm(parentStage);
 			}
 
 		} catch (Exception e) {
@@ -149,11 +144,12 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	@FXML
 	public void onBtDeleteAction(ActionEvent event) {
 		try {
+			CompresionTest obj = getCompresionTestFromTableView();
 			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de accion",
 					"Seguro que desea apagar probeta?", "Después de apagados los datos seran perdidos");
 
 			if (result.get() == ButtonType.OK) {
-				CompresionTest obj = getCompresionTestFromTableView();
+
 				if (compresionTestService == null) {
 					throw new IllegalStateException("Service was null");
 				} else {
@@ -165,22 +161,33 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
 		} catch (IllegalStateException e1) {
 			Alerts.showAlert("Error", "IllegalStateException", e1.getMessage(), AlertType.ERROR);
+		} catch (NullPointerException e2) {
+			Alerts.showAlert("Error", "NullPointerException", e2.getMessage(), AlertType.ERROR);
 		}
 
 	}
 
 	@FXML
 	public void onBtWarningACtion(ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
 		try {
 
 			createDialogForm("/gui/WarningDialog.fxml", "Aviso", Utils.currentStage(event),
 					(WarningDialogController controller) -> {
 						controller.setCompresionTestListList(compresionTestListList);
 						controller.setLateCorpoDeProvaList(lateCorpoDeProvaList);
+						controller.setEntity(new CompresionTest());
+						controller.setCompresionTestService(new CompresionTestService());
 						controller.updateDialogData();
-					}, (WarningDialogController) -> {
-					}, (WarningDialogController) -> {
+					}, (WarningDialogController controller) -> {
+						controller.setIsBtCancelPressed(true);
+					}, (WarningDialogController controller) -> {
+						this.entity = controller.getEntity();
+						this.btCancelPressed = controller.getIsBtCancelPressed();
 					}, "/gui/WarningDialog.css");
+			if (!btCancelPressed) {
+				showCompresionTestForm(parentStage);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
@@ -204,7 +211,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 							this.client = controller.getEntity();
 						}
 						this.btCancelPressed = controller.getPressedCancelButton();
-					},"");// final
+					}, "");// final
 			if (!this.btCancelPressed) {
 				if (this.client == null) {
 					throw new IllegalStateException("Cliente vacío");
@@ -225,36 +232,13 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		rF.compresionTestReportViewByClient(service.findByClientId(id), client);
 	}
 
-	public void setCompresionTestListService(CompresionTestListService service) {
-		this.service = service;
-	}
-
-	public ClientService getClientService() {
-		return clientService;
-	}
-
-	public List<CorpoDeProva> getLateCorpoDeProvaList() {
-		return lateCorpoDeProvaList;
-	}
-
-	public void setClientService(ClientService clientService) {
-		this.clientService = clientService;
-	}
-
-	public CompresionTestService getCompresionTestService() {
-		return compresionTestService;
-	}
-
-	public void setCompresionTestService(CompresionTestService compresionTestService) {
-		this.compresionTestService = compresionTestService;
-	}
-
-	public CorpoDeProvaService getCorpoDeProvaService() {
-		return corpoDeProvaService;
-	}
-
-	public void setCorpoDeProvaService(CorpoDeProvaService corpoDeProvaService) {
-		this.corpoDeProvaService = corpoDeProvaService;
+	private void showCompresionTestForm(Stage parentStage) {
+		createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, this.entity,
+				"/gui/CompresionTestForm.css");
+		updateViewData();
+		if (lateCorpoDeProvaList.size() > 0) {
+			Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
+		}
 	}
 
 	@Override
@@ -264,17 +248,27 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	}
 
 	private void initializeNodes() {
+		formatTableView();
+	}
+
+	private void formatTableView() {
+		
+		
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("compresionTestId"));
 		tableColumnClientName.setCellValueFactory(new PropertyValueFactory<>("clientName"));
 		tableColumnAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+		
 		tableColumnCreationDate.setCellValueFactory(new PropertyValueFactory<>("creationDate"));
 		Utils.formatTableColumnDate(tableColumnCreationDate, "dd/MM/yyyy");
 		tableColumnObra.setCellValueFactory(new PropertyValueFactory<>("obra"));
 
 		Stage stage = (Stage) Program.getMainScene().getWindow();
+		
+		
 		tableViewClient.prefHeightProperty().bind(stage.heightProperty());
-
 	}
+
+
 
 	public void updateViewData() {
 		updateTableView();
@@ -301,13 +295,15 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			formatWarningBtn(lateCorpoDeProvaList);
 		} catch (IllegalStateException e) {
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
+		} catch (DbException e1) {
+			Alerts.showAlert("Error", "SQLException", e1.getMessage(), AlertType.ERROR);
 		}
 
 	}
 
 	private void formatWarningBtn(List<CorpoDeProva> list) {
 		if (list.size() > 0) {
-			
+
 			btWarning.setVisible(true);
 			btWarning.setDisable(false);
 			return;
@@ -327,10 +323,11 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		CompresionTestList compresionTestList = tableViewClient.getSelectionModel().getSelectedItem();
 		CompresionTestService compresionTestService = new CompresionTestService();
 		if (compresionTestList == null) {
-			throw new NullPointerException("compresionTestList was null");
+			throw new NullPointerException("Ensayo vacío o no selecionado!");
 		}
 		CompresionTest compresionTest = compresionTestService.findByIdWithTimeZone(compresionTestList.getCompresionTestId(),
 				TimeZone.getDefault());
+
 		return compresionTest;
 	}
 
@@ -396,6 +393,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 			dialogStage.setTitle(title);
 			dialogStage.setScene(new Scene(pane));
+			dialogStage.getScene().getStylesheets().add("/gui/GlobalStyle.css");
 			if (!css.trim().equals("")) {
 				dialogStage.getScene().getStylesheets().add(css);
 			}
@@ -418,6 +416,42 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		} catch (IOException e) {
 			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
 		}
+	}
+
+	public void setCompresionTestListService(CompresionTestListService service) {
+		this.service = service;
+	}
+
+	public ClientService getClientService() {
+		return clientService;
+	}
+
+	public List<CorpoDeProva> getLateCorpoDeProvaList() {
+		return lateCorpoDeProvaList;
+	}
+
+	public void setClientService(ClientService clientService) {
+		this.clientService = clientService;
+	}
+
+	public CompresionTestService getCompresionTestService() {
+		return compresionTestService;
+	}
+
+	public void setCompresionTestService(CompresionTestService compresionTestService) {
+		this.compresionTestService = compresionTestService;
+	}
+
+	public CorpoDeProvaService getCorpoDeProvaService() {
+		return corpoDeProvaService;
+	}
+
+	public void setCorpoDeProvaService(CorpoDeProvaService corpoDeProvaService) {
+		this.corpoDeProvaService = corpoDeProvaService;
+	}
+
+	public TableView<CompresionTestList> getTableViewClient() {
+		return tableViewClient;
 	}
 
 }

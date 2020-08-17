@@ -31,9 +31,10 @@
                   <Insets bottom="8.0" />
                </VBox.margin>
             </TableView>
-            <HBox alignment="CENTER" prefHeight="21.0" prefWidth="348.0">
+            <HBox alignment="CENTER" prefHeight="21.0" prefWidth="348.0" spacing="8.0">
                <children>
-                  <Button fx:id="btnClose" mnemonicParsing="false" onAction="#onBtCloseAction" text="Cerrar" />
+                  <Button fx:id="btnOpen" mnemonicParsing="false" onAction="#onBtOpenAction" styleClass="safe-button" text="Abrir" />
+                  <Button fx:id="btnClose" mnemonicParsing="false" onAction="#onBtCloseAction" styleClass="dangerous-button" text="Cerrar" />
                </children>
             </HBox>
          </children>

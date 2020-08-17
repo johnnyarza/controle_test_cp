@@ -28,6 +28,7 @@ public class Program extends Application {
 			scrollPane.setFitToWidth(true);
 
 			mainScene = new Scene(scrollPane);
+			mainScene.getStylesheets().add("/gui/application.css");
 			primaryStage.setScene(mainScene);
 			primaryStage.setTitle("Probeta Control");
 			primaryStage.show();

@@ -98,10 +98,11 @@ public class ProveedoresViewController implements Initializable,DataChangeListen
 	
 	public void onBtDeleteAction(ActionEvent event) {
 		try {
+			Provider obj = getProviderFromTableView();
 			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de acción",
 					"Seguro que desea apagar?", "Los datos seleccionados serán perdidos");
 			if (result.get() == ButtonType.OK) {
-				Provider obj = getProviderFromTableView();
+				
 			if (service == null) {
 				throw new IllegalStateException("Provider Service was null");
 			}

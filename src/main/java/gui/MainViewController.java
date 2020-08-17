@@ -64,15 +64,18 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void onBtTestAction(ActionEvent event) {
 		loadView("/gui/LoadCompresionTestView.fxml", (LoadCompresionTestViewController controller) -> {
+
 			controller.setCompresionTestListService(new CompresionTestListService());
 			controller.setClientService(new ClientService());
 			controller.setCorpoDeProvaService(new CorpoDeProvaService());
 			controller.setCompresionTestService(new CompresionTestService());
+
 			controller.updateViewData();
+
 			if (controller.getLateCorpoDeProvaList().size() > 0) {
 				Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
 			}
-		},"/gui/LoadCompresionTestView.css");
+		}, "/gui/LoadCompresionTestView.css");
 	}
 
 	@FXML
@@ -80,7 +83,7 @@ public class MainViewController implements Initializable {
 		loadView("/gui/ClientList.fxml", (ClientListController controller) -> {
 			controller.setClientService(new ClientService());
 			controller.updateTableView();
-		},"/gui/ClientList.css");
+		}, "/gui/ClientList.css");
 	}
 
 	@FXML
@@ -88,7 +91,7 @@ public class MainViewController implements Initializable {
 		loadView("/gui/ProveedoresView.fxml", (ProveedoresViewController controller) -> {
 			controller.setService(new ProviderService());
 			controller.updateTableView();
-		},"/gui/ProveedoresView.css");
+		}, "/gui/ProveedoresView.css");
 	}
 
 	@FXML
@@ -96,7 +99,7 @@ public class MainViewController implements Initializable {
 		loadView("/gui/MateriaisView.fxml", (MateriaisViewController controller) -> {
 			controller.setService(new MaterialService());
 			controller.updateTableView();
-		},"/gui/MateriaisView.css");
+		}, "/gui/MateriaisView.css");
 	}
 
 	@FXML
@@ -105,7 +108,7 @@ public class MainViewController implements Initializable {
 			controller.setService(new ConcreteDesignService());
 			controller.setCompresionTestService(new CompresionTestService());
 			controller.updateTableView();
-		},"/gui/ConcreteDesignView.css");
+		}, "/gui/ConcreteDesignView.css");
 	}
 
 	@FXML
@@ -215,11 +218,11 @@ public class MainViewController implements Initializable {
 			VBox newVbox = loader.load();
 
 			Scene mainScene = Program.getMainScene();
-			
+
 			if (!css.trim().equals("")) {
 				mainScene.getStylesheets().add(css);
 			}
-			
+
 			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
 
 			Node mainMenu = mainVBox.getChildren().get(0);
@@ -231,6 +234,7 @@ public class MainViewController implements Initializable {
 			initializingAction.accept(controller);
 
 		} catch (IOException e) {
+			e.printStackTrace();
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}

@@ -11,5 +11,6 @@ public interface ProviderDao {
 	void deleteById(Integer id);
 	Provider findById(Integer id);
 	List<Provider> findAll();
+	Provider findByName(String name);
 
 }

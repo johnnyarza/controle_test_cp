@@ -34,4 +34,8 @@ public class ClientService {
 	public List<Cliente> findByNameLike(String str) {
 		return dao.findByLikeName(str);
 	}
+	
+	public Cliente findByName(String str) {
+		return dao.findByName(str);
+	}
 }

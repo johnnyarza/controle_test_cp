@@ -12,6 +12,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -31,9 +32,10 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
+
 public class Utils {
 
-	private static NumberFormat format = NumberFormat.getInstance(new Locale("pt", "BR"));
+	private static NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
 	private static DecimalFormat df = (DecimalFormat) format;
 
 	public static Stage currentStage(ActionEvent event) {
@@ -148,17 +150,48 @@ public class Utils {
 				} else {
 					if (daysBetweenDates(item.getRuptureDate(), new Date()) == 0
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
-						setStyle("-fx-background-color: #f1c40f");
+						getStyleClass().add("today-row");
+						getStyleClass().add("table-row-cell");
+						
+						//setStyle("-fx-background-color: #f1c40f");
 					} else if (item.getRuptureDate().compareTo(new Date()) < 0
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
-						setStyle("-fx-background-color: #e74c3c");
+						getStyleClass().add("late-row");
+						getStyleClass().add("table-row-cell");
+						//setStyle("-fx-background-color: #e74c3c");
 					} else if (daysBetweenDates(item.getRuptureDate(), new Date()) == 1
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
-						setStyle("-fx-background-color: #2ecc71");
+						//setStyle("-fx-background-color: #2ecc71");
+						getStyleClass().add("table-row-cell");
+						getStyleClass().add("tomorrow-row");
+						
 					} else {
 						setStyle("");
 					}
 				}
+			}
+		});
+	}
+	
+	// In this method is necessary that the Scene already has a css file.
+	public static <T> void formatTableViewRows(TableView<T> tableView, List<String> cssClasses) {
+		if (tableView.getParent().getScene().getStylesheets().size() == 0) {
+			throw new IllegalStateException("The Scene does not has a CSS file definition");
+		}
+		tableView.setRowFactory(row -> new TableRow<T>() {
+
+			@Override
+			public void updateItem(T item, boolean empty) {
+				super.updateItem(item, empty);
+
+				if (item == null || empty) {
+					setStyle("");
+				} else {
+					for (String cssClass : cssClasses) {
+						getStyleClass().add(cssClass);
+					}
+				}
+
 			}
 		});
 	}

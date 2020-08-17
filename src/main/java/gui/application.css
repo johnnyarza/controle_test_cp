@@ -14,12 +14,3 @@
 	-fx-background-color: transparent;
 	
 }
-
-.safe-button:hover {
-	-fx-background-color:#2ecc71;
-}
-
-.dangerous-button:hover {
-	-fx-background-color:#e74c3c;
-}
-

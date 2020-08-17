@@ -14,12 +14,12 @@
          
             <MenuBar fx:id="myMenuBar">
               <menus>
-                  <Menu mnemonicParsing="false" text="Archivo">
+                  <Menu mnemonicParsing="false" styleClass="safe-button" text="Archivo">
                     <items>
                         <MenuItem fx:id="BtTest" mnemonicParsing="false" onAction="#onBtTestAction" text="Roturas" />
                     </items>
                   </Menu>
-                <Menu mnemonicParsing="false" text="Registros">
+                <Menu mnemonicParsing="false" styleClass="safe-button" text="Registros">
                   <items>
                     <MenuItem fx:id="onBtClientAction" mnemonicParsing="false" onAction="#onBtClientAction" text="Clientes" />
                         <MenuItem fx:id="btDesign" mnemonicParsing="false" onAction="#onBtDesignAction" text="Diseños" />
@@ -27,13 +27,13 @@
                         <MenuItem fx:id="btProvider" mnemonicParsing="false" onAction="#onBtProviderAction" text="Proveedores" />
                   </items>
                 </Menu>
-                  <Menu mnemonicParsing="false" text="Configuraciones">
+                  <Menu mnemonicParsing="false" styleClass="safe-button" text="Configuraciones">
                     <items>
                       <MenuItem fx:id="BtConfigReport" mnemonicParsing="false" onAction="#onBtConfigReportAction" text="Relatorios" />
                         <MenuItem fx:id="btConfigConnection" mnemonicParsing="false" onAction="#onBtConfigConnectionAction" text="Conexion" />
                     </items>
                   </Menu>
-                <Menu mnemonicParsing="false" text="Help">
+                <Menu mnemonicParsing="false" styleClass="safe-button" text="Help">
                   <items>
                     <MenuItem fx:id="btAbout" mnemonicParsing="false" onAction="#onBtAboutAction" text="About" />
                   </items>

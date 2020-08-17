@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
 <VBox fx:id="vbox" minWidth="400.0" prefHeight="401.0" prefWidth="1168.0" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.CompresionTestFormController">
@@ -25,8 +26,8 @@
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="279.0" minWidth="80.0" prefWidth="104.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="462.0" minWidth="143.0" prefWidth="164.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="60.0" prefWidth="66.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="119.0" minWidth="90.0" prefWidth="92.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="10.0" prefWidth="290.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="124.99997558593748" minWidth="90.0" prefWidth="124.19998779296873" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="10.0" prefWidth="256.60001220703134" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="10.0" prefWidth="103.0" />
         </columnConstraints>
         <rowConstraints>
@@ -40,15 +41,18 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label text="Fecha creación" GridPane.columnIndex="3" GridPane.rowIndex="2">
+            <Label text="Creado em:" GridPane.columnIndex="3" GridPane.rowIndex="2">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
             </Label>
             <TextField fx:id="txtid" editable="false" maxWidth="50.0" GridPane.columnIndex="1" />
-            <TextField fx:id="txtObra" GridPane.columnIndex="4" />
-            <TextField fx:id="txtAddress" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <Label text="Obra" GridPane.columnIndex="3">
+            <TextField fx:id="txtObra" promptText="Obra" GridPane.columnIndex="4" />
+            <TextField fx:id="txtAddress" promptText="Ubicación" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <Label text="Obra:" GridPane.columnIndex="3">
                <padding>
                   <Insets left="5.0" />
                </padding>
@@ -56,7 +60,7 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label text="Ubicacion" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <Label text="Ubicación:" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -75,8 +79,8 @@
                <GridPane.margin>
                   <Insets left="2.0" />
                </GridPane.margin></HBox>
-            <ComboBox fx:id="comboBoxClient" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <DatePicker fx:id="dpCreationDate" editable="false" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+            <ComboBox fx:id="comboBoxClient" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" promptText="Cliente" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <DatePicker fx:id="dpCreationDate" editable="false" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" promptText="fecha" GridPane.columnIndex="4" GridPane.rowIndex="2" />
             <Label fx:id="labelErrorClient" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" />
@@ -105,7 +109,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label text="Diseño / m³" GridPane.columnIndex="6">
+            <Label text="Dosificación / m³" GridPane.columnIndex="6">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>
@@ -139,7 +143,7 @@
                   <Button fx:id="btSearchConcreteProvider" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtSearchConcreteProviderAction" prefHeight="20.0" prefWidth="20.0" />
                </children>
             </HBox>
-            <ComboBox fx:id="comboBoxConcreteProvider" onAction="#onChangeCount" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ComboBox fx:id="comboBoxConcreteProvider" onAction="#onChangeCount" prefWidth="150.0" promptText="Prov. Hormigón" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label fx:id="labelErrorConcreteProvider" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets left="5.0" />
@@ -147,10 +151,10 @@
             </Label>
          </children>
          <padding>
-            <Insets left="5.0" top="5.0" />
+            <Insets left="8.0" right="8.0" top="5.0" />
          </padding>
       </GridPane>
-      <TableView fx:id="tableViewCorpoDeProva" minWidth="400.0" prefHeight="276.0">
+      <TableView fx:id="tableViewCorpoDeProva" minWidth="400.0" prefHeight="276.0" styleClass="tableView">
         <columns>
           <TableColumn fx:id="tableColumnId" prefWidth="72.0" styleClass="custom-align" text="Probeta iD" />
           <TableColumn fx:id="tableColumnCodigo" prefWidth="200.0" styleClass="fitwidth" text="Descripción" />
@@ -177,6 +181,31 @@
             <Button fx:id="btApagarProbeta" mnemonicParsing="false" onAction="#onBtApagarProbetaAction" styleClass="delete-button" text="Apagar Probeta" />
             <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onbtPrintAction" styleClass="custom-button" text="Imprimir" />
             <Button fx:id="btClose" mnemonicParsing="false" onAction="#onBtCloseAction" styleClass="close-button" text="Cerrar" />
+            <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="222.0" spacing="5.0">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <children>
+                  <Label text="Mañana">
+                     <graphic>
+                        <Circle fill="#2ecc71" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+                     </graphic>
+                  </Label>
+                  <Label text="Hoy">
+                     <graphic>
+                        <Circle fill="#f1c40f" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+                     </graphic>
+                  </Label>
+                  <Label text="Retrasado">
+                     <graphic>
+                        <Circle fill="#e74c3c" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+                     </graphic>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets left="8.0" />
+               </padding>
+            </HBox>
          </children>
       </HBox>
    </children>

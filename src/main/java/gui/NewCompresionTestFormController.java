@@ -207,7 +207,16 @@ public class NewCompresionTestFormController implements Initializable {
 	private void initializeNodes() {
 		initializeComboBoxes();
 		setButtonsGraphic();
+		formatButtons();
 		this.btCancelPressed = false;		
+	}
+	
+	private void formatButtons() {
+		String safeButton = "safe-button";
+		btCancel.getStyleClass().add("dangerous-button");
+		btCreate.getStyleClass().add(safeButton);
+		btSearchClient.getStyleClass().add(safeButton);
+		btSearchConcreteProvider.getStyleClass().add(safeButton);
 	}
 	
 	private void setButtonsGraphic() {

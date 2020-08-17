@@ -34,6 +34,8 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 
 	private CompresionTest compresionTest;
 
+	private Boolean isCancelButtonPressed = false;
+
 	@FXML
 	private Button btFilter;
 
@@ -51,6 +53,90 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 
 	@FXML
 	private Label labelErrorFinalDate;
+
+	@FXML
+	private void onBtFilterAction(ActionEvent event) {
+		try {
+			List<CorpoDeProva> list = getFormData();
+			this.obsList = FXCollections.observableArrayList(list);
+			Utils.currentStage(event).close();
+
+		} catch (DbException e) {
+			Alerts.showAlert("Error", "Error filtrando probetas", e.getMessage(), AlertType.ERROR);
+		} catch (ValidationException e1) {
+			setLabelErrorMessages(e1.getErrors());
+		}
+	}
+
+	private void setLabelErrorMessages(Map<String, String> errors) {
+		Set<String> errorNames = errors.keySet();
+
+		labelErrorInitialDate.setText(errorNames.contains("initialDate") ? errors.get("initialDate") : "");
+		labelErrorFinalDate.setText(errorNames.contains("finalDate") ? errors.get("finalDate") : "");
+
+	}
+
+	private List<CorpoDeProva> getFormData() {
+		ValidationException exception = new ValidationException("Validation Exception");
+
+		if (service == null) {
+			throw new IllegalStateException("Service was null");
+		}
+
+		if (dpFinalDate.getValue() == null) {
+			exception.addError("finalDate", "vacío");
+		}
+		if (dpInitialDate.getValue() == null) {
+			exception.addError("initialDate", "vacío");
+		}
+
+		if (dpInitialDate.getValue() != null && dpFinalDate.getValue() != null) {
+			Instant instantBefore = Utils.getInsTantFromDatePicker(dpInitialDate);
+			Instant instantAfter = Utils.getInsTantFromDatePicker(dpFinalDate);
+
+			if (instantBefore.compareTo(instantAfter) > 0) {
+				exception.addError("initialDate", "Fecha posterior a rotura");
+			}
+			if (instantAfter.compareTo(instantBefore) < 0) {
+				exception.addError("finalDate", "Fecha anterior a moldeo");
+			}
+		}
+
+		if (exception.getErrors().size() > 0) {
+			throw exception;
+		}
+		if (this.compresionTest.getId() == null) {
+			throw new IllegalStateException("compresionTestId was null");
+		}
+
+		return service.findByDatesAndCompresionTestId(TimeZone.getDefault(),
+				Date.from(Utils.getInsTantFromDatePicker(dpInitialDate)),
+				Date.from(Utils.getInsTantFromDatePicker(dpFinalDate)), this.compresionTest.getId());
+	}
+
+	@FXML
+	public void onBtCloseAction(ActionEvent event) {
+		setIsCancelButtonPressed(true);
+		Utils.currentStage(event).close();
+	}
+
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		initializeNodes();
+	}
+
+	private void initializeNodes() {
+		btFilter.getStyleClass().add("safe-button");
+		btClose.getStyleClass().add("dangerous-button");
+	}
+
+	public Boolean getIsCancelButtonPressed() {
+		return isCancelButtonPressed;
+	}
+
+	public void setIsCancelButtonPressed(Boolean isCancelButtonPressed) {
+		this.isCancelButtonPressed = isCancelButtonPressed;
+	}
 
 	public CorpoDeProvaService getService() {
 		return service;
@@ -75,74 +161,4 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 	public void setCompresionTest(CompresionTest compresionTest) {
 		this.compresionTest = compresionTest;
 	}
-
-	@FXML
-	public void onBtFilterAction(ActionEvent event) {
-		try {
-			List<CorpoDeProva> list = getFormData();
-			this.obsList = FXCollections.observableArrayList(list);
-			Utils.currentStage(event).close();
-
-		} catch (DbException e) {
-			Alerts.showAlert("Error", "Error filtrando probetas", e.getMessage(), AlertType.ERROR);
-		} catch (ValidationException e1) {
-			setLabelErrorMessages(e1.getErrors());
-		}
-	}
-
-	private void setLabelErrorMessages(Map<String, String> errors) {
-		Set<String> errorNames = errors.keySet();
-		
-		labelErrorInitialDate.setText(errorNames.contains("initialDate") ? errors.get("initialDate") : "");
-		labelErrorFinalDate.setText(errorNames.contains("finalDate") ? errors.get("finalDate") : "");
-		
-	}
-
-	private List<CorpoDeProva> getFormData() {
-		ValidationException exception = new ValidationException("Validation Exception");
-
-		if (service == null) {
-			throw new IllegalStateException("Service was null");
-		}
-
-		if (dpFinalDate.getValue() == null) {
-			exception.addError("finalDate", "vacío");
-		}
-		if (dpInitialDate.getValue() == null) {
-			exception.addError("initialDate", "vacío");
-		}
-
-		if (dpInitialDate.getValue() != null && dpFinalDate.getValue() != null) {
-			Instant instantBefore = Utils.getInsTantFromDatePicker(dpInitialDate);
-			Instant instantAfter = Utils.getInsTantFromDatePicker(dpFinalDate);
-			
-			if (instantBefore.compareTo(instantAfter) > 0) {
-				exception.addError("initialDate", "Fecha posterior a rotura");
-			}
-			if (instantAfter.compareTo(instantBefore) < 0) {
-				exception.addError("finalDate", "Fecha anterior a moldeo");
-			}
-		}
-		
-		if (exception.getErrors().size() > 0) {
-			throw exception;
-		}
-		if (this.compresionTest.getId() == null) {
-			throw new IllegalStateException("compresionTestId was null");
-		}
-		
-		return service.findByDatesAndCompresionTestId(TimeZone.getDefault(), Date.from(Utils.getInsTantFromDatePicker(dpInitialDate)), 
-				Date.from(Utils.getInsTantFromDatePicker(dpFinalDate)), this.compresionTest.getId());
-	}
-
-	@FXML
-	public void onBtCloseAction(ActionEvent event) {
-		Utils.currentStage(event).close();
-	}
-
-	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
-
-	}
-
 }
