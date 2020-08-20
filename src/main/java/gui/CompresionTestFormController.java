@@ -18,8 +18,6 @@ import java.util.TimeZone;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-import org.apache.commons.collections.map.HashedMap;
-
 import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Cliente;
@@ -33,6 +31,7 @@ import application.service.ClientService;
 import application.service.CompresionTestService;
 import application.service.ConcreteDesignService;
 import application.service.CorpoDeProvaService;
+import application.service.UserService;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
@@ -218,21 +217,46 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private void onBtLockAction(ActionEvent event) {
-		if (isLocked) {
-			btLock.setGraphic(imgViewMap.get("btUnlock"));
-//			ObservableList<String> styleCalss = btLock.getStyleClass();
-//			btLock.getStyleClass().clear();
-//			btLock.getStyleClass().addAll(styleCalss);
-//			btLock.getStyleClass().add("custom-button");
-			isLocked = false;
+		Stage parentStage = Utils.currentStage(event);
+		try {
+			if (isLocked) {
+				createDialogForm("/gui/LoginForm.fxml", "Login", parentStage, (LoginFormController controller) -> {
+					controller.setUserService(new UserService());
+					controller.setEntity(null);
+					controller.setIsLoggin(true);
+					controller.setLogger(logger);
+				}, (LoginFormController controller) -> {
+					controller.setEntity(null);
+				}, (LoginFormController controller) -> {
+					isLocked = controller.getEntity() == null ? true : false;
+				}, "");
+			} else {
+				isLocked = true;
+			}
 
-		} else {
-			btLock.setGraphic(imgViewMap.get("btLock"));
-//			btLock.getStyleClass().clear();
-//			btLock.getStyleClass().add("close-button");
-			isLocked = true;
+			setLockButtonStyle();
+			setNodesDisable();
+
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
-		setNodesDisable();
+
+	}
+
+	private void setLockButtonStyle() {
+		if (!isLocked) {
+			btLock.setGraphic(imgViewMap.get("btUnlock"));
+			btLock.getStyleClass().clear();
+			btLock.getStyleClass().add("button");
+			btLock.getStyleClass().add("unlocked-button");
+			return;
+		}
+		
+		btLock.setGraphic(imgViewMap.get("btLock"));
+		btLock.getStyleClass().clear();
+		btLock.getStyleClass().add("button");
+		btLock.getStyleClass().add("locked-button");
+
 	}
 
 	private void setNodesDisable() {
@@ -477,6 +501,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		formatTableView();
 		initializeComboBoxClient();
 		tableViewCorpoDeProva.prefHeightProperty().bind(vbox.heightProperty());
+		btLock.getStyleClass().add("button");
+		btLock.getStyleClass().add("locked-button");
 		setButtonsGraphics();
 	}
 

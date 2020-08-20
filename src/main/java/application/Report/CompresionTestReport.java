@@ -36,6 +36,7 @@ public class CompresionTestReport {
 			cTestList.add(cTest);
 			clientList.add(cTest.getClient());
 			
+			
 			JRBeanCollectionDataSource itemsCTEstRBean = new JRBeanCollectionDataSource(cTestList);
 			JRBeanCollectionDataSource itemsCorpoDeProvaChartRBEan =new JRBeanCollectionDataSource(compresionTestChartData(list));
 			JRBeanCollectionDataSource itemsClientRBean = new JRBeanCollectionDataSource(clientList);

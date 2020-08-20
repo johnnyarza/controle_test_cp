@@ -103,4 +103,28 @@ public class UserDaoJDBC implements UserDao {
 
 	}
 
+	@Override
+	public User findByNameAndPassword(User user) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM cp_db.users where name collate utf8mb4_0900_as_cs =? and password collate utf8mb4_0900_as_cs =?");
+			st.setString(1, user.getName());
+			st.setString(2, user.getPassword());
+
+			rs = st.executeQuery();
+
+			if (rs.next()) {
+				return new User(rs.getInt(1), rs.getString(2), rs.getString(3));
+			}
+
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+		return null;
+	}
+
 }

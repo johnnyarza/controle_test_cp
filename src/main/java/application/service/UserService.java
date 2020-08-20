@@ -23,4 +23,8 @@ public class UserService {
 	public void deleteById(Integer id) {
 		dao.deleteById(id);
 	}
+	
+	public User findByNameAndPassword(User user) {
+		return dao.findByNameAndPassword(user);
+	}
 }

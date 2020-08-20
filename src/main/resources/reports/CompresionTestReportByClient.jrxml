@@ -315,10 +315,10 @@ Resumen por Cliente]]></text>
 							<jr:columnHeader style="Table_CH" height="26">
 								<staticText>
 									<reportElement x="0" y="0" width="91" height="26" uuid="d1db1ad1-f84f-4089-9286-a37cb1f20b09"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
+									<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 										<font fontName="Arial" size="10" isBold="true"/>
 									</textElement>
-									<text><![CDATA[Ensayo]]></text>
+									<text><![CDATA[Ensayo <br>(Doc Nª - obra)]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="13">
@@ -363,7 +363,7 @@ Resumen por Cliente]]></text>
 										<font fontName="Arial" size="10" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Fecha de
-Moldeo]]></text>
+Confeccion]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="13">
@@ -407,7 +407,7 @@ Moldeo]]></text>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="10" isBold="true"/>
 									</textElement>
-									<text><![CDATA[Edad]]></text>
+									<text><![CDATA[Edad (días)]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="13">
@@ -455,7 +455,7 @@ Moldeo]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="13">
-								<textField pattern="#,##0.00#;(#,##0.00#-)">
+								<textField pattern="#.00">
 									<reportElement stretchType="ContainerHeight" x="0" y="0" width="50" height="13" uuid="33f43d1c-935d-40b2-b697-7a1e47b25faf"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial"/>
@@ -478,7 +478,7 @@ Moldeo]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="13">
-								<textField pattern="#,##0.00#;(#,##0.00#-)">
+								<textField pattern="#.000">
 									<reportElement stretchType="ContainerHeight" x="0" y="0" width="50" height="13" uuid="2593c31c-c0af-49c0-aa4a-771f8e0d8b93"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial"/>
@@ -487,54 +487,8 @@ Moldeo]]></text>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="50" uuid="60edab91-d752-4477-a5c1-2239ac79c737">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column11"/>
-							<jr:columnHeader style="Table_CH" height="26" rowSpan="1">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<staticText>
-									<reportElement x="0" y="0" width="50" height="26" uuid="92221d20-9d12-49ad-83a6-3e2f92494484"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="10" isBold="true"/>
-									</textElement>
-									<text><![CDATA[Rotura
-(ton)]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="13">
-								<textField textAdjust="ScaleFont" pattern="#,##0.00#;(#,##0.00#-)" isBlankWhenNull="true">
-									<reportElement stretchType="ContainerHeight" x="0" y="0" width="50" height="13" uuid="fdc22e15-6289-45f1-95a8-09a59f5536b6"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial"/>
-									</textElement>
-									<textFieldExpression><![CDATA[($F{tonRupture} == 0.0 ? null :$F{tonRupture})]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="60" uuid="04fbb434-1905-4490-a842-345bfddb7086">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column12"/>
-							<jr:columnHeader style="Table_CH" height="26" rowSpan="1">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<staticText>
-									<reportElement x="0" y="0" width="60" height="26" uuid="a9f86366-6f4f-4e4b-9c30-5aea64b9f0cc"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="10" isBold="true"/>
-									</textElement>
-									<text><![CDATA[Resistencia
-(Fck)]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="13">
-								<textField pattern="#,##0.00#;(#,##0.00#-)" isBlankWhenNull="true">
-									<reportElement stretchType="ContainerHeight" x="0" y="0" width="60" height="13" uuid="f5a0f1dc-c900-4892-b0fd-13a24e2adf38"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial"/>
-									</textElement>
-									<textFieldExpression><![CDATA[($F{fckRupture} == 0.0 ?  null : $F{fckRupture})]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
 						<jr:column width="62" uuid="13517393-aedf-4d58-8419-eea348d636ee">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column13"/>
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column11"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<jr:columnHeader style="Table_CH" height="26" rowSpan="1">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -548,12 +502,58 @@ Moldeo]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="13">
-								<textField pattern="#,##0.00#;(#,##0.00#-)">
+								<textField pattern="#,###.00">
 									<reportElement stretchType="ContainerHeight" x="0" y="0" width="62" height="13" uuid="1c9dc8f1-70df-421e-9f8b-d106175a769b"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{densid}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="50" uuid="60edab91-d752-4477-a5c1-2239ac79c737">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column12"/>
+							<jr:columnHeader style="Table_CH" height="26" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+								<staticText>
+									<reportElement x="0" y="0" width="50" height="26" uuid="92221d20-9d12-49ad-83a6-3e2f92494484"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="10" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Rotura
+(ton)]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="13">
+								<textField textAdjust="ScaleFont" pattern="#.00" isBlankWhenNull="true">
+									<reportElement stretchType="ContainerHeight" x="0" y="0" width="50" height="13" uuid="fdc22e15-6289-45f1-95a8-09a59f5536b6"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial"/>
+									</textElement>
+									<textFieldExpression><![CDATA[($F{tonRupture} == 0.0 ? null :$F{tonRupture})]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="60" uuid="04fbb434-1905-4490-a842-345bfddb7086">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column13"/>
+							<jr:columnHeader style="Table_CH" height="26" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+								<staticText>
+									<reportElement x="0" y="0" width="60" height="26" uuid="a9f86366-6f4f-4e4b-9c30-5aea64b9f0cc"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="10" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Resistencia
+(MPa)]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="13">
+								<textField pattern="#.00" isBlankWhenNull="true">
+									<reportElement stretchType="ContainerHeight" x="0" y="0" width="60" height="13" uuid="f5a0f1dc-c900-4892-b0fd-13a24e2adf38"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial"/>
+									</textElement>
+									<textFieldExpression><![CDATA[($F{fckRupture} == 0.0 ?  null : $F{fckRupture})]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
