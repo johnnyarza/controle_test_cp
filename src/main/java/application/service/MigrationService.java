@@ -34,6 +34,10 @@ public class MigrationService {
 		dao.corpoDeProvaMigration();
 	}
 	
+	public void userMigration() {
+		dao.userMigration();
+	}
+	
 	public void initiateDB() {
 	schemaMigration();
 	clientsTableMigration();
@@ -42,6 +46,7 @@ public class MigrationService {
 	concreteDesignMigration();
 	compresionTestMigration();			
 	corpoDeProvaMigration();
+	userMigration();
 	}
 
 }

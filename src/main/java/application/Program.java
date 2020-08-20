@@ -39,7 +39,7 @@ public class Program extends Application {
 			
 			createConfigFiles();
 
-			if (!DB.testConnection()) {
+			if (DB.testConnection()) {
 				initiateTables();
 			}
 			

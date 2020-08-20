@@ -45,7 +45,7 @@ public class MigrationDaoJDBC implements MigrationDao {
 					"  `email` varchar(45) DEFAULT NULL," + 
 					"  PRIMARY KEY (`id`)," + 
 					"  UNIQUE KEY `name_UNIQUE` (`name`)" + 
-					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci");
+					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
 
 			st.executeUpdate();
 		} catch (SQLException e) {
@@ -67,7 +67,7 @@ public class MigrationDaoJDBC implements MigrationDao {
 					"  PRIMARY KEY (`id`)," + 
 					"  KEY `PK_providersId_idx` (`providerId`)," + 
 					"  CONSTRAINT `PK_providersId` FOREIGN KEY (`providerId`) REFERENCES `providers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE" + 
-					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
+					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 			st.executeUpdate();
 		} catch (SQLException e) {
@@ -90,7 +90,7 @@ public class MigrationDaoJDBC implements MigrationDao {
 					"  `email` varchar(45) DEFAULT NULL," + 
 					"  PRIMARY KEY (`id`)," + 
 					"  UNIQUE KEY `name_UNIQUE` (`name`)" + 
-					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
+					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 			st.executeUpdate();
 		} catch (SQLException e) {
@@ -120,7 +120,7 @@ public class MigrationDaoJDBC implements MigrationDao {
 					"  CONSTRAINT `FK_clientID_compresionTest` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
 					"  CONSTRAINT `FK_concreteDesign` FOREIGN KEY (`ConcreteDesign_id`) REFERENCES `concretedesign` (`id`) ON DELETE SET NULL ON UPDATE CASCADE," + 
 					"  CONSTRAINT `FK_concreteProviderId` FOREIGN KEY (`concreteProviderId`) REFERENCES `clients` (`id`) ON DELETE SET NULL ON UPDATE CASCADE" + 
-					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci");
+					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
 
 			st.executeUpdate();
 		} catch (SQLException e) {
@@ -174,7 +174,7 @@ public class MigrationDaoJDBC implements MigrationDao {
 					"  CONSTRAINT `FK_MAT6` FOREIGN KEY (`mat6_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
 					"  CONSTRAINT `FK_MAT7` FOREIGN KEY (`mat7_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
 					"  CONSTRAINT `FK_MAT8` FOREIGN KEY (`mat8_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE" + 
-					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
+					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 			st.executeUpdate();
 		} catch (SQLException e) {
@@ -207,7 +207,7 @@ public class MigrationDaoJDBC implements MigrationDao {
 					"  KEY `FK_compresionTestId_CP_idx` (`compresionTest_Id`)," + 
 					"  CONSTRAINT `FK_clientID_CpID` FOREIGN KEY (`client_id`) REFERENCES `compresion_test` (`client_id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
 					"  CONSTRAINT `FK_compresionTestId_CP` FOREIGN KEY (`compresionTest_Id`) REFERENCES `compresion_test` (`id`) ON DELETE CASCADE ON UPDATE CASCADE" + 
-					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
+					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 			st.executeUpdate();
 		} catch (SQLException e) {
@@ -222,13 +222,13 @@ public class MigrationDaoJDBC implements MigrationDao {
 	public void userMigration() {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("CREATE TABLE IF NOT EXISTS `users` (" + 
-					"  `id` INT NOT NULL AUTO_INCREMENT," + 
-					"  `name` VARCHAR(45) NOT NULL," + 
-					"  `password` VARCHAR(45) NOT NULL," + 
-					"  PRIMARY KEY (`id`)," + 
-					"  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE," + 
-					"  UNIQUE INDEX `password_UNIQUE` (`password` ASC) VISIBLE)");
+			st = conn.prepareStatement("CREATE TABLE IF NOT EXISTS `users` ( " + 
+					"`id` INT NOT NULL AUTO_INCREMENT," + 
+					"`name` VARCHAR(45) NOT NULL, " + 
+					"`password` VARCHAR(45) NOT NULL," + 
+					"PRIMARY KEY (`id`)," + 
+					"UNIQUE KEY `name_UNIQUE` (`name`), " + 
+					"UNIQUE KEY `password_UNIQUE` (`password`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
 			st.executeUpdate();
 			
 		} catch (SQLException e) {

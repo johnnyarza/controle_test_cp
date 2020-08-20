@@ -78,22 +78,22 @@ public class UserDaoJDBC implements UserDao {
 			st.setString(1, user.getName());
 			st.setString(2, user.getPassword());
 			st.setInt(3, user.getId());
-			
+
 			st.executeUpdate();
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		} finally {
 			DB.closeStatement(st);
 		}
-	
+
 	}
 
 	@Override
 	public void deleteById(Integer id) {
-		PreparedStatement st= null;
+		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement("DELETE FROM `users` WHERE `id`=?");
-			st.setInt(1,id);
+			st.setInt(1, id);
 			st.executeUpdate();
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
@@ -108,14 +108,20 @@ public class UserDaoJDBC implements UserDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM cp_db.users where name collate utf8mb4_0900_as_cs =? and password collate utf8mb4_0900_as_cs =?");
+			st = conn.prepareStatement(
+					"SELECT * FROM cp_db.users where name=? and password=?");
 			st.setString(1, user.getName());
 			st.setString(2, user.getPassword());
 
 			rs = st.executeQuery();
 
 			if (rs.next()) {
-				return new User(rs.getInt(1), rs.getString(2), rs.getString(3));
+				String userStr = rs.getString(2);
+				String passStr = rs.getString(3);
+				
+				if (rs.getString(2).equals(user.getName()) && rs.getString(3).equals(user.getPassword())) {
+					return new User(rs.getInt(1), rs.getString(2), rs.getString(3));
+				}
 			}
 
 		} catch (SQLException e) {
