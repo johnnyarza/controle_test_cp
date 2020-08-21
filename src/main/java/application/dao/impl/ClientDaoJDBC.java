@@ -51,6 +51,7 @@ public class ClientDaoJDBC implements ClientDao {
 			throw new DbException(e.getMessage());
 		} finally {
 			DB.closeStatement(st);
+			DB.closeResultSet(rs);
 		}
 	}
 

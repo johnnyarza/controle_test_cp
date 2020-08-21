@@ -19,6 +19,7 @@ import application.util.FileUtils;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
@@ -46,7 +47,7 @@ public class ConnectionConfigViewController implements Initializable {
 
 	@FXML
 	private Button btSave;
-
+	
 	@FXML
 	private Label ipLabel;
 
@@ -58,7 +59,9 @@ public class ConnectionConfigViewController implements Initializable {
 
 	@FXML
 	private Label passLabel;
+	
 
+	
 	@FXML
 	public void onBtSaveAction() {
 

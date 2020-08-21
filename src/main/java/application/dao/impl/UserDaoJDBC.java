@@ -4,11 +4,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.util.logging.Level;
 
 import application.dao.UserDao;
 import application.db.DB;
 import application.db.DbException;
 import application.domaim.User;
+import application.log.LogUtils;
 
 public class UserDaoJDBC implements UserDao {
 
@@ -23,7 +27,10 @@ public class UserDaoJDBC implements UserDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("INSERT INTO `users` (`name`,`password`) VALUES (?,?)");
+			conn.setAutoCommit(false);
+			st = conn.prepareStatement("INSERT INTO `users` (`name`,`password`) VALUES (?,?)",
+					Statement.RETURN_GENERATED_KEYS);
+
 			st.setString(1, user.getName());
 			st.setString(2, user.getPassword());
 
@@ -36,14 +43,37 @@ public class UserDaoJDBC implements UserDao {
 					user.setId(id);
 					return user;
 				}
-				DB.closeResultSet(rs);
 			} else {
 				throw new DbException("Unexpected Error. No rows affected");
 			}
-
+			
+			conn.commit();
 		} catch (SQLException e) {
+			LogUtils lg = new LogUtils();
+			
+			if (conn != null) {
+				try {
+					lg.doLog(Level.INFO, "Rollbacking", e);
+					conn.rollback();
+				} catch (SQLException excep) {
+
+					lg.doLog(Level.SEVERE, excep.getMessage(), excep);
+				}
+			}
+			
 			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+
+			try {
+				conn.setAutoCommit(true);
+			} catch (SQLException e) {
+				LogUtils lg = new LogUtils();
+				lg.doLog(Level.SEVERE, e.getMessage(), e);
+			}
 		}
+
 		return null;
 	}
 
@@ -108,17 +138,15 @@ public class UserDaoJDBC implements UserDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement(
-					"SELECT * FROM cp_db.users where name=? and password=?");
+
+			st = conn.prepareStatement("SELECT * FROM cp_db.users where name=? and password=?");
 			st.setString(1, user.getName());
 			st.setString(2, user.getPassword());
 
 			rs = st.executeQuery();
 
 			if (rs.next()) {
-				String userStr = rs.getString(2);
-				String passStr = rs.getString(3);
-				
+
 				if (rs.getString(2).equals(user.getName()) && rs.getString(3).equals(user.getPassword())) {
 					return new User(rs.getInt(1), rs.getString(2), rs.getString(3));
 				}

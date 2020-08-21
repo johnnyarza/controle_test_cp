@@ -53,15 +53,19 @@ public class LoginFormController implements Initializable {
 
 	@FXML
 	private void onBtOkAction(ActionEvent event) {
-		try {
+		try {		
 			setEntity(getUserFromForm());
 			if (isLoggin) {
 				setEntity(userService.findByNameAndPassword(entity));
 				if (entity == null) {
 					throw new LoginException("Usuario o contraseña no válidos");
-				} else {
-
+				} 
+			} else {			
+				if (entity == null) {
+					throw new IllegalStateException("User was null");
 				}
+				userService.saveOrInsert(entity);
+				Alerts.showAlert("Aviso", "Alteraciones guardadas", null, AlertType.INFORMATION);
 			}
 			Utils.currentStage(event).close();
 		} catch (ValidationException e) {
@@ -92,6 +96,8 @@ public class LoginFormController implements Initializable {
 
 	private User getUserFromForm() {
 		User user = new User();
+		user.setId(null);
+
 		ValidationException exception = new ValidationException("Validation Error");
 		if (txtUser.getText().trim().equals("") || txtUser.getText() == null) {
 			exception.addError("user", "vacío");

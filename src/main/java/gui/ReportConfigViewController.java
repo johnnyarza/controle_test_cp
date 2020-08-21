@@ -11,23 +11,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import application.domaim.User;
 import application.log.LogUtils;
+import application.service.UserService;
 import application.util.FileUtils;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class ReportConfigViewController implements Initializable{
+	
+	private User user;
 	
 	private String logoPath;
 	
@@ -36,6 +47,15 @@ public class ReportConfigViewController implements Initializable{
 	private File imagesProp;
 	
 	private LogUtils logger;
+	
+	@FXML
+	private Button btEditAdmin;
+	
+	@FXML
+	private Button btNewAdmin;
+	
+	@FXML
+	private Button btDeleteAdmin;
 	
 	@FXML
 	private Button btSave;
@@ -55,6 +75,62 @@ public class ReportConfigViewController implements Initializable{
 	@FXML
 	public void onBtSaveAction() {
 
+	}
+	
+	@FXML
+	private void onBtNewAdmin(ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
+		doLogIn(parentStage);
+		
+		if (user != null) {
+			doSignUp(parentStage);
+		}
+		
+	}
+	
+	private void doSignUp(Stage parentStage) {
+		createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage, 
+				(LoginFormController controller)->{
+					controller.setIsLoggin(false);
+					controller.setEntity(null);
+					controller.setUserService(new UserService());
+					controller.setLogger(logger);
+					
+				}, 
+				(LoginFormController controller)->{
+					controller.setEntity(null);
+				}, 
+				(LoginFormController controller)->{
+					setUser(controller.getEntity());
+				}, "");
+	}
+	
+	private void doLogIn(Stage parentStage) {
+		createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage, 
+				(LoginFormController controller)->{
+					controller.setIsLoggin(true);
+					controller.setEntity(null);
+					controller.setUserService(new UserService());
+					controller.setLogger(logger);
+					
+				}, 
+				(LoginFormController controller)->{
+					controller.setEntity(null);
+				}, 
+				(LoginFormController controller)->{
+					setUser(controller.getEntity());
+				}, "");
+		
+	}
+
+	@FXML
+	private void onBtEditAdmin(ActionEvent event) {
+		
+	}
+	
+	@FXML
+	private void onBtDeleteAdmin(ActionEvent event) {
+		
 	}
 	
 	private void saveImagePaths()  {
@@ -160,6 +236,46 @@ public class ReportConfigViewController implements Initializable{
 		ImageView imgView2 = Utils.createImageView("/images/lupa.png", 15.0, 15.0);
 		btLogo.setGraphic(imgView2);	
 	}
+	
+	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css) {
+		try {
+
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			AnchorPane pane = loader.load();
+
+			T controller = loader.getController();
+			initializingAction.accept(controller);
+
+			Stage dialogStage = new Stage();
+
+			dialogStage.setTitle(title);
+			dialogStage.setScene(new Scene(pane));
+			dialogStage.getScene().getStylesheets().add("/gui/GlobalStyle.css");
+			if (!css.trim().equals("")) {
+				dialogStage.getScene().getStylesheets().add(css);
+			}
+			dialogStage.setResizable(true);
+			dialogStage.initOwner(parentStage);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+
+			dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+				@Override
+				public void handle(WindowEvent we) {
+					windowEventAction.accept(controller);
+
+				}
+			});
+
+			dialogStage.showAndWait();
+			finalAction.accept(controller);
+
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
+		}
+	}
 
 	public String getLogoPath() {
 		return logoPath;
@@ -189,6 +305,14 @@ public class ReportConfigViewController implements Initializable{
 
 	public void setLogger(LogUtils logger) {
 		this.logger = logger;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
 }
