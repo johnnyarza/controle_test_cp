@@ -1,5 +1,6 @@
 package application;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ public class Program extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+			createConfigFiles();
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainView.fxml"));
 			ScrollPane scrollPane = loader.load();
 
@@ -37,13 +39,14 @@ public class Program extends Application {
 			primaryStage.setTitle("Probeta Control");
 			primaryStage.show();
 			
-			createConfigFiles();
+			
 
 			if (DB.testConnection()) {
 				initiateTables();
 			}
 			
 		} catch (IOException e) {
+			e.printStackTrace();
 			Alerts.showAlert("Error", "Error al abrir ventana", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -67,6 +70,10 @@ public class Program extends Application {
 	}
 	
 	private static void createConfigFiles() throws IOException {
+		File directory = new File(Paths.get(System.getProperty("user.home"), "cp_configs").toFile().toURI());
+		directory.mkdir();
+		
+		
 		if (!Paths.get(System.getProperty("user.home"), "cp_configs", "ReportImage.properties").toFile().isFile()) {
 			Map<String, String> initialProps = new HashMap<>();
 			initialProps.put("carimboPath", "");
