@@ -213,6 +213,7 @@ public class MainViewController implements Initializable {
 	@Override
 	public void initialize(URL uri, ResourceBundle rb) {
 		logger = new LogUtils();
+		System.out.println (myMenuBar.getStyleClass().toString());
 	}
 
 }
