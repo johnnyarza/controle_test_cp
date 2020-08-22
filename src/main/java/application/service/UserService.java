@@ -3,6 +3,7 @@ package application.service;
 import application.dao.UserDao;
 import application.dao.impl.UserDaoJDBC;
 import application.db.DB;
+import application.db.DbException;
 import application.domaim.User;
 
 public class UserService {
@@ -12,6 +13,9 @@ public class UserService {
 		if (user.getId() != null) {
 			dao.update(user);
 		} else {
+			if (dao.findByName(user.getName()) != null ) {
+				throw new DbException ("Usuario ya existe");
+			};
 			dao.insert(user);
 		}
 	}

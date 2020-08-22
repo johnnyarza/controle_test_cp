@@ -85,7 +85,7 @@ public class Program extends Application {
 			Map<String, String> initialProps = new HashMap<>();
 			initialProps.put("password", EncriptaDecriptaApacheCodec.codificaBase64Encoder("1a2b3c4d5e6f"));
 			initialProps.put("user", "johnny");
-			initialProps.put("dburl", "jdbc:mysql://kkreco.duckdns.org:3333/cp_db?useTimezone=true&serverTimezone=UTC");
+			initialProps.put("dburl", "jdbc:mysql://kkreco.duckdns.org:3333/?useTimezone=true&serverTimezone=UTC");
 			initialProps.put("useSSL", "false");
 			
 			FileUtils.writeProperties("db.properties", initialProps);

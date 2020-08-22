@@ -31,7 +31,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 	public void insert(CompresionTest obj) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("INSERT INTO compresion_test " 
+			st = conn.prepareStatement("INSERT INTO cp_db.compresion_test " 
 					+ "(client_id,concreteProviderId,ConcreteDesign_id,obra,address,creacionDate) " 
 					+ "VALUES "
 					+ "(?,?,?,?,?,?)",
@@ -67,7 +67,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 	public void update(CompresionTest obj) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("UPDATE compresion_test SET "
+			st = conn.prepareStatement("UPDATE cp_db.compresion_test SET "
 					+ "compresion_test.client_id = ?, " 
 					+ "compresion_test.concreteProviderId = ? "
 					+ "compresion_test.ConcreteDesign_id = ?, " 
@@ -99,7 +99,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("delete from compresion_test where id = ?");
+			st = conn.prepareStatement("delete from cp_db.compresion_test where id = ?");
 			
 			st.setInt(1, id);
 			
@@ -119,7 +119,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM compresion_test where compresion_test.id = ?");
+			st = conn.prepareStatement("SELECT * FROM cp_db.compresion_test where compresion_test.id = ?");
 			
 			st.setInt(1, id);
 			rs = st.executeQuery();
@@ -161,7 +161,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM compresion_test");
+			st = conn.prepareStatement("SELECT * FROM cp_db.compresion_test");
 			
 			rs = st.executeQuery();
 			
@@ -203,7 +203,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM compresion_test where compresion_test.id = ?");
+			st = conn.prepareStatement("SELECT * FROM cp_db.compresion_test where compresion_test.id = ?");
 			
 			st.setInt(1, id);
 			rs = st.executeQuery();
@@ -290,7 +290,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 		Boolean result = null;
 		try {
 			st = conn.prepareStatement(
-					"SELECT COUNT(id) FROM compresion_test WHERE ConcreteDesign_id = ?");
+					"SELECT COUNT(id) FROM cp_db.compresion_test WHERE ConcreteDesign_id = ?");
 			st.setInt(1, concreteDesignId);
 			
 			rs = st.executeQuery();

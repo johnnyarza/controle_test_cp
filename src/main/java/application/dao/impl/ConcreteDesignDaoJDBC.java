@@ -30,7 +30,7 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"INSERT INTO concretedesign " + "(description, " + "fck, " + "mat1_id, " + "mat2_id, " + "mat3_id, "
+					"INSERT INTO cp_db.concretedesign " + "(description, " + "fck, " + "mat1_id, " + "mat2_id, " + "mat3_id, "
 							+ "mat4_id, " + "mat5_id, " + "mat6_id, " + "mat7_id, " + "mat8_id," + "mat1_qtt,"
 							+ "mat2_qtt," + "mat3_qtt," + "mat4_qtt," + "mat5_qtt," + "mat6_qtt," + "mat7_qtt,"
 							+ "mat8_qtt," + "slump" + ") " + "VALUES "
@@ -38,27 +38,6 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 					Statement.RETURN_GENERATED_KEYS);
 
 			setStatement(st, obj);
-			/*
-			 * st.setString(1, obj.getDescription()); st.setDouble(2, obj.getFck());
-			 * 
-			 * st.setInt(3, obj.getProporcion().getMat1().getId()); st.setInt(4,
-			 * obj.getProporcion().getMat2().getId()); st.setInt(5,
-			 * obj.getProporcion().getMat3().getId()); st.setInt(6,
-			 * obj.getProporcion().getMat4().getId()); st.setInt(7,
-			 * obj.getProporcion().getMat5().getId()); st.setInt(8,
-			 * obj.getProporcion().getMat6().getId()); st.setInt(9,
-			 * obj.getProporcion().getMat7().getId());
-			 * st.setInt(10,obj.getProporcion().getMat8().getId());
-			 * 
-			 * st.setDouble(11, obj.getProporcion().getMat1Qtt()); st.setDouble(12,
-			 * obj.getProporcion().getMat2Qtt()); st.setDouble(13,
-			 * obj.getProporcion().getMat3Qtt()); st.setDouble(14,
-			 * obj.getProporcion().getMat4Qtt()); st.setDouble(15,
-			 * obj.getProporcion().getMat5Qtt()); st.setDouble(16,
-			 * obj.getProporcion().getMat6Qtt()); st.setDouble(17,
-			 * obj.getProporcion().getMat7Qtt()); st.setDouble(18,
-			 * obj.getProporcion().getMat8Qtt());
-			 */
 
 			int rows = st.executeUpdate();
 			if (rows > 0) {
@@ -83,7 +62,7 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-					"UPDATE concretedesign SET " + "description = ?, " + "fck = ?, " + "mat1_id = ?, " + "mat2_id = ?, "
+					"UPDATE cp_db.concretedesign SET " + "description = ?, " + "fck = ?, " + "mat1_id = ?, " + "mat2_id = ?, "
 							+ "mat3_id = ?, " + "mat4_id = ?, " + "mat5_id = ?, " + "mat6_id = ?, " + "mat7_id = ?, "
 							+ "mat8_id = ?," + "mat1_qtt = ?," + "mat2_qtt = ?," + "mat3_qtt = ?," + "mat4_qtt = ?,"
 							+ "mat5_qtt = ?," + "mat6_qtt = ?," + "mat7_qtt = ?," + "mat8_qtt = ?," +"slump = ? "+ "WHERE id = ?"  ,
@@ -178,7 +157,7 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("DELETE FROM concretedesign " + "WHERE id = ?");
+			st = conn.prepareStatement("DELETE FROM cp_db.concretedesign " + "WHERE id = ?");
 
 			st.setInt(1, id);
 			int rows = st.executeUpdate();
@@ -198,7 +177,7 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 		ResultSet rs = null;
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM concretedesign WHERE id = ?");
+			st = conn.prepareStatement("SELECT * FROM cp_db.concretedesign WHERE id = ?");
 			st.setInt(1, id);
 
 			rs = st.executeQuery();
@@ -222,7 +201,7 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 		ResultSet rs = null;
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM concretedesign");
+			st = conn.prepareStatement("SELECT * FROM cp_db.concretedesign");
 
 			rs = st.executeQuery();
 

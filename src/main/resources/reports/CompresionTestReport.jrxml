@@ -190,12 +190,12 @@
 				<textElement textAlignment="Right" verticalAlignment="Top" markup="html">
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Rotura a compresión simple de probetas cilíndricas de hormigón <br> Comércio y Construcciones HJVA Ltda"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Rotura a compresión simple de probetas cilíndricas de hormigón <br> Servicicios de Ingeniería HJVA Ltda"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="650" y="40" width="151" height="23" uuid="d9264bce-95eb-4a88-b3ab-0af824a357f6"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA["Impresso em: " +(new SimpleDateFormat("dd/MM/yyyy").format(new Date()))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Impreso em: " +(new SimpleDateFormat("dd/MM/yyyy").format(new Date()))]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -606,36 +606,48 @@
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column12"/>
 						<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="59" height="13" uuid="3eaf45d4-7a8b-4453-88fc-0bed529adc2d"/>
+								<reportElement x="0" y="0" width="59" height="13" uuid="3eaf45d4-7a8b-4453-88fc-0bed529adc2d">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
 								<textElement>
 									<font fontName="Arial"/>
+									<paragraph leftIndent="1"/>
 								</textElement>
 								<text><![CDATA[Ubicación:]]></text>
 							</staticText>
 						</jr:tableFooter>
 						<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="59" height="13" uuid="f172cb49-6cdc-4f5b-830a-b7a77f2f043f"/>
+								<reportElement x="0" y="0" width="59" height="13" uuid="f172cb49-6cdc-4f5b-830a-b7a77f2f043f">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
 								<textElement>
 									<font fontName="Arial"/>
+									<paragraph leftIndent="1"/>
 								</textElement>
 								<text><![CDATA[Documento:]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:columnFooter style="Table 1_CH" height="13" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="59" height="13" uuid="7d7f10e5-5b63-48f2-9d4a-0853c6cd6f95"/>
+								<reportElement x="0" y="0" width="59" height="13" uuid="7d7f10e5-5b63-48f2-9d4a-0853c6cd6f95">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
 								<textElement>
 									<font fontName="Arial"/>
+									<paragraph leftIndent="1"/>
 								</textElement>
 								<text><![CDATA[Obra:]]></text>
 							</staticText>
 						</jr:columnFooter>
 						<jr:detailCell style="Table 1_TD" height="13">
 							<staticText>
-								<reportElement x="0" y="0" width="59" height="13" uuid="6a7ffee2-050a-47df-b9e5-ce0a737abcb1"/>
+								<reportElement x="0" y="0" width="59" height="13" uuid="6a7ffee2-050a-47df-b9e5-ce0a737abcb1">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
 								<textElement>
 									<font fontName="Arial"/>
+									<paragraph leftIndent="1"/>
 								</textElement>
 								<text><![CDATA[Cliente:]]></text>
 							</staticText>
@@ -645,25 +657,45 @@
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column13"/>
 						<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="150" height="13" uuid="3e7e5cef-2ed1-44db-97ab-040159ad2ece"/>
+								<reportElement x="0" y="0" width="150" height="13" uuid="3e7e5cef-2ed1-44db-97ab-040159ad2ece">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement>
+									<paragraph leftIndent="2"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{address}]]></textFieldExpression>
 							</textField>
 						</jr:tableFooter>
 						<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="150" height="13" uuid="a1db18d4-8ef9-40ed-a78a-35f56ad6abc3"/>
+								<reportElement x="0" y="0" width="150" height="13" uuid="a1db18d4-8ef9-40ed-a78a-35f56ad6abc3">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement>
+									<paragraph leftIndent="2"/>
+								</textElement>
 								<textFieldExpression><![CDATA["Nª: "+$F{id} + " • Fecha: " + new SimpleDateFormat("MM/dd/yyyy").format($F{date})]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:columnFooter style="Table 1_CH" height="13" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="150" height="13" uuid="1c67e78d-092d-4e88-8582-0fd3e2fbbf9b"/>
+								<reportElement x="0" y="0" width="150" height="13" uuid="1c67e78d-092d-4e88-8582-0fd3e2fbbf9b">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement>
+									<paragraph leftIndent="2"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{obra}]]></textFieldExpression>
 							</textField>
 						</jr:columnFooter>
 						<jr:detailCell style="Table 1_TD" height="13">
 							<textField>
-								<reportElement x="0" y="0" width="150" height="13" uuid="80087368-50a0-4919-b77c-ef2d86f13e0a"/>
+								<reportElement x="0" y="0" width="150" height="13" uuid="80087368-50a0-4919-b77c-ef2d86f13e0a">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement>
+									<paragraph leftIndent="2"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{client}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -777,7 +809,7 @@
 										<font fontName="Arial" size="10" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Fecha de
-Confeccion]]></text>
+Moldeo]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="13">

@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Savepoint;
 import java.sql.Statement;
 import java.util.logging.Level;
 
@@ -28,11 +27,12 @@ public class UserDaoJDBC implements UserDao {
 		ResultSet rs = null;
 		try {
 			conn.setAutoCommit(false);
-			st = conn.prepareStatement("INSERT INTO `users` (`name`,`password`) VALUES (?,?)",
+			st = conn.prepareStatement("INSERT INTO cp_db.users (`name`,`password`,`role`) VALUES (?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, user.getName());
 			st.setString(2, user.getPassword());
+			st.setString(3, user.getRole());
 
 			int rowsAffected = st.executeUpdate();
 
@@ -82,13 +82,13 @@ public class UserDaoJDBC implements UserDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("Select * from `users` where `id`=?");
+			st = conn.prepareStatement("Select * from cp_db.users where `id`=?");
 			st.setInt(1, id);
 
 			rs = st.executeQuery();
 
 			if (rs.next()) {
-				return new User(rs.getInt(1), rs.getString(2), rs.getString(3));
+				return new User(rs.getInt(1), rs.getString(2), rs.getString(3),rs.getString(4));
 			}
 
 		} catch (SQLException e) {
@@ -122,7 +122,7 @@ public class UserDaoJDBC implements UserDao {
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("DELETE FROM `users` WHERE `id`=?");
+			st = conn.prepareStatement("DELETE FROM cp_db.users WHERE `id`=?");
 			st.setInt(1, id);
 			st.executeUpdate();
 		} catch (SQLException e) {
@@ -145,13 +145,40 @@ public class UserDaoJDBC implements UserDao {
 
 			rs = st.executeQuery();
 
-			if (rs.next()) {
+			while (rs.next()) {
 
-				if (rs.getString(2).equals(user.getName()) && rs.getString(3).equals(user.getPassword())) {
-					return new User(rs.getInt(1), rs.getString(2), rs.getString(3));
+				if (rs.getString(2).equalsIgnoreCase(user.getName()) && rs.getString(3).equals(user.getPassword())) {
+					return new User(rs.getInt(1), rs.getString(2), rs.getString(3),rs.getString(4));
 				}
 			}
 
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+		return null;
+	}
+	
+	@Override
+	public User findByName(String name) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+
+			st = conn.prepareStatement("SELECT * FROM cp_db.users where name=?");
+			st.setString(1, name);
+			
+
+			rs = st.executeQuery();
+
+			while (rs.next()) {
+
+				if (rs.getString(2).equalsIgnoreCase(name)) {
+					return new User(rs.getInt(1), rs.getString(2), rs.getString(3),rs.getString(4));
+				}
+			}
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		} finally {

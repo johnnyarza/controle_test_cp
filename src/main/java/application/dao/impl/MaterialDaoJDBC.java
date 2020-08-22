@@ -27,7 +27,7 @@ public class MaterialDaoJDBC implements MaterialDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("INSERT INTO materials " + "(name, " + "providerId) " + "VALUES " + "(? ,?)",
+			st = conn.prepareStatement("INSERT INTO cp_db.materials " + "(name, " + "providerId) " + "VALUES " + "(? ,?)",
 					Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, obj.getName());
@@ -57,7 +57,7 @@ public class MaterialDaoJDBC implements MaterialDao {
 	public void update(Material obj) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("UPDATE materials SET " + "name = ?, " + "providerId = ? " + "WHERE id = ? ");
+			st = conn.prepareStatement("UPDATE cp_db.materials SET " + "name = ?, " + "providerId = ? " + "WHERE id = ? ");
 
 			st.setString(1, obj.getName());
 			st.setInt(2, obj.getProvider().getId());
@@ -81,7 +81,7 @@ public class MaterialDaoJDBC implements MaterialDao {
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("DELETE FROM materials WHERE id = ?");
+			st = conn.prepareStatement("DELETE FROM cp_db.materials WHERE id = ?");
 
 			st.setInt(1, id);
 
@@ -106,7 +106,7 @@ public class MaterialDaoJDBC implements MaterialDao {
 		Material obj = new Material();
 		try {
 			st = conn.prepareStatement(
-					"SELECT * FROM materials WHERE id = ?");
+					"SELECT * FROM cp_db.materials WHERE id = ?");
 			
 			st.setInt(1, id);
 			
@@ -163,7 +163,7 @@ public class MaterialDaoJDBC implements MaterialDao {
 		List<Material>  list = new ArrayList<>();
 		try {
 			st = conn.prepareStatement(
-					"SELECT * FROM materials WHERE id <> ?");
+					"SELECT * FROM cp_db.materials WHERE id <> ?");
 			st.setInt(1, id);
 			
 			rs = st.executeQuery();

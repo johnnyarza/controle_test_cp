@@ -36,7 +36,9 @@ public class MigrationService {
 	
 	public void userMigration() {
 		dao.userMigration();
+		dao.defaultUserMigration();
 	}
+	
 	
 	public void initiateDB() {
 	schemaMigration();

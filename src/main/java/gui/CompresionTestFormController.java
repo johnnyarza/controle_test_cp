@@ -32,6 +32,7 @@ import application.service.CompresionTestService;
 import application.service.ConcreteDesignService;
 import application.service.CorpoDeProvaService;
 import application.service.UserService;
+import enums.LogEnum;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
@@ -223,7 +224,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 				createDialogForm("/gui/LoginForm.fxml", "Login", parentStage, (LoginFormController controller) -> {
 					controller.setUserService(new UserService());
 					controller.setEntity(null);
-					controller.setIsLoggin(true);
+					controller.setIsLoggin(LogEnum.SIGNIN);
 					controller.setLogger(logger);
 				}, (LoginFormController controller) -> {
 					controller.setEntity(null);

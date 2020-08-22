@@ -8,6 +8,7 @@ public class User implements Serializable{
 	Integer id;
 	String name;
 	String password;
+	String role;
 	
 	public User() {
 		super();
@@ -17,6 +18,13 @@ public class User implements Serializable{
 		this.id = id;
 		this.name = name;
 		this.password = password;
+	}
+	public User(Integer id, String name, String password,String role) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.password = password;
+		this.role = role;
 	}
 	public Integer getId() {
 		return id;
@@ -35,6 +43,12 @@ public class User implements Serializable{
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
 	}
 	
 	

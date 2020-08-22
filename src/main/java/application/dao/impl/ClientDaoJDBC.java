@@ -27,7 +27,7 @@ public class ClientDaoJDBC implements ClientDao {
 		ResultSet rs = null;
 		try {
 
-			st = conn.prepareStatement("INSERT INTO clients " + "(name,phone,address,email) " + "VALUES " + "(?,?,?,?)",
+			st = conn.prepareStatement("INSERT INTO cp_db.clients " + "(name,phone,address,email) " + "VALUES " + "(?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, obj.getName());
@@ -59,7 +59,7 @@ public class ClientDaoJDBC implements ClientDao {
 	public void update(Cliente obj) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("update clients set " + "clients.name = ?, " + "clients.phone =?, "
+			st = conn.prepareStatement("update cp_db.clients set " + "clients.name = ?, " + "clients.phone =?, "
 					+ "clients.address = ?, " + "clients.email = ? " + "WHERE clients.id = ?");
 
 			st.setString(1, obj.getName());
@@ -81,7 +81,7 @@ public class ClientDaoJDBC implements ClientDao {
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("delete from clients where clients.id = ?");
+			st = conn.prepareStatement("delete from cp_db.clients where clients.id = ?");
 
 			st.setInt(1, id);
 
@@ -99,7 +99,7 @@ public class ClientDaoJDBC implements ClientDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM clients where clients.id = ?");
+			st = conn.prepareStatement("SELECT * FROM cp_db.clients where clients.id = ?");
 
 			st.setInt(1, id);
 			rs = st.executeQuery();
@@ -121,7 +121,7 @@ public class ClientDaoJDBC implements ClientDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM clients");
+			st = conn.prepareStatement("SELECT * FROM cp_db.clients");
 
 			rs = st.executeQuery();
 
@@ -143,7 +143,7 @@ public class ClientDaoJDBC implements ClientDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM clients WHERE name LIKE '%" + str + "%'");
+			st = conn.prepareStatement("SELECT * FROM cp_db.clients WHERE name LIKE '%" + str + "%'");
 
 			rs = st.executeQuery();
 

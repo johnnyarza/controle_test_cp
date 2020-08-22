@@ -18,6 +18,7 @@ import application.domaim.User;
 import application.log.LogUtils;
 import application.service.UserService;
 import application.util.FileUtils;
+import enums.LogEnum;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.event.ActionEvent;
@@ -36,122 +37,122 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-public class ReportConfigViewController implements Initializable{
-	
+public class ReportConfigViewController implements Initializable {
+
 	private User user;
-	
+
 	private String logoPath;
-	
+
 	private String carimboPath;
-	
+
 	private File imagesProp;
-	
+
 	private LogUtils logger;
-	
+
 	@FXML
 	private Button btEditAdmin;
-	
+
 	@FXML
 	private Button btNewAdmin;
-	
+
 	@FXML
 	private Button btDeleteAdmin;
-	
+
 	@FXML
 	private Button btSave;
-	
+
 	@FXML
 	private Button btLogo;
-	
+
 	@FXML
 	private Button btCarimbo;
-	
+
 	@FXML
 	private ImageView imgLogo;
-	
+
 	@FXML
 	private ImageView imgCarimbo;
-	
+
 	@FXML
 	public void onBtSaveAction() {
 
 	}
-	
+
 	@FXML
 	private void onBtNewAdmin(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
 		doLogIn(parentStage);
-		
+
 		if (user != null) {
 			doSignUp(parentStage);
 		}
-		
-	}
-	
-	private void doSignUp(Stage parentStage) {
-		createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage, 
-				(LoginFormController controller)->{
-					controller.setIsLoggin(false);
-					controller.setEntity(null);
-					controller.setUserService(new UserService());
-					controller.setLogger(logger);
-					
-				}, 
-				(LoginFormController controller)->{
-					controller.setEntity(null);
-				}, 
-				(LoginFormController controller)->{
-					setUser(controller.getEntity());
-				}, "");
-	}
-	
-	private void doLogIn(Stage parentStage) {
-		createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage, 
-				(LoginFormController controller)->{
-					controller.setIsLoggin(true);
-					controller.setEntity(null);
-					controller.setUserService(new UserService());
-					controller.setLogger(logger);
-					
-				}, 
-				(LoginFormController controller)->{
-					controller.setEntity(null);
-				}, 
-				(LoginFormController controller)->{
-					setUser(controller.getEntity());
-				}, "");
-		
+
 	}
 
 	@FXML
 	private void onBtEditAdmin(ActionEvent event) {
-		
+		Stage parentStage = Utils.currentStage(event);
+		doLogIn(parentStage);
+
+		if (user != null) {
+
+		}
 	}
-	
+
 	@FXML
 	private void onBtDeleteAdmin(ActionEvent event) {
-		
+
 	}
-	
-	private void saveImagePaths()  {
+
+	private void doSignUp(Stage parentStage) {
+		createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
+				(LoginFormController controller) -> {
+					controller.setIsLoggin(LogEnum.SIGNUP);
+					controller.setEntity(null);
+					controller.setUserService(new UserService());
+					controller.setLogger(logger);
+
+				}, (LoginFormController controller) -> {
+					controller.setEntity(null);
+				}, (LoginFormController controller) -> {
+					setUser(controller.getEntity());
+				}, "");
+	}
+
+	private void doLogIn(Stage parentStage) {
+		createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
+				(LoginFormController controller) -> {
+					controller.setIsLoggin(LogEnum.SIGNIN);
+					controller.setEntity(null);
+					controller.setUserService(new UserService());
+					controller.setLogger(logger);
+
+				}, (LoginFormController controller) -> {
+					controller.setEntity(null);
+				}, (LoginFormController controller) -> {
+					setUser(controller.getEntity());
+				}, "");
+
+	}
+
+	private void saveImagePaths() {
 		try {
-		File file = imagesProp;
-		Map <String,String> mapProps = new HashMap<>();
-		Properties newProps = new Properties();
-		
-		mapProps.put("logoPath",logoPath == null || logoPath.trim().equals("") ? "" : logoPath);
-		mapProps.put("carimboPath",carimboPath == null || carimboPath.trim().equals("")? "" : carimboPath);
-		
-		newProps.putAll(mapProps);
-		newProps.store(new FileOutputStream(file),null);
+			File file = imagesProp;
+			Map<String, String> mapProps = new HashMap<>();
+			Properties newProps = new Properties();
+
+			mapProps.put("logoPath", logoPath == null || logoPath.trim().equals("") ? "" : logoPath);
+			mapProps.put("carimboPath", carimboPath == null || carimboPath.trim().equals("") ? "" : carimboPath);
+
+			newProps.putAll(mapProps);
+			newProps.store(new FileOutputStream(file), null);
 		} catch (IOException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error in saveImagePaths", "IOException", e.getMessage(), AlertType.ERROR);
 		}
-		
+
 	}
-	
-	
+
 	@FXML
 	public void onBtLogoAction(ActionEvent event) {
 		try {
@@ -164,7 +165,7 @@ public class ReportConfigViewController implements Initializable{
 			Alerts.showAlert("Error in onBtLogoAction", "FileNotFoundException", e.getMessage(), AlertType.ERROR);
 		}
 	}
-	
+
 	@FXML
 	public void onBtCarimboAction(ActionEvent event) {
 		try {
@@ -177,7 +178,6 @@ public class ReportConfigViewController implements Initializable{
 			Alerts.showAlert("Error in onBtCarimboAction", "FileNotFoundException", e.getMessage(), AlertType.ERROR);
 		}
 	}
-	
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -185,58 +185,58 @@ public class ReportConfigViewController implements Initializable{
 	}
 
 	private void initializeNodes() {
-		setImageSearchButtonGraphics();		
+		setImageSearchButtonGraphics();
 	}
-	
+
 	public void loadImages() {
 		try {
 			Properties props = loadReportImageProperties();
 			logoPath = props.containsKey("logoPath") ? props.getProperty("logoPath") : "";
 			carimboPath = props.containsKey("carimboPath") ? props.getProperty("carimboPath") : "";
-			setImagesInView ();
+			setImagesInView();
 		} catch (IOException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error in loadImages", "IOException", e.getMessage(), AlertType.ERROR);
 		}
-		
+
 	}
-	
+
 	private Properties loadReportImageProperties() throws IOException {
 		File file = imagesProp;
-		if (file == null || !file.isFile()) {			
+		if (file == null || !file.isFile()) {
 			Path path = FileUtils.writeProperties("ReportImage.properties", new HashMap<String, String>());
 			file = path.toFile();
 			setImagesProp(file);
-		}	
+		}
 		FileInputStream fs = new FileInputStream(file);
 		Properties props = new Properties();
 		props.load(fs);
 		return props;
 	}
-	
-	private void setImagesInView () throws IOException  {
+
+	private void setImagesInView() throws IOException {
 		//
 		try {
-		imgLogo.setImage(logoPath != null && !logoPath.trim().equals("") ? Utils.createImage(logoPath)
-				: new Image(ReportConfigViewController.class.getResourceAsStream("/images/logo.png")));
+			imgLogo.setImage(logoPath != null && !logoPath.trim().equals("") ? Utils.createImage(logoPath)
+					: new Image(ReportConfigViewController.class.getResourceAsStream("/images/logo.png")));
 
-		imgCarimbo.setImage(carimboPath != null && !carimboPath.trim().equals("") ? Utils.createImage(carimboPath)
-				: new Image(ReportConfigViewController.class.getResourceAsStream("/images/carimbo.png")));
+			imgCarimbo.setImage(carimboPath != null && !carimboPath.trim().equals("") ? Utils.createImage(carimboPath)
+					: new Image(ReportConfigViewController.class.getResourceAsStream("/images/carimbo.png")));
 		} catch (IOException e) {
-			
+
 			imgLogo.setImage(new Image(ReportConfigViewController.class.getResourceAsStream("/images/logo.png")));
-			imgCarimbo.setImage(new Image(ReportConfigViewController.class.getResourceAsStream("/images/carimbo.png")));	
+			imgCarimbo.setImage(new Image(ReportConfigViewController.class.getResourceAsStream("/images/carimbo.png")));
 			throw e;
 		}
 	}
 
 	private void setImageSearchButtonGraphics() {
 		ImageView imgView = Utils.createImageView("/images/lupa.png", 15.0, 15.0);
-		btCarimbo.setGraphic(imgView);	
+		btCarimbo.setGraphic(imgView);
 		ImageView imgView2 = Utils.createImageView("/images/lupa.png", 15.0, 15.0);
-		btLogo.setGraphic(imgView2);	
+		btLogo.setGraphic(imgView2);
 	}
-	
+
 	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
 			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css) {
 		try {
@@ -293,11 +293,9 @@ public class ReportConfigViewController implements Initializable{
 		this.carimboPath = carimboPath;
 	}
 
-
 	public File getImagesProp() {
 		return imagesProp;
 	}
-
 
 	public void setImagesProp(File file) {
 		this.imagesProp = file;
@@ -314,5 +312,5 @@ public class ReportConfigViewController implements Initializable{
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
+
 }

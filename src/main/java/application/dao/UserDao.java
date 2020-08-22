@@ -9,5 +9,6 @@ public interface UserDao {
 	User findByNameAndPassword(User user);
 	void update(User user);
 	void deleteById(Integer id);
+	User findByName(String name);
 	
 }

@@ -9,5 +9,6 @@ public interface MigrationDao {
 	void concreteDesignMigration();
 	void corpoDeProvaMigration();
 	void userMigration();
+	void defaultUserMigration();
 
 }

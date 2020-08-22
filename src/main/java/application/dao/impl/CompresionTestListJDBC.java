@@ -36,8 +36,8 @@ public class CompresionTestListJDBC implements CompresionTestListDao{
 					+ "compresion_test.address, "
 					+ "compresion_test.creacionDate " 
 					+ ",clients.id "
-					+ "FROM compresion_test "
-					+ "INNER JOIN clients "
+					+ "FROM cp_db.compresion_test "
+					+ "INNER JOIN cp_db.clients "
 					+ " ON compresion_test.client_id = clients.id " 
 					+ "ORDER BY compresion_test.creacionDate");
 			

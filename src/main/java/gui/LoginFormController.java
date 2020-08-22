@@ -13,6 +13,7 @@ import application.domaim.User;
 import application.exceptions.ValidationException;
 import application.log.LogUtils;
 import application.service.UserService;
+import enums.LogEnum;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.event.ActionEvent;
@@ -25,7 +26,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class LoginFormController implements Initializable {
-	private Boolean isLoggin = false;
+
+	private LogEnum logOption = LogEnum.SIGNIN;
 
 	private UserService userService;
 
@@ -53,14 +55,15 @@ public class LoginFormController implements Initializable {
 
 	@FXML
 	private void onBtOkAction(ActionEvent event) {
-		try {		
+		try {
 			setEntity(getUserFromForm());
-			if (isLoggin) {
+			if (logOption == LogEnum.SIGNIN) {
 				setEntity(userService.findByNameAndPassword(entity));
 				if (entity == null) {
 					throw new LoginException("Usuario o contraseña no válidos");
-				} 
-			} else {			
+				}
+			}
+			if (logOption == LogEnum.SIGNUP) {
 				if (entity == null) {
 					throw new IllegalStateException("User was null");
 				}
@@ -109,7 +112,8 @@ public class LoginFormController implements Initializable {
 			exception.addError("password", "vacío");
 		}
 		user.setPassword(pwField.getText());
-
+		user.setRole("adm");
+		
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
@@ -135,12 +139,12 @@ public class LoginFormController implements Initializable {
 		this.entity = entity;
 	}
 
-	public Boolean getIsLoggin() {
-		return isLoggin;
+	public LogEnum getIsLoggin() {
+		return logOption;
 	}
 
-	public void setIsLoggin(Boolean isLoggin) {
-		this.isLoggin = isLoggin;
+	public void setIsLoggin(LogEnum logOption) {
+		this.logOption = logOption;
 	}
 
 	public void setLogger(LogUtils logger) {

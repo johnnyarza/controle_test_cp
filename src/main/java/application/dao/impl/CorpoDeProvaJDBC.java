@@ -33,7 +33,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement("INSERT INTO corpo_de_provas " + "(" +
+			st = conn.prepareStatement("INSERT INTO cp_db.corpo_de_provas " + "(" +
 			/* 1 */ "code, " +
 			/* 2 */ "client_id, " +
 			/* 3 */ "compresionTest_Id, " +
@@ -81,7 +81,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 	public void update(CorpoDeProva obj) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("UPDATE corpo_de_provas SET " + "corpo_de_provas.code = ?, " // 1
+			st = conn.prepareStatement("UPDATE cp_db.corpo_de_provas SET " + "corpo_de_provas.code = ?, " // 1
 					+ "client_id = ?, " // 2
 					+ "compresionTest_Id = ?, " // 3
 					+ "slump = ?, " // 4
@@ -120,7 +120,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("delete from corpo_de_provas where id = ?");
+			st = conn.prepareStatement("delete from cp_db.corpo_de_provas where id = ?");
 
 			st.setInt(1, id);
 
@@ -139,7 +139,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 		ResultSet rs = null;
 		try {
 			st = conn
-					.prepareStatement("SELECT corpo_de_provas.*,(curdate()-dateMolde) as days FROM corpo_de_provas where id = ?");
+					.prepareStatement("SELECT corpo_de_provas.*,(curdate()-dateMolde) as days FROM cp_db.corpo_de_provas where id = ?");
 
 			st.setInt(1, id);
 			rs = st.executeQuery();
@@ -165,7 +165,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT corpo_de_provas.*,(curdate()-dateMolde) as days FROM corpo_de_provas");
+			st = conn.prepareStatement("SELECT corpo_de_provas.*,(curdate()-dateMolde) as days FROM cp_db.corpo_de_provas");
 
 			rs = st.executeQuery();
 
@@ -191,7 +191,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT corpo_de_provas.*,(ruptureDate-dateMolde) as days FROM corpo_de_provas WHERE "
+			st = conn.prepareStatement("SELECT corpo_de_provas.*,(ruptureDate-dateMolde) as days FROM cp_db.corpo_de_provas WHERE "
 					+ "compresionTest_Id = ?");
 
 			st.setInt(1, id);
@@ -231,7 +231,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM corpo_de_provas WHERE " + "compresionTest_Id = ?");
+			st = conn.prepareStatement("SELECT * FROM cp_db.corpo_de_provas WHERE " + "compresionTest_Id = ?");
 
 			st.setInt(1, id);
 
@@ -269,7 +269,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 		ResultSet rs = null;
 		Integer count = null;
 		try {
-			st = conn.prepareStatement("SELECT COUNT(id) as days FROM corpo_de_provas  "
+			st = conn.prepareStatement("SELECT COUNT(id) as days FROM cp_db.corpo_de_provas  "
 					+ "WHERE ruptureDate <= curdate() and tonRupture = 0 and compresionTest_Id = ?");
 			st.setInt(1, id);
 			rs = st.executeQuery();

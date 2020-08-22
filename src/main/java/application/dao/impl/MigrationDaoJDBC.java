@@ -226,9 +226,24 @@ public class MigrationDaoJDBC implements MigrationDao {
 					"`id` INT NOT NULL AUTO_INCREMENT," + 
 					"`name` VARCHAR(45) NOT NULL, " + 
 					"`password` VARCHAR(45) NOT NULL," + 
+					"`role` VARCHAR(3) NOT NULL DEFAULT 'clt', " +
 					"PRIMARY KEY (`id`)," + 
-					"UNIQUE KEY `name_UNIQUE` (`name`), " + 
-					"UNIQUE KEY `password_UNIQUE` (`password`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
+					"UNIQUE KEY `name_UNIQUE` (`name`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
+			st.executeUpdate();
+			
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
+		
+	}
+	
+	@Override
+	public void defaultUserMigration() {
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("INSERT IGNORE INTO users (name,password,role) VALUES ('admin','admin','adm')");
 			st.executeUpdate();
 			
 		} catch (SQLException e) {
