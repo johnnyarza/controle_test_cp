@@ -195,7 +195,7 @@
 			<textField>
 				<reportElement x="650" y="40" width="151" height="23" uuid="d9264bce-95eb-4a88-b3ab-0af824a357f6"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA["Impreso em: " +(new SimpleDateFormat("dd/MM/yyyy").format(new Date()))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Impreso en: " +(new SimpleDateFormat("dd/MM/yyyy").format(new Date()))]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -212,12 +212,12 @@
 					<datasetRun subDataset="CompresionTestDataSet" uuid="ae13b1ef-ee1f-4509-bac4-e12bc61789b9">
 						<dataSourceExpression><![CDATA[$P{CompresionTestCollectionBeanParam}]]></dataSourceExpression>
 					</datasetRun>
-					<jr:columnGroup width="565" uuid="0a10db28-de9d-46a2-9df3-c69b91c14fcc">
+					<jr:columnGroup width="575" uuid="0a10db28-de9d-46a2-9df3-c69b91c14fcc">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [9]"/>
 						<jr:columnFooter style="Table 1_CH" height="13" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="565" height="13" uuid="3ebbcfe6-3ca3-46fb-b905-ed0e18dc269d"/>
+								<reportElement x="0" y="0" width="575" height="13" uuid="3ebbcfe6-3ca3-46fb-b905-ed0e18dc269d"/>
 								<textElement textAlignment="Center">
 									<font fontName="Arial" isBold="true"/>
 								</textElement>
@@ -258,31 +258,32 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:columnGroup width="500" uuid="e4839a72-dee5-4a34-8407-76585e913189">
+						<jr:columnGroup width="510" uuid="e4839a72-dee5-4a34-8407-76585e913189">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [8]"/>
 							<jr:tableHeader style="Table 1_TH" height="13" rowSpan="1">
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<staticText>
-									<reportElement x="0" y="0" width="500" height="13" uuid="7c71d88b-ee45-4d82-874f-abb22e729dd1"/>
+									<reportElement x="0" y="0" width="510" height="13" uuid="7c71d88b-ee45-4d82-874f-abb22e729dd1"/>
 									<textElement textAlignment="Center">
 										<font fontName="Arial" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Dosificación]]></text>
 								</staticText>
 							</jr:tableHeader>
-							<jr:column width="63" uuid="278f2a49-c3f9-42cb-8025-1145b7db5742">
+							<jr:column width="71" uuid="278f2a49-c3f9-42cb-8025-1145b7db5742">
 								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
 								<jr:tableHeader style="Table 1_TH" height="9" rowSpan="1">
 									<property name="com.jaspersoft.studio.unit.width" value="px"/>
 									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-										<reportElement x="0" y="0" width="63" height="9" uuid="4e5edaa7-8578-4778-a3fd-4cce5429235b"/>
+										<reportElement x="0" y="0" width="71" height="9" uuid="4e5edaa7-8578-4778-a3fd-4cce5429235b"/>
 										<textElement textAlignment="Center" verticalAlignment="Top"/>
 										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat1Qtt() == 0.0 ? null : "1"]]></textFieldExpression>
 									</textField>
 								</jr:tableHeader>
 								<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
 									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-										<reportElement x="0" y="0" width="63" height="13" uuid="50de1927-79df-402c-98a7-ca4bbf14d3aa"/>
+										<reportElement x="0" y="0" width="71" height="13" uuid="50de1927-79df-402c-98a7-ca4bbf14d3aa"/>
 										<textElement textAlignment="Center">
 											<font fontName="Arial" size="10" isBold="false"/>
 										</textElement>
@@ -293,7 +294,7 @@
 									<property name="com.jaspersoft.studio.unit.height" value="px"/>
 									<property name="com.jaspersoft.studio.unit.width" value="px"/>
 									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-										<reportElement x="0" y="0" width="63" height="13" uuid="b9002ccb-b010-42fc-9f1b-5bd3603d29d2"/>
+										<reportElement x="0" y="0" width="71" height="13" uuid="b9002ccb-b010-42fc-9f1b-5bd3603d29d2"/>
 										<textElement textAlignment="Center">
 											<font fontName="Arial" size="10" isBold="true"/>
 										</textElement>
@@ -303,7 +304,7 @@
 								<jr:detailCell style="Table 1_TD" height="13">
 									<property name="com.jaspersoft.studio.unit.width" value="px"/>
 									<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-										<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="ce736690-fcb5-4d7c-8977-71253a1184b2"/>
+										<reportElement stretchType="ContainerHeight" x="0" y="0" width="71" height="13" uuid="ce736690-fcb5-4d7c-8977-71253a1184b2"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
 											<font fontName="Arial" size="10"/>
 										</textElement>
@@ -311,18 +312,18 @@
 									</textField>
 								</jr:detailCell>
 							</jr:column>
-							<jr:column width="63" uuid="a74b8f92-7e1b-4e3c-adef-421acd05e6bb">
+							<jr:column width="65" uuid="a74b8f92-7e1b-4e3c-adef-421acd05e6bb">
 								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
 								<jr:tableHeader style="Table 1_TH" height="9" rowSpan="1">
 									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-										<reportElement x="0" y="0" width="63" height="9" uuid="6808e11b-9a84-4423-ae25-c1be857c1464"/>
+										<reportElement x="0" y="0" width="65" height="9" uuid="6808e11b-9a84-4423-ae25-c1be857c1464"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle"/>
 										<textFieldExpression><![CDATA[$F{concreteDesign}.getProporcion().getMat2Qtt() == 0.0 ? null : "2"]]></textFieldExpression>
 									</textField>
 								</jr:tableHeader>
 								<jr:tableFooter style="Table 1_TH" height="13" rowSpan="1">
 									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-										<reportElement x="0" y="0" width="63" height="13" uuid="3b45ffc5-2d84-448f-8c43-3818b3c06b05"/>
+										<reportElement x="0" y="0" width="65" height="13" uuid="3b45ffc5-2d84-448f-8c43-3818b3c06b05"/>
 										<textElement textAlignment="Center">
 											<font fontName="Arial" size="10" isBold="false"/>
 										</textElement>
@@ -332,7 +333,7 @@
 								<jr:columnHeader style="Table 1_CH" height="13" rowSpan="1">
 									<property name="com.jaspersoft.studio.unit.width" value="px"/>
 									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-										<reportElement x="0" y="0" width="63" height="13" uuid="a78f83ac-6adc-433e-8a68-2b4c7269e7b6"/>
+										<reportElement x="0" y="0" width="65" height="13" uuid="a78f83ac-6adc-433e-8a68-2b4c7269e7b6"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
 											<font fontName="Arial" size="10" isBold="true"/>
 										</textElement>
@@ -342,7 +343,7 @@
 								<jr:detailCell style="Table 1_TD" height="13">
 									<property name="com.jaspersoft.studio.unit.width" value="px"/>
 									<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-										<reportElement stretchType="ContainerHeight" x="0" y="0" width="63" height="13" uuid="06c77063-4c4f-4c90-abf6-a7554d79928d"/>
+										<reportElement stretchType="ContainerHeight" x="0" y="0" width="65" height="13" uuid="06c77063-4c4f-4c90-abf6-a7554d79928d"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
 											<font fontName="Arial" size="10"/>
 										</textElement>
@@ -580,7 +581,7 @@
 							</jr:column>
 						</jr:columnGroup>
 					</jr:columnGroup>
-					<jr:column width="15" uuid="87b17bca-feb4-4905-abd5-8be5a1d1fe2a">
+					<jr:column width="4" uuid="87b17bca-feb4-4905-abd5-8be5a1d1fe2a">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column10"/>
 						<jr:detailCell style="Table 1_TD" height="13">
 							<box>
@@ -674,7 +675,7 @@
 								<textElement>
 									<paragraph leftIndent="2"/>
 								</textElement>
-								<textFieldExpression><![CDATA["Nª: "+$F{id} + " • Fecha: " + new SimpleDateFormat("MM/dd/yyyy").format($F{date})]]></textFieldExpression>
+								<textFieldExpression><![CDATA["Nª: "+$F{id} + " • Fecha: " + new SimpleDateFormat("dd/MM/yyyy").format($F{date})]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:columnFooter style="Table 1_CH" height="13" rowSpan="1">
@@ -982,7 +983,7 @@ Moldeo]]></text>
 										<font fontName="Arial" size="10" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Resistencia
-(MPa)]]></text>
+(kg/cm²)]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="13">
@@ -1058,7 +1059,7 @@ Moldeo]]></text>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
-				<text><![CDATA[NOTA: Los datos de este formulario y resultados son obtenidos unicamente de las muestras presentadas por el cliente. Las reeimpresiones tendrán costo adicional.]]></text>
+				<text><![CDATA[NOTA: Los datos de este formulario y resultados son obtenidos unicamente de las muestras presentadas por el cliente. Las reimpresiones tendrán costo adicional.]]></text>
 			</staticText>
 			<textField pattern="&quot;&quot;">
 				<reportElement x="268" y="0" width="267" height="46" uuid="27b413d1-fd15-4351-9592-4f3d22ca87fc"/>

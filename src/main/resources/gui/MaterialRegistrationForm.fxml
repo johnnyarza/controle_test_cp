@@ -33,7 +33,7 @@
             <TextField fx:id="txtName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <children>
-                  <Button fx:id="btCadastrar" minWidth="67.0" mnemonicParsing="false" onAction="#onBtCadastrarAction" prefWidth="67.0" text="Cadastrar" />
+                  <Button fx:id="btCadastrar" defaultButton="true" minWidth="67.0" mnemonicParsing="false" onAction="#onBtCadastrarAction" prefWidth="67.0" style="-fx-focus-color: transparent;" text="Cadastrar" />
                   <Button fx:id="btCancelar" minWidth="67.0" mnemonicParsing="false" onAction="#onBtCancelarAction" prefWidth="67.0" text="Cancelar" />
                </children>
                <GridPane.margin>
@@ -41,9 +41,21 @@
                </GridPane.margin>
             </HBox>
             <Label textFill="RED" wrapText="true" GridPane.columnIndex="2" />
-            <Label fx:id="labelErrorName" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Label fx:id="labelErrorProvider" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <ComboBox fx:id="comboBoxProvider" prefHeight="25.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <children>
+                  <Button fx:id="btAddProvider" maxHeight="25.0" maxWidth="25.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtAddProviderAction" prefHeight="25.0" prefWidth="25.0" />
+                  <Label fx:id="labelErrorProvider" textFill="RED" wrapText="true" />
+               </children>
+               <padding>
+                  <Insets left="8.0" />
+               </padding>
+            </HBox>
+            <Label fx:id="labelErrorName" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="8.0" />
+               </GridPane.margin>
+            </Label>
          </children>
       </GridPane>
    </children>

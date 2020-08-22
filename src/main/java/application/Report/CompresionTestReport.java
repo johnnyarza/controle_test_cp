@@ -29,7 +29,9 @@ public class CompresionTestReport {
 
 	public static void viewReport (List<CorpoDeProva> list,CompresionTest cTest) {
 		try {
-			
+			if (list.size() == 0) {
+				throw new JRException("No hay probetas para imprimir");
+			}
 			JRBeanCollectionDataSource itemsJRBean = new JRBeanCollectionDataSource(list);
 			List<CompresionTest> cTestList = new ArrayList<>();
 			List<Cliente> clientList = new ArrayList<>();

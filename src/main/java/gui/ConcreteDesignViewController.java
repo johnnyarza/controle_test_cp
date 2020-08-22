@@ -2,6 +2,7 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -44,7 +45,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	private CompresionTestService compresionTestService;
 
 	private ObservableList<ConcreteDesign> obsList;
-	
+
 	private LogUtils logger;
 
 	@FXML
@@ -70,7 +71,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 
 	@FXML
 	private TableColumn<ConcreteDesign, String> tableColumnName;
-	
+
 	@FXML
 	private TableColumn<ConcreteDesign, Double> tableColumnSlump;
 
@@ -87,7 +88,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.setLogger(logger);
 						controller.loadAssociatedObjects();
 						controller.subscribeDataChangeListener(this);
-					},"/gui/ConcreteDesignRegistrationForm.css");
+					}, "/gui/ConcreteDesignRegistrationForm.css");
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
@@ -107,7 +108,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.loadAssociatedObjects();
 						controller.updateFormData();
 						controller.subscribeDataChangeListener(this);
-					},"");
+					}, "");
 		} catch (IllegalStateException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
@@ -121,20 +122,13 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 			if (service == null || compresionTestService == null) {
 				throw new IllegalStateException("Service(s) was null");
 			}
-			if (compresionTestService.compresionTestContainsConcreteDesingId(obj.getId())) {
-				Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacción de acción",
-						"Elemento en utilización!!",
-						"Hay ensayos de roturas utiliazando este diseño /r/n" + "Seguro que desea apagar?");
-				if (result.get() == ButtonType.OK) {
-					service.deleteConcreteDesignById(obj.getId());
-				}
-			} else {
-				Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacción de acción",
-						"Seguro que desea apagar?", "");
-				if (result.get() == ButtonType.OK) {
-					service.deleteConcreteDesignById(obj.getId());
-				}
+
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacción de acción",
+					"Seguro que desea apagar?", "");
+			if (result.get() == ButtonType.OK) {
+				service.deleteConcreteDesignById(obj.getId());
 			}
+
 			updateTableView();
 		} catch (IllegalStateException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
@@ -142,6 +136,11 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		} catch (DbException e1) {
 			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "DbException", e1.getMessage(), AlertType.ERROR);
+		} catch (SQLIntegrityConstraintViolationException e) {
+			Alerts.showAlert("Error", "SQLIntegrityConstraintViolationException", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
@@ -252,7 +251,8 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		}
 	}
 
-	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction,String css) {
+	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction,
+			String css) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -264,11 +264,11 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Insertar datos del diseño");
 			dialogStage.setScene(new Scene(pane));
-			
+
 			if (!css.trim().equals("")) {
 				dialogStage.getScene().getStylesheets().add(css);
 			}
-			
+
 			dialogStage.setResizable(false);
 			dialogStage.initOwner(parentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);

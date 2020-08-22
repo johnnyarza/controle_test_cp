@@ -1,6 +1,7 @@
 package gui;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -52,10 +53,14 @@ public class LoginFormController implements Initializable {
 
 	@FXML
 	private Label passwordErrLabel;
+	
+	@FXML
+	private Label titleLabel;
 
 	@FXML
 	private void onBtOkAction(ActionEvent event) {
 		try {
+			setErrorMessages(new HashMap<String, String>());
 			setEntity(getUserFromForm());
 			if (logOption == LogEnum.SIGNIN) {
 				setEntity(userService.findByNameAndPassword(entity));
@@ -63,13 +68,14 @@ public class LoginFormController implements Initializable {
 					throw new LoginException("Usuario o contraseña no válidos");
 				}
 			}
-			if (logOption == LogEnum.SIGNUP) {
+			if (logOption == LogEnum.SIGNUP ||logOption == LogEnum.EDIT ) {
 				if (entity == null) {
 					throw new IllegalStateException("User was null");
 				}
 				userService.saveOrInsert(entity);
 				Alerts.showAlert("Aviso", "Alteraciones guardadas", null, AlertType.INFORMATION);
 			}
+			
 			Utils.currentStage(event).close();
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
@@ -99,8 +105,10 @@ public class LoginFormController implements Initializable {
 
 	private User getUserFromForm() {
 		User user = new User();
-		user.setId(null);
-
+		if (entity != null) {
+			user.setId(entity.getId());
+		}
+		
 		ValidationException exception = new ValidationException("Validation Error");
 		if (txtUser.getText().trim().equals("") || txtUser.getText() == null) {
 			exception.addError("user", "vacío");
@@ -119,6 +127,14 @@ public class LoginFormController implements Initializable {
 		}
 
 		return user;
+	}
+	
+	public void setTitleLabel(String msg) {
+		titleLabel.setText(msg);
+	}
+	
+	public void setTxtUserText(String msg) {
+		txtUser.setText(msg);
 	}
 
 	@Override

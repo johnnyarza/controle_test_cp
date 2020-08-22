@@ -142,9 +142,9 @@ public class CorpoDeProva {
 
 	public void setFckRupture() {
 		if ((this.diameter != null && this.tonRupture != null) && ((this.diameter != 0) && (this.tonRupture != 0))) {
-			Double areaCirculoM2 = ((Math.PI * (this.diameter * this.diameter)) / 4) / 10000;
-			Double tonMN = this.tonRupture * 0.00980665;
-			this.fckRupture = tonMN / areaCirculoM2;
+			Double areaCirculoCm2 = ((Math.PI * (this.diameter * this.diameter)) / 4);			
+			Double kgRupture = this.tonRupture * 1000;
+			this.fckRupture = kgRupture / areaCirculoCm2;
 		} else {
 			this.fckRupture = 0.0;
 		}

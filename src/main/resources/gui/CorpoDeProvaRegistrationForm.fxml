@@ -52,8 +52,8 @@
             <TextField fx:id="txtRuptureTon" GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
                <children>
-                  <Button fx:id="btSave" mnemonicParsing="false" onAction="#onBtSaveAction" text="Cadastrar" />
-                  <Button fx:id="btCancel" mnemonicParsing="false" onAction="#onBtCancelAction" text="Cancelar" />
+                  <Button fx:id="btSave" defaultButton="true" mnemonicParsing="false" onAction="#onBtSaveAction" styleClass="custom-button" text="Guardar" />
+                  <Button fx:id="btCancel" mnemonicParsing="false" onAction="#onBtCancelAction" styleClass="close-button" text="Cerrar" />
                </children>
                <GridPane.margin>
                   <Insets top="5.0" />

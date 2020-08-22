@@ -69,11 +69,11 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 		try {
 			st = conn.prepareStatement("UPDATE cp_db.compresion_test SET "
 					+ "compresion_test.client_id = ?, " 
-					+ "compresion_test.concreteProviderId = ? "
+					+ "compresion_test.concreteProviderId = ?, "
 					+ "compresion_test.ConcreteDesign_id = ?, " 
-					+"compresion_test.obra = ?, " 
-					+"compresion_test.address = ?, " 
-					+"compresion_test.creacionDate = ? " 
+					+ "compresion_test.obra = ?, " 
+					+ "compresion_test.address = ?, " 
+					+ "compresion_test.creacionDate = ? " 
 					+"WHERE compresion_test.id = ?");
 			
 			st.setInt(1, obj.getClient().getId());
@@ -287,7 +287,6 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 	public Boolean compresionTestContainsConcreteDesingId(Integer concreteDesignId) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
-		Boolean result = null;
 		try {
 			st = conn.prepareStatement(
 					"SELECT COUNT(id) FROM cp_db.compresion_test WHERE ConcreteDesign_id = ?");
@@ -297,17 +296,107 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 			if (rs.next()) {
 				int count = rs.getInt(1);
 				if (count > 0) {
-					result = true;
+					return true;
 				} else {
-					result = false;
+					return false;
 				}
 			} else {
-				throw new DbException("Result Set is empty on compresionTestContainsConcreteDesingIdcompresionTestContainsConcreteDesingId");
+				throw new DbException("Result Set is empty on compresionTestContainsConcreteDesingId");
 			}
-			return result;
 		} catch (SQLException e) {
 			throw new DbException("Error on compresionTestContainsConcreteDesingId"  + e.getMessage());
 		}finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+	}
+	
+	@Override
+	public List<CompresionTest> findByConcreteDesingId(Integer concreteDesignId) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM cp_db.compresion_test where compresion_test.id = ?");
+			
+			st.setInt(1, concreteDesignId);
+			rs = st.executeQuery();
+			
+			Cliente client = new Cliente();
+			Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+			Cliente concreteProvider = new Cliente();
+			ClientService clientService = new ClientService();
+			ConcreteDesignService concreteDesignService = new ConcreteDesignService();
+			List<CompresionTest> lst = new ArrayList<>();
+			
+			while (rs.next()) {
+				client = clientService.findById(rs.getInt(2));
+				concreteProvider = clientService.findById(rs.getInt(3));
+				
+				CompresionTest compresionTest = new CompresionTest();
+				
+				compresionTest.setId(rs.getInt(1));
+				compresionTest.setClient(client);
+				compresionTest.setConcreteProvider(concreteProvider);
+				compresionTest.setConcreteDesign(concreteDesignService.findConcreteDesignById(rs.getInt(4)));
+				compresionTest.setObra(rs.getString(5));
+				compresionTest.setAddress(rs.getString(6));
+				compresionTest.setDate(new java.util.Date(rs.getTimestamp(7,cal).getTime()));
+				
+				lst.add(compresionTest);
+				
+			}
+			return lst;
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}	
+	}
+
+	@Override
+	public List<CompresionTest> findyByClientId(Integer id,TimeZone tZ) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM cp_db.compresion_test WHERE client_id = ?");
+			st.setInt(1, id);
+			
+			rs = st.executeQuery();
+			List<CompresionTest> list = new ArrayList<CompresionTest>();
+			while (rs.next()) {
+				list.add(instatiateCompresionTest(tZ,rs));
+			}
+					
+			return list;		
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+	}
+
+	@Override
+	public List<CompresionTest> findyByConcreteProviderId(Integer id, TimeZone tZ) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM cp_db.compresion_test WHERE concreteProviderId = ?");
+			st.setInt(1, id);
+			
+			rs = st.executeQuery();
+			List<CompresionTest> list = new ArrayList<CompresionTest>();
+			while (rs.next()) {
+				list.add(instatiateCompresionTest(tZ,rs));
+			}
+					
+			return list;		
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
 			DB.closeResultSet(rs);
 			DB.closeStatement(st);
 		}

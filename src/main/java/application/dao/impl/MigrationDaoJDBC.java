@@ -66,7 +66,7 @@ public class MigrationDaoJDBC implements MigrationDao {
 					"  `providerId` int DEFAULT NULL," + 
 					"  PRIMARY KEY (`id`)," + 
 					"  KEY `PK_providersId_idx` (`providerId`)," + 
-					"  CONSTRAINT `PK_providersId` FOREIGN KEY (`providerId`) REFERENCES `providers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE" + 
+					"  CONSTRAINT `PK_providersId` FOREIGN KEY (`providerId`) REFERENCES `providers` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE" + 
 					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 			st.executeUpdate();
@@ -117,9 +117,9 @@ public class MigrationDaoJDBC implements MigrationDao {
 					"  KEY `FK_clientID_compresionTest_idx` (`client_id`)," + 
 					"  KEY `FK_concreteDesign_idx` (`ConcreteDesign_id`)," + 
 					"  KEY `FK_concreteProviderId_idx` (`concreteProviderId`)," + 
-					"  CONSTRAINT `FK_clientID_compresionTest` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
-					"  CONSTRAINT `FK_concreteDesign` FOREIGN KEY (`ConcreteDesign_id`) REFERENCES `concretedesign` (`id`) ON DELETE SET NULL ON UPDATE CASCADE," + 
-					"  CONSTRAINT `FK_concreteProviderId` FOREIGN KEY (`concreteProviderId`) REFERENCES `clients` (`id`) ON DELETE SET NULL ON UPDATE CASCADE" + 
+					"  CONSTRAINT `FK_clientID_compresionTest` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE," + 
+					"  CONSTRAINT `FK_concreteDesign` FOREIGN KEY (`ConcreteDesign_id`) REFERENCES `concretedesign` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE," + 
+					"  CONSTRAINT `FK_concreteProviderId` FOREIGN KEY (`concreteProviderId`) REFERENCES `clients` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE" + 
 					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
 
 			st.executeUpdate();
@@ -166,14 +166,14 @@ public class MigrationDaoJDBC implements MigrationDao {
 					"  KEY `FK_MAT6_idx` (`mat6_id`)," + 
 					"  KEY `FK_MAT7_idx` (`mat7_id`)," + 
 					"  KEY `FK_MAT8_idx` (`mat8_id`)," + 
-					"  CONSTRAINT `FK_MAT` FOREIGN KEY (`mat1_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
-					"  CONSTRAINT `FK_MAT2` FOREIGN KEY (`mat2_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
-					"  CONSTRAINT `FK_MAT3` FOREIGN KEY (`mat3_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
-					"  CONSTRAINT `FK_MAT4` FOREIGN KEY (`mat4_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
-					"  CONSTRAINT `FK_MAT5` FOREIGN KEY (`mat5_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
-					"  CONSTRAINT `FK_MAT6` FOREIGN KEY (`mat6_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
-					"  CONSTRAINT `FK_MAT7` FOREIGN KEY (`mat7_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
-					"  CONSTRAINT `FK_MAT8` FOREIGN KEY (`mat8_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE" + 
+					"  CONSTRAINT `FK_MAT` FOREIGN KEY (`mat1_id`) REFERENCES `materials` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE," + 
+					"  CONSTRAINT `FK_MAT2` FOREIGN KEY (`mat2_id`) REFERENCES `materials` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE," + 
+					"  CONSTRAINT `FK_MAT3` FOREIGN KEY (`mat3_id`) REFERENCES `materials` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE," + 
+					"  CONSTRAINT `FK_MAT4` FOREIGN KEY (`mat4_id`) REFERENCES `materials` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE," + 
+					"  CONSTRAINT `FK_MAT5` FOREIGN KEY (`mat5_id`) REFERENCES `materials` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE," + 
+					"  CONSTRAINT `FK_MAT6` FOREIGN KEY (`mat6_id`) REFERENCES `materials` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE," + 
+					"  CONSTRAINT `FK_MAT7` FOREIGN KEY (`mat7_id`) REFERENCES `materials` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE," + 
+					"  CONSTRAINT `FK_MAT8` FOREIGN KEY (`mat8_id`) REFERENCES `materials` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE" + 
 					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 			st.executeUpdate();
@@ -205,8 +205,8 @@ public class MigrationDaoJDBC implements MigrationDao {
 					"  PRIMARY KEY (`id`)," + 
 					"  KEY `FK_clientID_CpID_idx` (`client_id`)," + 
 					"  KEY `FK_compresionTestId_CP_idx` (`compresionTest_Id`)," + 
-					"  CONSTRAINT `FK_clientID_CpID` FOREIGN KEY (`client_id`) REFERENCES `compresion_test` (`client_id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
-					"  CONSTRAINT `FK_compresionTestId_CP` FOREIGN KEY (`compresionTest_Id`) REFERENCES `compresion_test` (`id`) ON DELETE CASCADE ON UPDATE CASCADE" + 
+					"  CONSTRAINT `FK_clientID_CpID` FOREIGN KEY (`client_id`) REFERENCES `compresion_test` (`client_id`) ON DELETE RESTRICT ON UPDATE CASCADE," + 
+					"  CONSTRAINT `FK_compresionTestId_CP` FOREIGN KEY (`compresionTest_Id`) REFERENCES `compresion_test` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE" + 
 					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 			st.executeUpdate();

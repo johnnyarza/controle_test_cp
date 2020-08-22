@@ -16,18 +16,18 @@
    <children>
       <Label text="Configuraciones de Conexión">
          <VBox.margin>
-            <Insets left="5.0" />
+            <Insets left="8.0" />
          </VBox.margin>
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <HBox prefHeight="26.0" prefWidth="496.0" style="-fx-background-color: #e0dede;">
+      <HBox spacing="5.0" style="-fx-background-color: #e0dede;">
          <children>
             <Button fx:id="btSave" mnemonicParsing="false" onAction="#onBtSaveAction" styleClass="safe-button" text="Guardar" />
          </children>
          <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            <Insets bottom="8.0" left="8.0" top="8.0" />
          </padding>
       </HBox>
       <GridPane>

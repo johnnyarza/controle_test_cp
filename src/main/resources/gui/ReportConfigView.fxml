@@ -15,20 +15,20 @@
             <Font name="System Bold" size="14.0" />
          </font>
          <VBox.margin>
-            <Insets left="8.0" top="5.0" />
+            <Insets left="8.0" />
          </VBox.margin>
       </Label>
-      <HBox alignment="CENTER_LEFT" prefHeight="39.0" prefWidth="496.0" spacing="5.0" style="-fx-background-color: #e0dede;">
+      <HBox alignment="CENTER_LEFT" spacing="5.0" style="-fx-background-color: #e0dede;">
          <VBox.margin>
             <Insets />
          </VBox.margin>
          <children>
-            <Button fx:id="btEditAdmin" mnemonicParsing="false" onAction="#onBtEditAdmin" text="Editar adm." />
-            <Button fx:id="btNewAdmin" mnemonicParsing="false" onAction="#onBtNewAdmin" text="Nuevo adm." />
-            <Button fx:id="btDeleteAdmin" mnemonicParsing="false" onAction="#onBtDeleteAdmin" text="Apagar adm." />
+            <Button fx:id="btEditAdmin" mnemonicParsing="false" onAction="#onBtEditAdmin" styleClass="safe-button" text="Editar adm." />
+            <Button fx:id="btNewAdmin" mnemonicParsing="false" onAction="#onBtNewAdmin" styleClass="safe-button" text="Nuevo adm." />
+            <Button fx:id="btDeleteAdmin" mnemonicParsing="false" onAction="#onBtDeleteAdmin" styleClass="dangerous-button" text="Apagar adm." />
          </children>
          <padding>
-            <Insets left="8.0" />
+            <Insets bottom="8.0" left="8.0" top="8.0" />
          </padding>
       </HBox>
       <Label prefHeight="18.0" prefWidth="495.0" text="Imagen del Reporte">
@@ -44,11 +44,11 @@
       </Label>
       <HBox prefHeight="145.0" prefWidth="496.0">
          <children>
-            <VBox prefHeight="146.0" prefWidth="248.0">
+            <VBox prefHeight="146.0" prefWidth="248.0" spacing="5.0">
                <children>
                   <HBox alignment="CENTER_LEFT" minHeight="30.0" prefHeight="30.0" prefWidth="226.0">
                      <children>
-                        <Button fx:id="btLogo" contentDisplay="CENTER" graphicTextGap="0.0" minHeight="15.0" mnemonicParsing="false" onAction="#onBtLogoAction" prefHeight="25.0" prefWidth="25.0">
+                        <Button fx:id="btLogo" contentDisplay="CENTER" graphicTextGap="0.0" minHeight="15.0" mnemonicParsing="false" onAction="#onBtLogoAction" prefHeight="25.0" prefWidth="25.0" styleClass="safe-button">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
@@ -61,14 +61,14 @@
                   <Insets left="8.0" />
                </padding>
             </VBox>
-            <VBox prefHeight="208.0" prefWidth="248.0">
+            <VBox prefHeight="208.0" prefWidth="248.0" spacing="5.0">
                <children>
                   <HBox alignment="CENTER_LEFT" minHeight="30.0" prefHeight="30.0" prefWidth="226.0">
                      <children>
-                        <Button fx:id="btCarimbo" contentDisplay="CENTER" graphicTextGap="0.0" minHeight="15.0" mnemonicParsing="false" onAction="#onBtCarimboAction" prefHeight="25.0" prefWidth="25.0" />
+                        <Button fx:id="btCarimbo" contentDisplay="CENTER" graphicTextGap="0.0" minHeight="15.0" mnemonicParsing="false" onAction="#onBtCarimboAction" prefHeight="25.0" prefWidth="25.0" styleClass="safe-button" />
                      </children>
                   </HBox>
-                  <ImageView fx:id="imgCarimbo" fitHeight="80.0" fitWidth="237.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="imgCarimbo" fitHeight="87.0" fitWidth="237.0" pickOnBounds="true" preserveRatio="true" />
                </children>
                <padding>
                   <Insets left="8.0" />

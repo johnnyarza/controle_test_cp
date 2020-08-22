@@ -12,5 +12,6 @@ public interface MaterialDao {
 	Material findById(Integer id);
 	List<Material> findByDiffrentId(Integer id);
 	List<Material> findAll();
+	List<Material> findByProviderId(Integer providerId);
 
 }

@@ -1,11 +1,13 @@
-  package gui;
+package gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import application.db.DbException;
@@ -23,8 +25,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -44,7 +52,7 @@ public class MaterialRegistrationFormController implements Initializable {
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
 	private ObservableList<Provider> obsList;
-	
+
 	private LogUtils logger;
 
 	@FXML
@@ -52,6 +60,9 @@ public class MaterialRegistrationFormController implements Initializable {
 
 	@FXML
 	private Button btCancelar;
+
+	@FXML
+	private Button btAddProvider;
 
 	@FXML
 	private TextField txtId;
@@ -69,7 +80,20 @@ public class MaterialRegistrationFormController implements Initializable {
 	private ComboBox<Provider> comboBoxProvider;
 
 	@FXML
-	public void onBtCadastrarAction(ActionEvent event) {
+	private void onBtAddProviderAction(ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
+		Provider obj = new Provider();
+		
+		createDialogForm("/gui/ProviderRegistrationForm.fxml","Entre con los datos del Proveedor", parentStage, (ProviderRegistrationFormController controller) -> {
+			controller.setService(new ProviderService());
+			controller.setEntity(obj);
+			controller.setLogger(logger);
+		},"/gui/ProviderRegistrationForm.css");
+		loadAssociatedObjects();
+	}
+
+	@FXML
+	private void onBtCadastrarAction(ActionEvent event) {
 		try {
 			entity = getFormData();
 			if (entity == null) {
@@ -78,17 +102,17 @@ public class MaterialRegistrationFormController implements Initializable {
 			if (service == null && providerService == null) {
 				throw new IllegalStateException("Service was null");
 			}
-			
+
 			service.saveOrUpdate(entity);
 			notifyDataChangeListeners();
 			Utils.currentStage(event).close();
-			
+
 		} catch (DbException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
-		}catch (IllegalStateException e) {
+		} catch (IllegalStateException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		}
@@ -178,9 +202,21 @@ public class MaterialRegistrationFormController implements Initializable {
 
 	private void initializeNodes() {
 		Constraints.setTextFieldInteger(txtId);
+		formatButtons();
+		initializeComboBoxClient();
+	}
+
+	private void formatButtons() {
+		System.out.println(btCadastrar.getStyleClass().toString());
 		btCadastrar.getStyleClass().add("custom-button");
 		btCancelar.getStyleClass().add("close-button");
-		initializeComboBoxClient();
+		btAddProvider.getStyleClass().add("custom-button");
+		setButtonsGraphics();
+	}
+
+	private void setButtonsGraphics() {
+		ImageView imgView = Utils.createImageView("/images/plus_icon.png", 15.0, 15.0);
+		btAddProvider.setGraphic(imgView);
 	}
 
 	private void initializeComboBoxClient() {
@@ -199,5 +235,30 @@ public class MaterialRegistrationFormController implements Initializable {
 	public void initialize(URL url, ResourceBundle rb) {
 		initializeNodes();
 	}
-
+	
+	private <T> void createDialogForm(String absoluteName,String title, Stage parentStage,Consumer<T> initializingAction, String css) {
+		try {
+			
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			Pane pane = loader.load();
+		
+			T controller = loader.getController();
+			initializingAction.accept(controller);
+			
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle(title);
+			dialogStage.setScene(new Scene(pane));
+			if (!css.trim().equals("")) {
+				dialogStage.getScene().getStylesheets().add(css);
+			}
+			dialogStage.setResizable(false);
+			dialogStage.initOwner(parentStage);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.showAndWait();
+					
+		}catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error al cargar ventana",e.getMessage() , AlertType.ERROR);
+		}
+	}
 }

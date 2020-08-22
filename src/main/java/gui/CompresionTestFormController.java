@@ -226,6 +226,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					controller.setEntity(null);
 					controller.setIsLoggin(LogEnum.SIGNIN);
 					controller.setLogger(logger);
+					controller.setTitleLabel("Entrar con datos del administrador");
 				}, (LoginFormController controller) -> {
 					controller.setEntity(null);
 				}, (LoginFormController controller) -> {
@@ -242,33 +243,6 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 
-	}
-
-	private void setLockButtonStyle() {
-		if (!isLocked) {
-			btLock.setGraphic(imgViewMap.get("btUnlock"));
-			btLock.getStyleClass().clear();
-			btLock.getStyleClass().add("button");
-			btLock.getStyleClass().add("unlocked-button");
-			return;
-		}
-		
-		btLock.setGraphic(imgViewMap.get("btLock"));
-		btLock.getStyleClass().clear();
-		btLock.getStyleClass().add("button");
-		btLock.getStyleClass().add("locked-button");
-
-	}
-
-	private void setNodesDisable() {
-		comboBoxClient.setDisable(isLocked);
-		comboBoxConcreteProvider.setDisable(isLocked);
-		btSearchClient.setDisable(isLocked);
-		btSearchConcreteProvider.setDisable(isLocked);
-		txtObra.setDisable(isLocked);
-		txtAddress.setDisable(isLocked);
-		dpCreationDate.setDisable(isLocked);
-		comboBoxConcreteDesign.setDisable(isLocked);
 	}
 
 	@FXML
@@ -312,7 +286,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 						controller.setCorpoDeProva(obj);
 						controller.subscribeDataChangeListener(this);
 					}, (CorpoDeProvaRegistrationController controller) -> {
-					});
+					}, (CorpoDeProvaRegistrationController controller) -> {
+					}, "/gui/CompresionTestForm.css");
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
@@ -332,7 +307,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 						controller.updateFormData();
 						controller.subscribeDataChangeListener(this);
 					}, (CorpoDeProvaRegistrationController controller) -> {
-					});
+					}, (CorpoDeProvaRegistrationController controller) -> {
+					}, "/gui/CompresionTestForm.css");
 		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
@@ -491,6 +467,33 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	public void setLogger(LogUtils logger) {
 		this.logger = logger;
+	}
+
+	private void setLockButtonStyle() {
+		if (!isLocked) {
+			btLock.setGraphic(imgViewMap.get("btUnlock"));
+			btLock.getStyleClass().clear();
+			btLock.getStyleClass().add("button");
+			btLock.getStyleClass().add("unlocked-button");
+			return;
+		}
+
+		btLock.setGraphic(imgViewMap.get("btLock"));
+		btLock.getStyleClass().clear();
+		btLock.getStyleClass().add("button");
+		btLock.getStyleClass().add("locked-button");
+
+	}
+
+	private void setNodesDisable() {
+		comboBoxClient.setDisable(isLocked);
+		comboBoxConcreteProvider.setDisable(isLocked);
+		btSearchClient.setDisable(isLocked);
+		btSearchConcreteProvider.setDisable(isLocked);
+		txtObra.setDisable(isLocked);
+		txtAddress.setDisable(isLocked);
+		dpCreationDate.setDisable(isLocked);
+		comboBoxConcreteDesign.setDisable(isLocked);
 	}
 
 	@Override

@@ -34,4 +34,8 @@ public class MaterialService {
 	public List<Material> findByDiffrentId(Integer id) {
 		return dao.findByDiffrentId(id);
 	}
+	
+	public List<Material> findByProviderId(Integer providerId) {
+		return dao.findByProviderId(providerId);
+	}
 }

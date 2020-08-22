@@ -18,6 +18,14 @@ public class CompresionTestService {
 	public CompresionTest findById(int id) {		
 		return dao.findById(id);
 	}
+	
+	public List<CompresionTest> findByClientId(int id, TimeZone tZ) {		
+		return dao.findyByClientId(id, tZ);
+	}
+	
+	public List<CompresionTest> findByConcreteProviderId(int id, TimeZone tZ) {		
+		return dao.findyByConcreteProviderId(id, tZ);
+	}
 
 	public void saveOrUpdate(CompresionTest obj) {
 		if (obj.getId() == null) {
@@ -38,4 +46,15 @@ public class CompresionTestService {
 	public Boolean compresionTestContainsConcreteDesingId(Integer concreteDesignId) {
 		return dao.compresionTestContainsConcreteDesingId(concreteDesignId);
 	}
+	
+	public List<CompresionTest> findByConcreteDesingId(Integer concreteDesignId, TimeZone tZ) {
+		return dao.findByConcreteDesignId(tZ, concreteDesignId);
+	}
+	
+	public List<CompresionTest> findByConcreteDesingId(Integer concreteDesignId) {
+		return dao.findByConcreteDesingId(concreteDesignId);
+	}
+	
+	
+	
 }

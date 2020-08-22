@@ -155,6 +155,35 @@ public class MaterialDaoJDBC implements MaterialDao {
 			DB.closeResultSet(rs);
 		}
 	}
+	
+	@Override
+	public List<Material> findByProviderId(Integer providerId) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		List<Material>  list = new ArrayList<>();
+		try {
+			st = conn.prepareStatement(
+					"SELECT * FROM cp_db.materials where providerId=?");
+			
+			st.setInt(1, providerId);
+			rs = st.executeQuery();
+			ProviderService service = new ProviderService();
+		
+			while (rs.next()) {
+				Material obj = new Material();
+				obj.setId(rs.getInt(1));
+				obj.setName(rs.getString(2));
+				obj.setProvider(service.findById(rs.getInt(3)));
+				list.add(obj);
+			}
+			return list;			
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+	}
 
 	@Override
 	public List<Material> findByDiffrentId(Integer id) {

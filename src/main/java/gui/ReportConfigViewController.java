@@ -81,7 +81,7 @@ public class ReportConfigViewController implements Initializable {
 	@FXML
 	private void onBtNewAdmin(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		doLogIn(parentStage);
+		doSignIn(parentStage,"Hacer login con cuenta de administrador");
 
 		if (user != null) {
 			doSignUp(parentStage);
@@ -92,16 +92,42 @@ public class ReportConfigViewController implements Initializable {
 	@FXML
 	private void onBtEditAdmin(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		doLogIn(parentStage);
+		doSignIn(parentStage,"Hacer login con cuenta de administrador");
 
 		if (user != null) {
-
+			editUser(parentStage);
 		}
 	}
 
 	@FXML
 	private void onBtDeleteAdmin(ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
+		doSignIn(parentStage,"Insertar datos de cuenta que será borrada");
+		try {
+			if (user != null) {
+				UserService service = new UserService();
+				service.deleteById(user.getId());
+			}
+		} catch (IllegalAccessError e) {
+			Alerts.showAlert("Error", "Acceso denegado", e.getMessage(), AlertType.ERROR);
+		}
+	}
 
+	private void editUser(Stage parentStage) {
+		createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
+				(LoginFormController controller) -> {
+					controller.setIsLoggin(LogEnum.EDIT);
+					controller.setEntity(user);
+					controller.setUserService(new UserService());
+					controller.setLogger(logger);
+					controller.setTitleLabel("Editar datos de cuenta");
+					controller.setTxtUserText(user.getName());
+
+				}, (LoginFormController controller) -> {
+					controller.setEntity(null);
+				}, (LoginFormController controller) -> {
+					setUser(controller.getEntity());
+				}, "");
 	}
 
 	private void doSignUp(Stage parentStage) {
@@ -111,6 +137,7 @@ public class ReportConfigViewController implements Initializable {
 					controller.setEntity(null);
 					controller.setUserService(new UserService());
 					controller.setLogger(logger);
+					controller.setTitleLabel("Insertar datos de cuenta");
 
 				}, (LoginFormController controller) -> {
 					controller.setEntity(null);
@@ -119,13 +146,14 @@ public class ReportConfigViewController implements Initializable {
 				}, "");
 	}
 
-	private void doLogIn(Stage parentStage) {
+	private void doSignIn(Stage parentStage,String msg) {
 		createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
 				(LoginFormController controller) -> {
 					controller.setIsLoggin(LogEnum.SIGNIN);
 					controller.setEntity(null);
 					controller.setUserService(new UserService());
 					controller.setLogger(logger);
+					controller.setTitleLabel(msg);
 
 				}, (LoginFormController controller) -> {
 					controller.setEntity(null);
@@ -157,7 +185,8 @@ public class ReportConfigViewController implements Initializable {
 	public void onBtLogoAction(ActionEvent event) {
 		try {
 			Stage parentStage = Utils.currentStage(event);
-			logoPath = Utils.getFileAbsolutePath(parentStage, new FileChooser.ExtensionFilter("Imagenes", "*.jpg;*.png"));
+			logoPath = Utils.getFileAbsolutePath(parentStage,
+					new FileChooser.ExtensionFilter("Imagenes", "*.jpg;*.png"));
 			imgLogo.setImage(Utils.createImage(logoPath));
 			saveImagePaths();
 		} catch (FileNotFoundException e) {
@@ -170,7 +199,8 @@ public class ReportConfigViewController implements Initializable {
 	public void onBtCarimboAction(ActionEvent event) {
 		try {
 			Stage parentStage = Utils.currentStage(event);
-			carimboPath = Utils.getFileAbsolutePath(parentStage, new FileChooser.ExtensionFilter("Imagenes", "*.jpg;*.png"));
+			carimboPath = Utils.getFileAbsolutePath(parentStage,
+					new FileChooser.ExtensionFilter("Imagenes", "*.jpg;*.png"));
 			imgCarimbo.setImage(Utils.createImage(carimboPath));
 			saveImagePaths();
 		} catch (FileNotFoundException e) {

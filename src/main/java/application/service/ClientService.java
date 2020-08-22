@@ -1,6 +1,7 @@
 package application.service;
 
 import java.util.List;
+import java.util.TimeZone;
 
 import application.dao.ClientDao;
 import application.dao.DaoFactory;
@@ -10,6 +11,8 @@ import application.domaim.Cliente;
 public class ClientService {
 	
 	private ClientDao dao = DaoFactory.createClientDao();
+	
+	CompresionTestService compresionTestService = new CompresionTestService();
 	
 	public List<Cliente> findAll() {
 		return dao.findAll();
@@ -28,6 +31,12 @@ public class ClientService {
 	}
 	
 	public void deleteById(Integer id) {
+		if (compresionTestService.findByClientId(id, TimeZone.getDefault()).size() > 0) {
+			throw new DbException("Existen documentos que utilizan este cliente");
+		};
+		if (compresionTestService.findByConcreteProviderId(id, TimeZone.getDefault()).size() > 0) {
+			throw new DbException("Existen documentos que utilizan este cliente como proveedor de hormigón");
+		}
 		dao.deleteById(id);
 	}
 	
