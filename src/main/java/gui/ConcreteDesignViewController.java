@@ -262,7 +262,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 			initializingAction.accept(controller);
 
 			Stage dialogStage = new Stage();
-			dialogStage.setTitle("Insertar datos del diseño");
+			dialogStage.setTitle("Insertar datos dela dosificacíon");
 			dialogStage.setScene(new Scene(pane));
 
 			if (!css.trim().equals("")) {

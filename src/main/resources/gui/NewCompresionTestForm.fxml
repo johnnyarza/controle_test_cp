@@ -36,8 +36,8 @@
             <ComboBox fx:id="comboBoxConcreteDesign" prefHeight="25.0" prefWidth="184.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <HBox alignment="CENTER" prefHeight="29.0" prefWidth="182.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <children>
-                  <Button fx:id="btCreate" defaultButton="true" mnemonicParsing="false" onAction="#onBtCreateAction" text="Crear" />
-                  <Button fx:id="btCancel" cancelButton="true" mnemonicParsing="false" onAction="#onBtCancelAction" text="Cancelar" />
+                  <Button fx:id="btCreate" defaultButton="true" mnemonicParsing="false" onAction="#onBtCreateAction" text="Guardar" />
+                  <Button fx:id="btCancel" cancelButton="true" mnemonicParsing="false" onAction="#onBtCancelAction" text="Cerrar" />
                </children>
                <GridPane.margin>
                   <Insets top="5.0" />

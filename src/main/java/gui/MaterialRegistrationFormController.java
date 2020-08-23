@@ -207,7 +207,6 @@ public class MaterialRegistrationFormController implements Initializable {
 	}
 
 	private void formatButtons() {
-		System.out.println(btCadastrar.getStyleClass().toString());
 		btCadastrar.getStyleClass().add("custom-button");
 		btCancelar.getStyleClass().add("close-button");
 		btAddProvider.getStyleClass().add("custom-button");

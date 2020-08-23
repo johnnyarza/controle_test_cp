@@ -339,6 +339,9 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	@FXML
 	private void onBtEditarCadastroAction() {
 		try {
+			if (isLocked) {
+				throw new IllegalAccessException("La alteración de este documento esta bloqueada");
+			}
 			setCompresionTestFormData();
 			compresionTestService.saveOrUpdate(this.compresionTest);
 			onDataChange();
@@ -349,6 +352,12 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		} catch (DbException e1) {
 			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "Error al salvar el ensayo", e1.getMessage(), AlertType.ERROR);
+		} catch (IllegalAccessException e) {
+			Alerts.showAlert("Error", "Acceso denegado", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+
 		}
 	}
 
@@ -517,15 +526,16 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	private void setButtonsGraphics() {
 		imgViewMap.put("btLock", Utils.createImageView("/images/lock.png", 10.0, 10.0));
-		imgViewMap.put("btUnlock", Utils.createImageView("/images/unlock.png", 10.0, 10.0));
+		imgViewMap.put("btUnlock", Utils.createImageView("/images/unlock.png", 10.0, 10.0));		
 		btLock.setGraphic(imgViewMap.get("btLock"));
 
+		setButtonGraphic("/images/print.png", btPrint);
 		setButtonGraphic("/images/lupa.png", btSearchClient);
 		setButtonGraphic("/images/lupa.png", btSearchConcreteProvider);
 	}
 
 	private void setButtonGraphic(String path, Button button) {
-		ImageView imgView = Utils.createImageView(path, 10.0, 10.0);
+		ImageView imgView = Utils.createImageView(path, 15.0, 15.0);
 		button.setGraphic(imgView);
 	}
 

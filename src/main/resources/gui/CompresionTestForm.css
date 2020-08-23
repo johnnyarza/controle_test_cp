@@ -59,6 +59,7 @@
 .table-row-cell:selected {
 	-fx-border-color: #3498db;
 	-fx-table-cell-border-color:transparent;
+	-fx-background-color: transparent;
 }
 
 .late-row{

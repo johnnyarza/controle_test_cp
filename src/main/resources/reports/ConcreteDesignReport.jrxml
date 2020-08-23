@@ -164,15 +164,8 @@
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="46" splitType="Stretch">
+		<band height="48" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
-			<staticText>
-				<reportElement x="0" y="0" width="185" height="46" uuid="aa30b585-65f8-4343-be34-9a19590de70c"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial"/>
-				</textElement>
-				<text><![CDATA["Impreso en: " +(new SimpleDateFormat("dd/MM/yyyy").format(new Date()))]]></text>
-			</staticText>
 			<textField pattern="&quot;&quot;">
 				<reportElement x="185" y="0" width="185" height="46" uuid="8432f55e-f095-48f8-9b22-8b1090d1a6a8"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="html">
@@ -180,14 +173,17 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Hoja: " + $V{PAGE_NUMBER} + " / " + $V{PAGE_COUNT}]]></textFieldExpression>
 			</textField>
-			<image hAlign="Right" vAlign="Middle" onErrorType="Icon">
-				<reportElement x="370" y="0" width="185" height="46" uuid="4d6a85e4-2813-4b85-9b30-25f4d303a291"/>
-				<imageExpression><![CDATA[$P{carimbo}]]></imageExpression>
-			</image>
+			<textField>
+				<reportElement x="0" y="0" width="184" height="46" uuid="acc20cb4-b6fd-40d1-a18f-f40f67e7908a"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Impreso en: " +(new SimpleDateFormat("dd/MM/yyyy").format(new Date()))]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnFooter>
 	<pageFooter>
-		<band height="19" splitType="Stretch">
+		<band height="41" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
 			<line>
 				<reportElement x="0" y="2" width="555" height="1" uuid="13750126-da67-427c-8169-782bc5aa8c5f">
@@ -200,7 +196,7 @@
 				</graphicElement>
 			</line>
 			<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy">
-				<reportElement x="0" y="3" width="555" height="13" uuid="0df1434d-b37c-4f97-b573-ec19a2e79089">
+				<reportElement stretchType="ContainerHeight" x="0" y="3" width="555" height="38" uuid="0df1434d-b37c-4f97-b573-ec19a2e79089">
 					<property name="com.jaspersoft.layout.grid.x" value="-1"/>
 					<property name="com.jaspersoft.layout.grid.y" value="1"/>
 					<property name="com.jaspersoft.layout.grid.weight.x" value="1.0"/>
@@ -212,7 +208,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html"/>
-				<textFieldExpression><![CDATA["Pto. Quijarro, Av. Bolivia, 210 • TEL: 3-978-2323 / CEL: 689-21153 • E-mail: henry.hjva@gmail.com • Prov. German Bush - Santa Cruz"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Pto. Quijarro, Av. Bolivia, 210 • TEL: 3-978-2323 / CEL: 689-21153 <br> E-mail: henry.hjva@gmail.com • Prov. German Bush - Santa Cruz"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

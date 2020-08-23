@@ -59,8 +59,9 @@
 	<columnHeader>
 		<band height="32" splitType="Stretch">
 			<staticText>
-				<reportElement mode="Opaque" x="34" y="12" width="30" height="20" backcolor="#00D0FF" uuid="4b372287-0219-4d94-931b-c1ea2eaa06fc">
+				<reportElement mode="Opaque" x="34" y="16" width="30" height="16" backcolor="#00D0FF" uuid="4b372287-0219-4d94-931b-c1ea2eaa06fc">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7cf3dc01-82f1-442f-b3c6-b9d9fbbe37ba"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -74,8 +75,9 @@
 				<text><![CDATA[id]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="64" y="12" width="111" height="20" backcolor="#00D0FF" uuid="0bc66e9e-033a-4f8c-b92b-85eb7bbbcea1">
+				<reportElement mode="Opaque" x="64" y="16" width="111" height="16" backcolor="#00D0FF" uuid="0bc66e9e-033a-4f8c-b92b-85eb7bbbcea1">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8d95928f-4af1-431a-b97f-87adb9ce2864"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -89,8 +91,9 @@
 				<text><![CDATA[Nombre]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="175" y="12" width="111" height="20" backcolor="#00D0FF" uuid="6fad429d-6765-4a8d-80ad-3f28a198b61d">
+				<reportElement mode="Opaque" x="175" y="16" width="111" height="16" backcolor="#00D0FF" uuid="6fad429d-6765-4a8d-80ad-3f28a198b61d">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="29fd5dd5-1819-4b66-bd15-dc57e50a745b"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -104,8 +107,9 @@
 				<text><![CDATA[Telefono]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="286" y="12" width="148" height="20" backcolor="#00D0FF" uuid="56fb04b4-02b1-47f7-b2ec-aae08356df26">
+				<reportElement mode="Opaque" x="286" y="16" width="148" height="16" backcolor="#00D0FF" uuid="56fb04b4-02b1-47f7-b2ec-aae08356df26">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c826e571-bde9-438d-8cc6-bd6b68a509c9"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -119,8 +123,9 @@
 				<text><![CDATA[Ubicación]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="434" y="12" width="111" height="20" backcolor="#00D0FF" uuid="a2bdeed9-3c30-4bf9-b352-92c625541235">
+				<reportElement mode="Opaque" x="434" y="16" width="111" height="16" backcolor="#00D0FF" uuid="a2bdeed9-3c30-4bf9-b352-92c625541235">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6fd56507-55a5-49af-887d-2a18a215a4de"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -140,6 +145,7 @@
 			<textField>
 				<reportElement x="34" y="0" width="30" height="20" uuid="51a40b02-508b-435e-8157-10706f239112">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7cf3dc01-82f1-442f-b3c6-b9d9fbbe37ba"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -155,6 +161,7 @@
 			<textField>
 				<reportElement x="64" y="0" width="111" height="20" uuid="a7ce1f70-809d-4745-8e20-ddaaa1cfce35">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8d95928f-4af1-431a-b97f-87adb9ce2864"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -170,6 +177,7 @@
 			<textField>
 				<reportElement x="175" y="0" width="111" height="20" uuid="2107e25c-a3c5-46c8-8238-4d3079dbe881">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="29fd5dd5-1819-4b66-bd15-dc57e50a745b"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -185,6 +193,7 @@
 			<textField>
 				<reportElement x="286" y="0" width="148" height="20" uuid="f83357b8-4971-4972-9da0-462b3d626281">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c826e571-bde9-438d-8cc6-bd6b68a509c9"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -200,6 +209,7 @@
 			<textField>
 				<reportElement x="434" y="0" width="111" height="20" uuid="3c436781-5cb2-4894-bcbe-e6f96d979b4c">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6fd56507-55a5-49af-887d-2a18a215a4de"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -215,16 +225,45 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="30" splitType="Stretch">
-			<textField pattern="dd/MM/yyyy">
-				<reportElement x="0" y="5" width="90" height="20" uuid="4828311f-9c80-4889-bc6f-fb4c7e71ed89"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+		<band height="78" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="49" width="555" height="1" uuid="0e8e4868-655f-45a9-99a2-017cdfa4437e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineColor="#3498DB"/>
+				</graphicElement>
+			</line>
+			<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy">
+				<reportElement x="0" y="50" width="555" height="28" uuid="27bd0e9a-24d9-4732-afd3-2dec24cf3cff">
+					<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+					<property name="com.jaspersoft.layout.grid.y" value="1"/>
+					<property name="com.jaspersoft.layout.grid.weight.x" value="1.0"/>
+					<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+					<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+					<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+					<property name="com.jaspersoft.layout.grid.weight.fixed" value="false"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html"/>
+				<textFieldExpression><![CDATA["Pto. Quijarro, Av. Bolivia, 210 • TEL: 3-978-2323 / CEL: 689-21153 • E-mail: henry.hjva@gmail.com • Prov. German Bush - Santa Cruz"]]></textFieldExpression>
+			</textField>
+			<textField pattern="&quot;&quot;">
+				<reportElement x="185" y="0" width="185" height="46" uuid="3398d574-5f8b-4c03-9169-8fa693a063eb"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="html">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja: " + $V{PAGE_NUMBER} + " / " + $V{PAGE_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="515" y="5" width="40" height="20" uuid="5739c0e3-5bd0-4be1-9689-0e90247213d0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<reportElement x="0" y="0" width="184" height="46" uuid="9d1ed7a6-b102-4fae-9983-e6ed33870ba2"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Impreso en: " +(new SimpleDateFormat("dd/MM/yyyy").format(new Date()))]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

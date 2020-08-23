@@ -16,6 +16,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Program extends Application {
@@ -35,6 +36,7 @@ public class Program extends Application {
 			mainScene = new Scene(scrollPane);
 			mainScene.getStylesheets().add("/gui/application.css");
 			primaryStage.setScene(mainScene);
+			primaryStage.getIcons().add(new Image(Program.class.getResourceAsStream("/images/concrete.png")));
 
 			primaryStage.setTitle("Probeta Control");
 			primaryStage.show();

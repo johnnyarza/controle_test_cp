@@ -28,6 +28,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -37,7 +38,6 @@ public class ClientListController implements Initializable, DataChangeListener {
 	private ClientService service;
 
 	private ObservableList<Cliente> obsList;
-	
 
 	@FXML
 	private TableView<Cliente> tableViewClient;
@@ -73,7 +73,8 @@ public class ClientListController implements Initializable, DataChangeListener {
 	public void onBtNewAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
 		Cliente obj = new Cliente();
-		createDialogForm(obj, "/gui/ClienteRegistrationForm.fxml", parentStage, "/gui/ClienteRegistrationForm.css");
+		createDialogForm(obj, "/gui/ClienteRegistrationForm.fxml", parentStage, "/gui/ClienteRegistrationForm.css",
+				new Image(ClientListController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
 	}
 
 	@FXML
@@ -81,7 +82,8 @@ public class ClientListController implements Initializable, DataChangeListener {
 		try {
 			Stage parentStage = Utils.currentStage(event);
 			Cliente obj = getClientFromTableView();
-			createDialogForm(obj, "/gui/ClienteRegistrationForm.fxml", parentStage, "");
+			createDialogForm(obj, "/gui/ClienteRegistrationForm.fxml", parentStage, "",
+					new Image(ClientListController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
 
 		} catch (NullPointerException e) {
 			Alerts.showAlert("Error", "Ningun cliente seleccionado", e.getMessage(), AlertType.ERROR);
@@ -160,7 +162,7 @@ public class ClientListController implements Initializable, DataChangeListener {
 		tableViewClient.refresh();
 	}
 
-	public void createDialogForm(Cliente obj, String absoluteName, Stage parentStage, String css) {
+	public void createDialogForm(Cliente obj, String absoluteName, Stage parentStage, String css, Image windowIcon) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -174,6 +176,7 @@ public class ClientListController implements Initializable, DataChangeListener {
 			controller.updateFormData();
 
 			Stage dialogStage = new Stage();
+			dialogStage.getIcons().add(windowIcon);
 			dialogStage.setTitle("Cliente");
 			dialogStage.setScene(new Scene(pane));
 

@@ -28,3 +28,15 @@
 .dangerous-button:hover {
 	-fx-background-color:#e74c3c;
 }
+
+.menu-item:hover {
+	-fx-background-color:#2ecc71;
+}
+
+.menu-bar-menu:hover {
+	-fx-background-color:#2ecc71;
+}
+
+.menu-bar-menu:focused {
+	-fx-background-color:#2ecc71;
+}

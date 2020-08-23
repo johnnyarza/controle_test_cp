@@ -33,8 +33,8 @@
             <TextField fx:id="txtName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <children>
-                  <Button fx:id="btCadastrar" defaultButton="true" minWidth="67.0" mnemonicParsing="false" onAction="#onBtCadastrarAction" prefWidth="67.0" style="-fx-focus-color: transparent;" text="Cadastrar" />
-                  <Button fx:id="btCancelar" minWidth="67.0" mnemonicParsing="false" onAction="#onBtCancelarAction" prefWidth="67.0" text="Cancelar" />
+                  <Button fx:id="btCadastrar" defaultButton="true" minWidth="67.0" mnemonicParsing="false" onAction="#onBtCadastrarAction" prefWidth="67.0" style="-fx-focus-color: transparent;" text="Guardar" />
+                  <Button fx:id="btCancelar" minWidth="67.0" mnemonicParsing="false" onAction="#onBtCancelarAction" prefWidth="67.0" text="Cerrar" />
                </children>
                <GridPane.margin>
                   <Insets top="5.0" />
