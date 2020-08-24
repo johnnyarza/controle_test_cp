@@ -30,7 +30,7 @@
         </rowConstraints>
          <children>
             <ComboBox fx:id="comboBoxClient" prefHeight="25.0" prefWidth="189.0" promptText="Cliente" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <ComboBox fx:id="comboBoxConcreteProvider" prefHeight="25.0" prefWidth="181.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ComboBox fx:id="comboBoxConcreteProvider" prefHeight="25.0" prefWidth="181.0" promptText="Proveedor Hormigón" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="txtObra" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <TextField fx:id="txtAddress" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <ComboBox fx:id="comboBoxConcreteDesign" prefHeight="25.0" prefWidth="184.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
@@ -47,12 +47,12 @@
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin></Label>
-            <Label text="iD" />
-            <Label text="Cliente" GridPane.rowIndex="1" />
+            <Label text="iD:" />
+            <Label text="Cliente:" GridPane.rowIndex="1" />
             <TextField fx:id="txtId" editable="false" maxWidth="40.0" GridPane.columnIndex="1" />
-            <Label text="Obra" GridPane.rowIndex="3" />
-            <Label text="Ubicación" GridPane.rowIndex="4" />
-            <Label text="Diseño" GridPane.rowIndex="5" />
+            <Label text="Obra:" GridPane.rowIndex="3" />
+            <Label text="Ubicación:" GridPane.rowIndex="4" />
+            <Label text="Diseño:" GridPane.rowIndex="5" />
             <Label fx:id="labelErrorObra" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="5.0" />
@@ -72,7 +72,7 @@
                   </Button>
                </children>
             </HBox>
-            <Label text="Prov. Hormigon" GridPane.rowIndex="2" />
+            <Label text="Prov. Hormigón:" GridPane.rowIndex="2" />
             <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <children>
                   <Button fx:id="btSearchConcreteProvider" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onBtSearchConcreteProvider" prefHeight="25.0" prefWidth="25.0">

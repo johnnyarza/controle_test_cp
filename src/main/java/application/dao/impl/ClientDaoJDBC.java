@@ -7,11 +7,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import application.dao.ClientDao;
 import application.db.DB;
 import application.db.DbException;
 import application.domaim.Cliente;
+import application.log.LogUtils;
+import gui.util.Alerts;
+import javafx.scene.control.Alert.AlertType;
 
 public class ClientDaoJDBC implements ClientDao {
 
@@ -26,7 +30,7 @@ public class ClientDaoJDBC implements ClientDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-
+			conn.setAutoCommit(false);
 			st = conn.prepareStatement("INSERT INTO cp_db.clients " + "(name,phone,address,email) " + "VALUES " + "(?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 
@@ -47,11 +51,12 @@ public class ClientDaoJDBC implements ClientDao {
 			} else {
 				throw new DbException("Unexpected Error. No rows affected");
 			}
+			conn.commit();
 		} catch (SQLException e) {
+			rollback();
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			finallyActions(st, rs);
 		}
 	}
 
@@ -59,6 +64,7 @@ public class ClientDaoJDBC implements ClientDao {
 	public void update(Cliente obj) {
 		PreparedStatement st = null;
 		try {
+			conn.setAutoCommit(false);
 			st = conn.prepareStatement("update cp_db.clients set " + "clients.name = ?, " + "clients.phone =?, "
 					+ "clients.address = ?, " + "clients.email = ? " + "WHERE clients.id = ?");
 
@@ -69,11 +75,12 @@ public class ClientDaoJDBC implements ClientDao {
 			st.setInt(5, obj.getId());
 
 			st.executeUpdate();
-
+			conn.commit();
 		} catch (SQLException e) {
+			rollback();
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
+			finallyActions(st, null);
 		}
 	}
 
@@ -81,16 +88,18 @@ public class ClientDaoJDBC implements ClientDao {
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
+			conn.setAutoCommit(false);
+
 			st = conn.prepareStatement("delete from cp_db.clients where clients.id = ?");
-
 			st.setInt(1, id);
-
 			st.executeUpdate();
 
+			conn.commit();
 		} catch (SQLException e) {
+			rollback();
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
+			finallyActions(st, null);
 		}
 	}
 
@@ -100,19 +109,18 @@ public class ClientDaoJDBC implements ClientDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement("SELECT * FROM cp_db.clients where clients.id = ?");
-
 			st.setInt(1, id);
 			rs = st.executeQuery();
 
 			if (rs.next()) {
 				return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
 			}
+
 			return null;
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			finallyActions(st, rs);
 		}
 	}
 
@@ -133,8 +141,7 @@ public class ClientDaoJDBC implements ClientDao {
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			finallyActions(st, rs);
 		}
 	}
 
@@ -155,8 +162,7 @@ public class ClientDaoJDBC implements ClientDao {
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			finallyActions(st, rs);
 		}
 	}
 
@@ -165,7 +171,7 @@ public class ClientDaoJDBC implements ClientDao {
 
 		PreparedStatement st = null;
 		ResultSet rs = null;
-		
+
 		try {
 			st = conn.prepareStatement("SELECT * FROM cp_db.clients where clients.name = ?");
 
@@ -181,8 +187,34 @@ public class ClientDaoJDBC implements ClientDao {
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			finallyActions(st, rs);
+		}
+	}
+	private void finallyActions(PreparedStatement st, ResultSet rs) {
+		try {
+			if (!conn.getAutoCommit()) {
+				conn.setAutoCommit(true);
+			}
+			if (st != null) {
+				DB.closeStatement(st);
+			}
+			if (rs != null) {
+				DB.closeResultSet(rs);
+			}
+		} catch (Exception e2) {
+			Alerts.showAlert("Error", "Error desconocídos", e2.getMessage(), AlertType.ERROR);
+			LogUtils logger = new LogUtils();
+			logger.doLog(Level.WARNING, e2.getMessage(), e2);
+		}
+	}
+
+	private void rollback() {
+		try {
+			conn.rollback();
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "Error desconocídos", e.getMessage(), AlertType.ERROR);
+			LogUtils logger = new LogUtils();
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 		}
 	}
 }

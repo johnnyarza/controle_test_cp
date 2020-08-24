@@ -2,6 +2,7 @@ package gui.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -15,21 +16,31 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.function.Consumer;
+import java.util.logging.Level;
 
 import application.domaim.CorpoDeProva;
+import application.log.LogUtils;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.StringConverter;
 
 
@@ -240,6 +251,47 @@ public class Utils {
 			throw new FileNotFoundException("Error al Cargar Imagen");
 		}
 		return file.getAbsolutePath();
+	}
+	
+	public static<T> void createDialogForm(String absoluteName, String title, Stage parentStage,
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,Image icon,LogUtils logger) {
+		try {
+
+			FXMLLoader loader = new FXMLLoader(Utils.class.getResource(absoluteName));
+			AnchorPane pane = loader.load();
+
+			T controller = loader.getController();
+			initializingAction.accept(controller);
+
+			Stage dialogStage = new Stage();
+			
+			dialogStage.getIcons().add(icon);
+			dialogStage.setTitle(title);
+			dialogStage.setScene(new Scene(pane));
+			dialogStage.getScene().getStylesheets().add("/gui/GlobalStyle.css");
+			if (!css.trim().equals("")) {
+				dialogStage.getScene().getStylesheets().add(css);
+			}
+			dialogStage.setResizable(true);
+			dialogStage.initOwner(parentStage);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+
+			dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+				@Override
+				public void handle(WindowEvent we) {
+					windowEventAction.accept(controller);
+
+				}
+			});
+
+			dialogStage.showAndWait();
+			finalAction.accept(controller);
+
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
+		}
 	}
 	
 	

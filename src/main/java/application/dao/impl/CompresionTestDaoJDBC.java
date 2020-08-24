@@ -9,14 +9,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 import application.dao.CompresionTestDao;
 import application.db.DB;
 import application.db.DbException;
 import application.domaim.Cliente;
 import application.domaim.CompresionTest;
+import application.log.LogUtils;
 import application.service.ClientService;
 import application.service.ConcreteDesignService;
+import gui.util.Alerts;
+import javafx.scene.control.Alert.AlertType;
 
 public class CompresionTestDaoJDBC implements CompresionTestDao{
 	
@@ -31,6 +35,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 	public void insert(CompresionTest obj) {
 		PreparedStatement st = null;
 		try {
+			conn.setAutoCommit(false);
 			st = conn.prepareStatement("INSERT INTO cp_db.compresion_test " 
 					+ "(client_id,concreteProviderId,ConcreteDesign_id,obra,address,creacionDate) " 
 					+ "VALUES "
@@ -56,10 +61,13 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 			} else {
 				throw new DbException("Unexpected Error. No rows affected");
 			}
+			
+			conn.commit();
 		} catch (SQLException e) {
+			rollback();
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
+			finallyActions(st, null);
 		}		
 	}
 
@@ -67,6 +75,7 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 	public void update(CompresionTest obj) {
 		PreparedStatement st = null;
 		try {
+			conn.setAutoCommit(false);
 			st = conn.prepareStatement("UPDATE cp_db.compresion_test SET "
 					+ "compresion_test.client_id = ?, " 
 					+ "compresion_test.concreteProviderId = ?, "
@@ -85,13 +94,14 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 			st.setInt(7, obj.getId());
 			
 			st.executeUpdate();
-
+			conn.commit();
 		} 
 		catch (SQLException e) {
+			rollback();
 			throw new DbException(e.getMessage());
 		} 
 		finally {
-			DB.closeStatement(st);
+			finallyActions(st, null);
 		}	
 	}
 
@@ -99,18 +109,20 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
+			conn.setAutoCommit(false);
+			
 			st = conn.prepareStatement("delete from cp_db.compresion_test where id = ?");
-			
 			st.setInt(1, id);
-			
 			st.executeUpdate();
 
+			conn.commit();
 		} 
 		catch (SQLException e) {
+			rollback();
 			throw new DbException(e.getMessage());
 		} 
 		finally {
-			DB.closeStatement(st);
+			finallyActions(st, null);
 		}	
 	}
 
@@ -399,6 +411,34 @@ public class CompresionTestDaoJDBC implements CompresionTestDao{
 		} finally {
 			DB.closeResultSet(rs);
 			DB.closeStatement(st);
+		}
+	}
+	
+	private void finallyActions(PreparedStatement st, ResultSet rs) {
+		try {
+			if (!conn.getAutoCommit()) {
+				conn.setAutoCommit(true);
+			}
+			if (st != null) {
+				DB.closeStatement(st);
+			}
+			if (rs != null) {
+				DB.closeResultSet(rs);
+			}
+		} catch (Exception e2) {
+			Alerts.showAlert("Error", "Error desconocídos", e2.getMessage(), AlertType.ERROR);
+			LogUtils logger = new LogUtils();
+			logger.doLog(Level.WARNING, e2.getMessage(), e2);
+		}
+	}
+
+	private void rollback() {
+		try {
+			conn.rollback();
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "Error desconocídos", e.getMessage(), AlertType.ERROR);
+			LogUtils logger = new LogUtils();
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 		}
 	}
 }

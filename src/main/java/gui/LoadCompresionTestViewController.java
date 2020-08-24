@@ -41,6 +41,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -68,7 +69,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	private Boolean btCancelPressed;
 
 	private List<CorpoDeProva> lateCorpoDeProvaList;
-	
+
 	private LogUtils logger;
 
 	@FXML
@@ -121,7 +122,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 					}, (NewCompresionTestFormController controller) -> {
 						this.entity = controller.getEntity();
 						this.btCancelPressed = controller.getBtCancelPressed();
-					}, "/gui/NewCompresionTestForm.css");
+					}, "/gui/NewCompresionTestForm.css",
+					new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
 			if (!btCancelPressed) {
 				showCompresionTestForm(parentStage);
 			}
@@ -194,7 +196,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 					}, (WarningDialogController controller) -> {
 						this.entity = controller.getEntity();
 						this.btCancelPressed = controller.getIsBtCancelPressed();
-					}, "/gui/WarningDialog.css");
+					}, "/gui/WarningDialog.css",new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/alert.png")));
 			if (!btCancelPressed) {
 				showCompresionTestForm(parentStage);
 			}
@@ -264,22 +266,19 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	}
 
 	private void formatTableView() {
-		
-		
+
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("compresionTestId"));
 		tableColumnClientName.setCellValueFactory(new PropertyValueFactory<>("clientName"));
 		tableColumnAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
-		
+
 		tableColumnCreationDate.setCellValueFactory(new PropertyValueFactory<>("creationDate"));
 		Utils.formatTableColumnDate(tableColumnCreationDate, "dd/MM/yyyy");
 		tableColumnObra.setCellValueFactory(new PropertyValueFactory<>("obra"));
 
-		Stage stage = (Stage) Program.getMainScene().getWindow();	
-		
+		Stage stage = (Stage) Program.getMainScene().getWindow();
+
 		tableViewClient.prefHeightProperty().bind(stage.heightProperty());
 	}
-
-
 
 	public void updateViewData() {
 		updateTableView();
@@ -365,6 +364,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			controller.setChangesCount(0);
 
 			Stage dialogStage = new Stage();
+			dialogStage.getIcons().add(new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/test.png")));
 			dialogStage.setTitle("Ensayo de Rotura");
 			dialogStage.setScene(new Scene(pane));
 			if (!css.trim().contentEquals(""))
@@ -433,6 +433,11 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		}
 	}
 
+	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css, Image icon) {
+		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css, icon, logger);
+	}
+
 	public void setCompresionTestListService(CompresionTestListService service) {
 		this.service = service;
 	}
@@ -472,6 +477,5 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	public void setLogger(LogUtils logger) {
 		this.logger = logger;
 	}
-
 
 }

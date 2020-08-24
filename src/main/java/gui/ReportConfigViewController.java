@@ -22,20 +22,14 @@ import enums.LogEnum;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class ReportConfigViewController implements Initializable {
 
@@ -81,7 +75,7 @@ public class ReportConfigViewController implements Initializable {
 	@FXML
 	private void onBtNewAdmin(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		doSignIn(parentStage,"Hacer login con cuenta de administrador");
+		doSignIn(parentStage, "Hacer login con cuenta de administrador");
 
 		if (user != null) {
 			doSignUp(parentStage);
@@ -92,7 +86,7 @@ public class ReportConfigViewController implements Initializable {
 	@FXML
 	private void onBtEditAdmin(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		doSignIn(parentStage,"Hacer login con cuenta de administrador");
+		doSignIn(parentStage, "Hacer login con cuenta de administrador");
 
 		if (user != null) {
 			editUser(parentStage);
@@ -102,7 +96,7 @@ public class ReportConfigViewController implements Initializable {
 	@FXML
 	private void onBtDeleteAdmin(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		doSignIn(parentStage,"Insertar datos de cuenta que será borrada");
+		doSignIn(parentStage, "Insertar datos de cuenta que será borrada");
 		try {
 			if (user != null) {
 				UserService service = new UserService();
@@ -127,7 +121,7 @@ public class ReportConfigViewController implements Initializable {
 					controller.setEntity(null);
 				}, (LoginFormController controller) -> {
 					setUser(controller.getEntity());
-				}, "");
+				}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")));
 	}
 
 	private void doSignUp(Stage parentStage) {
@@ -143,10 +137,10 @@ public class ReportConfigViewController implements Initializable {
 					controller.setEntity(null);
 				}, (LoginFormController controller) -> {
 					setUser(controller.getEntity());
-				}, "");
+				}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")));
 	}
 
-	private void doSignIn(Stage parentStage,String msg) {
+	private void doSignIn(Stage parentStage, String msg) {
 		createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
 				(LoginFormController controller) -> {
 					controller.setIsLoggin(LogEnum.SIGNIN);
@@ -159,7 +153,7 @@ public class ReportConfigViewController implements Initializable {
 					controller.setEntity(null);
 				}, (LoginFormController controller) -> {
 					setUser(controller.getEntity());
-				}, "");
+				}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")));
 
 	}
 
@@ -185,8 +179,7 @@ public class ReportConfigViewController implements Initializable {
 	public void onBtLogoAction(ActionEvent event) {
 		try {
 			Stage parentStage = Utils.currentStage(event);
-			logoPath = Utils.getFileAbsolutePath(parentStage,
-					new FileChooser.ExtensionFilter("Imagenes", "*.jpg;*.png"));
+			logoPath = Utils.getFileAbsolutePath(parentStage, new FileChooser.ExtensionFilter("Imagenes", "*.jpg;*.png"));
 			imgLogo.setImage(Utils.createImage(logoPath));
 			saveImagePaths();
 		} catch (FileNotFoundException e) {
@@ -199,8 +192,7 @@ public class ReportConfigViewController implements Initializable {
 	public void onBtCarimboAction(ActionEvent event) {
 		try {
 			Stage parentStage = Utils.currentStage(event);
-			carimboPath = Utils.getFileAbsolutePath(parentStage,
-					new FileChooser.ExtensionFilter("Imagenes", "*.jpg;*.png"));
+			carimboPath = Utils.getFileAbsolutePath(parentStage, new FileChooser.ExtensionFilter("Imagenes", "*.jpg;*.png"));
 			imgCarimbo.setImage(Utils.createImage(carimboPath));
 			saveImagePaths();
 		} catch (FileNotFoundException e) {
@@ -268,43 +260,9 @@ public class ReportConfigViewController implements Initializable {
 	}
 
 	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css) {
-		try {
-
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			AnchorPane pane = loader.load();
-
-			T controller = loader.getController();
-			initializingAction.accept(controller);
-
-			Stage dialogStage = new Stage();
-
-			dialogStage.setTitle(title);
-			dialogStage.setScene(new Scene(pane));
-			dialogStage.getScene().getStylesheets().add("/gui/GlobalStyle.css");
-			if (!css.trim().equals("")) {
-				dialogStage.getScene().getStylesheets().add(css);
-			}
-			dialogStage.setResizable(true);
-			dialogStage.initOwner(parentStage);
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-
-			dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
-				@Override
-				public void handle(WindowEvent we) {
-					windowEventAction.accept(controller);
-
-				}
-			});
-
-			dialogStage.showAndWait();
-			finalAction.accept(controller);
-
-		} catch (IOException e) {
-			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
-		}
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css, Image icon) {
+		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css,
+				icon, logger);
 	}
 
 	public String getLogoPath() {

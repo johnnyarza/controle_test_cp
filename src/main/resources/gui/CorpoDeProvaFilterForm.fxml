@@ -64,8 +64,8 @@
             </GridPane>
             <HBox alignment="CENTER" prefHeight="135.0" prefWidth="330.0" spacing="5.0">
                <children>
-                  <Button fx:id="btFilter" mnemonicParsing="false" onAction="#onBtFilterAction" text="Filtrar" />
-                  <Button fx:id="btClose" mnemonicParsing="false" onAction="#onBtCloseAction" text="Cerrar" />
+                  <Button fx:id="btFilter" defaultButton="true" mnemonicParsing="false" onAction="#onBtFilterAction" text="Filtrar" />
+                  <Button fx:id="btClose" cancelButton="true" mnemonicParsing="false" onAction="#onBtCloseAction" text="Cerrar" />
                </children>
             </HBox>
          </children>

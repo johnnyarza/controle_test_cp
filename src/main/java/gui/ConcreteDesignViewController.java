@@ -1,6 +1,5 @@
 package gui;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
@@ -25,17 +24,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class ConcreteDesignViewController implements Initializable, DataChangeListener {
@@ -80,7 +76,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		try {
 			ConcreteDesign obj = new ConcreteDesign();
 			Stage parentStage = Utils.currentStage(event);
-			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", parentStage,
+			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", "Insertar probeta", parentStage,
 					(ConcreteDesignRegistrationFormController controller) -> {
 						controller.setMaterialService(new MaterialService());
 						controller.setService(new ConcreteDesignService());
@@ -88,7 +84,10 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.setLogger(logger);
 						controller.loadAssociatedObjects();
 						controller.subscribeDataChangeListener(this);
-					}, "/gui/ConcreteDesignRegistrationForm.css");
+					}, (ConcreteDesignRegistrationFormController controller) -> {
+					}, (ConcreteDesignRegistrationFormController controller) -> {
+					}, "/gui/ConcreteDesignRegistrationForm.css",
+					new Image(ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
@@ -100,7 +99,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		try {
 			ConcreteDesign obj = getFormData();
 			Stage parentStage = Utils.currentStage(event);
-			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", parentStage,
+			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", "Editar probeta", parentStage,
 					(ConcreteDesignRegistrationFormController controller) -> {
 						controller.setMaterialService(new MaterialService());
 						controller.setService(new ConcreteDesignService());
@@ -108,7 +107,9 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.loadAssociatedObjects();
 						controller.updateFormData();
 						controller.subscribeDataChangeListener(this);
-					}, "");
+					}, (ConcreteDesignRegistrationFormController controller) -> {
+					}, (ConcreteDesignRegistrationFormController controller) -> {
+					}, "/gui/ConcreteDesignRegistrationForm.css", new Image(ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
 		} catch (IllegalStateException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
@@ -123,8 +124,8 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 				throw new IllegalStateException("Service(s) was null");
 			}
 
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacción de acción",
-					"Seguro que desea apagar?", "");
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacción de acción", "Seguro que desea apagar?",
+					"");
 			if (result.get() == ButtonType.OK) {
 				service.deleteConcreteDesignById(obj.getId());
 			}
@@ -251,33 +252,10 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		}
 	}
 
-	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction,
-			String css) {
-		try {
-
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			Pane pane = loader.load();
-
-			T controller = loader.getController();
-			initializingAction.accept(controller);
-
-			Stage dialogStage = new Stage();
-			dialogStage.setTitle("Insertar datos dela dosificacíon");
-			dialogStage.setScene(new Scene(pane));
-
-			if (!css.trim().equals("")) {
-				dialogStage.getScene().getStylesheets().add(css);
-			}
-
-			dialogStage.setResizable(false);
-			dialogStage.initOwner(parentStage);
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-			dialogStage.showAndWait();
-
-		} catch (IOException e) {
-			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error al abrir ventana", e.getMessage(), AlertType.ERROR);
-		}
+	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css, Image icon) {
+		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css,
+				icon, logger);
 	}
 
 	@Override

@@ -185,8 +185,8 @@
             </GridPane>
             <HBox alignment="CENTER" prefHeight="40.0" prefWidth="517.0" spacing="10.0">
                <children>
-                  <Button fx:id="btSave" minWidth="62.0" mnemonicParsing="false" onAction="#onBtSaveAction" styleClass="save-button" text="Guardar" />
-                  <Button fx:id="btCancel" mnemonicParsing="false" onAction="#onBtCancelAction" styleClass="close-button" text="Cerrar" />
+                  <Button fx:id="btSave" defaultButton="true" minWidth="62.0" mnemonicParsing="false" onAction="#onBtSaveAction" styleClass="save-button" text="Guardar" />
+                  <Button fx:id="btCancel" cancelButton="true" mnemonicParsing="false" onAction="#onBtCancelAction" styleClass="close-button" text="Cerrar" />
                </children>
                <padding>
                   <Insets bottom="5.0" />

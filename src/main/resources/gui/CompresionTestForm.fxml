@@ -73,8 +73,8 @@
             </Label>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="265.0" spacing="5.0" GridPane.columnIndex="7" GridPane.rowIndex="2">
                <children>
-                  <Button fx:id="btFilter" mnemonicParsing="false" onAction="#onBtFilterAction" styleClass="custom-button" text="Filtrar Probetas" />
-                  <Button fx:id="btClearFilter" mnemonicParsing="false" onAction="#onbtClearFilterAction" styleClass="custom-button" text="Limpiar Filtros" />
+                  <Button fx:id="btFilter" maxHeight="25.6" maxWidth="25.6" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtFilterAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" />
+                  <Button fx:id="btClearFilter" maxHeight="25.6" maxWidth="25.6" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onbtClearFilterAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" />
                </children>
                <GridPane.margin>
                   <Insets left="2.0" />

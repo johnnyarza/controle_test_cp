@@ -46,7 +46,7 @@
                         <ToggleGroup fx:id="searchOpt" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton fx:id="rdName" mnemonicParsing="false" onAction="#onRdNameAction" text="Buscar por Nombre" toggleGroup="$searchOpt" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <RadioButton fx:id="rdName" mnemonicParsing="false" onAction="#onRdNameAction" selected="true" text="Buscar por Nombre" toggleGroup="$searchOpt" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <Label fx:id="labelErrorId" textFill="RED" GridPane.columnIndex="1">
                      <GridPane.margin>
                         <Insets />
@@ -64,9 +64,9 @@
             </TableView>
             <HBox prefHeight="39.0" prefWidth="414.0" spacing="5.0">
                <children>
-                  <Button fx:id="btSearch" mnemonicParsing="false" onAction="#onBtSearchAction" text="Buscar" />
+                  <Button fx:id="btSearch" defaultButton="true" mnemonicParsing="false" onAction="#onBtSearchAction" text="Buscar" />
                   <Button fx:id="btSelect" mnemonicParsing="false" onAction="#onBtSelectAction" prefWidth="51.0" text="Elegir" />
-                  <Button fx:id="btClose" mnemonicParsing="false" onAction="#onBtCloseAction" text="Cerrar" />
+                  <Button fx:id="btClose" cancelButton="true" mnemonicParsing="false" onAction="#onBtCloseAction" text="Cerrar" />
                </children>
                <VBox.margin>
                   <Insets top="5.0" />

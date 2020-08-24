@@ -1,6 +1,5 @@
 package gui;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -22,17 +21,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class MateriaisViewController implements Initializable, DataChangeListener {
@@ -40,7 +36,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 	MaterialService service;
 
 	ObservableList<Material> obsList;
-	
+
 	LogUtils logger;
 
 	@FXML
@@ -72,7 +68,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		Stage parentStage = Utils.currentStage(event);
 		Material obj = new Material();
 
-		createDialogForm("/gui/MaterialRegistrationForm.fxml", parentStage,
+		createDialogForm("/gui/MaterialRegistrationForm.fxml","Nuevo material", parentStage,
 				(MaterialRegistrationFormController controller) -> {
 					controller.setService(new MaterialService());
 					controller.setProviderService(new ProviderService());
@@ -80,7 +76,10 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 					controller.setLogger(logger);
 					controller.loadAssociatedObjects();
 					controller.subscribeDataChangeListener(this);
-				}, "/gui/MaterialRegistrationForm.css");
+				}, (MaterialRegistrationFormController controller) -> {
+				}, (MaterialRegistrationFormController controller) -> {
+				}, "/gui/MaterialRegistrationForm.css",
+				new Image(MateriaisViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
 	}
 
 	@FXML
@@ -89,7 +88,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 			Stage parentStage = Utils.currentStage(event);
 			Material obj = getMarialFromTableView();
 
-			createDialogForm("/gui/MaterialRegistrationForm.fxml", parentStage,
+			createDialogForm("/gui/MaterialRegistrationForm.fxml", "Editar material", parentStage,
 					(MaterialRegistrationFormController controller) -> {
 						controller.setService(new MaterialService());
 						controller.setProviderService(new ProviderService());
@@ -97,10 +96,16 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 						controller.loadAssociatedObjects();
 						controller.updateFormData();
 						controller.subscribeDataChangeListener(this);
-					}, "/gui/MaterialRegistrationForm.css");
+					}, (MaterialRegistrationFormController controller) -> {
+					}, (MaterialRegistrationFormController controller) -> {
+					}, "/gui/MaterialRegistrationForm.css",
+					new Image(MateriaisViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
 		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -124,7 +129,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		} catch (DbException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
-		}catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		}
@@ -183,31 +188,10 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		tableColumnProvider.setCellValueFactory(new PropertyValueFactory<>("provider"));
 	}
 
-	private <T> void createDialogForm(String absoluteName, Stage parentStage, Consumer<T> initializingAction,
-			String css) {
-		try {
-
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			Pane pane = loader.load();
-
-			T controller = loader.getController();
-			initializingAction.accept(controller);
-
-			Stage dialogStage = new Stage();
-			dialogStage.setTitle("Insertar datos del material");
-			dialogStage.setScene(new Scene(pane));
-			if (!css.trim().equals("")) {
-				dialogStage.getScene().getStylesheets().add(css);
-			}
-			dialogStage.setResizable(false);
-			dialogStage.initOwner(parentStage);
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-			dialogStage.showAndWait();
-
-		} catch (IOException e) {
-			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error al abrir ventana", e.getMessage(), AlertType.ERROR);
-		}
+	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css, Image icon) {
+		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css,
+				icon, logger);
 	}
 
 	@Override

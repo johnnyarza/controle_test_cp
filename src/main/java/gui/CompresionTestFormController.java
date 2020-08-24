@@ -1,6 +1,5 @@
 package gui;
 
-import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -41,11 +40,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -58,13 +54,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 
 public class CompresionTestFormController implements Initializable, DataChangeListener {
@@ -231,7 +224,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					controller.setEntity(null);
 				}, (LoginFormController controller) -> {
 					isLocked = controller.getEntity() == null ? true : false;
-				}, "");
+				}, "",new Image(CompresionTestFormController.class.getResourceAsStream("/images/sign_in.png")));
 			} else {
 				isLocked = true;
 			}
@@ -256,7 +249,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					if (controller.getEntity() != null) {
 						comboBoxClient.setValue(controller.getEntity());
 					}
-				});
+				},(FindClientFormController controller) -> {},"",new Image(CompresionTestFormController.class.getResourceAsStream("/images/lupa.png")));
 	}
 
 	@FXML
@@ -270,7 +263,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					if (controller.getEntity() != null) {
 						comboBoxConcreteProvider.setValue(controller.getEntity());
 					}
-				});
+				},(FindClientFormController controller) -> {},"",new Image(CompresionTestFormController.class.getResourceAsStream("/images/lupa.png")));
 	}
 
 	@FXML
@@ -287,7 +280,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 						controller.subscribeDataChangeListener(this);
 					}, (CorpoDeProvaRegistrationController controller) -> {
 					}, (CorpoDeProvaRegistrationController controller) -> {
-					}, "/gui/CompresionTestForm.css");
+					}, "/gui/CompresionTestForm.css",new Image(CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
@@ -308,7 +301,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 						controller.subscribeDataChangeListener(this);
 					}, (CorpoDeProvaRegistrationController controller) -> {
 					}, (CorpoDeProvaRegistrationController controller) -> {
-					}, "/gui/CompresionTestForm.css");
+					}, "/gui/CompresionTestForm.css",new Image(CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
 		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
@@ -402,7 +395,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 						if (!controller.getIsCancelButtonPressed()) {
 							obsList = controller.getObsList();
 						}
-					}, "/gui/GlobalStyle.css");
+					}, "/gui/GlobalStyle.css",new Image (CompresionTestFormController.class.getResourceAsStream("/images/filter_on.png")));
 			tableViewCorpoDeProva.setItems(this.obsList);
 			tableViewCorpoDeProva.refresh();
 		} catch (Exception e) {
@@ -525,13 +518,15 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	private void setButtonsGraphics() {
-		imgViewMap.put("btLock", Utils.createImageView("/images/lock.png", 10.0, 10.0));
-		imgViewMap.put("btUnlock", Utils.createImageView("/images/unlock.png", 10.0, 10.0));		
+		imgViewMap.put("btLock", Utils.createImageView("/images/lock.png", 15.0, 15.0));
+		imgViewMap.put("btUnlock", Utils.createImageView("/images/unlock.png", 15.0, 15.0));		
 		btLock.setGraphic(imgViewMap.get("btLock"));
 
 		setButtonGraphic("/images/print.png", btPrint);
 		setButtonGraphic("/images/lupa.png", btSearchClient);
 		setButtonGraphic("/images/lupa.png", btSearchConcreteProvider);
+		setButtonGraphic("/images/filter_on.png", btFilter);
+		setButtonGraphic("/images/filter_off.png", btClearFilter);
 	}
 
 	private void setButtonGraphic(String path, Button button) {
@@ -673,69 +668,10 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		comboBoxConcreteDesign.setItems(obsListConcreteDesign);
 	}
 
+	
 	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> initializingActionFinal) {
-		try {
-
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			Pane pane = loader.load();
-
-			T controller = loader.getController();
-			initializingAction.accept(controller);
-
-			Stage dialogStage = new Stage();
-			dialogStage.setTitle(title);
-			dialogStage.setScene(new Scene(pane));
-			dialogStage.setResizable(false);
-			dialogStage.initOwner(parentStage);
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-			dialogStage.showAndWait();
-			initializingActionFinal.accept(controller);
-
-		} catch (IOException e) {
-			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error al abrir ventana", e.getMessage(), AlertType.ERROR);
-		}
-	}
-
-	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css) {
-		try {
-
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			AnchorPane pane = loader.load();
-
-			T controller = loader.getController();
-			initializingAction.accept(controller);
-
-			Stage dialogStage = new Stage();
-
-			dialogStage.setTitle(title);
-			dialogStage.setScene(new Scene(pane));
-			dialogStage.getScene().getStylesheets().add("/gui/GlobalStyle.css");
-			if (!css.trim().equals("")) {
-				dialogStage.getScene().getStylesheets().add(css);
-			}
-			dialogStage.setResizable(true);
-			dialogStage.initOwner(parentStage);
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-
-			dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
-				@Override
-				public void handle(WindowEvent we) {
-					windowEventAction.accept(controller);
-
-				}
-			});
-
-			dialogStage.showAndWait();
-			finalAction.accept(controller);
-
-		} catch (IOException e) {
-			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
-		}
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,Image icon) {
+		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css, icon, logger);
 	}
 
 	private CorpoDeProva getCorpoDeProvaView() {

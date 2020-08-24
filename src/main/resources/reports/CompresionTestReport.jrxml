@@ -1036,7 +1036,7 @@ Moldeo]]></text>
 					<categoryAxisFormat>
 						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
 					</categoryAxisFormat>
-					<valueAxisLabelExpression><![CDATA["Resistencia (MPa)"]]></valueAxisLabelExpression>
+					<valueAxisLabelExpression><![CDATA["Rotura (kg/cm²)"]]></valueAxisLabelExpression>
 					<valueAxisFormat>
 						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
 					</valueAxisFormat>

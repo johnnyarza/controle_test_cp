@@ -11,14 +11,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 import application.dao.CorpoDeProvaDao;
 import application.db.DB;
 import application.db.DbException;
 import application.domaim.CompresionTest;
 import application.domaim.CorpoDeProva;
+import application.log.LogUtils;
 import application.service.CompresionTestService;
+import gui.util.Alerts;
 import gui.util.Utils;
+import javafx.scene.control.Alert.AlertType;
 
 public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 
@@ -31,8 +35,8 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 	@Override
 	public void insert(CorpoDeProva obj) {
 		PreparedStatement st = null;
-
 		try {
+			if (conn.getAutoCommit()) conn.setAutoCommit(false);
 			st = conn.prepareStatement("INSERT INTO cp_db.corpo_de_provas " + "(" +
 			/* 1 */ "code, " +
 			/* 2 */ "client_id, " +
@@ -70,10 +74,12 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 			} else {
 				throw new DbException("Unexpected Error. No rows affected");
 			}
+			conn.commit();
 		} catch (SQLException e) {
+			rollback();
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
+			finallyActions(st, null);
 		}
 	}
 
@@ -81,6 +87,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 	public void update(CorpoDeProva obj) {
 		PreparedStatement st = null;
 		try {
+			if (conn.getAutoCommit()) conn.setAutoCommit(false);
 			st = conn.prepareStatement("UPDATE cp_db.corpo_de_provas SET " + "corpo_de_provas.code = ?, " // 1
 					+ "client_id = ?, " // 2
 					+ "compresionTest_Id = ?, " // 3
@@ -108,11 +115,12 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 			st.setInt(12, obj.getId());
 
 			st.executeUpdate();
-
+			conn.commit();
 		} catch (SQLException e) {
+			rollback();
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
+			finallyActions(st, null);
 		}
 	}
 
@@ -120,16 +128,18 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
+			if (conn.getAutoCommit()) conn.setAutoCommit(false);
+			
 			st = conn.prepareStatement("delete from cp_db.corpo_de_provas where id = ?");
-
 			st.setInt(1, id);
-
 			st.executeUpdate();
-
+			
+			conn.commit();
 		} catch (SQLException e) {
+			rollback();
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
+			finallyActions(st, null);
 		}
 	}
 
@@ -383,4 +393,31 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 
 	}
 
+	private void finallyActions(PreparedStatement st, ResultSet rs) {
+		try {
+			if (!conn.getAutoCommit()) {
+				conn.setAutoCommit(true);
+			}
+			if (st != null) {
+				DB.closeStatement(st);
+			}
+			if (rs != null) {
+				DB.closeResultSet(rs);
+			}
+		} catch (Exception e2) {
+			Alerts.showAlert("Error", "Error desconocídos", e2.getMessage(), AlertType.ERROR);
+			LogUtils logger = new LogUtils();
+			logger.doLog(Level.WARNING, e2.getMessage(), e2);
+		}
+	}
+
+	private void rollback() {
+		try {
+			conn.rollback();
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "Error desconocídos", e.getMessage(), AlertType.ERROR);
+			LogUtils logger = new LogUtils();
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+		}
+	}
 }

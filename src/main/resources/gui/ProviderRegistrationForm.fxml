@@ -27,16 +27,16 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="iD" />
-            <Label text="Nombre" GridPane.rowIndex="1" />
-            <Label text="Telefono" GridPane.rowIndex="2" />
-            <Label text="Ubicación" GridPane.rowIndex="3" />
-            <Label text="Correo E." GridPane.rowIndex="4" />
+            <Label text="iD:" />
+            <Label text="Nombre:" GridPane.rowIndex="1" />
+            <Label text="Telefono:" GridPane.rowIndex="2" />
+            <Label text="Ubicación:" GridPane.rowIndex="3" />
+            <Label text="Correo E.:" GridPane.rowIndex="4" />
             <TextField fx:id="txtId" editable="false" maxWidth="40.0" prefHeight="25.0" GridPane.columnIndex="1" />
-            <TextField fx:id="txtName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="txtPhone" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="txtAddress" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <TextField fx:id="txtEmail" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <TextField fx:id="txtName" promptText="Nombre" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="txtPhone" promptText="Telefono" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="txtAddress" promptText="Ubicación" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="txtEmail" promptText="Correo Electrónico" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                <children>
                   <Button fx:id="btCadastrar" mnemonicParsing="false" onAction="#onBtCadastrarAction" text="Guardar" />

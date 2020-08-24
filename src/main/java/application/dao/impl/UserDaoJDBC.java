@@ -12,6 +12,8 @@ import application.db.DB;
 import application.db.DbException;
 import application.domaim.User;
 import application.log.LogUtils;
+import gui.util.Alerts;
+import javafx.scene.control.Alert.AlertType;
 
 public class UserDaoJDBC implements UserDao {
 
@@ -49,31 +51,11 @@ public class UserDaoJDBC implements UserDao {
 			
 			conn.commit();
 		} catch (SQLException e) {
-			LogUtils lg = new LogUtils();
-			
-			if (conn != null) {
-				try {
-					lg.doLog(Level.INFO, "Rollbacking", e);
-					conn.rollback();
-				} catch (SQLException excep) {
-
-					lg.doLog(Level.SEVERE, excep.getMessage(), excep);
-				}
-			}
-			
+			rollback();			
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeResultSet(rs);
-			DB.closeStatement(st);
-
-			try {
-				conn.setAutoCommit(true);
-			} catch (SQLException e) {
-				LogUtils lg = new LogUtils();
-				lg.doLog(Level.SEVERE, e.getMessage(), e);
-			}
+		finallyActions(st, rs);
 		}
-
 		return null;
 	}
 
@@ -104,16 +86,20 @@ public class UserDaoJDBC implements UserDao {
 	public void update(User user) {
 		PreparedStatement st = null;
 		try {
+			if (conn.getAutoCommit()) conn.setAutoCommit(false);
+			
 			st = conn.prepareStatement("UPDATE `cp_db`.`users` SET `name` = ?,`password` = ? WHERE `id` = ?");
 			st.setString(1, user.getName());
 			st.setString(2, user.getPassword());
 			st.setInt(3, user.getId());
 
 			st.executeUpdate();
+			conn.commit();
 		} catch (SQLException e) {
+			rollback();
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
+			finallyActions(st, null);
 		}
 
 	}
@@ -122,13 +108,18 @@ public class UserDaoJDBC implements UserDao {
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
+			if (conn.getAutoCommit()) conn.setAutoCommit(false);
+			
 			st = conn.prepareStatement("DELETE FROM cp_db.users WHERE `id`=?");
 			st.setInt(1, id);
 			st.executeUpdate();
+			
+			conn.commit();
 		} catch (SQLException e) {
+			rollback();
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
+			finallyActions(st, null);
 		}
 
 	}
@@ -186,6 +177,34 @@ public class UserDaoJDBC implements UserDao {
 			DB.closeStatement(st);
 		}
 		return null;
+	}
+	
+	private void finallyActions(PreparedStatement st, ResultSet rs) {
+		try {
+			if (!conn.getAutoCommit()) {
+				conn.setAutoCommit(true);
+			}
+			if (st != null) {
+				DB.closeStatement(st);
+			}
+			if (rs != null) {
+				DB.closeResultSet(rs);
+			}
+		} catch (Exception e2) {
+			Alerts.showAlert("Error", "Error desconocídos", e2.getMessage(), AlertType.ERROR);
+			LogUtils logger = new LogUtils();
+			logger.doLog(Level.WARNING, e2.getMessage(), e2);
+		}
+	}
+
+	private void rollback() {
+		try {
+			conn.rollback();
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "Error desconocídos", e.getMessage(), AlertType.ERROR);
+			LogUtils logger = new LogUtils();
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+		}
 	}
 
 }

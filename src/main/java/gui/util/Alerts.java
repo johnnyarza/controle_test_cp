@@ -6,6 +6,8 @@ import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 public class Alerts {
 
@@ -14,7 +16,10 @@ public class Alerts {
 		alert.setTitle(title);
 		alert.setHeaderText(header);
 		alert.setContentText(content);
-		alert.show();
+		//alert.show();
+		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(Alerts.class.getResourceAsStream("/images/alert.png")));
+		stage.showAndWait();
 	}
 	
 	public static Optional<ButtonType> showConfirmationDialog(String title, String header, String content) {

@@ -8,13 +8,17 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import application.dao.ConcreteDesignDao;
 import application.db.DB;
 import application.db.DbException;
 import application.domaim.ConcreteDesign;
 import application.domaim.MaterialProporcion;
+import application.log.LogUtils;
 import application.service.MaterialService;
+import gui.util.Alerts;
+import javafx.scene.control.Alert.AlertType;
 
 public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 
@@ -29,13 +33,14 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement(
-					"INSERT INTO cp_db.concretedesign " + "(description, " + "fck, " + "mat1_id, " + "mat2_id, " + "mat3_id, "
-							+ "mat4_id, " + "mat5_id, " + "mat6_id, " + "mat7_id, " + "mat8_id," + "mat1_qtt,"
-							+ "mat2_qtt," + "mat3_qtt," + "mat4_qtt," + "mat5_qtt," + "mat6_qtt," + "mat7_qtt,"
-							+ "mat8_qtt," + "slump" + ") " + "VALUES "
-							+ "(? ,? ,? ,? ,? ,? ,? ,? ,? ,?,? ,? ,? ,? ,? ,? ,? ,?,?)",
-					Statement.RETURN_GENERATED_KEYS);
+			conn.setAutoCommit(false);
+			st = conn
+					.prepareStatement(
+							"INSERT INTO cp_db.concretedesign " + "(description, " + "fck, " + "mat1_id, " + "mat2_id, " + "mat3_id, "
+									+ "mat4_id, " + "mat5_id, " + "mat6_id, " + "mat7_id, " + "mat8_id," + "mat1_qtt," + "mat2_qtt,"
+									+ "mat3_qtt," + "mat4_qtt," + "mat5_qtt," + "mat6_qtt," + "mat7_qtt," + "mat8_qtt," + "slump" + ") "
+									+ "VALUES " + "(? ,? ,? ,? ,? ,? ,? ,? ,? ,?,? ,? ,? ,? ,? ,? ,? ,?,?)",
+							Statement.RETURN_GENERATED_KEYS);
 
 			setStatement(st, obj);
 
@@ -48,12 +53,12 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 			} else {
 				throw new DbException("No rows were affected");
 			}
-
+			conn.commit();
 		} catch (SQLException e) {
+			rollback();
 			throw new DbException("Error inserting ConcreteDesing");
 		} finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			finallyActions(st, rs);
 		}
 	}
 
@@ -61,11 +66,15 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 	public void update(ConcreteDesign obj) {
 		PreparedStatement st = null;
 		try {
+			if (conn.getAutoCommit()) {
+				conn.setAutoCommit(false);
+			}
+
 			st = conn.prepareStatement(
 					"UPDATE cp_db.concretedesign SET " + "description = ?, " + "fck = ?, " + "mat1_id = ?, " + "mat2_id = ?, "
-							+ "mat3_id = ?, " + "mat4_id = ?, " + "mat5_id = ?, " + "mat6_id = ?, " + "mat7_id = ?, "
-							+ "mat8_id = ?," + "mat1_qtt = ?," + "mat2_qtt = ?," + "mat3_qtt = ?," + "mat4_qtt = ?,"
-							+ "mat5_qtt = ?," + "mat6_qtt = ?," + "mat7_qtt = ?," + "mat8_qtt = ?," +"slump = ? "+ "WHERE id = ?"  ,
+							+ "mat3_id = ?, " + "mat4_id = ?, " + "mat5_id = ?, " + "mat6_id = ?, " + "mat7_id = ?, " + "mat8_id = ?,"
+							+ "mat1_qtt = ?," + "mat2_qtt = ?," + "mat3_qtt = ?," + "mat4_qtt = ?," + "mat5_qtt = ?,"
+							+ "mat6_qtt = ?," + "mat7_qtt = ?," + "mat8_qtt = ?," + "slump = ? " + "WHERE id = ?",
 					Statement.RETURN_GENERATED_KEYS);
 
 			setStatement(st, obj);
@@ -75,11 +84,12 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 			if (rows == 0) {
 				throw new DbException("No rows were affected");
 			}
-
+			conn.commit();
 		} catch (SQLException e) {
+			rollback();
 			throw new DbException("Error inserting ConcreteDesing");
 		} finally {
-			DB.closeStatement(st);
+			finallyActions(st, null);
 		}
 	}
 
@@ -157,6 +167,9 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
+			if (conn.getAutoCommit()) {
+				conn.setAutoCommit(false);
+			}
 			st = conn.prepareStatement("DELETE FROM cp_db.concretedesign " + "WHERE id = ?");
 
 			st.setInt(1, id);
@@ -164,10 +177,12 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 			if (rows == 0) {
 				throw new DbException("No rows were deleted");
 			}
+			conn.commit();
 		} catch (SQLException e) {
+			rollback();
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
+			finallyActions(st, null);
 		}
 
 	}
@@ -247,11 +262,39 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 		matProp.setMat6Qtt(rs.getDouble(17));
 		matProp.setMat7Qtt(rs.getDouble(18));
 		matProp.setMat8Qtt(rs.getDouble(19));
-		
+
 		obj.setSlump(rs.getDouble(20));
 
 		obj.setProporcion(matProp);
 
 		return obj;
+	}
+
+	private void finallyActions(PreparedStatement st, ResultSet rs) {
+		try {
+			if (!conn.getAutoCommit()) {
+				conn.setAutoCommit(true);
+			}
+			if (st != null) {
+				DB.closeStatement(st);
+			}
+			if (rs != null) {
+				DB.closeResultSet(rs);
+			}
+		} catch (Exception e2) {
+			Alerts.showAlert("Error", "Error desconocídos", e2.getMessage(), AlertType.ERROR);
+			LogUtils logger = new LogUtils();
+			logger.doLog(Level.WARNING, e2.getMessage(), e2);
+		}
+	}
+
+	private void rollback() {
+		try {
+			conn.rollback();
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "Error desconocídos", e.getMessage(), AlertType.ERROR);
+			LogUtils logger = new LogUtils();
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+		}
 	}
 }
