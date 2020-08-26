@@ -79,6 +79,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	private ClientService clientService;
 
 	private CompresionTest compresionTest;
+	
+	private Boolean isNewDoc = false;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -224,7 +226,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					controller.setEntity(null);
 				}, (LoginFormController controller) -> {
 					isLocked = controller.getEntity() == null ? true : false;
-				}, "",new Image(CompresionTestFormController.class.getResourceAsStream("/images/sign_in.png")));
+				}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/sign_in.png")));
 			} else {
 				isLocked = true;
 			}
@@ -249,7 +251,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					if (controller.getEntity() != null) {
 						comboBoxClient.setValue(controller.getEntity());
 					}
-				},(FindClientFormController controller) -> {},"",new Image(CompresionTestFormController.class.getResourceAsStream("/images/lupa.png")));
+				}, (FindClientFormController controller) -> {
+				}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/lupa.png")));
 	}
 
 	@FXML
@@ -263,7 +266,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					if (controller.getEntity() != null) {
 						comboBoxConcreteProvider.setValue(controller.getEntity());
 					}
-				},(FindClientFormController controller) -> {},"",new Image(CompresionTestFormController.class.getResourceAsStream("/images/lupa.png")));
+				}, (FindClientFormController controller) -> {
+				}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/lupa.png")));
 	}
 
 	@FXML
@@ -276,11 +280,14 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", "Inserir Probeta", parentStage,
 					(CorpoDeProvaRegistrationController controller) -> {
 						controller.setCorpoDeProvaService(new CorpoDeProvaService());
+						controller.setLogger(logger);
 						controller.setCorpoDeProva(obj);
+						controller.setIsLocked(isLocked);
 						controller.subscribeDataChangeListener(this);
 					}, (CorpoDeProvaRegistrationController controller) -> {
 					}, (CorpoDeProvaRegistrationController controller) -> {
-					}, "/gui/CompresionTestForm.css",new Image(CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
+					}, "/gui/CompresionTestForm.css",
+					new Image(CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
@@ -292,19 +299,28 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		try {
 			Stage parentStage = Utils.currentStage(event);
 			CorpoDeProva obj = getCorpoDeProvaView();
+			if (isLocked && (obj.getTonRupture() != null && obj.getTonRupture() != 0.0)) {
+				throw new IllegalAccessException("La alteración de este documento esta bloqueada");
+			}
 
 			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", "Editar Probeta", parentStage,
 					(CorpoDeProvaRegistrationController controller) -> {
 						controller.setCorpoDeProvaService(new CorpoDeProvaService());
+						controller.setLogger(logger);
 						controller.setCorpoDeProva(obj);
 						controller.updateFormData();
+						controller.setIsLocked(isLocked);
+						controller.formLockedState();
 						controller.subscribeDataChangeListener(this);
 					}, (CorpoDeProvaRegistrationController controller) -> {
 					}, (CorpoDeProvaRegistrationController controller) -> {
-					}, "/gui/CompresionTestForm.css",new Image(CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
+					}, "/gui/CompresionTestForm.css",
+					new Image(CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
 		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+		} catch (IllegalAccessException e) {
+			Alerts.showAlert("Error", "Acceso denegado", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -395,7 +411,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 						if (!controller.getIsCancelButtonPressed()) {
 							obsList = controller.getObsList();
 						}
-					}, "/gui/GlobalStyle.css",new Image (CompresionTestFormController.class.getResourceAsStream("/images/filter_on.png")));
+					}, "/gui/GlobalStyle.css",
+					new Image(CompresionTestFormController.class.getResourceAsStream("/images/filter_on.png")));
 			tableViewCorpoDeProva.setItems(this.obsList);
 			tableViewCorpoDeProva.refresh();
 		} catch (Exception e) {
@@ -496,6 +513,9 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		txtAddress.setDisable(isLocked);
 		dpCreationDate.setDisable(isLocked);
 		comboBoxConcreteDesign.setDisable(isLocked);
+		btApagarProbeta.setDisable(isLocked);
+		btInserirProbeta.setDisable(isLocked);
+		btEditarCadastro.setDisable(isLocked);
 	}
 
 	@Override
@@ -519,7 +539,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	private void setButtonsGraphics() {
 		imgViewMap.put("btLock", Utils.createImageView("/images/lock.png", 15.0, 15.0));
-		imgViewMap.put("btUnlock", Utils.createImageView("/images/unlock.png", 15.0, 15.0));		
+		imgViewMap.put("btUnlock", Utils.createImageView("/images/unlock.png", 15.0, 15.0));
 		btLock.setGraphic(imgViewMap.get("btLock"));
 
 		setButtonGraphic("/images/print.png", btPrint);
@@ -668,10 +688,10 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		comboBoxConcreteDesign.setItems(obsListConcreteDesign);
 	}
 
-	
 	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css, icon, logger);
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css, Image icon) {
+		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css,
+				icon, logger);
 	}
 
 	private CorpoDeProva getCorpoDeProvaView() {
@@ -705,6 +725,28 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		updateFormData();
 		updateTableView();
 		setLabelMessageText(this.compresionTest.getId());
+	}
+	
+	public void setFormaLockedState() {
+			btApagarProbeta.setDisable(!isNewDoc);
+			btInserirProbeta.setDisable(!isNewDoc);
+			btEditarCadastro.setDisable(!isNewDoc);
+	}
+
+	public Boolean getIsLocked() {
+		return isLocked;
+	}
+
+	public void setIsLocked(Boolean isLocked) {
+		this.isLocked = isLocked;
+	}
+
+	public Boolean getIsNewDoc() {
+		return isNewDoc;
+	}
+
+	public void setIsNewDoc(Boolean isNewDoc) {
+		this.isNewDoc = isNewDoc;
 	}
 
 	private void setCompresionTestFormData() {

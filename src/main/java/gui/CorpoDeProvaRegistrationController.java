@@ -6,14 +6,20 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
+
+import org.apache.commons.lang3.StringUtils;
 
 import application.db.DbException;
 import application.domaim.CorpoDeProva;
 import application.exceptions.ValidationException;
+import application.log.LogUtils;
 import application.service.CorpoDeProvaService;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
@@ -25,8 +31,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 public class CorpoDeProvaRegistrationController implements Initializable {
 
@@ -34,7 +44,11 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 
 	CorpoDeProva corpoDeProva;
 
+	Boolean isLocked = false;
+
 	List<DataChangeListener> dataChangeListeners = new ArrayList<>();
+
+	private LogUtils logger;
 
 	@FXML
 	private Label labelErrorCode;
@@ -93,20 +107,64 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 	@FXML
 	private Button btCancel;
 
+	@FXML
+	private Button btToday;
+
+	@FXML
+	private Button btDateCalc;
+
+	@FXML
+	private void onBtTodayAction(ActionEvent event) {
+		try {
+			dpMoldeDate.setValue(LocalDate.now());
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "Error saving Probeta", e.getMessage(), AlertType.ERROR);
+		}
+	}
+
+	@FXML
+	private void onBtDateCalcAction(ActionEvent event) {
+		try {
+
+			Dialog<String> dlg = new TextInputDialog();
+			dlg.setTitle("Sumar días");
+			dlg.setHeaderText("Insertar días para sumar \na la fecha de moldeo");
+			Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(CorpoDeProva.class.getResourceAsStream("/images/calculator.png")));
+			String response = dlg.showAndWait().orElse("");
+			
+			if (StringUtils.isNumeric(response) && dpMoldeDate.getValue() != null) {
+				dpRuptureDate.setValue(dpMoldeDate.getValue().plusDays(Utils.tryParseToInt(response)));
+			}
+		} catch (NoSuchElementException e) {
+			Alerts.showAlert("Error", "Campo vacío o valor no numerico", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+		}
+
+	}
+
 	public void onBtSaveAction(ActionEvent event) {
 		try {
+			setErrorMessages(new HashMap<String, String>());
 			CorpoDeProva obj = getFormData();
 			obj.setFckRupture();
 			obj.setCompresionTest(this.corpoDeProva.getCompresionTest());
+			obj.setIsLocked(true);
 
 			corpoDeProvaService.saveOrUpdate(obj);
 			notifyDataChangeListeners();
 
 			Utils.currentStage(event).close();
 		} catch (DbException e) {
-			Alerts.showAlert("Error", "Error saving Probeta", e.getMessage(), AlertType.ERROR);
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
 		} catch (ValidationException e1) {
 			setErrorMessages(e1.getErrors());
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -128,6 +186,10 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 
 	public void setCorpoDeProva(CorpoDeProva corpoDeProva) {
 		this.corpoDeProva = corpoDeProva;
+	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
 	}
 
 	private CorpoDeProva getFormData() {
@@ -184,9 +246,9 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 		if (dpRuptureDate.getValue() != null && dpMoldeDate.getValue() != null) {
 			Instant instantBefore = Utils.getInsTantFromDatePicker(dpMoldeDate);
 			Instant instantAfter = Utils.getInsTantFromDatePicker(dpRuptureDate);
-			LocalDate i =LocalDate.ofInstant(instantBefore, ZoneId.systemDefault());
-			LocalDate j =LocalDate.ofInstant(instantAfter, ZoneId.systemDefault());
-			
+			LocalDate i = LocalDate.ofInstant(instantBefore, ZoneId.systemDefault());
+			LocalDate j = LocalDate.ofInstant(instantAfter, ZoneId.systemDefault());
+
 			obj.setDays(Utils.daysBetweenLocalDates(j, i));
 		}
 
@@ -207,8 +269,10 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 
 		if (txtRuptureTon.getText() == null || txtRuptureTon.getText().trim().equals("")) {
 			obj.setTonRupture(0.0);
+			obj.setIsLocked(false);
 		} else {
 			obj.setTonRupture(Utils.tryParseToDouble(txtRuptureTon.getText()));
+			obj.setIsLocked(true);
 		}
 
 		if (exception.getErrors().size() > 0) {
@@ -232,6 +296,14 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 
 	}
 
+	public Boolean getIsLocked() {
+		return isLocked;
+	}
+
+	public void setIsLocked(Boolean isLocked) {
+		this.isLocked = isLocked;
+	}
+
 	public void updateFormData() {
 
 		if (corpoDeProva == null) {
@@ -246,8 +318,7 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 			dpMoldeDate.setValue(LocalDate.ofInstant(corpoDeProva.getMoldeDate().toInstant(), ZoneId.systemDefault()));
 		}
 		if (corpoDeProva.getRuptureDate() != null) {
-			dpRuptureDate
-					.setValue(LocalDate.ofInstant(corpoDeProva.getRuptureDate().toInstant(), ZoneId.systemDefault()));
+			dpRuptureDate.setValue(LocalDate.ofInstant(corpoDeProva.getRuptureDate().toInstant(), ZoneId.systemDefault()));
 		}
 
 		txtDiameter.setText(String.format("%.2f", corpoDeProva.getDiameter()));
@@ -269,6 +340,20 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 		initializeNodes();
 	}
 
+	public void formLockedState() {
+		if (corpoDeProva.getIsLocked()) {
+			txtDiameter.setDisable(isLocked);
+			txtHeight.setDisable(isLocked);
+			txtCode.setDisable(isLocked);
+			txtSlump.setDisable(isLocked);
+			txtWeight.setDisable(isLocked);
+			dpMoldeDate.setDisable(isLocked);
+			dpRuptureDate.setDisable(isLocked);
+			btToday.setDisable(isLocked);
+			btDateCalc.setDisable(isLocked);
+		}
+	}
+
 	public void initializeNodes() {
 		Utils.formatDatePicker(dpMoldeDate, "dd/MM/yyyy");
 		Utils.formatDatePicker(dpRuptureDate, "dd/MM/yyyy");
@@ -278,5 +363,7 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 		Constraints.setTextFieldDouble(txtHeight);
 		Constraints.setTextFieldDouble(txtWeight);
 		Constraints.setTextFieldDouble(txtRuptureTon);
+		btToday.setGraphic(Utils.createImageView("/images/pin.png", 20.0, 20.0));
+		btDateCalc.setGraphic(Utils.createImageView("/images/calculator.png", 20.0, 20.0));
 	}
 }

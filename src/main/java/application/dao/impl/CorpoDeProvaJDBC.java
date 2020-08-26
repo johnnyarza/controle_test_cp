@@ -48,7 +48,8 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 			/* 8 */ "diameter, " +
 			/* 9 */ "height, " +
 			/* 10 */ "weight, " +
-			/* 11 */ "tonRupture) " + "VALUES (? ,? , ? ,? ,? ,? ,? ,? ,? ,? ,? )", Statement.RETURN_GENERATED_KEYS);
+			/* 11 */ "tonRupture,"+
+			/* 12 */"is_locked) " + "VALUES (? ,? , ? ,? ,? ,? ,? ,? ,? ,? ,?,? )", Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, obj.getCode());
 			st.setInt(2, obj.getCompresionTest().getClient().getId());
@@ -61,6 +62,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 			st.setDouble(9, obj.getHeight());
 			st.setDouble(10, obj.getWeight());
 			st.setDouble(11, obj.getTonRupture());
+			st.setInt(12, obj.getIsLocked() ? 1 : 0);
 
 			int rowsAffected = st.executeUpdate();
 
@@ -98,8 +100,9 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 					+ "diameter = ?, " // 8
 					+ "height = ?, " // 9
 					+ "weight = ?, " // 10
-					+ "tonRupture = ? " // 11
-					+ "WHERE id = ?"); // 12
+					+ "tonRupture = ?, " // 11
+					+ "is_locked = ? " //12
+					+ "WHERE id = ?"); // 13
 
 			st.setString(1, obj.getCode());
 			st.setInt(2, obj.getCompresionTest().getClient().getId());
@@ -112,7 +115,8 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 			st.setDouble(9, obj.getHeight());
 			st.setDouble(10, obj.getWeight());
 			st.setDouble(11, obj.getTonRupture());
-			st.setInt(12, obj.getId());
+			st.setInt(12, obj.getIsLocked() ? 1 : 0);
+			st.setInt(13, obj.getId());
 
 			st.executeUpdate();
 			conn.commit();
@@ -158,7 +162,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 				CorpoDeProva obj = instantiateCorpoDeProva(rs);
 				obj.setDensid();
 				obj.setFckRupture();
-				obj.setDays(rs.getInt(13));
+				obj.setDays(rs.getInt(14));
 				return obj;
 			}
 			return null;
@@ -184,7 +188,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 				CorpoDeProva obj = instantiateCorpoDeProva(rs);
 				obj.setDensid();
 				obj.setFckRupture();
-				obj.setDays(rs.getInt(13));
+				obj.setDays(rs.getInt(14));
 				list.add(obj);
 			}
 			return list;
@@ -213,7 +217,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 				CorpoDeProva obj = instantiateCorpoDeProva(rs);
 				obj.setDensid();
 				obj.setFckRupture();
-				obj.setDays(rs.getInt(13));
+				obj.setDays(rs.getInt(14));
 				list.add(obj);
 			}
 			return list;
@@ -231,7 +235,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 		CompresionTest compresionTest = compresionTestService.findById(rs.getInt(4));
 		CorpoDeProva obj = new CorpoDeProva(rs.getInt(1), rs.getString(2), compresionTest, rs.getDouble(5),
 				new java.util.Date(rs.getTimestamp(6).getTime()), new java.util.Date(rs.getTimestamp(7).getTime()),
-				rs.getDouble(9), rs.getDouble(10), rs.getDouble(11), rs.getDouble(12));
+				rs.getDouble(9), rs.getDouble(10), rs.getDouble(11), rs.getDouble(12),rs.getInt(13) == 0 ? false : true);
 
 		return obj;
 	}
@@ -255,7 +259,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 				CorpoDeProva obj = new CorpoDeProva(rs.getInt(1), rs.getString(2), compresionTest, rs.getDouble(5),
 						new java.util.Date(rs.getTimestamp(6, cal).getTime()),
 						new java.util.Date(rs.getTimestamp(7, cal).getTime()), rs.getDouble(9), rs.getDouble(10), rs.getDouble(11),
-						rs.getDouble(12));
+						rs.getDouble(12),rs.getInt(13) == 0 ? false : true);
 				int days = (Math
 						.abs((int) ChronoUnit.DAYS.between(obj.getRuptureDate().toInstant().atZone(tZ.toZoneId()).toLocalDate(),
 								obj.getMoldeDate().toInstant().atZone(tZ.toZoneId()).toLocalDate())));
@@ -358,7 +362,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 
 			CorpoDeProva obj = new CorpoDeProva(rs.getInt(1), rs.getString(2), compresionTest, rs.getDouble(5),
 					new java.util.Date(rs.getTimestamp(6, cal).getTime()), new java.util.Date(rs.getTimestamp(7, cal).getTime()),
-					rs.getDouble(9), rs.getDouble(10), rs.getDouble(11), rs.getDouble(12));
+					rs.getDouble(9), rs.getDouble(10), rs.getDouble(11), rs.getDouble(12),rs.getInt(13) == 0 ? false : true);
 
 			int days = Utils.daysBetweenDates(obj.getRuptureDate(), obj.getMoldeDate());
 

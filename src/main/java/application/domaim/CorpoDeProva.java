@@ -17,12 +17,13 @@ public class CorpoDeProva {
 	private Double densid;
 	private Double tonRupture;
 	private Double fckRupture;
+	private Boolean isLocked;
 
 	public CorpoDeProva() {
 	}
 
 	public CorpoDeProva(Integer id, String code, CompresionTest compresionTest, Double slump, Date moldeDate,
-			Date ruptureDate, Double diameter, Double height, Double weight, Double tonRupture) {
+			Date ruptureDate, Double diameter, Double height, Double weight, Double tonRupture,Boolean isLocked) {
 		super();
 		this.id = id;
 		this.code = code;
@@ -34,6 +35,7 @@ public class CorpoDeProva {
 		this.height = height;
 		this.weight = weight;
 		this.tonRupture = tonRupture;
+		this.isLocked = isLocked;
 	}
 
 	public Integer getId() {
@@ -148,6 +150,14 @@ public class CorpoDeProva {
 		} else {
 			this.fckRupture = 0.0;
 		}
+	}
+
+	public Boolean getIsLocked() {
+		return isLocked;
+	}
+
+	public void setIsLocked(Boolean isLocked) {
+		this.isLocked = isLocked;
 	}
 
 	@Override

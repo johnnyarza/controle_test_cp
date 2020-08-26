@@ -202,11 +202,12 @@ public class MigrationDaoJDBC implements MigrationDao {
 					"  `height` decimal(10,2) DEFAULT NULL," + 
 					"  `weight` decimal(10,2) DEFAULT NULL," + 
 					"  `tonRupture` decimal(10,2) DEFAULT NULL," + 
+					"  `is_locked` TINYINT NOT NULL DEFAULT 0, " +
 					"  PRIMARY KEY (`id`)," + 
 					"  KEY `FK_clientID_CpID_idx` (`client_id`)," + 
 					"  KEY `FK_compresionTestId_CP_idx` (`compresionTest_Id`)," + 
-					"  CONSTRAINT `FK_clientID_CpID` FOREIGN KEY (`client_id`) REFERENCES `compresion_test` (`client_id`) ON DELETE RESTRICT ON UPDATE CASCADE," + 
-					"  CONSTRAINT `FK_compresionTestId_CP` FOREIGN KEY (`compresionTest_Id`) REFERENCES `compresion_test` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE" + 
+					"  CONSTRAINT `FK_clientID_CpID` FOREIGN KEY (`client_id`) REFERENCES `compresion_test` (`client_id`) ON DELETE CASCADE ON UPDATE CASCADE," + 
+					"  CONSTRAINT `FK_compresionTestId_CP` FOREIGN KEY (`compresionTest_Id`) REFERENCES `compresion_test` (`id`) ON DELETE CASCADE ON UPDATE CASCADE" + 
 					") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 			st.executeUpdate();

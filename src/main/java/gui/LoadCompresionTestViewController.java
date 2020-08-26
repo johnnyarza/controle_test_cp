@@ -68,6 +68,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	private Boolean btCancelPressed;
 
+	private Boolean isNewDoc = false;
+
 	private List<CorpoDeProva> lateCorpoDeProvaList;
 
 	private LogUtils logger;
@@ -107,9 +109,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	@FXML
 	public void onbtNewAction(ActionEvent event) {
+		isNewDoc = true;
 		try {
 			Stage parentStage = Utils.currentStage(event);
-			createDialogForm("/gui/NewCompresionTestForm.fxml", "Nueva Rotura", parentStage,
+			createDialogForm("/gui/NewCompresionTestForm.fxml", "Nuevo Documento", parentStage,
 					(NewCompresionTestFormController controller) -> {
 						controller.setCompresionTestService(new CompresionTestService());
 						controller.setClientService(new ClientService());
@@ -136,6 +139,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	@FXML
 	public void onbtOpenAction(ActionEvent event) {
+		isNewDoc = false;
 		try {
 			CompresionTest obj = getCompresionTestFromTableView();
 			Stage parentStage = Utils.currentStage(event);
@@ -196,7 +200,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 					}, (WarningDialogController controller) -> {
 						this.entity = controller.getEntity();
 						this.btCancelPressed = controller.getIsBtCancelPressed();
-					}, "/gui/WarningDialog.css",new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/alert.png")));
+					}, "/gui/WarningDialog.css",
+					new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/alert.png")));
 			if (!btCancelPressed) {
 				showCompresionTestForm(parentStage);
 			}
@@ -357,6 +362,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			controller.setCompresionTest(obj);
 			controller.setLogger(logger);
 			controller.loadAssociatedObjects();
+			controller.setIsNewDoc(this.isNewDoc);
+			controller.setFormaLockedState();
 			controller.updateFormData();
 			controller.updateTableView();
 			controller.setLabelMessageText(obj.getId());
@@ -364,8 +371,9 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			controller.setChangesCount(0);
 
 			Stage dialogStage = new Stage();
-			dialogStage.getIcons().add(new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/test.png")));
-			dialogStage.setTitle("Ensayo de Rotura");
+			dialogStage.getIcons()
+					.add(new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/test.png")));
+			dialogStage.setTitle("Roturas de probetas de hormigón");
 			dialogStage.setScene(new Scene(pane));
 			if (!css.trim().contentEquals(""))
 				dialogStage.getScene().getStylesheets().add(css);
@@ -435,7 +443,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
 			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css, Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css, icon, logger);
+		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css,
+				icon, logger);
 	}
 
 	public void setCompresionTestListService(CompresionTestListService service) {

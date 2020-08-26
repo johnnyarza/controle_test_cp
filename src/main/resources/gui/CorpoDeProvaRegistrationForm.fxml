@@ -60,14 +60,30 @@
                </GridPane.margin>
             </HBox>
             <Label textFill="RED" wrapText="true" GridPane.columnIndex="2" />
-            <Label fx:id="labelErrorCode" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Label fx:id="labelErrorSlump" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <Label fx:id="labelErrorMoldeDate" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <Label fx:id="labelErrorRuptureDate" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="4" />
             <Label fx:id="labelErrorDiameter" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="5" />
             <Label fx:id="labelErrorHeight" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="6" />
             <Label fx:id="labelErrorWeight" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="7" />
             <Label fx:id="labelErrorRuptureTon" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+               <children>
+                  <Button fx:id="btToday" contentDisplay="CENTER" graphicTextGap="0.0" maxHeight="25.6" maxWidth="25.6" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtTodayAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" />
+                  <Label fx:id="labelErrorCode" textFill="RED" wrapText="true" />
+               </children>
+               <padding>
+                  <Insets left="8.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+               <children>
+                  <Button fx:id="btDateCalc" contentDisplay="CENTER" graphicTextGap="0.0" maxHeight="25.6" maxWidth="25.6" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtDateCalcAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" />
+                  <Label fx:id="labelErrorRuptureDate" textFill="RED" wrapText="true" />
+               </children>
+               <padding>
+                  <Insets left="8.0" />
+               </padding>
+            </HBox>
+            <Label fx:id="labelErrorSlump" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
          </children>
       </GridPane>
    </children>

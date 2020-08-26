@@ -6,7 +6,6 @@ public class ProgramStarter {
 	//TODO implementar os roles dos users
 	//TODO pedir senha para eliminar
 	//TODO Dosagem n entra totalemten no relatorio
-	//TODO bloquear todo o ensaio depois de fechar janela 
 	//TODO alterar nome botão guardar ensaio
 	//TODO alterar nome da janela de adicionar novo ensaio
 	
