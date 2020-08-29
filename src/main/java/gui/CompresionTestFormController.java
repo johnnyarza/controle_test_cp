@@ -79,7 +79,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	private ClientService clientService;
 
 	private CompresionTest compresionTest;
-	
+
 	private Boolean isNewDoc = false;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -248,10 +248,11 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					controller.setEntity(null);
 					controller.setService(new ClientService());
 				}, (FindClientFormController controller) -> {
+					controller.setEntity(null);
+				}, (FindClientFormController controller) -> {
 					if (controller.getEntity() != null) {
 						comboBoxClient.setValue(controller.getEntity());
 					}
-				}, (FindClientFormController controller) -> {
 				}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/lupa.png")));
 	}
 
@@ -263,10 +264,11 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					controller.setEntity(null);
 					controller.setService(new ClientService());
 				}, (FindClientFormController controller) -> {
+					controller.setEntity(null);
+				}, (FindClientFormController controller) -> {
 					if (controller.getEntity() != null) {
 						comboBoxConcreteProvider.setValue(controller.getEntity());
 					}
-				}, (FindClientFormController controller) -> {
 				}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/lupa.png")));
 	}
 
@@ -351,6 +353,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			if (isLocked) {
 				throw new IllegalAccessException("La alteración de este documento esta bloqueada");
 			}
+			setErrorMessages(new HashMap<String, String>());
 			setCompresionTestFormData();
 			compresionTestService.saveOrUpdate(this.compresionTest);
 			onDataChange();
@@ -726,11 +729,11 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		updateTableView();
 		setLabelMessageText(this.compresionTest.getId());
 	}
-	
+
 	public void setFormaLockedState() {
-			btApagarProbeta.setDisable(!isNewDoc);
-			btInserirProbeta.setDisable(!isNewDoc);
-			btEditarCadastro.setDisable(!isNewDoc);
+		btApagarProbeta.setDisable(!isNewDoc);
+		btInserirProbeta.setDisable(!isNewDoc);
+		btEditarCadastro.setDisable(!isNewDoc);
 	}
 
 	public Boolean getIsLocked() {

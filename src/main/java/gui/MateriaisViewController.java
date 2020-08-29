@@ -138,7 +138,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 	@FXML
 	private void onBtPrintAction() {
 		ReportFactory rF = new ReportFactory();
-		rF.materialReportView();
+		rF.materialReportView(tableViewMaterial.getItems());
 	}
 
 	public MaterialService getService() {

@@ -86,7 +86,7 @@ public class ReportConfigViewController implements Initializable {
 	@FXML
 	private void onBtEditAdmin(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		doSignIn(parentStage, "Hacer login con cuenta de administrador");
+		doSignIn(parentStage, "Hacer login con la cuenta que será modificada");
 
 		if (user != null) {
 			editUser(parentStage);
@@ -131,7 +131,7 @@ public class ReportConfigViewController implements Initializable {
 					controller.setEntity(null);
 					controller.setUserService(new UserService());
 					controller.setLogger(logger);
-					controller.setTitleLabel("Insertar datos de cuenta");
+					controller.setTitleLabel("Insertar nuevos datos de cuenta");
 
 				}, (LoginFormController controller) -> {
 					controller.setEntity(null);

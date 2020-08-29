@@ -31,12 +31,12 @@ public class Constraints {
 		});
 	}
 
-	public static void setTextFieldDouble(TextField txt) {
+	public static void setTextFieldDouble(TextField txt,Integer decimalPlaces) {
 		DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance();
 		DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
 		char sep = symbols.getDecimalSeparator();
 		txt.textProperty().addListener((obs, oldValue, newValue) -> {
-			if (newValue != null && !newValue.matches("\\d*([\\" + sep + "]\\d*)?")) {
+			if (newValue != null && !newValue.matches("\\d*([\\" + sep + "]\\d{0," + decimalPlaces +"})?")) {
 				txt.setText(oldValue);
 			}
 		});

@@ -109,6 +109,7 @@ public class FindClientFormController implements Initializable {
 	}
 
 	public void setPressedCancelButton(Boolean pressedCancelButton) {
+		this.entity = null;
 		this.pressedCancelButton = pressedCancelButton;
 	}
 

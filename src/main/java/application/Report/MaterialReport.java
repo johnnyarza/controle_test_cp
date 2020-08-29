@@ -2,44 +2,45 @@ package application.Report;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import application.db.DB;
+import application.domaim.Material;
 import application.exceptions.ReportException;
 import application.util.FileUtils;
+import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JRDesignQuery;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
 
 public class MaterialReport {
 
-	private static Connection conn = DB.getConnection();
 
-	public static void viewMaterialReport() {
+	public static void viewMaterialReport(List<Material> materialsList) {
 		try {
+			if (materialsList.size() == 0) {
+				throw new JRException("Lista de materiales vacía");
+			}
+					
+			JRBeanCollectionDataSource materialsJRBean = new JRBeanCollectionDataSource(materialsList);
+			
+			Map<String,Object> data = new HashMap<String, Object>();
+			data.put("logo", FileUtils.getLogoPath());
+			data.put("materialCollecionBeanParam", materialsJRBean);
+			
 			InputStream input = MaterialReport.class.getResourceAsStream("/reports/MaterialsReport.jrxml");
 			JasperDesign jasperDesign = JRXmlLoader.load(input);
-
-			String sql = "SELECT materials.id,materials.name,(providers.name) "
-					+ "as proveedor FROM materials inner join providers " + "where materials.providerId = providers.id";
-			JRDesignQuery newQuery = new JRDesignQuery();
-			
-			newQuery.setText(sql);
-			jasperDesign.setQuery(newQuery);
 			JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
 			
-			Map<String, Object> data = new HashMap<>();
-			data.put("logo", FileUtils.getLogoPath());
 
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, data, conn);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, data, new JREmptyDataSource());
 			JasperViewer.viewReport(jasperPrint, false);
 
 		} catch (JRException e) {

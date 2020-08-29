@@ -6,23 +6,25 @@ import application.domaim.Cliente;
 import application.domaim.CompresionTest;
 import application.domaim.ConcreteDesign;
 import application.domaim.CorpoDeProva;
+import application.domaim.Material;
+import application.domaim.Provider;
 
 public class ReportFactory {
 
-	public void clientReportView() {
-		ClientReport.viewClientReport();
+	public void clientReportView(List<Cliente> clientsList) {
+		ClientReport.viewClientReport(clientsList);
 	}
 	
 	public void concreteDesignReportView(List<ConcreteDesign> list) {
 		ConcreteDesignReport.viewConcreteDesignReport(list);
 	}
 	
-	public void materialReportView() {
-		MaterialReport.viewMaterialReport();
+	public void materialReportView(List<Material> materialslList) {
+		MaterialReport.viewMaterialReport(materialslList);
 	}
 	
-	public void providerReportView() {
-		ProviderReport.viewProviderReport();
+	public void providerReportView(List<Provider> providersList) {
+		ProviderReport.viewProviderReport(providersList);
 	}
 	
 	public void compresionTestReportView(List<CorpoDeProva> list,CompresionTest compresionTest) {

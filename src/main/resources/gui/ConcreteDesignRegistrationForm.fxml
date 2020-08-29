@@ -181,6 +181,7 @@
                   <ComboBox fx:id="comboBoxMat8" minWidth="150.0" prefWidth="355.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                   <TextField fx:id="txtQtt8" minWidth="50.0" prefWidth="60.0" GridPane.columnIndex="2" GridPane.rowIndex="8" />
                   <Label textFill="RED" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+                  <Button fx:id="btCalc" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" graphicTextGap="0.0" maxHeight="25.6" maxWidth="25.6" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtCalcAction" prefHeight="25.6" prefWidth="25.6" styleClass="save-button" GridPane.columnIndex="3" />
                </children>
             </GridPane>
             <HBox alignment="CENTER" prefHeight="40.0" prefWidth="517.0" spacing="10.0">

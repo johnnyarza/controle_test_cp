@@ -140,7 +140,7 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 	@FXML
 	public void onBtPrintAction() {
 		ReportFactory rF = new ReportFactory();
-		rF.providerReportView();
+		rF.providerReportView(tableViewProvider.getItems());
 	}
 
 	public ProviderService getService() {

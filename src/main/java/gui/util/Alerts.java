@@ -27,6 +27,8 @@ public class Alerts {
 		alert.setTitle(title);
 		alert.setHeaderText(header);
 		alert.setContentText(content);
+		Stage stage = (Stage)alert.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(Alerts.class.getResourceAsStream("/images/confirm.png")));
 		return alert.showAndWait();
 	}
 }

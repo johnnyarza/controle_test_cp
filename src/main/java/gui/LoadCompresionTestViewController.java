@@ -24,6 +24,8 @@ import application.service.CompresionTestListService;
 import application.service.CompresionTestService;
 import application.service.ConcreteDesignService;
 import application.service.CorpoDeProvaService;
+import application.service.UserService;
+import enums.LogEnum;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
@@ -42,13 +44,14 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 public class LoadCompresionTestViewController implements Initializable, DataChangeListener {
+
+	private Boolean isLocked = true;
 
 	private CompresionTestListService service;
 
@@ -157,12 +160,28 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	@FXML
 	public void onBtDeleteAction(ActionEvent event) {
 		try {
+
+			Stage parentStage = Utils.currentStage(event);
 			CompresionTest obj = getCompresionTestFromTableView();
 			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de accion",
 					"Seguro que desea apagar probeta?", "Después de apagados los datos seran perdidos");
 
 			if (result.get() == ButtonType.OK) {
-
+				Utils.createDialogForm("/gui/LoginForm.fxml", "Login", parentStage, (LoginFormController controller) -> {
+					controller.setUserService(new UserService());
+					controller.setEntity(null);
+					controller.setIsLoggin(LogEnum.SIGNIN);
+					controller.setLogger(logger);
+					controller.setTitleLabel("Entrar con datos del administrador");
+				}, (LoginFormController controller) -> {
+					controller.setEntity(null);
+				}, (LoginFormController controller) -> {
+					isLocked = controller.getEntity() == null ? true : false;
+				}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/sign_in.png")), logger);
+				if (isLocked) {
+					throw new IllegalAccessException("Acceso denegado!");
+				}
+				isLocked = true;
 				if (compresionTestService == null) {
 					throw new IllegalStateException("Service was null");
 				} else {
@@ -179,6 +198,11 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		} catch (NullPointerException e2) {
 			logger.doLog(Level.WARNING, e2.getMessage(), e2);
 			Alerts.showAlert("Error", "NullPointerException", e2.getMessage(), AlertType.ERROR);
+		} catch (IllegalAccessException e) {
+			Alerts.showAlert("Error", "IllegalAccessException", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
@@ -222,13 +246,13 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 						controller.setPressedCancelButton(false);
 					}, (FindClientFormController controller) -> {
 						controller.setPressedCancelButton(true);
-					}, // window close event
-					(FindClientFormController controller) -> {
+					}, (FindClientFormController controller) -> {
 						if (controller.getEntity() != null) {
 							this.client = controller.getEntity();
 						}
 						this.btCancelPressed = controller.getPressedCancelButton();
-					}, "");// final
+					}, "", new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/client.png")));
+
 			if (!this.btCancelPressed) {
 				if (this.client == null) {
 					throw new IllegalStateException("Cliente vacío");
@@ -305,7 +329,9 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		try {
 			if (corpoDeProvaService == null)
 				throw new IllegalStateException("corpoDeProvaService was null");
+
 			lateCorpoDeProvaList = corpoDeProvaService.findLateCorpoDeProva(TimeZone.getDefault());
+
 			formatWarningBtn(lateCorpoDeProvaList);
 		} catch (IllegalStateException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
@@ -394,46 +420,6 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				}
 			});
 			dialogStage.showAndWait();
-
-		} catch (IOException e) {
-			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
-		}
-	}
-
-	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css) {
-		try {
-
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			AnchorPane pane = loader.load();
-
-			T controller = loader.getController();
-			initializingAction.accept(controller);
-
-			Stage dialogStage = new Stage();
-
-			dialogStage.setTitle(title);
-			dialogStage.setScene(new Scene(pane));
-			dialogStage.getScene().getStylesheets().add("/gui/GlobalStyle.css");
-			if (!css.trim().equals("")) {
-				dialogStage.getScene().getStylesheets().add(css);
-			}
-			dialogStage.setResizable(true);
-			dialogStage.initOwner(parentStage);
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-
-			dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
-				@Override
-				public void handle(WindowEvent we) {
-					windowEventAction.accept(controller);
-
-				}
-			});
-
-			dialogStage.showAndWait();
-			finalAction.accept(controller);
 
 		} catch (IOException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);

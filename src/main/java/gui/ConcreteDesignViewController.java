@@ -109,7 +109,8 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.subscribeDataChangeListener(this);
 					}, (ConcreteDesignRegistrationFormController controller) -> {
 					}, (ConcreteDesignRegistrationFormController controller) -> {
-					}, "/gui/ConcreteDesignRegistrationForm.css", new Image(ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
+					}, "/gui/ConcreteDesignRegistrationForm.css",
+					new Image(ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
 		} catch (IllegalStateException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
@@ -182,43 +183,6 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		this.logger = logger;
 	}
 
-	/*
-	 * @FXML private TableColumn<ConcreteDesign, String> tableColumnDescription;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Double> tableColumnFck;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Material> tableColumnMat1;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Material> tableColumnMat2;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Material> tableColumnMat3;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Material> tableColumnMat4;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Material> tableColumnMat5;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Material> tableColumnMat6;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Material> tableColumnMat7;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Material> tableColumnMat8;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Double> tableColumnMat1Qtt;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Double> tableColumnMat2Qtt;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Double> tableColumnMat3Qtt;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Double> tableColumnMat4Qtt;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Double> tableColumnMat5Qtt;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Double> tableColumnMat6Qtt;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Double> tableColumnMat7Qtt;
-	 * 
-	 * @FXML private TableColumn<ConcreteDesign, Double> tableColumnMat8Qtt;
-	 */
 	private ConcreteDesign getFormData() {
 		ConcreteDesign obj = tableViewConcreteDesing.getSelectionModel().getSelectedItem();
 		if (obj == null) {
@@ -240,7 +204,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		tableColumnDesc.getStyleClass().add("description-column-style");
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("description"));
 		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));
-		Utils.formatTableColumnDouble(tableColumnSlump, 2);
+		Utils.formatTableColumnDouble(tableColumnSlump, 1);
 	}
 
 	private ConcreteDesign getConcreteDesingFromTableView() {

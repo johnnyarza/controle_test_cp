@@ -75,11 +75,11 @@
 					<datasetRun subDataset="ConcreteDesignMCDataSet" uuid="88ff41d1-8832-441f-9541-fffad929190f">
 						<dataSourceExpression><![CDATA[$P{CollectionBeanParam}]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="70" uuid="3666c03a-95f0-4638-a116-af30c74c8467">
+					<jr:column width="60" uuid="3666c03a-95f0-4638-a116-af30c74c8467">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
 						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="70" height="30" uuid="e5cf6dc9-eaed-48e4-b895-09c872ea7267"/>
+								<reportElement x="0" y="0" width="60" height="30" uuid="e5cf6dc9-eaed-48e4-b895-09c872ea7267"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="11" isBold="true"/>
 								</textElement>
@@ -88,9 +88,9 @@
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="70" height="30" uuid="a0e7595d-de45-4fdb-a04f-5d5923ffdfc9"/>
+								<reportElement x="0" y="0" width="60" height="30" uuid="a0e7595d-de45-4fdb-a04f-5d5923ffdfc9"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="11"/>
+									<font fontName="Arial" size="10"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 							</textField>
@@ -111,7 +111,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="110" height="30" uuid="af7957dc-53e9-4c2f-a069-3bce4d4a9c66"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="11"/>
+									<font fontName="Arial" size="10"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 							</textField>
@@ -129,20 +129,20 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField>
+							<textField pattern="#.00">
 								<reportElement x="0" y="0" width="60" height="30" uuid="df55dd48-35f4-410b-b07b-da454eb2bcad"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="11"/>
+									<font fontName="Arial" size="10"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{fck}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="309" uuid="aeda098a-c14b-457b-8bc1-a217aaec8354">
+					<jr:column width="320" uuid="aeda098a-c14b-457b-8bc1-a217aaec8354">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
 						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="309" height="30" uuid="4e84bf88-6ec5-402d-80fc-11188a344715"/>
+								<reportElement x="0" y="0" width="320" height="30" uuid="4e84bf88-6ec5-402d-80fc-11188a344715"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="11" isBold="true"/>
 								</textElement>
@@ -150,10 +150,10 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="309" height="30" uuid="0e18d1d6-7a4e-4209-b053-94f98ec5520b"/>
+							<textField textAdjust="StretchHeight">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="320" height="30" uuid="0e18d1d6-7a4e-4209-b053-94f98ec5520b"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="11"/>
+									<font fontName="Arial" size="10"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{proporcion}]]></textFieldExpression>
 							</textField>

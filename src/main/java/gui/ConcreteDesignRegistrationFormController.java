@@ -31,6 +31,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 public class ConcreteDesignRegistrationFormController implements Initializable {
 
@@ -40,16 +42,24 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 
 	private MaterialService materialService;
 
+	private Material target;
+
+	private Material origin;
+
+	private Double percentage;
+
 	private TextField[] vecTextFieldQtt = new TextField[8];
 
 	private Map<Integer, ComboBox<Material>> mapComboBoxMat = new HashMap<>();
 
 	private ObservableList<Material> obsListMaterial;
-	
+
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
-	
+
 	private LogUtils logger;
-	
+
+	@FXML
+	private TextField txtGeneric;
 
 	@FXML
 	private TextField txtId;
@@ -59,7 +69,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 
 	@FXML
 	private TextField txtFck;
-	
+
 	@FXML
 	private TextField txtSlump;
 
@@ -124,7 +134,10 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 	private Button btCancel;
 
 	@FXML
-	public void onBtSaveAction(ActionEvent event) {
+	private Button btCalc;
+
+	@FXML
+	private void onBtSaveAction(ActionEvent event) {
 		try {
 			ConcreteDesign obj = getFormData();
 			if (obj == null) {
@@ -147,8 +160,70 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 	}
 
 	@FXML
-	public void onBtCancelAction(ActionEvent event) {
+	private void onBtCancelAction(ActionEvent event) {
 		Utils.currentStage(event).close();
+	}
+
+	private ObservableList<Material> getUsingMaterials() {
+		ObservableList<Material> obsListUsingMaterials = FXCollections.observableArrayList();
+		mapComboBoxMat.forEach((key, comboMat) -> {
+			if (comboMat.getValue() != null) {
+				obsListUsingMaterials.add(comboMat.getValue());
+			}
+		});
+		return obsListUsingMaterials;
+	}
+
+	@FXML
+	private void onBtCalcAction(ActionEvent event) {
+		try {
+			ObservableList<Material> obsListUsingMaterials = getUsingMaterials();
+			if (obsListUsingMaterials.size() == 0) {
+				Alerts.showAlert("Aviso", "Aún no existen materiales en uso", null, AlertType.INFORMATION);
+				return;
+			}
+
+			Stage parentStage = Utils.currentStage(event);
+			Utils.createDialogForm("/gui/ConcreteDesignCalc.fxml", "Calculadora", parentStage,
+					(ConcreteDesignCalcController controller) -> {
+						controller.setObsListMaterial(obsListUsingMaterials);
+						controller.setOrigin(null);
+						controller.setTarget(null);
+						controller.updateFormData();
+					}, (ConcreteDesignCalcController controller) -> {
+						controller.setObjectsToNull();
+					}, (ConcreteDesignCalcController controller) -> {
+						target = controller.getTarget();
+						origin = controller.getOrigin();
+						percentage = controller.getPercentage();
+					}, "", new Image(ConcreteDesignCalcController.class.getResourceAsStream("/images/calculator.png")),
+					new LogUtils());
+
+			setValueFromCalc();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void setValueFromCalc() {
+		if (target != null && origin != null && percentage != null) {
+			Integer originIndex = null;
+			Integer targetIndex = null;
+			for (Integer key : mapComboBoxMat.keySet()) {
+
+				if (mapComboBoxMat.get(key).getValue().getId() == origin.getId()) {
+					originIndex = key;
+				}
+				if (mapComboBoxMat.get(key).getValue().getId() == target.getId()) {
+					targetIndex = key;
+				}
+
+			}
+			Double result = Utils.tryParseToDouble(vecTextFieldQtt[originIndex].getText()) * (percentage / 100);
+			vecTextFieldQtt[targetIndex].setText(Utils.doubleFormat(result));
+
+		}
 	}
 
 	public TextField[] getVecTextField() {
@@ -204,7 +279,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		if (txtFck.getText() == null || txtFck.getText().trim().equals("")) {
 			exception.addError("resistencia", "Campo resistencia no puede ser vacío");
 		}
-		
+
 		if (txtSlump.getText() == null || txtSlump.getText().trim().equals("")) {
 			exception.addError("slump", "Campo slump no puede ser vacío");
 		}
@@ -311,17 +386,17 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 	}
 
 	private void initializeNodes() {
-		Constraints.setTextFieldDouble(txtFck);
-		Constraints.setTextFieldDouble(txtSlump);
+		Constraints.setTextFieldDouble(txtFck,0);
+		Constraints.setTextFieldDouble(txtSlump,1);
 		setVecTxtFieldsQtt();
 		setComboBoxesMat();
-		formatTextFields();
 		setTextFieldQttConstraints();
+		btCalc.setGraphic(Utils.createImageView("/images/calculator.png", 20.0, 20.0));
 	}
 
 	private void setTextFieldQttConstraints() {
 		for (TextField txt : vecTextFieldQtt) {
-			Constraints.setTextFieldDouble(txt);
+			Constraints.setTextFieldDouble(txt,2);
 		}
 	}
 
@@ -347,12 +422,6 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		mapComboBoxMat.put(7, comboBoxMat8);
 	}
 
-	private void formatTextFields() {
-		for (int i = 0; i <= 7; i += 1) {
-			Constraints.setTextFieldDouble(vecTextFieldQtt[i]);
-		}
-	}
-
 	public void loadAssociatedObjects() {
 		List<Material> list = materialService.findAll();
 		list.add(new Material());
@@ -368,12 +437,12 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 	public void updateFormData() {
 		txtId.setText(entity.getId().toString());
 		txtName.setText(entity.getDescription());
-		txtFck.setText(Utils.doubleFormat(entity.getFck()));
-		txtSlump.setText(Utils.doubleFormat(entity.getSlump()));
+		txtFck.setText(String.format("%.0f", entity.getFck()));
+		txtSlump.setText(String.format("%.1f", entity.getSlump()));
 		Double[] qtt = materialProporcionQttToArray(entity.getProporcion());
 		Material[] mat = materialProporcionMatToArray(entity.getProporcion());
 		for (int i = 0; i <= 7; i += 1) {
-			vecTextFieldQtt[i].setText((qtt[i] == null || qtt[i] == 0.0)? "" : Utils.doubleFormat(qtt[i]));
+			vecTextFieldQtt[i].setText((qtt[i] == null || qtt[i] == 0.0) ? "" : Utils.doubleFormat(qtt[i]));
 			if (mat[i] != null) {
 				mapComboBoxMat.get(i).setValue(mat[i]);
 			}
@@ -422,13 +491,13 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		}
 		return str;
 	}
-	
+
 	public void subscribeDataChangeListener(DataChangeListener listener) {
 		dataChangeListeners.add(listener);
 	}
-	
+
 	private void notifyDataChangeListeners() {
-		dataChangeListeners.forEach((DataChangeListener x) -> x.onDataChange());	
+		dataChangeListeners.forEach((DataChangeListener x) -> x.onDataChange());
 	}
 
 	@Override

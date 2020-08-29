@@ -111,7 +111,7 @@ public class ClientListController implements Initializable, DataChangeListener {
 	@FXML
 	public void onBtPrintAction() {
 		ReportFactory rF = new ReportFactory();
-		rF.clientReportView();
+		rF.clientReportView(tableViewClient.getItems());
 	}
 
 	public void setClientService(ClientService service) {

@@ -11,7 +11,7 @@
 
 <VBox minWidth="417.0" prefHeight="316.0" prefWidth="896.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ConcreteDesignViewController">
    <children>
-      <Label text="Lista de Disenõs">
+      <Label text="Dosificaciones">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
