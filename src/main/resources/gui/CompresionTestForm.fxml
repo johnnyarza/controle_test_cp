@@ -179,6 +179,7 @@
             <Button fx:id="btInserirProbeta" mnemonicParsing="false" onAction="#onBtInserirProbetaAction" styleClass="custom-button" text="Insertar Probeta" />
             <Button fx:id="btEditarProbeta" mnemonicParsing="false" onAction="#onBtEditarProbetaAction" styleClass="custom-button" text="Editar Probeta" />
             <Button fx:id="btApagarProbeta" mnemonicParsing="false" onAction="#onBtApagarProbetaAction" styleClass="delete-button" text="Borrar Probeta" />
+            <Button fx:id="btCopy" contentDisplay="CENTER" graphicTextGap="2.0" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onBtCopyAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" textAlignment="CENTER" />
             <Button fx:id="btPrint" contentDisplay="CENTER" graphicTextGap="2.0" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onbtPrintAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" textAlignment="CENTER" />
             <Button fx:id="btClose" mnemonicParsing="false" onAction="#onBtCloseAction" styleClass="close-button" text="Cerrar" />
             <Button fx:id="btLock" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onBtLockAction" prefHeight="25.6" prefWidth="25.6" />

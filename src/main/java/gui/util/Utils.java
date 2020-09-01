@@ -26,6 +26,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.TableCell;
@@ -251,6 +252,11 @@ public class Utils {
 			throw new FileNotFoundException("Error al Cargar Imagen");
 		}
 		return file.getAbsolutePath();
+	}
+	
+	public static void setButtonGraphic(String path, Button button,Double height,Double width) {
+		ImageView imgView = Utils.createImageView(path, height, width);
+		button.setGraphic(imgView);
 	}
 	
 	public static<T> void createDialogForm(String absoluteName, String title, Stage parentStage,

@@ -137,6 +137,9 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	private Button btLock;
 
 	@FXML
+	private Button btCopy;
+
+	@FXML
 	private Button btSearchConcreteProvider;
 
 	@FXML
@@ -210,6 +213,34 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private Label labelMessages;
+
+	@FXML
+	private void onBtCopyAction(ActionEvent event) {
+		try {
+			CorpoDeProva obj = getCorpoDeProvaView();
+			Stage parentStage = Utils.currentStage(event);
+			obj.setId(null);
+			obj.setCompresionTest(compresionTest);
+
+			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", "Copiar Probeta", parentStage,
+					(CorpoDeProvaRegistrationController controller) -> {
+						controller.setCorpoDeProvaService(new CorpoDeProvaService());
+						controller.setLogger(logger);
+						controller.setCorpoDeProva(obj);
+						controller.updateFormData();
+						controller.setIsLocked(isLocked);
+						controller.subscribeDataChangeListener(this);
+					}, (CorpoDeProvaRegistrationController controller) -> {
+					}, (CorpoDeProvaRegistrationController controller) -> {
+					}, "/gui/CompresionTestForm.css",
+					new Image(CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
+			
+
+		} catch (NullPointerException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+		}
+	}
 
 	@FXML
 	private void onBtLockAction(ActionEvent event) {
@@ -301,8 +332,14 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		try {
 			Stage parentStage = Utils.currentStage(event);
 			CorpoDeProva obj = getCorpoDeProvaView();
+			
 			if (isLocked && (obj.getTonRupture() != null && obj.getTonRupture() != 0.0)) {
 				throw new IllegalAccessException("La alteración de este documento esta bloqueada");
+			}
+			
+			if (isLocked && (obj.getRuptureDate().compareTo(new Date()) < 0)) 
+			{
+				throw new IllegalAccessException("Probeta Retrasada. El administrador debe desbloquear el documento!");
 			}
 
 			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", "Editar Probeta", parentStage,
@@ -519,6 +556,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		btApagarProbeta.setDisable(isLocked);
 		btInserirProbeta.setDisable(isLocked);
 		btEditarCadastro.setDisable(isLocked);
+		btCopy.setDisable(isLocked);
 	}
 
 	@Override
@@ -541,20 +579,17 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	private void setButtonsGraphics() {
-		imgViewMap.put("btLock", Utils.createImageView("/images/lock.png", 15.0, 15.0));
-		imgViewMap.put("btUnlock", Utils.createImageView("/images/unlock.png", 15.0, 15.0));
+		imgViewMap.put("btLock", Utils.createImageView("/images/lock.png", 20.0, 20.0));
+		imgViewMap.put("btUnlock", Utils.createImageView("/images/unlock.png", 20.0, 20.0));
 		btLock.setGraphic(imgViewMap.get("btLock"));
 
-		setButtonGraphic("/images/print.png", btPrint);
-		setButtonGraphic("/images/lupa.png", btSearchClient);
-		setButtonGraphic("/images/lupa.png", btSearchConcreteProvider);
-		setButtonGraphic("/images/filter_on.png", btFilter);
-		setButtonGraphic("/images/filter_off.png", btClearFilter);
-	}
-
-	private void setButtonGraphic(String path, Button button) {
-		ImageView imgView = Utils.createImageView(path, 15.0, 15.0);
-		button.setGraphic(imgView);
+		Utils.setButtonGraphic("/images/print.png", btPrint, 20.0, 20.0);
+		Utils.setButtonGraphic("/images/lupa.png", btSearchClient, 15.0, 15.0);
+		Utils.setButtonGraphic("/images/lupa.png", btSearchConcreteProvider, 15.0, 15.0);
+		
+		Utils.setButtonGraphic("/images/fileIcons/copy.png", btCopy, 20.0, 20.0);
+		Utils.setButtonGraphic("/images/filter_off.png", btClearFilter, 20.0, 20.0);
+		Utils.setButtonGraphic("/images/filter_on.png", btFilter, 20.0, 20.0);		
 	}
 
 	private void setTableColumnsCellValueFactory() {
@@ -734,6 +769,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		btApagarProbeta.setDisable(!isNewDoc);
 		btInserirProbeta.setDisable(!isNewDoc);
 		btEditarCadastro.setDisable(!isNewDoc);
+		btCopy.setDisable(!isNewDoc);
 	}
 
 	public Boolean getIsLocked() {
