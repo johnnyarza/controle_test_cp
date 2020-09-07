@@ -4,7 +4,7 @@
   <groupId>com.HJVA</groupId>
   <artifactId>cp_project</artifactId>
   <name>Controle_corpo_de_prova</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <build>
     <resources>
       <resource>

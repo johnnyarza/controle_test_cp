@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.HJVA</groupId>
 	<artifactId>cp_project</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>Controle_corpo_de_prova</name>
 
 
@@ -113,6 +113,8 @@
 					<target>11</target>
 				</configuration>
 			</plugin>
+
+
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
