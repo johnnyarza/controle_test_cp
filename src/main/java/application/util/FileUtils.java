@@ -16,7 +16,15 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+
+import gui.util.Alerts;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 public class FileUtils {
 
@@ -66,19 +74,20 @@ public class FileUtils {
 		Path path = Paths.get(System.getProperty("user.home"), "cp_configs", "ReportImage.properties");
 		Properties props = new Properties();
 		File file = path.toFile();
-		
+
 		if (!file.isFile()) {
-			Map<String,String> initialProps = new HashMap<>();
-			initialProps.put("carimboPath","");
-			initialProps.put("logoPath","");
+			Map<String, String> initialProps = new HashMap<>();
+			initialProps.put("carimboPath", "");
+			initialProps.put("logoPath", "");
 			file = writeProperties("ReportImage.properties", initialProps).toFile();
 		}
-		
-		InputStream inStream = new FileInputStream(file);	
+
+		InputStream inStream = new FileInputStream(file);
 		props.load(inStream);
-		
-		String resposta = props.getProperty("logoPath").trim().equals("") ?  "images/logo.png" : props.getProperty("logoPath");
-		
+
+		String resposta = props.getProperty("logoPath").trim().equals("") ? "images/logo.png"
+				: props.getProperty("logoPath");
+
 		return resposta;
 	}
 
@@ -86,19 +95,20 @@ public class FileUtils {
 		Path path = Paths.get(System.getProperty("user.home"), "cp_configs", "ReportImage.properties");
 		Properties props = new Properties();
 		File file = path.toFile();
-		
+
 		if (!file.isFile()) {
-			Map<String,String> initialProps = new HashMap<>();
-			initialProps.put("carimboPath","");
-			initialProps.put("logoPath","");
+			Map<String, String> initialProps = new HashMap<>();
+			initialProps.put("carimboPath", "");
+			initialProps.put("logoPath", "");
 			file = writeProperties("ReportImage.properties", initialProps).toFile();
 		}
-		
-		InputStream inStream = new FileInputStream(file);	
+
+		InputStream inStream = new FileInputStream(file);
 		props.load(inStream);
-		
-		String resposta =  props.getProperty("carimboPath").trim().equals("") ?  "images/carimbo.png" : props.getProperty("carimboPath");
-		
+
+		String resposta = props.getProperty("carimboPath").trim().equals("") ? "images/carimbo.png"
+				: props.getProperty("carimboPath");
+
 		return resposta;
 	}
 
@@ -130,4 +140,44 @@ public class FileUtils {
 		props.load(br);
 		return props;
 	}
+
+	public static Boolean checkLicenseKey() throws IOException {
+		Path path = Paths.get(System.getProperty("user.home"), "cp_configs", "key.properties");
+		File file = path.toFile();
+		InputStream inStream = new FileInputStream(file);
+
+		Properties keyProp = new Properties();
+		keyProp.load(inStream);
+		String decodedKey =EncriptaDecriptaApacheCodec.decodificaBase64Decoder(keyProp.getProperty("key"));
+		inStream.close();
+		
+		if (!decodedKey.equals("2rHr3ZrKjf")) {
+			Dialog<String> dlg = new TextInputDialog();
+			dlg.setTitle("Código Serial");
+			dlg.setHeaderText("Insertar código serial del programa");
+			
+			Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(FileUtils.class.getResourceAsStream("/images/sign_in.png")));
+			String keyStr = "";
+			
+			do {
+				Optional<String> result = dlg.showAndWait();
+				if (!result.isPresent()) {
+					return false;
+				};
+				keyStr = result.orElse("");
+				if (keyStr.equals("2rHr3ZrKjf")) {
+					Map<String, String> initialProps = new HashMap<>();
+					initialProps.put("key", EncriptaDecriptaApacheCodec.codificaBase64Encoder(keyStr));
+					writeProperties("key.properties", initialProps);
+					Alerts.showAlert("Información", "Código serial guardado", null, AlertType.INFORMATION);
+					return true;
+				}
+				Alerts.showAlert("Error", "Código serial no válido", null, AlertType.ERROR);
+			} while (!keyStr.equals("2rHr3ZrKjf"));
+		}
+
+		return decodedKey.equals("2rHr3ZrKjf");
+	}
+
 }

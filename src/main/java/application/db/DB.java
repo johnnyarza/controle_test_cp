@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import application.util.EncriptaDecriptaApacheCodec;
@@ -34,7 +35,9 @@ public class DB {
 				String url = props.getProperty("dburl");
 				DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
 				conn = DriverManager.getConnection(url, props);
-				conn.setNetworkTimeout(Executors.newFixedThreadPool(1), 5000);
+				ExecutorService ex = Executors.newFixedThreadPool(1);
+				conn.setNetworkTimeout(ex, 5000);
+				ex.shutdown();
 			}
 			return conn;
 		} catch (SQLException e) {
