@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import application.util.EncriptaDecriptaApacheCodec;
 import gui.util.Alerts;
@@ -20,21 +22,11 @@ public class DB {
 	private static Connection conn = null;
 
 	public static Boolean testConnection() {
-		try {
-			if (conn == null) {
-				Properties props = loadProperties();
-				String url = props.getProperty("dburl");
-				DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
-				conn = DriverManager.getConnection(url, props);
-			}
-			return true;
-			
-		} catch (SQLException e) {
-			Alerts.showAlert("Error", "SQLException", "Error al conectarse al servidor", AlertType.ERROR);
+		if (getConnection() == null) {
 			return false;
 		}
+		return true;
 	}
-	
 
 	public static Connection getConnection() {
 		try {
@@ -43,6 +35,9 @@ public class DB {
 				String url = props.getProperty("dburl");
 				DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
 				conn = DriverManager.getConnection(url, props);
+				ExecutorService ex = Executors.newFixedThreadPool(1);
+				conn.setNetworkTimeout(ex, 5000);
+				ex.shutdown();
 			}
 			return conn;
 		} catch (SQLException e) {
@@ -63,9 +58,9 @@ public class DB {
 	}
 
 	private static Properties loadProperties() {
-		
+
 		Path path = Paths.get(System.getProperty("user.home"), "cp_configs", "db.properties");
-		
+
 		try (FileInputStream fs = new FileInputStream(path.toFile())) {
 			Properties props = new Properties();
 			props.load(fs);

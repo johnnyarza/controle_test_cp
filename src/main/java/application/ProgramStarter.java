@@ -4,7 +4,8 @@ import application.Program;
 public class ProgramStarter {
 
 	//TODO implementar os roles dos users
-	//TODO pedir senha para eliminar
+	//TODO implementar serial key
+	
 
 	
 	public static void main(String[] args) {

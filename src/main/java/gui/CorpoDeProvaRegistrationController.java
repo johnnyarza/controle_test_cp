@@ -25,7 +25,6 @@ import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,13 +32,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
-
 import javafx.stage.Stage;
 
 public class CorpoDeProvaRegistrationController implements Initializable {
@@ -166,12 +163,12 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 		for (int i = 0; i <= 1; i++) {
 			dlg.setHeaderText("Insertar numero " + (i + 1));
 			String response = dlg.showAndWait().orElse("");
-			
+
 			if (Utils.tryParseToDouble(response) == null) {
 				Alerts.showAlert("Error", "Hay valores no numericos", null, AlertType.ERROR);
 				return null;
 			}
-			
+
 			lst.add(Utils.tryParseToDouble(response));
 			dlg.getEditor().setText("");
 		}
@@ -185,12 +182,8 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 	private void onBtDateCalcAction(ActionEvent event) {
 		try {
 
-			Dialog<String> dlg = new TextInputDialog();
-			dlg.setTitle("Sumar días");
-			dlg.setHeaderText("Insertar días para sumar \na la fecha de moldeo");
-			Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
-			stage.getIcons().add(new Image(CorpoDeProva.class.getResourceAsStream("/images/calculator.png")));
-			String response = dlg.showAndWait().orElse("");
+			String response = Utils.getStringWithDialog("Sumar días", "Insertar días para sumar \na la fecha de moldeo",
+					new Image(CorpoDeProva.class.getResourceAsStream("/images/calculator.png")));
 
 			if (StringUtils.isNumeric(response) && dpMoldeDate.getValue() != null) {
 				dpRuptureDate.setValue(dpMoldeDate.getValue().plusDays(Utils.tryParseToInt(response)));

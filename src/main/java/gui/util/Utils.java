@@ -28,11 +28,13 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -49,6 +51,15 @@ public class Utils {
 
 	private static NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
 	private static DecimalFormat df = (DecimalFormat) format;
+	
+	public static String getStringWithDialog(String title,String header,Image image) {
+		Dialog<String> dlg = new TextInputDialog();
+		dlg.setTitle(title);
+		dlg.setHeaderText(header);
+		Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(image);
+		return dlg.showAndWait().orElse("");
+	}
 
 	public static Stage currentStage(ActionEvent event) {
 		return (Stage) ((Node) event.getSource()).getScene().getWindow();

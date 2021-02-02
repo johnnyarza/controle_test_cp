@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-
 import application.db.DB;
 import application.service.MigrationService;
 import application.util.EncriptaDecriptaApacheCodec;
@@ -18,6 +17,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.application.Platform;
 
 public class Program extends Application {
 
@@ -27,6 +27,11 @@ public class Program extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			createConfigFiles();
+			if (!FileUtils.checkLicenseKey()) {
+				Alerts.showAlert("Error", "Código serial no válido", null, AlertType.ERROR);
+				Platform.exit();
+			}
+			
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainView.fxml"));
 			ScrollPane scrollPane = loader.load();
 
@@ -89,6 +94,12 @@ public class Program extends Application {
 			initialProps.put("useSSL", "false");
 
 			FileUtils.writeProperties("db.properties", initialProps);
+		}
+		
+		if (!Paths.get(System.getProperty("user.home"), "cp_configs", "key.properties").toFile().isFile()) {
+			Map<String, String> initialProps = new HashMap<>();
+			initialProps.put("key", "");
+			FileUtils.writeProperties("key.properties", initialProps);
 		}
 
 	}
