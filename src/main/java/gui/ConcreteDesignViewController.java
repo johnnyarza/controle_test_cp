@@ -86,8 +86,8 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.subscribeDataChangeListener(this);
 					}, (ConcreteDesignRegistrationFormController controller) -> {
 					}, (ConcreteDesignRegistrationFormController controller) -> {
-					}, "/gui/ConcreteDesignRegistrationForm.css",
-					new Image(ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
+					}, "/gui/ConcreteDesignRegistrationForm.css", new Image(
+							ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
@@ -97,17 +97,17 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	@FXML
 	public void onBtEditAction(ActionEvent event) {
 		try {
-			
+
 			if (allowEditOrDelete(event))
 				throw new IllegalAccessError("Accesso denegado");
-			
+
 			ConcreteDesign obj = getFormData();
 			if (obj == null) {
 				throw new NullPointerException("ConcreteDesing was null");
 			}
-			
+
 			Stage parentStage = Utils.currentStage(event);
-			
+
 			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", "Editar probeta", parentStage,
 					(ConcreteDesignRegistrationFormController controller) -> {
 						controller.setMaterialService(new MaterialService());
@@ -118,32 +118,40 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.subscribeDataChangeListener(this);
 					}, (ConcreteDesignRegistrationFormController controller) -> {
 					}, (ConcreteDesignRegistrationFormController controller) -> {
-					}, "/gui/ConcreteDesignRegistrationForm.css",
-					new Image(ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
+					}, "/gui/ConcreteDesignRegistrationForm.css", new Image(
+							ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
 		} catch (IllegalStateException e) {
-			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
+		} catch (NullPointerException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+		} catch (IllegalAccessError e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
 	@FXML
 	public void onBtDeleteAction(ActionEvent event) {
 		try {
-			
+
 			if (allowEditOrDelete(event))
 				throw new IllegalAccessError("Accesso denegado");
-			
+
 			ConcreteDesign obj = getConcreteDesingFromTableView();
 			if (obj == null) {
 				throw new NullPointerException("ConcreteDesing was null");
 			}
-			
+
 			if (service == null || compresionTestService == null) {
 				throw new IllegalStateException("Service(s) was null");
 			}
 
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacción de acción", "Seguro que desea apagar?",
-					"");
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacción de acción",
+					"Seguro que desea apagar?", "");
 			if (result.get() == ButtonType.OK) {
 				service.deleteConcreteDesignById(obj.getId());
 			}
@@ -160,7 +168,10 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		} catch (NullPointerException e1) {
 			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "NullPointerException", e1.getMessage(), AlertType.ERROR);
-		}catch (Exception e) {
+		} catch (IllegalAccessError e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
@@ -182,7 +193,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		}
 
 	}
-	
+
 	private boolean allowEditOrDelete(ActionEvent event) {
 		return Utils.isUserAdmin(event, logger);
 	}
@@ -241,9 +252,10 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	}
 
 	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css, Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css,
-				icon, logger);
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
+			Image icon) {
+		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction,
+				css, icon, logger);
 	}
 
 	@Override

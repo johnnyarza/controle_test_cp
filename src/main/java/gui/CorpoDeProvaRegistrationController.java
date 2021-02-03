@@ -416,7 +416,7 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 		Constraints.setTextFieldDouble(txtDiameter, 2);
 		Constraints.setTextFieldDouble(txtHeight, 1);
 		Constraints.setTextFieldDouble(txtWeight, 3);
-		Constraints.setTextFieldDouble(txtRuptureTon, 1);
+		Constraints.setTextFieldDouble(txtRuptureTon, 2);
 		btToday.setGraphic(Utils.createImageView("/images/pin.png", 20.0, 20.0));
 		btDateCalc.setGraphic(Utils.createImageView("/images/calculator.png", 20.0, 20.0));
 		btDiameterCalc.setGraphic(Utils.createImageView("/images/calculator.png", 20.0, 20.0));

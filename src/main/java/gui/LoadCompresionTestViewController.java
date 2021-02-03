@@ -113,6 +113,18 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	@FXML
 	public void onbtNewAction(ActionEvent event) {
 		isNewDoc = true;
+		var wrapper = new Object(){
+			private boolean btCancelPressed = true;
+			
+			public boolean getBtCancelPressed() {
+				return this.btCancelPressed;
+			}
+			
+			public void setBtCancelPressed(boolean btPressed) {
+				this.btCancelPressed = btPressed;
+			}
+		};
+		
 		try {
 			Stage parentStage = Utils.currentStage(event);
 			createDialogForm("/gui/NewCompresionTestForm.fxml", "Nuevo Documento", parentStage,
@@ -127,10 +139,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 						controller.setBtCancelPressed(true);
 					}, (NewCompresionTestFormController controller) -> {
 						this.entity = controller.getEntity();
-						this.btCancelPressed = controller.getBtCancelPressed();
+						wrapper.setBtCancelPressed(controller.getBtCancelPressed());
 					}, "/gui/NewCompresionTestForm.css",
 					new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
-			if (!btCancelPressed) {
+			if (!(wrapper.getBtCancelPressed())) {
 				showCompresionTestForm(parentStage);
 			}
 
@@ -213,6 +225,19 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	@FXML
 	public void onBtWarningACtion(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
+		
+		var wrapper = new Object(){
+			private boolean btCancelPressed = true;
+			
+			public boolean getBtCancelPressed() {
+				return this.btCancelPressed;
+			}
+			
+			public void setBtCancelPressed(boolean btPressed) {
+				this.btCancelPressed = btPressed;
+			}
+		};
+		
 		try {
 
 			createDialogForm("/gui/WarningDialog.fxml", "Aviso", Utils.currentStage(event),
@@ -226,10 +251,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 						controller.setIsBtCancelPressed(true);
 					}, (WarningDialogController controller) -> {
 						this.entity = controller.getEntity();
-						this.btCancelPressed = controller.getIsBtCancelPressed();
+						wrapper.setBtCancelPressed(controller.getIsBtCancelPressed());
 					}, "/gui/WarningDialog.css",
 					new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/alert.png")));
-			if (!btCancelPressed) {
+			if (!(wrapper.getBtCancelPressed())) {
 				showCompresionTestForm(parentStage);
 			}
 		} catch (Exception e) {
@@ -422,8 +447,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 					}
 				}
 			});
+			
 			dialogStage.showAndWait();
-
+			
+			if (this.isNewDoc) this.isNewDoc = false;
 		} catch (IOException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
