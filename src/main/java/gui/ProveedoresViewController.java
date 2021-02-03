@@ -87,6 +87,10 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 
 	public void onBtEditAction(ActionEvent event) {
 		try {
+
+			if (allowEditOrDelete(event))
+				throw new IllegalAccessError("Accesso denegado");
+
 			Stage parentStage = Utils.currentStage(event);
 			Provider obj = getProviderFromTableView();
 
@@ -104,14 +108,21 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+		} catch (IllegalAccessError e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
 	public void onBtDeleteAction(ActionEvent event) {
 		try {
+
+			if (allowEditOrDelete(event))
+				throw new IllegalAccessError("Accesso denegado");
+
 			Provider obj = getProviderFromTableView();
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de acción", "Seguro que desea apagar?",
-					"Los datos seleccionados serán perdidos");
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de acción",
+					"Seguro que desea apagar?", "Los datos seleccionados serán perdidos");
 			if (result.get() == ButtonType.OK) {
 
 				if (service == null) {
@@ -122,6 +133,9 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 			updateTableView();
 		} catch (SQLIntegrityConstraintViolationException e) {
 			Alerts.showAlert("Error", "SQLIntegrityConstraintViolationException", e.getMessage(), AlertType.ERROR);
+		} catch (IllegalAccessError e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
 		} catch (DbException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error deleting probeta", e.getMessage(), AlertType.ERROR);
@@ -143,6 +157,10 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 		rF.providerReportView(tableViewProvider.getItems());
 	}
 
+	private boolean allowEditOrDelete(ActionEvent event) {
+		return Utils.isUserAdmin(event, logger);
+	}
+
 	public ProviderService getService() {
 		return service;
 	}
@@ -160,9 +178,10 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 	}
 
 	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css, Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css,
-				icon, logger);
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
+			Image icon) {
+		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction,
+				css, icon, logger);
 	}
 
 	public void updateTableView() {

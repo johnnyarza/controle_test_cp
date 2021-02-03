@@ -1,6 +1,8 @@
 package gui;
 
 import java.net.URL;
+import gui.util.Utils;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -16,7 +18,6 @@ import application.service.MaterialService;
 import application.service.ProviderService;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
-import gui.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -68,7 +69,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		Stage parentStage = Utils.currentStage(event);
 		Material obj = new Material();
 
-		createDialogForm("/gui/MaterialRegistrationForm.fxml","Nuevo material", parentStage,
+		createDialogForm("/gui/MaterialRegistrationForm.fxml", "Nuevo material", parentStage,
 				(MaterialRegistrationFormController controller) -> {
 					controller.setService(new MaterialService());
 					controller.setProviderService(new ProviderService());
@@ -88,6 +89,9 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 			Stage parentStage = Utils.currentStage(event);
 			Material obj = getMarialFromTableView();
 
+			if (allowEditOrDelete(event))
+				throw new IllegalAccessError("Accesso denegado");
+
 			createDialogForm("/gui/MaterialRegistrationForm.fxml", "Editar material", parentStage,
 					(MaterialRegistrationFormController controller) -> {
 						controller.setService(new MaterialService());
@@ -103,6 +107,9 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+		} catch (IllegalAccessError e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
@@ -111,7 +118,11 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 
 	@FXML
 	private void onBtDeleteAction(ActionEvent event) {
+
 		try {
+			if (allowEditOrDelete(event))
+				throw new IllegalAccessError("Accesso denegado");
+
 			if (service == null) {
 				throw new IllegalStateException("Material service was null");
 			}
@@ -132,6 +143,8 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+		} catch (SQLIntegrityConstraintViolationException e) {
+			Alerts.showAlert("Error", "SQLIntegrityConstraintViolationException", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -139,6 +152,10 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 	private void onBtPrintAction() {
 		ReportFactory rF = new ReportFactory();
 		rF.materialReportView(tableViewMaterial.getItems());
+	}
+
+	private boolean allowEditOrDelete(ActionEvent event) {
+		return Utils.isUserAdmin(event, logger);
 	}
 
 	public MaterialService getService() {
@@ -189,9 +206,10 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 	}
 
 	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css, Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css,
-				icon, logger);
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
+			Image icon) {
+		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction,
+				css, icon, logger);
 	}
 
 	@Override

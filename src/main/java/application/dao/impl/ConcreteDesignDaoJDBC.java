@@ -34,13 +34,13 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 		ResultSet rs = null;
 		try {
 			conn.setAutoCommit(false);
-			st = conn
-					.prepareStatement(
-							"INSERT INTO cp_db.concretedesign " + "(description, " + "fck, " + "mat1_id, " + "mat2_id, " + "mat3_id, "
-									+ "mat4_id, " + "mat5_id, " + "mat6_id, " + "mat7_id, " + "mat8_id," + "mat1_qtt," + "mat2_qtt,"
-									+ "mat3_qtt," + "mat4_qtt," + "mat5_qtt," + "mat6_qtt," + "mat7_qtt," + "mat8_qtt," + "slump" + ") "
-									+ "VALUES " + "(? ,? ,? ,? ,? ,? ,? ,? ,? ,?,? ,? ,? ,? ,? ,? ,? ,?,?)",
-							Statement.RETURN_GENERATED_KEYS);
+			st = conn.prepareStatement(
+					"INSERT INTO cp_db.concretedesign " + "(description, " + "fck, " + "mat1_id, " + "mat2_id, "
+							+ "mat3_id, " + "mat4_id, " + "mat5_id, " + "mat6_id, " + "mat7_id, " + "mat8_id,"
+							+ "mat1_qtt," + "mat2_qtt," + "mat3_qtt," + "mat4_qtt," + "mat5_qtt," + "mat6_qtt,"
+							+ "mat7_qtt," + "mat8_qtt," + "slump" + ") " + "VALUES "
+							+ "(? ,? ,? ,? ,? ,? ,? ,? ,? ,?,? ,? ,? ,? ,? ,? ,? ,?,?)",
+					Statement.RETURN_GENERATED_KEYS);
 
 			setStatement(st, obj);
 
@@ -70,12 +70,11 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 				conn.setAutoCommit(false);
 			}
 
-			st = conn.prepareStatement(
-					"UPDATE cp_db.concretedesign SET " + "description = ?, " + "fck = ?, " + "mat1_id = ?, " + "mat2_id = ?, "
-							+ "mat3_id = ?, " + "mat4_id = ?, " + "mat5_id = ?, " + "mat6_id = ?, " + "mat7_id = ?, " + "mat8_id = ?,"
-							+ "mat1_qtt = ?," + "mat2_qtt = ?," + "mat3_qtt = ?," + "mat4_qtt = ?," + "mat5_qtt = ?,"
-							+ "mat6_qtt = ?," + "mat7_qtt = ?," + "mat8_qtt = ?," + "slump = ? " + "WHERE id = ?",
-					Statement.RETURN_GENERATED_KEYS);
+			st = conn.prepareStatement("UPDATE cp_db.concretedesign SET " + "description = ?, " + "fck = ?, "
+					+ "mat1_id = ?, " + "mat2_id = ?, " + "mat3_id = ?, " + "mat4_id = ?, " + "mat5_id = ?, "
+					+ "mat6_id = ?, " + "mat7_id = ?, " + "mat8_id = ?," + "mat1_qtt = ?," + "mat2_qtt = ?,"
+					+ "mat3_qtt = ?," + "mat4_qtt = ?," + "mat5_qtt = ?," + "mat6_qtt = ?," + "mat7_qtt = ?,"
+					+ "mat8_qtt = ?," + "slump = ? " + "WHERE id = ?", Statement.RETURN_GENERATED_KEYS);
 
 			setStatement(st, obj);
 			st.setInt(20, obj.getId());
@@ -216,7 +215,41 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 		ResultSet rs = null;
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM cp_db.concretedesign");
+			st = conn.prepareStatement("SELECT * FROM cp_db.concretedesign;");
+
+			rs = st.executeQuery();
+
+			List<ConcreteDesign> list = new ArrayList<>();
+
+			while (rs.next()) {
+				ConcreteDesign obj = instantiateConcreteDesign(rs);
+				list.add(obj);
+			}
+			return list;
+		} catch (SQLException e) {
+			throw new DbException("Error finding All! " + e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+	}
+
+	@Override
+	public List<ConcreteDesign> findByMaterialId(Integer id) {
+		ResultSet rs = null;
+		PreparedStatement st = null;
+		try {
+			int i;
+			st = conn.prepareStatement("SELECT * FROM cp_db.concretedesign WHERE cp_db.concretedesign.mat1_id = ? "
+					+ "OR cp_db.concretedesign.mat2_id = ? OR cp_db.concretedesign.mat3_id = ? "
+					+ "OR cp_db.concretedesign.mat4_id = ? OR cp_db.concretedesign.mat5_id = ? "
+					+ "OR cp_db.concretedesign.mat6_id = ? OR cp_db.concretedesign.mat7_id = ? "
+					+ "OR cp_db.concretedesign.mat8_id = ?;");
+			
+			for (i = 1; i <= 8; i++) {
+				st.setInt(i, id);
+			}
+
 
 			rs = st.executeQuery();
 
@@ -297,4 +330,5 @@ public class ConcreteDesignDaoJDBC implements ConcreteDesignDao {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 		}
 	}
+
 }

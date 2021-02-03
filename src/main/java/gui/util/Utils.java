@@ -21,6 +21,10 @@ import java.util.logging.Level;
 
 import application.domaim.CorpoDeProva;
 import application.log.LogUtils;
+import application.service.UserService;
+import enums.LogEnum;
+import gui.CompresionTestFormController;
+import gui.LoginFormController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -46,13 +50,12 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.StringConverter;
 
-
 public class Utils {
 
 	private static NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
 	private static DecimalFormat df = (DecimalFormat) format;
-	
-	public static String getStringWithDialog(String title,String header,Image image) {
+
+	public static String getStringWithDialog(String title, String header, Image image) {
 		Dialog<String> dlg = new TextInputDialog();
 		dlg.setTitle(title);
 		dlg.setHeaderText(header);
@@ -175,19 +178,19 @@ public class Utils {
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
 						getStyleClass().add("today-row");
 						getStyleClass().add("table-row-cell");
-						
-						//setStyle("-fx-background-color: #f1c40f");
+
+						// setStyle("-fx-background-color: #f1c40f");
 					} else if (item.getRuptureDate().compareTo(new Date()) < 0
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
 						getStyleClass().add("late-row");
 						getStyleClass().add("table-row-cell");
-						//setStyle("-fx-background-color: #e74c3c");
+						// setStyle("-fx-background-color: #e74c3c");
 					} else if (daysBetweenDates(item.getRuptureDate(), new Date()) == 1
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
-						//setStyle("-fx-background-color: #2ecc71");
+						// setStyle("-fx-background-color: #2ecc71");
 						getStyleClass().add("table-row-cell");
 						getStyleClass().add("tomorrow-row");
-						
+
 					} else {
 						setStyle("");
 					}
@@ -195,7 +198,7 @@ public class Utils {
 			}
 		});
 	}
-	
+
 	// In this method is necessary that the Scene already has a css file.
 	public static <T> void formatTableViewRows(TableView<T> tableView, List<String> cssClasses) {
 		if (tableView.getParent().getScene().getStylesheets().size() == 0) {
@@ -245,17 +248,19 @@ public class Utils {
 		}
 		return imgView;
 	}
-	
+
 	public static Image createImage(String absolutePath) throws FileNotFoundException {
 		File file = new File(absolutePath);
 		if (file == null || !(file.isFile())) {
-			throw new FileNotFoundException("Error al Cargar Imagen(es). Es posible que la(s) imagene(s) no exista(n)!");
+			throw new FileNotFoundException(
+					"Error al Cargar Imagen(es). Es posible que la(s) imagene(s) no exista(n)!");
 		}
 		Image image = new Image(file.toURI().toString());
 		return image;
 	}
-	
-	public static String getFileAbsolutePath(Stage dialogParentStage, ExtensionFilter filter) throws FileNotFoundException {
+
+	public static String getFileAbsolutePath(Stage dialogParentStage, ExtensionFilter filter)
+			throws FileNotFoundException {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(filter);
 		File file = fileChooser.showOpenDialog(dialogParentStage);
@@ -264,14 +269,15 @@ public class Utils {
 		}
 		return file.getAbsolutePath();
 	}
-	
-	public static void setButtonGraphic(String path, Button button,Double height,Double width) {
+
+	public static void setButtonGraphic(String path, Button button, Double height, Double width) {
 		ImageView imgView = Utils.createImageView(path, height, width);
 		button.setGraphic(imgView);
 	}
-	
-	public static<T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,Image icon,LogUtils logger) {
+
+	public static <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
+			Image icon, LogUtils logger) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(Utils.class.getResource(absoluteName));
@@ -281,7 +287,7 @@ public class Utils {
 			initializingAction.accept(controller);
 
 			Stage dialogStage = new Stage();
-			
+
 			dialogStage.getIcons().add(icon);
 			dialogStage.setTitle(title);
 			dialogStage.setScene(new Scene(pane));
@@ -310,7 +316,43 @@ public class Utils {
 			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
 		}
 	}
-	
-	
-	
+
+	public static boolean isUserAdmin(ActionEvent event, LogUtils logger) {
+		Stage parentStage = Utils.currentStage(event);
+		var wrapper = new Object() {
+			private boolean isUserAdmin = true;
+
+			public void setIsUserAdmin(boolean bool) {
+				isUserAdmin = bool;
+			};
+			
+			public boolean getIsUserAdmin() {
+				return isUserAdmin;
+			}
+		};
+
+		Consumer<LoginFormController> initialCons = (LoginFormController loginFormController) -> {
+			loginFormController.setUserService(new UserService());
+			loginFormController.setEntity(null);
+			loginFormController.setIsLoggin(LogEnum.SIGNIN);
+			loginFormController.setLogger(logger);
+			loginFormController.setTitleLabel("Entrar con datos del administrador");
+		};
+
+		Consumer<LoginFormController> windowEventCons = (LoginFormController loginFormController) -> {
+			loginFormController.setEntity(null);
+		};
+
+		Consumer<LoginFormController> finalCons = (LoginFormController loginFormController) -> {
+			wrapper.setIsUserAdmin((loginFormController.getEntity() == null ? true : false));
+		};
+
+		createDialogForm("/gui/LoginForm.fxml", "Login", parentStage, initialCons, windowEventCons, finalCons, "",
+				new Image(CompresionTestFormController.class.getResourceAsStream("/images/sign_in.png")), logger);
+		
+		return wrapper.getIsUserAdmin();
+	}
+
+	;
+
 }

@@ -34,5 +34,10 @@ public class ConcreteDesignService {
 			dao.update(obj);
 		}
 	}
+	
+	public List<ConcreteDesign> findByMaterialId(int materialId) {
+		return dao.findByMaterialId(materialId);
+	}
+	
 
 }

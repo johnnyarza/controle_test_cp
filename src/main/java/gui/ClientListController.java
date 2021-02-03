@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 import application.Program;
 import application.Report.ReportFactory;
@@ -38,6 +39,8 @@ public class ClientListController implements Initializable, DataChangeListener {
 	private ClientService service;
 
 	private ObservableList<Cliente> obsList;
+
+	private LogUtils logger;
 
 	@FXML
 	private TableView<Cliente> tableViewClient;
@@ -80,11 +83,18 @@ public class ClientListController implements Initializable, DataChangeListener {
 	@FXML
 	public void onBtEditAction(ActionEvent event) {
 		try {
+
+			if (allowEditOrDelete(event))
+				throw new IllegalAccessError("Accesso denegado");
+
 			Stage parentStage = Utils.currentStage(event);
 			Cliente obj = getClientFromTableView();
 			createDialogForm(obj, "/gui/ClienteRegistrationForm.fxml", parentStage, "",
 					new Image(ClientListController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
 
+		} catch (IllegalAccessError e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
 		} catch (NullPointerException e) {
 			Alerts.showAlert("Error", "Ningun cliente seleccionado", e.getMessage(), AlertType.ERROR);
 		}
@@ -93,6 +103,10 @@ public class ClientListController implements Initializable, DataChangeListener {
 	@FXML
 	public void onBtDeleteAction(ActionEvent event) {
 		try {
+
+			if (allowEditOrDelete(event))
+				throw new IllegalAccessError("Accesso denegado");
+
 			Cliente obj = getClientFromTableView();
 			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacion", null,
 					"Segura que desea apagar cliente?");
@@ -101,6 +115,9 @@ public class ClientListController implements Initializable, DataChangeListener {
 				service.deleteById(id);
 				onDataChange();
 			}
+		} catch (IllegalAccessError e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
 		} catch (DbException e) {
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
 		} catch (NullPointerException e1) {
@@ -114,8 +131,16 @@ public class ClientListController implements Initializable, DataChangeListener {
 		rF.clientReportView(tableViewClient.getItems());
 	}
 
+	private boolean allowEditOrDelete(ActionEvent event) {
+		return Utils.isUserAdmin(event, logger);
+	}
+
 	public void setClientService(ClientService service) {
 		this.service = service;
+	}
+	
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
 	}
 
 	@Override

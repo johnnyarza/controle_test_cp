@@ -1,6 +1,9 @@
 package gui;
 
 import java.net.URL;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
+
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -337,7 +340,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 				throw new IllegalAccessException("La alteración de este documento esta bloqueada");
 			}
 			
-			if (isLocked && (obj.getRuptureDate().compareTo(new Date()) < 0)) 
+			if (isLocked && (DateTimeComparator.getDateOnlyInstance().compare(obj.getRuptureDate(), new Date()) < 0)) 
 			{
 				throw new IllegalAccessException("Probeta Retrasada. El administrador debe desbloquear el documento!");
 			}

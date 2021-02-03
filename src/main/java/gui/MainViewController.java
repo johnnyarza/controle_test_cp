@@ -87,6 +87,7 @@ public class MainViewController implements Initializable {
 	public void onBtClientAction(ActionEvent event) {
 		loadView("/gui/ClientList.fxml", (ClientListController controller) -> {
 			controller.setClientService(new ClientService());
+			controller.setLogger(logger);
 			controller.updateTableView();
 		}, "/gui/ClientList.css");
 	}

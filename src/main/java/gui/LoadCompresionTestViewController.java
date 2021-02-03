@@ -178,10 +178,13 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				}, (LoginFormController controller) -> {
 					isLocked = controller.getEntity() == null ? true : false;
 				}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/sign_in.png")), logger);
+				
 				if (isLocked) {
 					throw new IllegalAccessException("Acceso denegado!");
 				}
+				
 				isLocked = true;
+				
 				if (compresionTestService == null) {
 					throw new IllegalStateException("Service was null");
 				} else {

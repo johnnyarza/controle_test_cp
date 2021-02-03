@@ -97,8 +97,17 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	@FXML
 	public void onBtEditAction(ActionEvent event) {
 		try {
+			
+			if (allowEditOrDelete(event))
+				throw new IllegalAccessError("Accesso denegado");
+			
 			ConcreteDesign obj = getFormData();
+			if (obj == null) {
+				throw new NullPointerException("ConcreteDesing was null");
+			}
+			
 			Stage parentStage = Utils.currentStage(event);
+			
 			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", "Editar probeta", parentStage,
 					(ConcreteDesignRegistrationFormController controller) -> {
 						controller.setMaterialService(new MaterialService());
@@ -120,7 +129,15 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	@FXML
 	public void onBtDeleteAction(ActionEvent event) {
 		try {
+			
+			if (allowEditOrDelete(event))
+				throw new IllegalAccessError("Accesso denegado");
+			
 			ConcreteDesign obj = getConcreteDesingFromTableView();
+			if (obj == null) {
+				throw new NullPointerException("ConcreteDesing was null");
+			}
+			
 			if (service == null || compresionTestService == null) {
 				throw new IllegalStateException("Service(s) was null");
 			}
@@ -140,7 +157,10 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 			Alerts.showAlert("Error", "DbException", e1.getMessage(), AlertType.ERROR);
 		} catch (SQLIntegrityConstraintViolationException e) {
 			Alerts.showAlert("Error", "SQLIntegrityConstraintViolationException", e.getMessage(), AlertType.ERROR);
-		} catch (Exception e) {
+		} catch (NullPointerException e1) {
+			logger.doLog(Level.WARNING, e1.getMessage(), e1);
+			Alerts.showAlert("Error", "NullPointerException", e1.getMessage(), AlertType.ERROR);
+		}catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
@@ -161,6 +181,10 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 			Alerts.showAlert("Error", "Error al abrir reporte", e.getMessage(), AlertType.ERROR);
 		}
 
+	}
+	
+	private boolean allowEditOrDelete(ActionEvent event) {
+		return Utils.isUserAdmin(event, logger);
 	}
 
 	public ConcreteDesignService getService() {

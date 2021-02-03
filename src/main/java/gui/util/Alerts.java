@@ -31,4 +31,5 @@ public class Alerts {
 		stage.getIcons().add(new Image(Alerts.class.getResourceAsStream("/images/confirm.png")));
 		return alert.showAndWait();
 	}
+	
 }

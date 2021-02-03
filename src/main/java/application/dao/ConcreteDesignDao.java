@@ -11,5 +11,6 @@ public interface ConcreteDesignDao {
 	void deleteById(Integer id);
 	ConcreteDesign findById(Integer id);
 	List<ConcreteDesign> findAll();
+	List<ConcreteDesign> findByMaterialId(Integer id);
 
 }
