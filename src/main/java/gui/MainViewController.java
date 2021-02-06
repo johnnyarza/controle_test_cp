@@ -4,8 +4,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -37,6 +43,9 @@ import javafx.scene.layout.VBox;
 public class MainViewController implements Initializable {
 
 	private Executor exec;
+
+	private ScheduledExecutorService executor;
+
 	private Boolean btCancelPressed;
 
 	private CompresionTest compresionTest;
@@ -273,27 +282,45 @@ public class MainViewController implements Initializable {
 
 	@Override
 	public void initialize(URL uri, ResourceBundle rb) {
+		BtTest.setDisable(true);
+		executor = Executors.newScheduledThreadPool(1);
+
 		exec = Executors.newCachedThreadPool(runnable -> {
 			Thread t = new Thread(runnable);
 			t.setDaemon(true);
 			return t;
 		});
-		
+
 		Task<Boolean> task = new Task<Boolean>() {
 
 			@Override
-			protected Boolean call() throws Exception {		
+			protected Boolean call() throws Exception {
 				return DB.testConnection();
-			}};
-			
-			task.setOnFailed(e->{
-				Alerts.showAlert("Error", "Error al conectar", task.getException().getMessage(), AlertType.ERROR);
-				task.getException().printStackTrace();
-			});
-			
-			task.setOnSucceeded(e -> System.out.println("ok"));
-			
-			exec.execute(task);
+			}
+		};
+
+		task.setOnFailed(e -> {
+			Alerts.showAlert("Error", "Error al conectar", task.getException().getMessage(), AlertType.ERROR);
+			task.getException().printStackTrace();
+		});
+
+		task.setOnSucceeded(e -> System.out.println("ok"));
+		
+		task.setOnCancelled(e -> {
+			Alerts.showAlert("Error", "Error de conexión", "Se agotó el tiempo de espera de la conexión", AlertType.ERROR);
+		});
+
+		exec.execute(task);
+
+		executor.schedule(new Runnable() {
+
+			@Override
+			public void run() {
+				task.cancel();
+			}
+		}, 5, TimeUnit.SECONDS);
+		
+		executor.shutdown();
 
 	}
 
