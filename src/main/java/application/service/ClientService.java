@@ -1,5 +1,6 @@
 package application.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -9,8 +10,12 @@ import application.db.DbException;
 import application.domaim.Cliente;
 
 public class ClientService {
+	private ClientDao dao;
 	
-	private ClientDao dao = DaoFactory.createClientDao();
+	
+	public ClientService () throws SQLException {
+		this.dao = DaoFactory.createClientDao();
+	};
 	
 	CompresionTestService compresionTestService = new CompresionTestService();
 	

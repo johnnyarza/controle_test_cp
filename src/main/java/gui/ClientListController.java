@@ -2,6 +2,7 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -97,6 +98,10 @@ public class ClientListController implements Initializable, DataChangeListener {
 			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
 		} catch (NullPointerException e) {
 			Alerts.showAlert("Error", "Ningun cliente seleccionado", e.getMessage(), AlertType.ERROR);
+		} catch (SQLException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		
 		}
 	}
 
@@ -122,6 +127,10 @@ public class ClientListController implements Initializable, DataChangeListener {
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
 		} catch (NullPointerException e1) {
 			Alerts.showAlert("Error", "NullPointerException", e1.getMessage(), AlertType.ERROR);
+		}catch (SQLException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		
 		}
 	}
 
@@ -131,7 +140,7 @@ public class ClientListController implements Initializable, DataChangeListener {
 		rF.clientReportView(tableViewClient.getItems());
 	}
 
-	private boolean allowEditOrDelete(ActionEvent event) {
+	private boolean allowEditOrDelete(ActionEvent event) throws SQLException {
 		return Utils.isUserAdmin(event, logger);
 	}
 
@@ -218,6 +227,8 @@ public class ClientListController implements Initializable, DataChangeListener {
 			Alerts.showAlert("Error", "Error al abrir ventana", null, AlertType.ERROR);
 		} catch (SecurityException e) {
 			Alerts.showAlert("Error", "Error inesperado", e.getMessage(), AlertType.ERROR);
+		} catch (SQLException e) {
+			Alerts.showAlert("Error", "Error en banco de datos", e.getMessage(), AlertType.ERROR);
 		}
 	}
 

@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -104,57 +105,83 @@ public class ReportConfigViewController implements Initializable {
 			}
 		} catch (IllegalAccessError e) {
 			Alerts.showAlert("Error", "Acceso denegado", e.getMessage(), AlertType.ERROR);
+		} catch (SQLException e) {
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
 	private void editUser(Stage parentStage) {
-		createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
-				(LoginFormController controller) -> {
-					controller.setIsLoggin(LogEnum.EDIT);
-					controller.setEntity(user);
-					controller.setUserService(new UserService());
-					controller.setLogger(logger);
-					controller.setTitleLabel("Editar datos de cuenta");
-					controller.setTxtUserText(user.getName());
+		var wrapper = new Object() {
+			UserService userService;
+		};
+		try {
+			wrapper.userService = new UserService();
+			createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
+					(LoginFormController controller) -> {
+						controller.setIsLoggin(LogEnum.EDIT);
+						controller.setEntity(user);
+						controller.setUserService(wrapper.userService);
+						controller.setLogger(logger);
+						controller.setTitleLabel("Editar datos de cuenta");
+						controller.setTxtUserText(user.getName());
 
-				}, (LoginFormController controller) -> {
-					controller.setEntity(null);
-				}, (LoginFormController controller) -> {
-					setUser(controller.getEntity());
-				}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")));
+					}, (LoginFormController controller) -> {
+						controller.setEntity(null);
+					}, (LoginFormController controller) -> {
+						setUser(controller.getEntity());
+					}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")));
+		} catch (SQLException e) {
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	private void doSignUp(Stage parentStage) {
-		createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
-				(LoginFormController controller) -> {
-					controller.setIsLoggin(LogEnum.SIGNUP);
-					controller.setEntity(null);
-					controller.setUserService(new UserService());
-					controller.setLogger(logger);
-					controller.setTitleLabel("Insertar nuevos datos de cuenta");
+		var wrapper = new Object() {
+			UserService userService;
+		};
+		try {
+			wrapper.userService = new UserService();
+			createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
+					(LoginFormController controller) -> {
+						controller.setIsLoggin(LogEnum.SIGNUP);
+						controller.setEntity(null);
+						controller.setUserService(wrapper.userService);
+						controller.setLogger(logger);
+						controller.setTitleLabel("Insertar nuevos datos de cuenta");
 
-				}, (LoginFormController controller) -> {
-					controller.setEntity(null);
-				}, (LoginFormController controller) -> {
-					setUser(controller.getEntity());
-				}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")));
+					}, (LoginFormController controller) -> {
+						controller.setEntity(null);
+					}, (LoginFormController controller) -> {
+						setUser(controller.getEntity());
+					}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")));
+		} catch (SQLException e) {
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	private void doSignIn(Stage parentStage, String msg) {
-		createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
-				(LoginFormController controller) -> {
-					controller.setIsLoggin(LogEnum.SIGNIN);
-					controller.setEntity(null);
-					controller.setUserService(new UserService());
-					controller.setLogger(logger);
-					controller.setTitleLabel(msg);
+		var wrapper = new Object() {
+			UserService userService;
+		};
+		try {
+			wrapper.userService = new UserService();
+			createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
+					(LoginFormController controller) -> {
+						controller.setIsLoggin(LogEnum.SIGNIN);
+						controller.setEntity(null);
+						controller.setUserService(wrapper.userService);
+						controller.setLogger(logger);
+						controller.setTitleLabel(msg);
 
-				}, (LoginFormController controller) -> {
-					controller.setEntity(null);
-				}, (LoginFormController controller) -> {
-					setUser(controller.getEntity());
-				}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")));
+					}, (LoginFormController controller) -> {
+						controller.setEntity(null);
+					}, (LoginFormController controller) -> {
+						setUser(controller.getEntity());
+					}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")));
 
+		} catch (SQLException e) {
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	private void saveImagePaths() {
@@ -179,7 +206,8 @@ public class ReportConfigViewController implements Initializable {
 	public void onBtLogoAction(ActionEvent event) {
 		try {
 			Stage parentStage = Utils.currentStage(event);
-			logoPath = Utils.getFileAbsolutePath(parentStage, new FileChooser.ExtensionFilter("Imagenes", "*.jpg;*.png"));
+			logoPath = Utils.getFileAbsolutePath(parentStage,
+					new FileChooser.ExtensionFilter("Imagenes", "*.jpg;*.png"));
 			imgLogo.setImage(Utils.createImage(logoPath));
 			saveImagePaths();
 		} catch (FileNotFoundException e) {
@@ -192,7 +220,8 @@ public class ReportConfigViewController implements Initializable {
 	public void onBtCarimboAction(ActionEvent event) {
 		try {
 			Stage parentStage = Utils.currentStage(event);
-			carimboPath = Utils.getFileAbsolutePath(parentStage, new FileChooser.ExtensionFilter("Imagenes", "*.jpg;*.png"));
+			carimboPath = Utils.getFileAbsolutePath(parentStage,
+					new FileChooser.ExtensionFilter("Imagenes", "*.jpg;*.png"));
 			imgCarimbo.setImage(Utils.createImage(carimboPath));
 			saveImagePaths();
 		} catch (FileNotFoundException e) {
@@ -260,9 +289,10 @@ public class ReportConfigViewController implements Initializable {
 	}
 
 	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css, Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css,
-				icon, logger);
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
+			Image icon) {
+		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction,
+				css, icon, logger);
 	}
 
 	public String getLogoPath() {

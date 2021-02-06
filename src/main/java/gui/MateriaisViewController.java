@@ -2,6 +2,8 @@ package gui;
 
 import java.net.URL;
 import gui.util.Utils;
+
+import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
@@ -68,11 +70,22 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 	private void onBtNewAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
 		Material obj = new Material();
+		var wrapper = new Object() {
+			public MaterialService materialService;
+			public ProviderService providerService;
+		};
+		try {
+			wrapper.materialService = new MaterialService();
+			wrapper.providerService = new ProviderService();
 
+		} catch (SQLException e) {
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		}
+		;
 		createDialogForm("/gui/MaterialRegistrationForm.fxml", "Nuevo material", parentStage,
 				(MaterialRegistrationFormController controller) -> {
-					controller.setService(new MaterialService());
-					controller.setProviderService(new ProviderService());
+					controller.setService(wrapper.materialService);
+					controller.setProviderService(wrapper.providerService);
 					controller.setEntity(obj);
 					controller.setLogger(logger);
 					controller.loadAssociatedObjects();
@@ -85,7 +98,15 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 
 	@FXML
 	private void onBtEditAction(ActionEvent event) {
+		var wrapper = new Object() {
+			public MaterialService materialService;
+			public ProviderService providerService;
+		};
+
 		try {
+			wrapper.materialService = new MaterialService();
+			wrapper.providerService = new ProviderService();
+
 			Stage parentStage = Utils.currentStage(event);
 			Material obj = getMarialFromTableView();
 
@@ -94,8 +115,8 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 
 			createDialogForm("/gui/MaterialRegistrationForm.fxml", "Editar material", parentStage,
 					(MaterialRegistrationFormController controller) -> {
-						controller.setService(new MaterialService());
-						controller.setProviderService(new ProviderService());
+						controller.setService(wrapper.materialService);
+						controller.setProviderService(wrapper.providerService);
 						controller.setEntity(obj);
 						controller.loadAssociatedObjects();
 						controller.updateFormData();
@@ -145,6 +166,11 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		} catch (SQLIntegrityConstraintViolationException e) {
 			Alerts.showAlert("Error", "SQLIntegrityConstraintViolationException", e.getMessage(), AlertType.ERROR);
+		} catch (IllegalAccessError e) {
+			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
+			e.printStackTrace();
+		} catch (SQLException e) {
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -154,7 +180,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		rF.materialReportView(tableViewMaterial.getItems());
 	}
 
-	private boolean allowEditOrDelete(ActionEvent event) {
+	private boolean allowEditOrDelete(ActionEvent event) throws SQLException {
 		return Utils.isUserAdmin(event, logger);
 	}
 

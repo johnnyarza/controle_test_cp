@@ -1,6 +1,7 @@
 package gui;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
@@ -70,33 +71,44 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 	private TableColumn<Provider, String> tableColumnEmail;
 
 	public void onBtNewAction(ActionEvent event) {
-		Stage parentStage = Utils.currentStage(event);
-		Provider obj = new Provider();
+		var wrapper = new Object() {
+			ProviderService providerService;
+		};
+		try {
+			wrapper.providerService = new ProviderService();
+			Stage parentStage = Utils.currentStage(event);
+			Provider obj = new Provider();
 
-		createDialogForm("/gui/ProviderRegistrationForm.fxml", "Nuevo proveedor", parentStage,
-				(ProviderRegistrationFormController controller) -> {
-					controller.setService(new ProviderService());
-					controller.setEntity(obj);
-					controller.setLogger(logger);
-					controller.subscribeDataChangeListener(this);
-				}, (ProviderRegistrationFormController controller) -> {
-				}, (ProviderRegistrationFormController controller) -> {
-				}, "/gui/ProviderRegistrationForm.css",
-				new Image(ProveedoresViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
+			createDialogForm("/gui/ProviderRegistrationForm.fxml", "Nuevo proveedor", parentStage,
+					(ProviderRegistrationFormController controller) -> {
+						controller.setService(wrapper.providerService);
+						controller.setEntity(obj);
+						controller.setLogger(logger);
+						controller.subscribeDataChangeListener(this);
+					}, (ProviderRegistrationFormController controller) -> {
+					}, (ProviderRegistrationFormController controller) -> {
+					}, "/gui/ProviderRegistrationForm.css",
+					new Image(ProveedoresViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
+		} catch (SQLException e) {
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	public void onBtEditAction(ActionEvent event) {
+		var wrapper = new Object() {
+			ProviderService providerService;
+		};
 		try {
 
 			if (allowEditOrDelete(event))
 				throw new IllegalAccessError("Accesso denegado");
-
+			wrapper.providerService = new ProviderService();
 			Stage parentStage = Utils.currentStage(event);
 			Provider obj = getProviderFromTableView();
 
 			createDialogForm("/gui/ProviderRegistrationForm.fxml", "Editar proveedor", parentStage,
 					(ProviderRegistrationFormController controller) -> {
-						controller.setService(new ProviderService());
+						controller.setService(wrapper.providerService);
 						controller.setEntity(obj);
 						controller.setLogger(logger);
 						controller.updateFormData();
@@ -111,6 +123,8 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 		} catch (IllegalAccessError e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
+		} catch (SQLException e) {
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -157,7 +171,7 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 		rF.providerReportView(tableViewProvider.getItems());
 	}
 
-	private boolean allowEditOrDelete(ActionEvent event) {
+	private boolean allowEditOrDelete(ActionEvent event) throws SQLException {
 		return Utils.isUserAdmin(event, logger);
 	}
 

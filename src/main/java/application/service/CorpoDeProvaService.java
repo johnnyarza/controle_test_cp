@@ -1,5 +1,6 @@
 package application.service;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -10,7 +11,11 @@ import application.domaim.CorpoDeProva;
 
 public class CorpoDeProvaService {
 
-	private CorpoDeProvaDao dao = DaoFactory.createCorpoDeProvaDao();
+	private CorpoDeProvaDao dao;
+
+	public CorpoDeProvaService() throws SQLException {
+		this.dao  = DaoFactory.createCorpoDeProvaDao();
+	};
 
 	public List<CorpoDeProva> findAll() {
 		return dao.findAll();
@@ -35,7 +40,7 @@ public class CorpoDeProvaService {
 	public List<CorpoDeProva> findByCompresionTestId(Integer id) {
 		return dao.findByCompresionTestId(id);
 	}
-	
+
 	public List<CorpoDeProva> findByClientId(Integer id) {
 		return dao.findByClientId(id);
 	}
@@ -52,6 +57,7 @@ public class CorpoDeProvaService {
 			Integer compresionTestId) {
 		return dao.findByDatesAndCompresionTestId(tZ, initialDate, finalDate, compresionTestId);
 	}
+
 	public List<CorpoDeProva> findLateCorpoDeProva(TimeZone tZ) {
 		return dao.findLateCorpoDeProva(tZ);
 	}

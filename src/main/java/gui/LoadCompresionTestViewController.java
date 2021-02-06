@@ -2,6 +2,7 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -113,25 +114,32 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	@FXML
 	public void onbtNewAction(ActionEvent event) {
 		isNewDoc = true;
-		var wrapper = new Object(){
+		var wrapper = new Object() {
 			private boolean btCancelPressed = true;
-			
+			public CompresionTestService compresionTestService;
+			public ClientService clientService;
+			public ConcreteDesignService concreteDesignService;
+
 			public boolean getBtCancelPressed() {
 				return this.btCancelPressed;
 			}
-			
+
 			public void setBtCancelPressed(boolean btPressed) {
 				this.btCancelPressed = btPressed;
 			}
 		};
-		
+
 		try {
+			wrapper.compresionTestService = new CompresionTestService();
+			wrapper.clientService = new ClientService();
+			wrapper.concreteDesignService = new ConcreteDesignService();
+
 			Stage parentStage = Utils.currentStage(event);
 			createDialogForm("/gui/NewCompresionTestForm.fxml", "Nuevo Documento", parentStage,
 					(NewCompresionTestFormController controller) -> {
-						controller.setCompresionTestService(new CompresionTestService());
-						controller.setClientService(new ClientService());
-						controller.setConcreteDesignService(new ConcreteDesignService());
+						controller.setCompresionTestService(wrapper.compresionTestService);
+						controller.setClientService(wrapper.clientService);
+						controller.setConcreteDesignService(wrapper.concreteDesignService);
 						controller.setLogger(logger);
 						controller.loadAssociatedObjects();
 						controller.subscribeDataChangeListener(this);
@@ -140,8 +148,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 					}, (NewCompresionTestFormController controller) -> {
 						this.entity = controller.getEntity();
 						wrapper.setBtCancelPressed(controller.getBtCancelPressed());
-					}, "/gui/NewCompresionTestForm.css",
-					new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
+					}, "/gui/NewCompresionTestForm.css", new Image(LoadCompresionTestViewController.class
+							.getResourceAsStream("/images/fileIcons/new_file.png")));
 			if (!(wrapper.getBtCancelPressed())) {
 				showCompresionTestForm(parentStage);
 			}
@@ -158,45 +166,51 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		try {
 			CompresionTest obj = getCompresionTestFromTableView();
 			Stage parentStage = Utils.currentStage(event);
-			createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, obj, "/gui/CompresionTestForm.css");
+			createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, obj,
+					"/gui/CompresionTestForm.css");
 			updateViewData();
 			if (lateCorpoDeProvaList.size() > 0) {
 				Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
 			}
-		} catch (NullPointerException e) {
+		} catch (NullPointerException | SQLException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", e.getClass().getName(), e.getMessage(), AlertType.ERROR);
 		}
 	}
 
 	@FXML
 	public void onBtDeleteAction(ActionEvent event) {
+		var wrapper = new Object() {
+			public UserService userService;
+		};
 		try {
-
+			wrapper.userService = new UserService();
 			Stage parentStage = Utils.currentStage(event);
 			CompresionTest obj = getCompresionTestFromTableView();
 			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de accion",
 					"Seguro que desea apagar probeta?", "Después de apagados los datos seran perdidos");
 
 			if (result.get() == ButtonType.OK) {
-				Utils.createDialogForm("/gui/LoginForm.fxml", "Login", parentStage, (LoginFormController controller) -> {
-					controller.setUserService(new UserService());
-					controller.setEntity(null);
-					controller.setIsLoggin(LogEnum.SIGNIN);
-					controller.setLogger(logger);
-					controller.setTitleLabel("Entrar con datos del administrador");
-				}, (LoginFormController controller) -> {
-					controller.setEntity(null);
-				}, (LoginFormController controller) -> {
-					isLocked = controller.getEntity() == null ? true : false;
-				}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/sign_in.png")), logger);
-				
+				Utils.createDialogForm("/gui/LoginForm.fxml", "Login", parentStage,
+						(LoginFormController controller) -> {
+							controller.setUserService(wrapper.userService);
+							controller.setEntity(null);
+							controller.setIsLoggin(LogEnum.SIGNIN);
+							controller.setLogger(logger);
+							controller.setTitleLabel("Entrar con datos del administrador");
+						}, (LoginFormController controller) -> {
+							controller.setEntity(null);
+						}, (LoginFormController controller) -> {
+							isLocked = controller.getEntity() == null ? true : false;
+						}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/sign_in.png")),
+						logger);
+
 				if (isLocked) {
 					throw new IllegalAccessException("Acceso denegado!");
 				}
-				
+
 				isLocked = true;
-				
+
 				if (compresionTestService == null) {
 					throw new IllegalStateException("Service was null");
 				} else {
@@ -225,27 +239,28 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	@FXML
 	public void onBtWarningACtion(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		
-		var wrapper = new Object(){
+
+		var wrapper = new Object() {
 			private boolean btCancelPressed = true;
-			
+			public CompresionTestService compresionTestService;
+
 			public boolean getBtCancelPressed() {
 				return this.btCancelPressed;
 			}
-			
+
 			public void setBtCancelPressed(boolean btPressed) {
 				this.btCancelPressed = btPressed;
 			}
 		};
-		
-		try {
 
+		try {
+			wrapper.compresionTestService = new CompresionTestService();
 			createDialogForm("/gui/WarningDialog.fxml", "Aviso", Utils.currentStage(event),
 					(WarningDialogController controller) -> {
 						controller.setCompresionTestListList(compresionTestListList);
 						controller.setLateCorpoDeProvaList(lateCorpoDeProvaList);
 						controller.setEntity(new CompresionTest());
-						controller.setCompresionTestService(new CompresionTestService());
+						controller.setCompresionTestService(wrapper.compresionTestService);
 						controller.updateDialogData();
 					}, (WarningDialogController controller) -> {
 						controller.setIsBtCancelPressed(true);
@@ -264,13 +279,17 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	}
 
 	public void onBtReportAction(ActionEvent event) {
+		var wrapper = new Object() {
+			ClientService clientService;
+		};
 		Stage parentStage = Utils.currentStage(event);
 		this.client = null;
 		try {
+			wrapper.clientService = new ClientService();
 			createDialogForm("/gui/FindClientForm.fxml", "Elegir cliente para el reporte...", parentStage,
 					(FindClientFormController controller) -> {// initial
 						controller.setEntity(null);
-						controller.setService(new ClientService());
+						controller.setService(wrapper.clientService);
 						controller.setPressedCancelButton(false);
 					}, (FindClientFormController controller) -> {
 						controller.setPressedCancelButton(true);
@@ -293,17 +312,20 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		} catch (ReportException e1) {
 			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "ReportException", e1.getMessage(), AlertType.ERROR);
+		} catch (SQLException e1) {
+			logger.doLog(Level.WARNING, e1.getMessage(), e1);
+			Alerts.showAlert("Error", "SQLException", e1.getMessage(), AlertType.ERROR);
 		}
 
 	}
 
-	private void showCompresionTestReportByClient(Integer id) {
+	private void showCompresionTestReportByClient(Integer id) throws SQLException {
 		CorpoDeProvaService service = new CorpoDeProvaService();
 		ReportFactory rF = new ReportFactory();
 		rF.compresionTestReportViewByClient(service.findByClientId(id), client);
 	}
 
-	private void showCompresionTestForm(Stage parentStage) {
+	private void showCompresionTestForm(Stage parentStage) throws SQLException {
 		createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, this.entity,
 				"/gui/CompresionTestForm.css");
 		updateViewData();
@@ -389,19 +411,20 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		updateViewData();
 	}
 
-	private CompresionTest getCompresionTestFromTableView() {
+	private CompresionTest getCompresionTestFromTableView() throws SQLException {
 		CompresionTestList compresionTestList = tableViewClient.getSelectionModel().getSelectedItem();
 		CompresionTestService compresionTestService = new CompresionTestService();
 		if (compresionTestList == null) {
 			throw new NullPointerException("Ensayo vacío o no selecionado!");
 		}
-		CompresionTest compresionTest = compresionTestService.findByIdWithTimeZone(compresionTestList.getCompresionTestId(),
-				TimeZone.getDefault());
+		CompresionTest compresionTest = compresionTestService
+				.findByIdWithTimeZone(compresionTestList.getCompresionTestId(), TimeZone.getDefault());
 
 		return compresionTest;
 	}
 
-	private void createDialogFormCompresionTest(String absoluteName, Stage parentStage, CompresionTest obj, String css) {
+	private void createDialogFormCompresionTest(String absoluteName, Stage parentStage, CompresionTest obj,
+			String css) throws SQLException {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -439,18 +462,19 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				@Override
 				public void handle(WindowEvent we) {
 					if (controller.getChangesCount() > 0) {
-						Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acción", "Segura que desea cerrar?",
-								"Hay datos no guardados!!");
+						Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acción",
+								"Segura que desea cerrar?", "Hay datos no guardados!!");
 						if (result.get() != ButtonType.OK) {
 							we.consume();
 						}
 					}
 				}
 			});
-			
+
 			dialogStage.showAndWait();
-			
-			if (this.isNewDoc) this.isNewDoc = false;
+
+			if (this.isNewDoc)
+				this.isNewDoc = false;
 		} catch (IOException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
@@ -458,9 +482,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	}
 
 	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css, Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction, css,
-				icon, logger);
+			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
+			Image icon) {
+		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction,
+				css, icon, logger);
 	}
 
 	public void setCompresionTestListService(CompresionTestListService service) {

@@ -2,6 +2,7 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,29 +47,29 @@ import javafx.util.Callback;
 public class NewCompresionTestFormController implements Initializable {
 
 	private ClientService clientService;
-	
+
 	private CompresionTestService compresionTestService;
-	
+
 	private ConcreteDesignService concreteDesignService;
-	
+
 	private CompresionTest entity;
-	
+
 	private ObservableList<Cliente> obsList;
-	
+
 	private ObservableList<ConcreteDesign> obsListConcreteDesign;
-	
+
 	private List<DataChangeListener> dataChangeListener = new ArrayList<DataChangeListener>();
-	
+
 	private Boolean btCancelPressed;
-	
+
 	private LogUtils logger;
 
 	@FXML
 	private ComboBox<Cliente> comboBoxClient;
-	
+
 	@FXML
 	private ComboBox<Cliente> comboBoxConcreteProvider;
-	
+
 	@FXML
 	private ComboBox<ConcreteDesign> comboBoxConcreteDesign;
 
@@ -86,16 +87,16 @@ public class NewCompresionTestFormController implements Initializable {
 
 	@FXML
 	private Button btCancel;
-	
+
 	@FXML
 	private Button btSearchClient;
-	
+
 	@FXML
 	private Button btSearchConcreteProvider;
 
 	@FXML
 	private Label labelErrorClient;
-	
+
 	@FXML
 	private Label labelErrorConcreteProvider;
 
@@ -104,7 +105,7 @@ public class NewCompresionTestFormController implements Initializable {
 
 	@FXML
 	private Label labelErrorAddress;
-	
+
 	@FXML
 	private Label labelErrorConcreteDesign;
 
@@ -154,11 +155,11 @@ public class NewCompresionTestFormController implements Initializable {
 
 	@FXML
 	public void onBtCreateAction(ActionEvent event) {
-		try {			
+		try {
 
-		if (clientService == null || compresionTestService == null || concreteDesignService == null) {
-			throw new IllegalStateException("Service(s) was null");
-		}
+			if (clientService == null || compresionTestService == null || concreteDesignService == null) {
+				throw new IllegalStateException("Service(s) was null");
+			}
 			entity = getFormData();
 			compresionTestService.saveOrUpdate(entity);
 			notifyDataChangeListeners();
@@ -175,36 +176,50 @@ public class NewCompresionTestFormController implements Initializable {
 	@FXML
 	public void onBtCancelAction(ActionEvent event) {
 		this.btCancelPressed = true;
-		Utils.currentStage(event).close();	
+		Utils.currentStage(event).close();
 	}
-	
+
 	@FXML
-	public void onBtSearchClientAction (ActionEvent event) {
-		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/FindClientForm.fxml","Buscar Clientes" ,parentStage, 
-				(FindClientFormController controller) -> {
-					controller.setEntity(null);
-					controller.setService(new ClientService());
-				}, 
-				(FindClientFormController controller) -> {
-					if (controller.getEntity() != null) {
-						comboBoxClient.setValue(controller.getEntity());
-					}
-				});		
+	public void onBtSearchClientAction(ActionEvent event) {
+		var wrapper = new Object() {
+			ClientService clientService;
+		};
+		try {
+			wrapper.clientService = new ClientService();
+			Stage parentStage = Utils.currentStage(event);
+			createDialogForm("/gui/FindClientForm.fxml", "Buscar Clientes", parentStage,
+					(FindClientFormController controller) -> {
+						controller.setEntity(null);
+						controller.setService(wrapper.clientService);
+					}, (FindClientFormController controller) -> {
+						if (controller.getEntity() != null) {
+							comboBoxClient.setValue(controller.getEntity());
+						}
+					});
+		} catch (SQLException e) {
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		}
 	}
-	
-	public void onBtSearchConcreteProvider (ActionEvent event) {
-		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/FindClientForm.fxml","Buscar Clientes" ,parentStage, 
-				(FindClientFormController controller) -> {
-					controller.setEntity(null);
-					controller.setService(new ClientService());
-				}, 
-				(FindClientFormController controller) -> {
-					if (controller.getEntity() != null) {
-						comboBoxConcreteProvider.setValue(controller.getEntity());
-					}
-				});		
+
+	public void onBtSearchConcreteProvider(ActionEvent event) {
+		var wrapper = new Object() {
+			ClientService clientService;
+		};
+		try {
+			wrapper.clientService = new ClientService();
+			Stage parentStage = Utils.currentStage(event);
+			createDialogForm("/gui/FindClientForm.fxml", "Buscar Clientes", parentStage,
+					(FindClientFormController controller) -> {
+						controller.setEntity(null);
+						controller.setService(wrapper.clientService);
+					}, (FindClientFormController controller) -> {
+						if (controller.getEntity() != null) {
+							comboBoxConcreteProvider.setValue(controller.getEntity());
+						}
+					});
+		} catch (SQLException e) {
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	@Override
@@ -217,9 +232,9 @@ public class NewCompresionTestFormController implements Initializable {
 		initializeComboBoxes();
 		setButtonsGraphic();
 		formatButtons();
-		this.btCancelPressed = false;		
+		this.btCancelPressed = false;
 	}
-	
+
 	private void formatButtons() {
 		String safeButton = "safe-button";
 		btCancel.getStyleClass().add("dangerous-button");
@@ -227,23 +242,23 @@ public class NewCompresionTestFormController implements Initializable {
 		btSearchClient.getStyleClass().add(safeButton);
 		btSearchConcreteProvider.getStyleClass().add(safeButton);
 	}
-	
+
 	private void setButtonsGraphic() {
 		setButtonFindClientGraphic();
 	}
-	
+
 	private void setButtonFindClientGraphic() {
 		ImageView imgView = Utils.createImageView("/images/lupa.png", 15.0, 15.0);
-		btSearchClient.setGraphic(imgView);	
+		btSearchClient.setGraphic(imgView);
 		ImageView imgView2 = Utils.createImageView("/images/lupa.png", 15.0, 15.0);
 		btSearchConcreteProvider.setGraphic(imgView2);
 	}
-	
+
 	public void loadAssociatedObjects() {
 		loadAssociatedObjectsComboBoxClient();
 		loadAssociatedObjectsComboBoxConcreteDesign();
 	}
-	
+
 	private void loadAssociatedObjectsComboBoxConcreteDesign() {
 		if (concreteDesignService == null) {
 			throw new IllegalStateException("concreteDesignService was null");
@@ -252,8 +267,8 @@ public class NewCompresionTestFormController implements Initializable {
 		obsListConcreteDesign = FXCollections.observableArrayList(list);
 		comboBoxConcreteDesign.setItems(obsListConcreteDesign);
 	}
-	
-	private void loadAssociatedObjectsComboBoxClient () {
+
+	private void loadAssociatedObjectsComboBoxClient() {
 		if (clientService == null) {
 			throw new IllegalStateException("ClientService was null");
 		}
@@ -262,7 +277,7 @@ public class NewCompresionTestFormController implements Initializable {
 		comboBoxClient.setItems(obsList);
 		comboBoxConcreteProvider.setItems(obsList);
 	}
-	
+
 	private void initializeComboBoxes() {
 		initializeComboBoxClient();
 		initializeComboBoxConcreteDesign();
@@ -281,7 +296,7 @@ public class NewCompresionTestFormController implements Initializable {
 		comboBoxConcreteProvider.setCellFactory(factory);
 		comboBoxConcreteProvider.setButtonCell(factory.call(null));
 	}
-	
+
 	private void initializeComboBoxConcreteDesign() {
 		Callback<ListView<ConcreteDesign>, ListCell<ConcreteDesign>> factory = lv -> new ListCell<ConcreteDesign>() {
 			@Override
@@ -294,70 +309,69 @@ public class NewCompresionTestFormController implements Initializable {
 		comboBoxConcreteDesign.setButtonCell(factory.call(null));
 	}
 
+	private CompresionTest getFormData() {
 
-	private CompresionTest getFormData()  {
-		
 		CompresionTest obj = new CompresionTest();
-		
-		ValidationException exception =  new ValidationException("Validation error");
-		
+
+		ValidationException exception = new ValidationException("Validation error");
+
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
-		
+
 		if (comboBoxClient.getValue() == null) {
-			exception.addError("client","cliente vacío");
+			exception.addError("client", "cliente vacío");
 		}
 		obj.setClient(comboBoxClient.getValue());
-		
+
 		if (comboBoxConcreteProvider.getValue() == null) {
-			exception.addError("provider","Proveedor vacío");
+			exception.addError("provider", "Proveedor vacío");
 		}
 		obj.setConcreteProvider(comboBoxConcreteProvider.getValue());
-		
+
 		if (txtObra.getText() == null || txtObra.getText().trim().equals("")) {
-			exception.addError("obra","obra vacía");
+			exception.addError("obra", "obra vacía");
 		}
 		obj.setObra(txtObra.getText());
-		
+
 		if (txtAddress.getText() == null || txtAddress.getText().trim().equals("")) {
-			exception.addError("address","ubicación vacía");
+			exception.addError("address", "ubicación vacía");
 		}
 		obj.setAddress(txtAddress.getText());
-		
+
 		if (comboBoxConcreteDesign.getValue() == null) {
 			exception.addError("design", "diseño vacío");
 		}
 		obj.setConcreteDesign(comboBoxConcreteDesign.getValue());
-		
+
 		obj.setDate(new Date());
-		
+
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
-		
+
 		return obj;
 	}
 
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet(); // Set é conjunto
 
-		labelErrorObra.setText(fields.contains("obra") ? errors.get("obra") : "");		
+		labelErrorObra.setText(fields.contains("obra") ? errors.get("obra") : "");
 		labelErrorClient.setText(fields.contains("client") ? errors.get("client") : "");
 		labelErrorAddress.setText(fields.contains("address") ? errors.get("address") : "");
 		labelErrorConcreteDesign.setText(fields.contains("design") ? errors.get("design") : "");
 		labelErrorConcreteProvider.setText(fields.contains("provider") ? errors.get("provider") : "");
 
 	}
-	
-	public void subscribeDataChangeListener (DataChangeListener dataChangeListener) {
+
+	public void subscribeDataChangeListener(DataChangeListener dataChangeListener) {
 		this.dataChangeListener.add(dataChangeListener);
 	}
-	
-	private void notifyDataChangeListeners () {
+
+	private void notifyDataChangeListeners() {
 		dataChangeListener.forEach((DataChangeListener x) -> x.onDataChange());
 	}
 
-	private <T> void createDialogForm(String absoluteName,String title ,Stage parentStage, Consumer<T> initializingAction,
-			Consumer<T> finalAction) {
+	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
+			Consumer<T> initializingAction, Consumer<T> finalAction) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));

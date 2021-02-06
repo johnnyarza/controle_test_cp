@@ -2,6 +2,7 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,18 +28,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class MaterialRegistrationFormController implements Initializable {
@@ -81,15 +82,23 @@ public class MaterialRegistrationFormController implements Initializable {
 
 	@FXML
 	private void onBtAddProviderAction(ActionEvent event) {
-		Stage parentStage = Utils.currentStage(event);
-		Provider obj = new Provider();
-		
-		createDialogForm("/gui/ProviderRegistrationForm.fxml","Entre con los datos del Proveedor", parentStage, (ProviderRegistrationFormController controller) -> {
-			controller.setService(new ProviderService());
-			controller.setEntity(obj);
-			controller.setLogger(logger);
-		},"/gui/ProviderRegistrationForm.css");
-		loadAssociatedObjects();
+		var wrapper = new Object() {
+			public ProviderService providerService;
+		};
+		try {
+			Stage parentStage = Utils.currentStage(event);
+			Provider obj = new Provider();
+			wrapper.providerService = new ProviderService();
+			createDialogForm("/gui/ProviderRegistrationForm.fxml", "Entre con los datos del Proveedor", parentStage,
+					(ProviderRegistrationFormController controller) -> {
+						controller.setService(wrapper.providerService);
+						controller.setEntity(obj);
+						controller.setLogger(logger);
+					}, "/gui/ProviderRegistrationForm.css");
+			loadAssociatedObjects();
+		} catch (SQLException e) {
+			Alerts.showAlert("Erro", "SQLException", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	@FXML
@@ -234,16 +243,17 @@ public class MaterialRegistrationFormController implements Initializable {
 	public void initialize(URL url, ResourceBundle rb) {
 		initializeNodes();
 	}
-	
-	private <T> void createDialogForm(String absoluteName,String title, Stage parentStage,Consumer<T> initializingAction, String css) {
+
+	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
+			Consumer<T> initializingAction, String css) {
 		try {
-			
+
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
-		
+
 			T controller = loader.getController();
 			initializingAction.accept(controller);
-			
+
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle(title);
 			dialogStage.setScene(new Scene(pane));
@@ -254,10 +264,10 @@ public class MaterialRegistrationFormController implements Initializable {
 			dialogStage.initOwner(parentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.showAndWait();
-					
-		}catch (IOException e) {
+
+		} catch (IOException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error al cargar ventana",e.getMessage() , AlertType.ERROR);
+			Alerts.showAlert("Error", "Error al cargar ventana", e.getMessage(), AlertType.ERROR);
 		}
 	}
 }

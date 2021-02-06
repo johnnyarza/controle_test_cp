@@ -1,6 +1,7 @@
 package gui;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
@@ -73,13 +74,20 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 
 	@FXML
 	public void onBtNewAction(ActionEvent event) {
+		var wrapper = new Object() {
+			public MaterialService matService;
+			public ConcreteDesignService concreteDesignService;
+		};
 		try {
+			wrapper.concreteDesignService = new ConcreteDesignService();
+			wrapper.matService = new MaterialService();
+
 			ConcreteDesign obj = new ConcreteDesign();
 			Stage parentStage = Utils.currentStage(event);
 			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", "Insertar probeta", parentStage,
 					(ConcreteDesignRegistrationFormController controller) -> {
-						controller.setMaterialService(new MaterialService());
-						controller.setService(new ConcreteDesignService());
+						controller.setMaterialService(wrapper.matService);
+						controller.setService(wrapper.concreteDesignService);
 						controller.setEntity(obj);
 						controller.setLogger(logger);
 						controller.loadAssociatedObjects();
@@ -96,7 +104,13 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 
 	@FXML
 	public void onBtEditAction(ActionEvent event) {
+		var wrapper = new Object() {
+			public MaterialService matService;
+			public ConcreteDesignService concreteDesignService;
+		};
 		try {
+			wrapper.concreteDesignService = new ConcreteDesignService();
+			wrapper.matService = new MaterialService();
 
 			if (allowEditOrDelete(event))
 				throw new IllegalAccessError("Accesso denegado");
@@ -110,8 +124,8 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 
 			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", "Editar probeta", parentStage,
 					(ConcreteDesignRegistrationFormController controller) -> {
-						controller.setMaterialService(new MaterialService());
-						controller.setService(new ConcreteDesignService());
+						controller.setMaterialService(wrapper.matService);
+						controller.setService(wrapper.concreteDesignService);
 						controller.setEntity(obj);
 						controller.loadAssociatedObjects();
 						controller.updateFormData();
@@ -194,7 +208,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 
 	}
 
-	private boolean allowEditOrDelete(ActionEvent event) {
+	private boolean allowEditOrDelete(ActionEvent event) throws SQLException {
 		return Utils.isUserAdmin(event, logger);
 	}
 

@@ -1,10 +1,16 @@
 package application.service;
 
+import java.sql.SQLException;
+
 import application.dao.DaoFactory;
 import application.dao.MigrationDao;
 
 public class MigrationService {
-	private MigrationDao dao = DaoFactory.createMigrationDao();
+	private MigrationDao dao;
+
+	public MigrationService() throws SQLException {
+		this.dao = DaoFactory.createMigrationDao();
+	};
 
 	public void schemaMigration() {
 		dao.schemaMigration();

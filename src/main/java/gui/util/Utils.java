@@ -3,6 +3,7 @@ package gui.util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -21,6 +22,7 @@ import java.util.logging.Level;
 
 import application.domaim.CorpoDeProva;
 import application.log.LogUtils;
+import application.service.MigrationService;
 import application.service.UserService;
 import enums.LogEnum;
 import gui.CompresionTestFormController;
@@ -317,22 +319,25 @@ public class Utils {
 		}
 	}
 
-	public static boolean isUserAdmin(ActionEvent event, LogUtils logger) {
+	public static boolean isUserAdmin(ActionEvent event, LogUtils logger) throws SQLException {
+
 		Stage parentStage = Utils.currentStage(event);
 		var wrapper = new Object() {
+			public UserService userService;
 			private boolean isUserAdmin = true;
 
 			public void setIsUserAdmin(boolean bool) {
 				isUserAdmin = bool;
 			};
-			
+
 			public boolean getIsUserAdmin() {
 				return isUserAdmin;
 			}
 		};
+		wrapper.userService = new UserService();
 
 		Consumer<LoginFormController> initialCons = (LoginFormController loginFormController) -> {
-			loginFormController.setUserService(new UserService());
+			loginFormController.setUserService(wrapper.userService);
 			loginFormController.setEntity(null);
 			loginFormController.setIsLoggin(LogEnum.SIGNIN);
 			loginFormController.setLogger(logger);
@@ -349,10 +354,18 @@ public class Utils {
 
 		createDialogForm("/gui/LoginForm.fxml", "Login", parentStage, initialCons, windowEventCons, finalCons, "",
 				new Image(CompresionTestFormController.class.getResourceAsStream("/images/sign_in.png")), logger);
-		
-		return wrapper.getIsUserAdmin();
-	}
 
-	;
+		return wrapper.getIsUserAdmin();
+	};
+
+	private static void initiateTables() throws SQLException {
+		MigrationService service = new MigrationService();
+		try {
+			service.initiateDB();
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "Error al iniciar el DB", e.getMessage(), AlertType.ERROR);
+		}
+
+	}
 
 }

@@ -1,6 +1,7 @@
 package application.domaim;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +12,7 @@ import gui.util.Utils;
 public class MaterialProporcion implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private MaterialService materialService = new MaterialService();
+	private MaterialService materialService;
 
 	private Material mat1;
 	private Material mat2;
@@ -31,12 +32,11 @@ public class MaterialProporcion implements Serializable {
 	private Double mat7Qtt;
 	private Double mat8Qtt;
 
-	public MaterialProporcion() {
-	}
-
+	public MaterialProporcion() {};
+	
 	public MaterialProporcion(Material mat1, Material mat2, Material mat3, Material mat4, Material mat5, Material mat6,
 			Material mat7, Material mat8, Double mat1Qtt, Double mat2Qtt, Double mat3Qtt, Double mat4Qtt,
-			Double mat5Qtt, Double mat6Qtt, Double mat7Qtt, Double mat8Qtt) {
+			Double mat5Qtt, Double mat6Qtt, Double mat7Qtt, Double mat8Qtt) throws SQLException {
 		this.mat1 = mat1;
 		this.mat2 = mat2;
 		this.mat3 = mat3;
@@ -54,6 +54,8 @@ public class MaterialProporcion implements Serializable {
 		this.mat6Qtt = mat6Qtt;
 		this.mat7Qtt = mat7Qtt;
 		this.mat8Qtt = mat8Qtt;
+		
+		this.materialService = new MaterialService();
 	}
 
 	public Material getMat1() {

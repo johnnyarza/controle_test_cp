@@ -1,5 +1,7 @@
 package application.service;
 
+import java.sql.SQLException;
+
 import javax.security.auth.login.LoginException;
 
 import application.dao.UserDao;
@@ -8,7 +10,11 @@ import application.db.DB;
 import application.domaim.User;
 
 public class UserService {
-	private UserDao dao = new UserDaoJDBC(DB.getConnection());
+	private UserDao dao;
+
+	public UserService() throws SQLException {
+		this.dao =  new UserDaoJDBC(DB.getConnection());
+	}
 
 	public void saveOrInsert(User user) throws LoginException {
 		if (user.getId() != null) {
@@ -35,7 +41,7 @@ public class UserService {
 	public User findByNameAndPassword(User user) {
 		return dao.findByNameAndPassword(user);
 	}
-	
+
 	public User findByName(String name) {
 		return dao.findByName(name);
 	}

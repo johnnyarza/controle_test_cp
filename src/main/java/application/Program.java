@@ -5,19 +5,18 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import application.db.DB;
-import application.service.MigrationService;
+
 import application.util.EncriptaDecriptaApacheCodec;
 import application.util.FileUtils;
 import gui.util.Alerts;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.application.Platform;
 
 public class Program extends Application {
 
@@ -25,13 +24,15 @@ public class Program extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
+
 		try {
+
 			createConfigFiles();
 			if (!FileUtils.checkLicenseKey()) {
 				Alerts.showAlert("Error", "Código serial no válido", null, AlertType.ERROR);
 				Platform.exit();
 			}
-			
+
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainView.fxml"));
 			ScrollPane scrollPane = loader.load();
 
@@ -46,14 +47,11 @@ public class Program extends Application {
 			primaryStage.setTitle("Probeta Control");
 			primaryStage.show();
 
-			if (DB.testConnection()) {
-				initiateTables();
-			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 			Alerts.showAlert("Error", "Error al abrir ventana", e.getMessage(), AlertType.ERROR);
 		}
+
 	}
 
 	public static Scene getMainScene() {
@@ -62,16 +60,6 @@ public class Program extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
-
-	}
-
-	private static void initiateTables() {
-		MigrationService service = new MigrationService();
-		try {
-			service.initiateDB();
-		} catch (Exception e) {
-			Alerts.showAlert("Error", "Error al iniciar el DB", e.getMessage(), AlertType.ERROR);
-		}
 
 	}
 
@@ -95,7 +83,7 @@ public class Program extends Application {
 
 			FileUtils.writeProperties("db.properties", initialProps);
 		}
-		
+
 		if (!Paths.get(System.getProperty("user.home"), "cp_configs", "key.properties").toFile().isFile()) {
 			Map<String, String> initialProps = new HashMap<>();
 			initialProps.put("key", "");

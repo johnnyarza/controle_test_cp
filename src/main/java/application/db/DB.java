@@ -10,8 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import application.util.EncriptaDecriptaApacheCodec;
 import gui.util.Alerts;
@@ -21,29 +19,23 @@ public class DB {
 
 	private static Connection conn = null;
 
-	public static Boolean testConnection() {
+	public static Boolean testConnection() throws SQLException {
 		if (getConnection() == null) {
 			return false;
 		}
 		return true;
 	}
 
-	public static Connection getConnection() {
-		try {
-			if (conn == null) {
-				Properties props = loadProperties();
-				String url = props.getProperty("dburl");
-				DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
-				conn = DriverManager.getConnection(url, props);
-				ExecutorService ex = Executors.newFixedThreadPool(1);
-				conn.setNetworkTimeout(ex, 5000);
-				ex.shutdown();
-			}
-			return conn;
-		} catch (SQLException e) {
-			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
-			return null;
+	public static Connection getConnection() throws SQLException {
+
+		if (conn == null) {
+			Properties props = loadProperties();
+			String url = props.getProperty("dburl");
+			DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
+			conn = DriverManager.getConnection(url, props);
 		}
+		return conn;
+
 	}
 
 	public static void closeConnection() {
