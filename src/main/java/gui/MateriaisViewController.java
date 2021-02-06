@@ -5,6 +5,7 @@ import gui.util.Utils;
 
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -53,6 +54,8 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 
 	@FXML
 	private Button btPrint;
+	
+	private List<Button> buttons = Arrays.asList(btNew,btEdit,btDelete,btPrint);
 
 	@FXML
 	private TableView<Material> tableViewMaterial;
@@ -117,6 +120,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 					(MaterialRegistrationFormController controller) -> {
 						controller.setService(wrapper.materialService);
 						controller.setProviderService(wrapper.providerService);
+						controller.setLogger(logger);
 						controller.setEntity(obj);
 						controller.loadAssociatedObjects();
 						controller.updateFormData();
@@ -222,6 +226,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		initializeNodes();
+		Utils.setDisableButtons(buttons, true);
 
 	}
 

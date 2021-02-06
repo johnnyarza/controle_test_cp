@@ -28,7 +28,6 @@ import application.service.ProviderService;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.concurrent.Task;
-import javafx.concurrent.Worker;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -55,7 +54,7 @@ public class MainViewController implements Initializable {
 
 	private CompresionTest compresionTest;
 
-	private LogUtils logger;
+	private LogUtils logger = new LogUtils();
 
 	@FXML
 	private MenuItem BtTest;
@@ -287,9 +286,9 @@ public class MainViewController implements Initializable {
 
 	private void testConnection() {
 		List<MenuItem> buttons = Arrays.asList(BtTest, btDesign, btMaterial, btProvider, onBtClientAction);
-		Utils.setDisableButtons(buttons, true);				
+		Utils.setDisableButtons(buttons, true);
 		executor = Executors.newScheduledThreadPool(1);
-		
+
 		EventHandler<WorkerStateEvent> onFail = (WorkerStateEvent e) -> {
 			Alerts.showAlert("Error", "Error al conectar", testConnectionTask.getException().getMessage(),
 					AlertType.ERROR);
@@ -311,7 +310,8 @@ public class MainViewController implements Initializable {
 			@Override
 			protected Boolean call() throws Exception {
 				Boolean conected = DB.testConnection();
-				if (conected) Utils.initiateTables();
+				if (conected)
+					Utils.initiateTables();
 				return conected;
 			}
 		};
@@ -319,7 +319,7 @@ public class MainViewController implements Initializable {
 		Utils.setTaskEvents(testConnectionTask, onFail, e -> {
 			try {
 				Utils.setDisableButtons(buttons, !testConnectionTask.get());
-				
+
 			} catch (InterruptedException e1) {
 				logger.doLog(Level.WARNING, e1.getMessage(), e1);
 				Alerts.showAlert("InterruptedException", "Error de conexión", e1.getMessage(), AlertType.ERROR);

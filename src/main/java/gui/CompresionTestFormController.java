@@ -15,6 +15,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -42,6 +45,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -64,6 +68,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class CompresionTestFormController implements Initializable, DataChangeListener {
+	private Executor exec;
 
 	private ObservableList<CorpoDeProva> obsList;
 
@@ -589,6 +594,11 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		initializeNodes();
+		exec = Executors.newCachedThreadPool(runnable -> {
+			Thread t = new Thread(runnable);
+			t.setDaemon(true);
+			return t;
+		});
 	}
 
 	private void initializeNodes() {
@@ -674,12 +684,34 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		if (corpoDeProvaService == null) {
 			throw new IllegalStateException("Service was null");
 		}
-		List<CorpoDeProva> list = corpoDeProvaService.findByCompresionTestIdWithTimeZone(compresionTest.getId(),
-				TimeZone.getDefault());
-		obsList = FXCollections.observableArrayList(list);
-		tableViewCorpoDeProva.setItems(obsList);
-		Utils.formatCorpoDeProvaTableViewRowColor(tableViewCorpoDeProva);
-		tableViewCorpoDeProva.refresh();
+
+		Task<List<CorpoDeProva>> task = new Task<List<CorpoDeProva>>() {
+
+			@Override
+			protected List<CorpoDeProva> call() throws Exception {
+				return corpoDeProvaService.findByCompresionTestIdWithTimeZone(compresionTest.getId(),
+						TimeZone.getDefault());
+			}
+		};
+		
+		task.setOnSucceeded(e -> {
+			try {
+				tableViewCorpoDeProva.setItems(FXCollections.observableArrayList(task.get()));
+				Utils.formatCorpoDeProvaTableViewRowColor(tableViewCorpoDeProva);
+				tableViewCorpoDeProva.refresh();
+			} catch (ExecutionException | InterruptedException e1) {
+				logger.doLog(Level.WARNING, e1.getMessage(), e1);
+				Alerts.showAlert("Error", e1.getCause().toString(), e1.getMessage(), AlertType.ERROR);
+			}
+		});
+		exec.execute(task);
+
+//		List<CorpoDeProva> list = corpoDeProvaService.findByCompresionTestIdWithTimeZone(compresionTest.getId(),
+//				TimeZone.getDefault());
+//		obsList = FXCollections.observableArrayList(list);
+//		tableViewCorpoDeProva.setItems(obsList);
+//		Utils.formatCorpoDeProvaTableViewRowColor(tableViewCorpoDeProva);
+//		tableViewCorpoDeProva.refresh();
 	}
 
 	public void updateFormData() {
