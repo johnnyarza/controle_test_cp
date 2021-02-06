@@ -3,9 +3,13 @@ package gui;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -19,7 +23,7 @@ import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,9 +38,9 @@ import javafx.stage.Stage;
 
 public class ProveedoresViewController implements Initializable, DataChangeListener {
 
-	private ProviderService service;
+	private Executor exec;
 
-	private ObservableList<Provider> obsList;
+	private ProviderService service;
 
 	private LogUtils logger;
 
@@ -70,6 +74,8 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 	@FXML
 	private TableColumn<Provider, String> tableColumnEmail;
 
+	private List<Button> buttons = Arrays.asList(btNew, btEdit, btDelete, btPrint);
+
 	public void onBtNewAction(ActionEvent event) {
 		var wrapper = new Object() {
 			ProviderService providerService;
@@ -91,6 +97,9 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 					new Image(ProveedoresViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
 		} catch (SQLException e) {
 			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Erros desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -125,6 +134,9 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
 		} catch (SQLException e) {
 			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Erros desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -202,10 +214,26 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
 		}
-		List<Provider> list = service.findAll();
-		obsList = FXCollections.observableArrayList(list);
-		tableViewProvider.setItems(obsList);
-		tableViewProvider.refresh();
+		Task<List<Provider>> findAllProvidersTask = new Task<List<Provider>>() {
+
+			@Override
+			protected List<Provider> call() throws Exception {
+				return service.findAll();
+			}
+		};
+
+		findAllProvidersTask.setOnSucceeded(e -> {
+			try {
+				tableViewProvider.setItems(FXCollections.observableArrayList(findAllProvidersTask.get()));
+				tableViewProvider.refresh();
+				Utils.setDisableButtons(buttons, false);
+			} catch (ExecutionException | InterruptedException e1) {
+				logger.doLog(Level.WARNING, e1.getMessage(), e1);
+				Alerts.showAlert("Error", e1.getCause().toString(), e1.getMessage(), AlertType.ERROR);
+			}
+		});
+		exec.execute(findAllProvidersTask);
+
 	}
 
 	private void initializeNodes() {
@@ -231,6 +259,13 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		initializeNodes();
+		Utils.setDisableButtons(buttons, true);
+
+		exec = Executors.newCachedThreadPool(runnable -> {
+			Thread t = new Thread(runnable);
+			t.setDaemon(true);
+			return t;
+		});
 	}
 
 	@Override

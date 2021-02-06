@@ -27,27 +27,30 @@ import application.service.UserService;
 import enums.LogEnum;
 import gui.CompresionTestFormController;
 import gui.LoginFormController;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.StringConverter;
@@ -358,7 +361,7 @@ public class Utils {
 		return wrapper.getIsUserAdmin();
 	};
 
-	private static void initiateTables() throws SQLException {
+	public static void initiateTables() throws SQLException {
 		MigrationService service = new MigrationService();
 		try {
 			service.initiateDB();
@@ -367,5 +370,29 @@ public class Utils {
 		}
 
 	}
+
+	public static void setTaskEvents(Task<?> task, EventHandler<WorkerStateEvent> onFail,
+			EventHandler<WorkerStateEvent> onSuccess, EventHandler<WorkerStateEvent> onCancel) {
+		task.setOnFailed(onFail);
+		task.setOnSucceeded(onSuccess);
+		task.setOnCancelled(onCancel);
+	};
+
+	public static void setDisableButtons(List<?> buttonsList, Boolean disabled) {
+		
+		if (buttonsList.get(0) instanceof Button || buttonsList.get(0) instanceof MenuItem) {
+			buttonsList.forEach(e -> {
+				if (e instanceof Button) {
+					Button b = (Button) e;
+					b.setDisable(disabled);
+				}
+				;
+				if (e instanceof MenuItem) {
+					MenuItem b = (MenuItem) e;
+					b.setDisable(disabled);
+				}
+			});
+		}
+	};
 
 }

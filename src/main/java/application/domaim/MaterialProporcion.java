@@ -32,7 +32,9 @@ public class MaterialProporcion implements Serializable {
 	private Double mat7Qtt;
 	private Double mat8Qtt;
 
-	public MaterialProporcion() {};
+	public MaterialProporcion() throws SQLException {
+		this.materialService = new MaterialService();
+	};
 	
 	public MaterialProporcion(Material mat1, Material mat2, Material mat3, Material mat4, Material mat5, Material mat6,
 			Material mat7, Material mat8, Double mat1Qtt, Double mat2Qtt, Double mat3Qtt, Double mat4Qtt,

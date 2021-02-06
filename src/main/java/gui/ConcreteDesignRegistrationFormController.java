@@ -1,6 +1,7 @@
 package gui;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -156,6 +157,9 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		} catch (ValidationException e2) {
 			logger.doLog(Level.WARNING, e2.getMessage(), e2);
 			Alerts.showAlert("Error", "ValidationException", setErrorMessages(e2.getErrors()), AlertType.ERROR);
+		} catch (SQLException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -262,7 +266,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		this.entity = entity;
 	}
 
-	private ConcreteDesign getFormData() {
+	private ConcreteDesign getFormData() throws SQLException {
 
 		ConcreteDesign obj = new ConcreteDesign();
 		MaterialProporcion prop = instantiateMaterialProporcion();
@@ -337,7 +341,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		return repetead;
 	}
 
-	private MaterialProporcion instantiateMaterialProporcion() {
+	private MaterialProporcion instantiateMaterialProporcion() throws SQLException {
 		MaterialProporcion prop = new MaterialProporcion();
 
 		int i = 0;

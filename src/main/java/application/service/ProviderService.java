@@ -4,9 +4,9 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
+import application.dao.DaoFactory;
 import application.dao.ProviderDao;
 import application.db.DbException;
-import application.dao.DaoFactory;
 import application.domaim.Provider;
 
 public class ProviderService {
@@ -18,6 +18,7 @@ public class ProviderService {
 	public ProviderService () throws SQLException {
 		this.dao  = DaoFactory.createProviderDao();
 		this.materialService = new MaterialService();
+		
 	}
 
 	public List<Provider> findAll() {

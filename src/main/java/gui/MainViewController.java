@@ -3,15 +3,14 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -27,8 +26,12 @@ import application.service.CorpoDeProvaService;
 import application.service.MaterialService;
 import application.service.ProviderService;
 import gui.util.Alerts;
+import gui.util.Utils;
 import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -45,6 +48,8 @@ public class MainViewController implements Initializable {
 	private Executor exec;
 
 	private ScheduledExecutorService executor;
+
+	Task<Boolean> testConnectionTask;
 
 	private Boolean btCancelPressed;
 
@@ -280,10 +285,21 @@ public class MainViewController implements Initializable {
 
 	}
 
-	@Override
-	public void initialize(URL uri, ResourceBundle rb) {
-		BtTest.setDisable(true);
+	private void testConnection() {
+		List<MenuItem> buttons = Arrays.asList(BtTest, btDesign, btMaterial, btProvider, onBtClientAction);
+		Utils.setDisableButtons(buttons, true);				
 		executor = Executors.newScheduledThreadPool(1);
+		
+		EventHandler<WorkerStateEvent> onFail = (WorkerStateEvent e) -> {
+			Alerts.showAlert("Error", "Error al conectar", testConnectionTask.getException().getMessage(),
+					AlertType.ERROR);
+			logger.doLog(Level.WARNING, testConnectionTask.getException().getMessage(),
+					testConnectionTask.getException());
+		};
+		EventHandler<WorkerStateEvent> onCancel = (WorkerStateEvent e) -> {
+			Alerts.showAlert("Error", "Error de conexión", "Se agotó el tiempo de espera de la conexión",
+					AlertType.ERROR);
+		};
 
 		exec = Executors.newCachedThreadPool(runnable -> {
 			Thread t = new Thread(runnable);
@@ -291,37 +307,46 @@ public class MainViewController implements Initializable {
 			return t;
 		});
 
-		Task<Boolean> task = new Task<Boolean>() {
-
+		testConnectionTask = new Task<Boolean>() {
 			@Override
 			protected Boolean call() throws Exception {
-				return DB.testConnection();
+				Boolean conected = DB.testConnection();
+				if (conected) Utils.initiateTables();
+				return conected;
 			}
 		};
 
-		task.setOnFailed(e -> {
-			Alerts.showAlert("Error", "Error al conectar", task.getException().getMessage(), AlertType.ERROR);
-			task.getException().printStackTrace();
-		});
+		Utils.setTaskEvents(testConnectionTask, onFail, e -> {
+			try {
+				Utils.setDisableButtons(buttons, !testConnectionTask.get());
+				
+			} catch (InterruptedException e1) {
+				logger.doLog(Level.WARNING, e1.getMessage(), e1);
+				Alerts.showAlert("InterruptedException", "Error de conexión", e1.getMessage(), AlertType.ERROR);
+			} catch (ExecutionException e1) {
+				logger.doLog(Level.WARNING, e1.getMessage(), e1);
+				Alerts.showAlert("InterruptedException", "Error de conexión", e1.getMessage(), AlertType.ERROR);
 
-		task.setOnSucceeded(e -> System.out.println("ok"));
-		
-		task.setOnCancelled(e -> {
-			Alerts.showAlert("Error", "Error de conexión", "Se agotó el tiempo de espera de la conexión", AlertType.ERROR);
-		});
+			}
+		}, onCancel);
 
-		exec.execute(task);
+		exec.execute(testConnectionTask);
 
 		executor.schedule(new Runnable() {
 
 			@Override
 			public void run() {
-				task.cancel();
+				testConnectionTask.cancel();
 			}
 		}, 5, TimeUnit.SECONDS);
-		
-		executor.shutdown();
 
+		executor.shutdown();
+	};
+
+	@Override
+	public void initialize(URL uri, ResourceBundle rb) {
+
+		testConnection();
 	}
 
 }

@@ -19,7 +19,8 @@ public class DB {
 
 	private static Connection conn = null;
 
-	public static Boolean testConnection() throws SQLException {
+	public static Boolean testConnection() throws SQLException {		
+		
 		if (getConnection() == null) {
 			return false;
 		}
@@ -43,7 +44,6 @@ public class DB {
 			try {
 				conn.close();
 			} catch (SQLException e) {
-				// throw new DbException(e.getMessage());
 				Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
 			}
 		}
