@@ -3,6 +3,7 @@ package gui;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -56,6 +57,8 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 
 	@FXML
 	private Button btPrint;
+
+	private List<Button> buttons;
 
 	@FXML
 	private TableView<ConcreteDesign> tableViewConcreteDesing;
@@ -275,6 +278,10 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		initializeNodes();
+		//TODO do the same to the buttons of the other classes
+		buttons = Arrays.asList(btNew, btEdit, btDelete, btPrint);
+		Utils.setDisableButtons(buttons, true);
+
 	}
 
 	@Override

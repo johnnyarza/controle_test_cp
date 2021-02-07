@@ -1,14 +1,15 @@
 package gui;
 
 import java.net.URL;
-import gui.util.Utils;
-
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -21,8 +22,10 @@ import application.service.MaterialService;
 import application.service.ProviderService;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
+import gui.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,6 +39,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class MateriaisViewController implements Initializable, DataChangeListener {
+
+	private Executor exec;
 
 	MaterialService service;
 
@@ -54,8 +59,8 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 
 	@FXML
 	private Button btPrint;
-	
-	private List<Button> buttons = Arrays.asList(btNew,btEdit,btDelete,btPrint);
+
+	private List<Button> buttons = Arrays.asList(btNew, btEdit, btDelete, btPrint);
 
 	@FXML
 	private TableView<Material> tableViewMaterial;
@@ -217,10 +222,33 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		if (service == null) {
 			throw new NullPointerException("Material Service was null");
 		}
-		List<Material> list = service.findAll();
-		obsList = FXCollections.observableArrayList(list);
-		tableViewMaterial.setItems(obsList);
-		tableViewMaterial.refresh();
+
+		Task<List<Material>> task = new Task<List<Material>>() {
+
+			@Override
+			protected List<Material> call() throws Exception {
+				return service.findAll();
+			}
+		};
+		
+		Utils.setTaskEvents(task,e -> {
+			logger.doLog(Level.WARNING, task.getException().toString(), task.getException());
+			Alerts.showAlert("Error", task.getException().toString(), task.getException().getMessage(), AlertType.ERROR);
+		}, e -> {
+			try {
+				tableViewMaterial.setItems(FXCollections.observableArrayList(task.get()));
+			} catch (InterruptedException | ExecutionException e1) {
+				logger.doLog(Level.WARNING, e1.toString(), e1);
+				Alerts.showAlert("Error", e1.toString(), e1.getMessage(), AlertType.ERROR);			
+			}
+			tableViewMaterial.refresh();
+		}, e -> {
+			Alerts.showAlert("Error", "Error de conexión", "Se agotó el tiempo de espera de la conexión",
+					AlertType.ERROR);
+		
+		});
+
+		exec.execute(task);
 	}
 
 	@Override
@@ -228,6 +256,11 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		initializeNodes();
 		Utils.setDisableButtons(buttons, true);
 
+		exec = Executors.newCachedThreadPool(runnable -> {
+			Thread t = new Thread(runnable);
+			t.setDaemon(true);
+			return t;
+		});
 	}
 
 	private void initializeNodes() {
