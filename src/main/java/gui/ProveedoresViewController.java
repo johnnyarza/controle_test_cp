@@ -25,7 +25,6 @@ import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -37,6 +36,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import task.DBTask;
 
 public class ProveedoresViewController implements Initializable, DataChangeListener {
 
@@ -235,13 +235,9 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
 		}
-		Task<List<Provider>> findAllProvidersTask = new Task<List<Provider>>() {
 
-			@Override
-			protected List<Provider> call() throws Exception {
-				return service.findAll();
-			}
-		};
+		DBTask<ProviderService, List<Provider>> findAllProvidersTask = new DBTask<ProviderService, List<Provider>>(
+				service, service -> service.findAll());
 
 		findAllProvidersTask.setOnSucceeded(e -> {
 			try {
@@ -254,6 +250,7 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 			}
 		});
 		exec.execute(findAllProvidersTask);
+		
 
 	}
 

@@ -315,7 +315,7 @@ public class Utils {
 		finalAction.accept(controller);
 
 	}
-
+	
 	public static boolean isUserAdmin(ActionEvent event, LogUtils logger) throws SQLException, IOException {
 
 		Stage parentStage = Utils.currentStage(event);
@@ -388,5 +388,7 @@ public class Utils {
 			});
 		}
 	};
+
+
 
 }

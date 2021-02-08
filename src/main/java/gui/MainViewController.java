@@ -55,6 +55,8 @@ public class MainViewController implements Initializable {
 	private CompresionTest compresionTest;
 
 	private LogUtils logger = new LogUtils();
+	
+	List<MenuItem> buttons;
 
 	@FXML
 	private MenuItem BtTest;
@@ -285,8 +287,8 @@ public class MainViewController implements Initializable {
 	}
 
 	private void testConnection() {
-		List<MenuItem> buttons = Arrays.asList(BtTest, btDesign, btMaterial, btProvider, onBtClientAction);
-		Utils.setDisableButtons(buttons, true);
+		
+		
 		executor = Executors.newScheduledThreadPool(1);
 
 		EventHandler<WorkerStateEvent> onFail = (WorkerStateEvent e) -> {
@@ -299,13 +301,7 @@ public class MainViewController implements Initializable {
 			Alerts.showAlert("Error", "Error de conexión", "Se agotó el tiempo de espera de la conexión",
 					AlertType.ERROR);
 		};
-
-		exec = Executors.newCachedThreadPool(runnable -> {
-			Thread t = new Thread(runnable);
-			t.setDaemon(true);
-			return t;
-		});
-
+		
 		testConnectionTask = new Task<Boolean>() {
 			@Override
 			protected Boolean call() throws Exception {
@@ -330,6 +326,7 @@ public class MainViewController implements Initializable {
 			}
 		}, onCancel);
 
+
 		exec.execute(testConnectionTask);
 
 		executor.schedule(new Runnable() {
@@ -338,14 +335,22 @@ public class MainViewController implements Initializable {
 			public void run() {
 				testConnectionTask.cancel();
 			}
-		}, 5, TimeUnit.SECONDS);
+		}, 30, TimeUnit.SECONDS);
 
 		executor.shutdown();
 	};
 
 	@Override
 	public void initialize(URL uri, ResourceBundle rb) {
-
+		buttons = Arrays.asList(BtTest, btDesign, btMaterial, btProvider, onBtClientAction);
+		Utils.setDisableButtons(buttons, true);
+		
+		exec = Executors.newCachedThreadPool(runnable -> {
+			Thread t = new Thread(runnable);
+			t.setDaemon(true);
+			return t;
+		});
+		
 		testConnection();
 	}
 
