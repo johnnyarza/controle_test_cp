@@ -24,7 +24,7 @@ import net.sf.jasperreports.view.JasperViewer;
 
 public class CompresionTestReportByClient {
 
-	public static void viewReport(List<CorpoDeProva> list, Cliente client) {
+	public static void viewReport(List<CorpoDeProva> list, Cliente client) throws IOException,ReportException {
 		try {
 			List<Cliente> clientList = new ArrayList<Cliente>();
 			clientList.add(client);
@@ -48,9 +48,7 @@ public class CompresionTestReportByClient {
 
 		} catch (JRException e) {
 			throw new ReportException(e.getMessage());
-		} catch (IOException e1) {
-			throw new ReportException(e1.getMessage());
-		}
+		} 
 	}
 
 

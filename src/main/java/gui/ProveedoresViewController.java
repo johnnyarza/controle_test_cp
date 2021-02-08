@@ -1,5 +1,6 @@
 package gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -17,6 +18,7 @@ import application.Program;
 import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Provider;
+import application.exceptions.ReportException;
 import application.log.LogUtils;
 import application.service.ProviderService;
 import gui.listeners.DataChangeListener;
@@ -44,6 +46,8 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 
 	private LogUtils logger;
 
+	private String iconsDirPath = "/images/fileIcons/";
+
 	@FXML
 	private Button btNew;
 
@@ -55,6 +59,8 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 
 	@FXML
 	private Button btPrint;
+
+	private List<Button> buttons;
 
 	@FXML
 	private TableView<Provider> tableViewProvider;
@@ -74,8 +80,6 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 	@FXML
 	private TableColumn<Provider, String> tableColumnEmail;
 
-	private List<Button> buttons = Arrays.asList(btNew, btEdit, btDelete, btPrint);
-
 	public void onBtNewAction(ActionEvent event) {
 		var wrapper = new Object() {
 			ProviderService providerService;
@@ -85,16 +89,20 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 			Stage parentStage = Utils.currentStage(event);
 			Provider obj = new Provider();
 
-			createDialogForm("/gui/ProviderRegistrationForm.fxml", "Nuevo proveedor", parentStage,
+			Consumer<ProviderRegistrationFormController> initConsumer = (
+					ProviderRegistrationFormController controller) -> {
+				controller.setService(wrapper.providerService);
+				controller.setEntity(obj);
+				controller.setLogger(logger);
+				controller.subscribeDataChangeListener(this);
+			};
+
+			Image img = new Image(ProveedoresViewController.class.getResourceAsStream(iconsDirPath + "edit_file.png"));
+
+			Utils.createDialogForm("/gui/ProviderRegistrationForm.fxml", "Nuevo proveedor", parentStage, initConsumer,
 					(ProviderRegistrationFormController controller) -> {
-						controller.setService(wrapper.providerService);
-						controller.setEntity(obj);
-						controller.setLogger(logger);
-						controller.subscribeDataChangeListener(this);
 					}, (ProviderRegistrationFormController controller) -> {
-					}, (ProviderRegistrationFormController controller) -> {
-					}, "/gui/ProviderRegistrationForm.css",
-					new Image(ProveedoresViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
+					}, "/gui/ProviderRegistrationForm.css", img, logger);
 		} catch (SQLException e) {
 			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
@@ -111,21 +119,27 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 
 			if (allowEditOrDelete(event))
 				throw new IllegalAccessError("Accesso denegado");
-			wrapper.providerService = new ProviderService();
+
 			Stage parentStage = Utils.currentStage(event);
 			Provider obj = getProviderFromTableView();
+			Consumer<ProviderRegistrationFormController> initConsumer = (
+					ProviderRegistrationFormController controller) -> {
+				controller.setService(wrapper.providerService);
+				controller.setEntity(obj);
+				controller.setLogger(logger);
+				controller.updateFormData();
+				controller.subscribeDataChangeListener(this);
+			};
+			Consumer<ProviderRegistrationFormController> finalConsumer = (
+					ProviderRegistrationFormController controller) -> {
+			};
+			Image img = new Image(ProveedoresViewController.class.getResourceAsStream(iconsDirPath + "edit_file.png"));
+			wrapper.providerService = new ProviderService();
 
-			createDialogForm("/gui/ProviderRegistrationForm.fxml", "Editar proveedor", parentStage,
+			Utils.createDialogForm("/gui/ProviderRegistrationForm.fxml", "Editar proveedor", parentStage, initConsumer,
 					(ProviderRegistrationFormController controller) -> {
-						controller.setService(wrapper.providerService);
-						controller.setEntity(obj);
-						controller.setLogger(logger);
-						controller.updateFormData();
-						controller.subscribeDataChangeListener(this);
-					}, (ProviderRegistrationFormController controller) -> {
-					}, (ProviderRegistrationFormController controller) -> {
-					}, "/gui/ProviderRegistrationForm.css",
-					new Image(ProveedoresViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
+					}, finalConsumer, "/gui/ProviderRegistrationForm.css", img, logger);
+
 		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
@@ -134,6 +148,9 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
 		} catch (SQLException e) {
 			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Erros desconocído", e.getMessage(), AlertType.ERROR);
@@ -180,10 +197,21 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 	@FXML
 	public void onBtPrintAction() {
 		ReportFactory rF = new ReportFactory();
-		rF.providerReportView(tableViewProvider.getItems());
+		try {
+			rF.providerReportView(tableViewProvider.getItems());
+		} catch (ReportException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error al abrir reporte", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
-	private boolean allowEditOrDelete(ActionEvent event) throws SQLException {
+	private boolean allowEditOrDelete(ActionEvent event) throws SQLException, IOException {
 		return Utils.isUserAdmin(event, logger);
 	}
 
@@ -201,13 +229,6 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 
 	public void setLogger(LogUtils logger) {
 		this.logger = logger;
-	}
-
-	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
-			Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction,
-				css, icon, logger);
 	}
 
 	public void updateTableView() {
@@ -259,6 +280,7 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		initializeNodes();
+		buttons = Arrays.asList(btNew, btEdit, btDelete, btPrint);
 		Utils.setDisableButtons(buttons, true);
 
 		exec = Executors.newCachedThreadPool(runnable -> {

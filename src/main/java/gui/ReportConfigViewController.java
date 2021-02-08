@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import application.domaim.User;
@@ -116,7 +115,7 @@ public class ReportConfigViewController implements Initializable {
 		};
 		try {
 			wrapper.userService = new UserService();
-			createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
+			Utils.createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
 					(LoginFormController controller) -> {
 						controller.setIsLoggin(LogEnum.EDIT);
 						controller.setEntity(user);
@@ -129,9 +128,13 @@ public class ReportConfigViewController implements Initializable {
 						controller.setEntity(null);
 					}, (LoginFormController controller) -> {
 						setUser(controller.getEntity());
-					}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")));
+					}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")),
+					logger);
 		} catch (SQLException e) {
 			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
 		}
 	}
 
@@ -141,7 +144,7 @@ public class ReportConfigViewController implements Initializable {
 		};
 		try {
 			wrapper.userService = new UserService();
-			createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
+			Utils.createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
 					(LoginFormController controller) -> {
 						controller.setIsLoggin(LogEnum.SIGNUP);
 						controller.setEntity(null);
@@ -153,9 +156,13 @@ public class ReportConfigViewController implements Initializable {
 						controller.setEntity(null);
 					}, (LoginFormController controller) -> {
 						setUser(controller.getEntity());
-					}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")));
+					}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")),
+					logger);
 		} catch (SQLException e) {
 			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
 		}
 	}
 
@@ -165,7 +172,7 @@ public class ReportConfigViewController implements Initializable {
 		};
 		try {
 			wrapper.userService = new UserService();
-			createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
+			Utils.createDialogForm("/gui/LoginForm.fxml", "Entrar con credenciales", parentStage,
 					(LoginFormController controller) -> {
 						controller.setIsLoggin(LogEnum.SIGNIN);
 						controller.setEntity(null);
@@ -177,10 +184,14 @@ public class ReportConfigViewController implements Initializable {
 						controller.setEntity(null);
 					}, (LoginFormController controller) -> {
 						setUser(controller.getEntity());
-					}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")));
+					}, "", new Image(ReportConfigViewController.class.getResourceAsStream("/images/sign_in.png")),
+					logger);
 
 		} catch (SQLException e) {
 			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
 		}
 	}
 
@@ -286,13 +297,6 @@ public class ReportConfigViewController implements Initializable {
 		btCarimbo.setGraphic(imgView);
 		ImageView imgView2 = Utils.createImageView("/images/lupa.png", 15.0, 15.0);
 		btLogo.setGraphic(imgView2);
-	}
-
-	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
-			Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction,
-				css, icon, logger);
 	}
 
 	public String getLogoPath() {

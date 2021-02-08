@@ -22,7 +22,7 @@ import net.sf.jasperreports.view.JasperViewer;
 
 public class ConcreteDesignReport {
 
-	public static void viewConcreteDesignReport(List<ConcreteDesign> list) {
+	public static void viewConcreteDesignReport(List<ConcreteDesign> list) throws IOException,ReportException {
 		try {
 
 			JRBeanCollectionDataSource itemsJRBean = new JRBeanCollectionDataSource(list);
@@ -38,8 +38,6 @@ public class ConcreteDesignReport {
 			JasperViewer.viewReport(jasperPrint, false);
 
 		} catch (JRException e) {
-			throw new ReportException(e.getMessage());
-		} catch (IOException e) {
 			throw new ReportException(e.getMessage());
 		}
 	}

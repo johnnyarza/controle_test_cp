@@ -1,5 +1,6 @@
 package gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -7,7 +8,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 import application.Report.ReportFactory;
@@ -23,7 +26,7 @@ import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -42,7 +45,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 
 	private CompresionTestService compresionTestService;
 
-	private ObservableList<ConcreteDesign> obsList;
+	private Executor exec;
 
 	private LogUtils logger;
 
@@ -87,7 +90,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 
 			ConcreteDesign obj = new ConcreteDesign();
 			Stage parentStage = Utils.currentStage(event);
-			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", "Insertar probeta", parentStage,
+			Utils.createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", "Insertar probeta", parentStage,
 					(ConcreteDesignRegistrationFormController controller) -> {
 						controller.setMaterialService(wrapper.matService);
 						controller.setService(wrapper.concreteDesignService);
@@ -97,8 +100,12 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.subscribeDataChangeListener(this);
 					}, (ConcreteDesignRegistrationFormController controller) -> {
 					}, (ConcreteDesignRegistrationFormController controller) -> {
-					}, "/gui/ConcreteDesignRegistrationForm.css", new Image(
-							ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
+					}, "/gui/ConcreteDesignRegistrationForm.css",
+					new Image(ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/new_file.png")),
+					logger);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
@@ -112,20 +119,20 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 			public ConcreteDesignService concreteDesignService;
 		};
 		try {
+			ConcreteDesign obj = getFormData();
 			wrapper.concreteDesignService = new ConcreteDesignService();
 			wrapper.matService = new MaterialService();
 
 			if (allowEditOrDelete(event))
 				throw new IllegalAccessError("Accesso denegado");
 
-			ConcreteDesign obj = getFormData();
 			if (obj == null) {
 				throw new NullPointerException("ConcreteDesing was null");
 			}
 
 			Stage parentStage = Utils.currentStage(event);
 
-			createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", "Editar probeta", parentStage,
+			Utils.createDialogForm("/gui/ConcreteDesignRegistrationForm.fxml", "Editar probeta", parentStage,
 					(ConcreteDesignRegistrationFormController controller) -> {
 						controller.setMaterialService(wrapper.matService);
 						controller.setService(wrapper.concreteDesignService);
@@ -135,8 +142,11 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 						controller.subscribeDataChangeListener(this);
 					}, (ConcreteDesignRegistrationFormController controller) -> {
 					}, (ConcreteDesignRegistrationFormController controller) -> {
-					}, "/gui/ConcreteDesignRegistrationForm.css", new Image(
-							ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
+					}, "/gui/ConcreteDesignRegistrationForm.css",
+					new Image(
+							ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")),
+					logger);
+
 		} catch (IllegalStateException e) {
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
 		} catch (NullPointerException e) {
@@ -207,11 +217,17 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		} catch (ReportException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error al abrir reporte", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
 
-	private boolean allowEditOrDelete(ActionEvent event) throws SQLException {
+	private boolean allowEditOrDelete(ActionEvent event) throws SQLException, IOException {
 		return Utils.isUserAdmin(event, logger);
 	}
 
@@ -244,10 +260,33 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	}
 
 	public void updateTableView() {
-		List<ConcreteDesign> list = service.findAllConcreteDesign();
-		obsList = FXCollections.observableArrayList(list);
-		tableViewConcreteDesing.setItems(obsList);
-		tableViewConcreteDesing.refresh();
+		Task<List<ConcreteDesign>> task = new Task<List<ConcreteDesign>>() {
+
+			@Override
+			protected List<ConcreteDesign> call() throws Exception {
+				return service.findAllConcreteDesign();
+			}
+		};
+
+		Utils.setTaskEvents(task, e -> {
+			logger.doLog(Level.WARNING, task.getException().getMessage(), task.getException());
+			Alerts.showAlert("Error", task.getException().toString(), task.getException().getMessage(),
+					AlertType.ERROR);
+		}, e -> {
+			try {
+				tableViewConcreteDesing.setItems(FXCollections.observableArrayList(task.get()));
+				tableViewConcreteDesing.refresh();
+				Utils.setDisableButtons(buttons, false);
+			} catch (InterruptedException | ExecutionException e1) {
+				logger.doLog(Level.WARNING, e1.getMessage(), e1);
+				Alerts.showAlert("Error", e1.toString(), e1.getMessage(), AlertType.ERROR);
+			}
+		}, e -> {
+			logger.doLog(Level.WARNING, task.getException().getMessage(), task.getException());
+			Alerts.showAlert("Error", task.getException().toString(), task.getException().getMessage(),
+					AlertType.ERROR);
+		});
+		exec.execute(task);
 	}
 
 	private void initializeNodes() {
@@ -268,20 +307,17 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		}
 	}
 
-	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
-			Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction,
-				css, icon, logger);
-	}
-
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		initializeNodes();
-		//TODO do the same to the buttons of the other classes
 		buttons = Arrays.asList(btNew, btEdit, btDelete, btPrint);
 		Utils.setDisableButtons(buttons, true);
 
+		exec = Executors.newCachedThreadPool(runnable -> {
+			Thread t = new Thread(runnable);
+			t.setDaemon(true);
+			return t;
+		});
 	}
 
 	@Override

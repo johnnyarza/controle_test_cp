@@ -1,5 +1,6 @@
 package gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -14,11 +15,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import org.joda.time.DateTimeComparator;
@@ -45,7 +44,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -66,6 +64,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import task.DBTask;
 
 public class CompresionTestFormController implements Initializable, DataChangeListener {
 	private Executor exec;
@@ -228,7 +227,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			obj.setId(null);
 			obj.setCompresionTest(compresionTest);
 
-			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", "Copiar Probeta", parentStage,
+			Utils.createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", "Copiar Probeta", parentStage,
 					(CorpoDeProvaRegistrationController controller) -> {
 						try {
 							controller.setCorpoDeProvaService(new CorpoDeProvaService());
@@ -242,12 +241,19 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 						controller.subscribeDataChangeListener(this);
 					}, (CorpoDeProvaRegistrationController controller) -> {
 					}, (CorpoDeProvaRegistrationController controller) -> {
-					}, "/gui/CompresionTestForm.css", new Image(
-							CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
+					}, "/gui/CompresionTestForm.css",
+					new Image(CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/new_file.png")),
+					logger);
 
 		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconcído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -256,21 +262,23 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		Stage parentStage = Utils.currentStage(event);
 		try {
 			if (isLocked) {
-				createDialogForm("/gui/LoginForm.fxml", "Login", parentStage, (LoginFormController controller) -> {
-					try {
-						controller.setUserService(new UserService());
-					} catch (SQLException e) {
-						Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
-					}
-					controller.setEntity(null);
-					controller.setIsLoggin(LogEnum.SIGNIN);
-					controller.setLogger(logger);
-					controller.setTitleLabel("Entrar con datos del administrador");
-				}, (LoginFormController controller) -> {
-					controller.setEntity(null);
-				}, (LoginFormController controller) -> {
-					isLocked = controller.getEntity() == null ? true : false;
-				}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/sign_in.png")));
+				Utils.createDialogForm("/gui/LoginForm.fxml", "Login", parentStage,
+						(LoginFormController controller) -> {
+							try {
+								controller.setUserService(new UserService());
+							} catch (SQLException e) {
+								Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+							}
+							controller.setEntity(null);
+							controller.setIsLoggin(LogEnum.SIGNIN);
+							controller.setLogger(logger);
+							controller.setTitleLabel("Entrar con datos del administrador");
+						}, (LoginFormController controller) -> {
+							controller.setEntity(null);
+						}, (LoginFormController controller) -> {
+							isLocked = controller.getEntity() == null ? true : false;
+						}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/sign_in.png")),
+						logger);
 			} else {
 				isLocked = true;
 			}
@@ -278,74 +286,133 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			setLockButtonStyle();
 			setNodesDisable();
 
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
 		} catch (Exception e) {
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconcído", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
 
 	@FXML
 	private void onBtSearchClientAction(ActionEvent event) {
-		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/FindClientForm.fxml", "Busca Cliente", parentStage,
-				(FindClientFormController controller) -> {
-					controller.setEntity(null);
-					try {
-						controller.setService(new ClientService());
-					} catch (SQLException e) {
-						Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
-					}
-				}, (FindClientFormController controller) -> {
-					controller.setEntity(null);
-				}, (FindClientFormController controller) -> {
-					if (controller.getEntity() != null) {
-						comboBoxClient.setValue(controller.getEntity());
-					}
-				}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/lupa.png")));
+		var wrapper = new Object() {
+			private ClientService clientService;
+
+			public void setClientService(ClientService clientService) {
+				this.clientService = clientService;
+			}
+
+			public ClientService getClientService() {
+				return this.clientService;
+			}
+		};
+		try {
+			wrapper.setClientService(new ClientService());
+			Stage parentStage = Utils.currentStage(event);
+			Utils.createDialogForm("/gui/FindClientForm.fxml", "Busca Cliente", parentStage,
+					(FindClientFormController controller) -> {
+						controller.setEntity(null);
+						controller.setService(wrapper.getClientService());
+					}, (FindClientFormController controller) -> {
+						controller.setEntity(null);
+					}, (FindClientFormController controller) -> {
+						if (controller.getEntity() != null) {
+							comboBoxClient.setValue(controller.getEntity());
+						}
+					}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/lupa.png")),
+					logger);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
+		} catch (SQLException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error en de conexión", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconcído", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	@FXML
 	public void onBtSearchConcreteProviderAction(ActionEvent event) {
-		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/FindClientForm.fxml", "Busca Cliente", parentStage,
-				(FindClientFormController controller) -> {
-					controller.setEntity(null);
-					try {
-						controller.setService(new ClientService());
-					} catch (SQLException e) {
-						Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
-					}
-				}, (FindClientFormController controller) -> {
-					controller.setEntity(null);
-				}, (FindClientFormController controller) -> {
-					if (controller.getEntity() != null) {
-						comboBoxConcreteProvider.setValue(controller.getEntity());
-					}
-				}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/lupa.png")));
+		var wrapper = new Object() {
+			private ClientService clientService;
+
+			public void setClientService(ClientService clientService) {
+				this.clientService = clientService;
+			}
+
+			public ClientService getClientService() {
+				return this.clientService;
+			}
+		};
+		try {
+			wrapper.setClientService(new ClientService());
+			Stage parentStage = Utils.currentStage(event);
+			Utils.createDialogForm("/gui/FindClientForm.fxml", "Busca Cliente", parentStage,
+					(FindClientFormController controller) -> {
+						controller.setEntity(null);
+						controller.setService(wrapper.getClientService());
+					}, (FindClientFormController controller) -> {
+						controller.setEntity(null);
+					}, (FindClientFormController controller) -> {
+						if (controller.getEntity() != null) {
+							comboBoxConcreteProvider.setValue(controller.getEntity());
+						}
+					}, "", new Image(CompresionTestFormController.class.getResourceAsStream("/images/lupa.png")),
+					logger);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
+		} catch (SQLException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error en de conexión", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconcído", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	@FXML
 	private void onBtInserirProbetaAction(ActionEvent event) {
+		var wrapper = new Object() {
+			private CorpoDeProvaService corpoDeProvaService;
+
+			public void setCorpoDeProvaService(CorpoDeProvaService corpoDeProvaService) {
+				this.corpoDeProvaService = corpoDeProvaService;
+			}
+
+			public CorpoDeProvaService getCorpoDeProvaService() {
+				return this.corpoDeProvaService;
+			}
+		};
 		try {
+			wrapper.setCorpoDeProvaService(new CorpoDeProvaService());
 			Stage parentStage = Utils.currentStage(event);
 			CorpoDeProva obj = new CorpoDeProva();
 			obj.setCompresionTest(compresionTest);
 
-			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", "Inserir Probeta", parentStage,
+			Utils.createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", "Inserir Probeta", parentStage,
 					(CorpoDeProvaRegistrationController controller) -> {
-						try {
-							controller.setCorpoDeProvaService(new CorpoDeProvaService());
-						} catch (SQLException e) {
-							Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
-						}
+						controller.setCorpoDeProvaService(wrapper.getCorpoDeProvaService());
 						controller.setLogger(logger);
 						controller.setCorpoDeProva(obj);
 						controller.setIsLocked(isLocked);
 						controller.subscribeDataChangeListener(this);
 					}, (CorpoDeProvaRegistrationController controller) -> {
 					}, (CorpoDeProvaRegistrationController controller) -> {
-					}, "/gui/CompresionTestForm.css", new Image(
-							CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
+					}, "/gui/CompresionTestForm.css",
+					new Image(CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/new_file.png")),
+					logger);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
+		} catch (SQLException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error en de conexión", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
@@ -354,7 +421,19 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private void onBtEditarProbetaAction(ActionEvent event) {
+		var wrapper = new Object() {
+			private CorpoDeProvaService corpoDeProvaService;
+
+			public void setCorpoDeProvaService(CorpoDeProvaService corpoDeProvaService) {
+				this.corpoDeProvaService = corpoDeProvaService;
+			}
+
+			public CorpoDeProvaService getCorpoDeProvaService() {
+				return this.corpoDeProvaService;
+			}
+		};
 		try {
+			wrapper.setCorpoDeProvaService(new CorpoDeProvaService());
 			Stage parentStage = Utils.currentStage(event);
 			CorpoDeProva obj = getCorpoDeProvaView();
 
@@ -366,13 +445,9 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 				throw new IllegalAccessException("Probeta Retrasada. El administrador debe desbloquear el documento!");
 			}
 
-			createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", "Editar Probeta", parentStage,
+			Utils.createDialogForm("/gui/CorpoDeProvaRegistrationForm.fxml", "Editar Probeta", parentStage,
 					(CorpoDeProvaRegistrationController controller) -> {
-						try {
-							controller.setCorpoDeProvaService(new CorpoDeProvaService());
-						} catch (SQLException e) {
-							Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
-						}
+						controller.setCorpoDeProvaService(wrapper.getCorpoDeProvaService());
 						controller.setLogger(logger);
 						controller.setCorpoDeProva(obj);
 						controller.updateFormData();
@@ -381,13 +456,24 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 						controller.subscribeDataChangeListener(this);
 					}, (CorpoDeProvaRegistrationController controller) -> {
 					}, (CorpoDeProvaRegistrationController controller) -> {
-					}, "/gui/CompresionTestForm.css", new Image(
-							CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
+					}, "/gui/CompresionTestForm.css",
+					new Image(
+							CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/edit_file.png")),
+					logger);
 		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		} catch (IllegalAccessException e) {
 			Alerts.showAlert("Error", "Acceso denegado", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
+		} catch (SQLException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error en de conexión", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconcído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -404,7 +490,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			}
 		} catch (DbException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error deleting probeta", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error al apagar probeta", e.getMessage(), AlertType.ERROR);
 		} catch (NullPointerException e1) {
 			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "NullPointerException", e1.getMessage(), AlertType.ERROR);
@@ -459,23 +545,38 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			rF.compresionTestReportView(list, this.compresionTest);
 		} catch (ReportException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error al abrir el reporte", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error al abrir reporte", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
 
 	@FXML
 	private void onBtFilterAction(ActionEvent event) {
-		try {
-			Stage parentStage = Utils.currentStage(event);
+		var wrapper = new Object() {
+			private CorpoDeProvaService corpoDeProvaService;
 
-			createDialogForm("/gui/CorpoDeProvaFilterForm.fxml", "Filtrar Probetas por Fecha", parentStage,
+			public void setCorpoDeProvaService(CorpoDeProvaService corpoDeProvaService) {
+				this.corpoDeProvaService = corpoDeProvaService;
+			}
+
+			public CorpoDeProvaService getCorpoDeProvaService() {
+				return this.corpoDeProvaService;
+			}
+		};
+		try {
+			wrapper.setCorpoDeProvaService(new CorpoDeProvaService());
+			Stage parentStage = Utils.currentStage(event);
+			Image img = new Image(CompresionTestFormController.class.getResourceAsStream("/images/filter_on.png"));
+
+			Utils.createDialogForm("/gui/CorpoDeProvaFilterForm.fxml", "Filtrar Probetas por Fecha", parentStage,
 					(CorpoDeProvaFilterFormController controller) -> {
-						try {
-							controller.setService(new CorpoDeProvaService());
-						} catch (SQLException e) {
-							Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
-						}
+						controller.setService(wrapper.getCorpoDeProvaService());
 						controller.setCompresionTest(this.compresionTest);
 					}, (CorpoDeProvaFilterFormController controller) -> {
 						controller.setIsCancelButtonPressed(true);
@@ -483,13 +584,18 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 						if (!controller.getIsCancelButtonPressed()) {
 							obsList = controller.getObsList();
 						}
-					}, "/gui/GlobalStyle.css",
-					new Image(CompresionTestFormController.class.getResourceAsStream("/images/filter_on.png")));
+					}, "/gui/GlobalStyle.css", img, logger);
 			tableViewCorpoDeProva.setItems(this.obsList);
 			tableViewCorpoDeProva.refresh();
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
+		} catch (SQLException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error en de conexión", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconcído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -684,16 +790,10 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		if (corpoDeProvaService == null) {
 			throw new IllegalStateException("Service was null");
 		}
+		//TODO create DBTask the others classes
+		DBTask<CorpoDeProvaService, List<CorpoDeProva>> task = new DBTask<CorpoDeProvaService, List<CorpoDeProva>>(
+				corpoDeProvaService, corpoDeProvaService -> corpoDeProvaService.findAll());
 
-		Task<List<CorpoDeProva>> task = new Task<List<CorpoDeProva>>() {
-
-			@Override
-			protected List<CorpoDeProva> call() throws Exception {
-				return corpoDeProvaService.findByCompresionTestIdWithTimeZone(compresionTest.getId(),
-						TimeZone.getDefault());
-			}
-		};
-		
 		task.setOnSucceeded(e -> {
 			try {
 				tableViewCorpoDeProva.setItems(FXCollections.observableArrayList(task.get()));
@@ -706,12 +806,6 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		});
 		exec.execute(task);
 
-//		List<CorpoDeProva> list = corpoDeProvaService.findByCompresionTestIdWithTimeZone(compresionTest.getId(),
-//				TimeZone.getDefault());
-//		obsList = FXCollections.observableArrayList(list);
-//		tableViewCorpoDeProva.setItems(obsList);
-//		Utils.formatCorpoDeProvaTableViewRowColor(tableViewCorpoDeProva);
-//		tableViewCorpoDeProva.refresh();
 	}
 
 	public void updateFormData() {
@@ -783,13 +877,6 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		List<ConcreteDesign> list = concreteDesignService.findAllConcreteDesign();
 		obsListConcreteDesign = FXCollections.observableArrayList(list);
 		comboBoxConcreteDesign.setItems(obsListConcreteDesign);
-	}
-
-	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
-			Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction,
-				css, icon, logger);
 	}
 
 	private CorpoDeProva getCorpoDeProvaView() {

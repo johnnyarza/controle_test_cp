@@ -27,7 +27,7 @@ import net.sf.jasperreports.view.JasperViewer;
 public class CompresionTestReport {
 	
 
-	public static void viewReport (List<CorpoDeProva> list,CompresionTest cTest) {
+	public static void viewReport (List<CorpoDeProva> list,CompresionTest cTest) throws IOException,ReportException {
 		try {
 			if (list.size() == 0) {
 				throw new JRException("No hay probetas para imprimir");
@@ -62,9 +62,7 @@ public class CompresionTestReport {
 
 		} catch (JRException e) {
 			throw new ReportException(e.getMessage());
-		} catch (IOException e1) {
-			throw new ReportException(e1.getMessage());
-		}
+		} 
 	}
 	
 	private static List<CompresionTestChartData> compresionTestChartData(List<CorpoDeProva> list) {

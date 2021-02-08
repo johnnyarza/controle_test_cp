@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
 import application.domaim.CorpoDeProva;
 import application.log.LogUtils;
@@ -282,47 +281,42 @@ public class Utils {
 
 	public static <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
 			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
-			Image icon, LogUtils logger) {
-		try {
+			Image icon, LogUtils logger) throws IOException {
 
-			FXMLLoader loader = new FXMLLoader(Utils.class.getResource(absoluteName));
-			AnchorPane pane = loader.load();
+		FXMLLoader loader = new FXMLLoader(Utils.class.getResource(absoluteName));
+		AnchorPane pane = loader.load();
 
-			T controller = loader.getController();
-			initializingAction.accept(controller);
+		T controller = loader.getController();
+		initializingAction.accept(controller);
 
-			Stage dialogStage = new Stage();
+		Stage dialogStage = new Stage();
 
-			dialogStage.getIcons().add(icon);
-			dialogStage.setTitle(title);
-			dialogStage.setScene(new Scene(pane));
-			dialogStage.getScene().getStylesheets().add("/gui/GlobalStyle.css");
-			if (!css.trim().equals("")) {
-				dialogStage.getScene().getStylesheets().add(css);
-			}
-			dialogStage.setResizable(true);
-			dialogStage.initOwner(parentStage);
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-
-			dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
-				@Override
-				public void handle(WindowEvent we) {
-					windowEventAction.accept(controller);
-
-				}
-			});
-
-			dialogStage.showAndWait();
-			finalAction.accept(controller);
-
-		} catch (IOException e) {
-			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
+		dialogStage.getIcons().add(icon);
+		dialogStage.setTitle(title);
+		dialogStage.setScene(new Scene(pane));
+		dialogStage.getScene().getStylesheets().add("/gui/GlobalStyle.css");
+		if (!css.trim().equals("")) {
+			dialogStage.getScene().getStylesheets().add(css);
 		}
+		dialogStage.setResizable(true);
+		dialogStage.initOwner(parentStage);
+		dialogStage.initModality(Modality.WINDOW_MODAL);
+
+		dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+			@Override
+			public void handle(WindowEvent we) {
+				windowEventAction.accept(controller);
+
+			}
+		});
+
+		dialogStage.showAndWait();
+		finalAction.accept(controller);
+
 	}
 
-	public static boolean isUserAdmin(ActionEvent event, LogUtils logger) throws SQLException {
+	public static boolean isUserAdmin(ActionEvent event, LogUtils logger) throws SQLException, IOException {
 
 		Stage parentStage = Utils.currentStage(event);
 		var wrapper = new Object() {
@@ -379,7 +373,7 @@ public class Utils {
 	};
 
 	public static void setDisableButtons(List<?> buttonsList, Boolean disabled) {
-		
+
 		if (buttonsList.get(0) instanceof Button || buttonsList.get(0) instanceof MenuItem) {
 			buttonsList.forEach(e -> {
 				if (e instanceof Button) {

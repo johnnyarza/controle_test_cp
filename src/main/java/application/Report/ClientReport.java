@@ -24,7 +24,7 @@ public class ClientReport {
 
 
 
-	public static void viewClientReport(List<Cliente> clientsList) {
+	public static void viewClientReport(List<Cliente> clientsList) throws IOException {
 		try {
 			if (clientsList.size() == 0) {
 				throw new JRException("Lista de clientes vacía");
@@ -47,9 +47,7 @@ public class ClientReport {
 		
 
 		} catch (JRException e) {
-			throw new ReportException(e.getMessage());
-		} catch (IOException e1) {
-			throw new ReportException(e1.getMessage());
+			throw new ReportException("Error al cargar reporte");
 		}
 	}
 }

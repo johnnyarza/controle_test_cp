@@ -23,7 +23,7 @@ import net.sf.jasperreports.view.JasperViewer;
 public class MaterialReport {
 
 
-	public static void viewMaterialReport(List<Material> materialsList) {
+	public static void viewMaterialReport(List<Material> materialsList) throws IOException,ReportException {
 		try {
 			if (materialsList.size() == 0) {
 				throw new JRException("Lista de materiales vacía");
@@ -45,8 +45,6 @@ public class MaterialReport {
 
 		} catch (JRException e) {
 			throw new ReportException(e.getMessage());
-		} catch (IOException e1) {
-			throw new ReportException(e1.getMessage());
-		}
+		} 
 	}
 }

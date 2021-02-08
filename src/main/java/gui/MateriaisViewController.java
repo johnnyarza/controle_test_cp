@@ -1,5 +1,6 @@
 package gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -10,13 +11,13 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Material;
 import application.domaim.Provider;
+import application.exceptions.ReportException;
 import application.log.LogUtils;
 import application.service.MaterialService;
 import application.service.ProviderService;
@@ -60,7 +61,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 	@FXML
 	private Button btPrint;
 
-	private List<Button> buttons = Arrays.asList(btNew, btEdit, btDelete, btPrint);
+	private List<Button> buttons;
 
 	@FXML
 	private TableView<Material> tableViewMaterial;
@@ -85,23 +86,26 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		try {
 			wrapper.materialService = new MaterialService();
 			wrapper.providerService = new ProviderService();
+			Utils.createDialogForm("/gui/MaterialRegistrationForm.fxml", "Nuevo material", parentStage,
+					(MaterialRegistrationFormController controller) -> {
+						controller.setService(wrapper.materialService);
+						controller.setProviderService(wrapper.providerService);
+						controller.setEntity(obj);
+						controller.setLogger(logger);
+						controller.loadAssociatedObjects();
+						controller.subscribeDataChangeListener(this);
+					}, (MaterialRegistrationFormController controller) -> {
+					}, (MaterialRegistrationFormController controller) -> {
+					}, "/gui/MaterialRegistrationForm.css",
+					new Image(MateriaisViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")),
+					logger);
 
 		} catch (SQLException e) {
 			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
 		}
-		;
-		createDialogForm("/gui/MaterialRegistrationForm.fxml", "Nuevo material", parentStage,
-				(MaterialRegistrationFormController controller) -> {
-					controller.setService(wrapper.materialService);
-					controller.setProviderService(wrapper.providerService);
-					controller.setEntity(obj);
-					controller.setLogger(logger);
-					controller.loadAssociatedObjects();
-					controller.subscribeDataChangeListener(this);
-				}, (MaterialRegistrationFormController controller) -> {
-				}, (MaterialRegistrationFormController controller) -> {
-				}, "/gui/MaterialRegistrationForm.css",
-				new Image(MateriaisViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
 	}
 
 	@FXML
@@ -121,7 +125,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 			if (allowEditOrDelete(event))
 				throw new IllegalAccessError("Accesso denegado");
 
-			createDialogForm("/gui/MaterialRegistrationForm.fxml", "Editar material", parentStage,
+			Utils.createDialogForm("/gui/MaterialRegistrationForm.fxml", "Editar material", parentStage,
 					(MaterialRegistrationFormController controller) -> {
 						controller.setService(wrapper.materialService);
 						controller.setProviderService(wrapper.providerService);
@@ -133,13 +137,17 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 					}, (MaterialRegistrationFormController controller) -> {
 					}, (MaterialRegistrationFormController controller) -> {
 					}, "/gui/MaterialRegistrationForm.css",
-					new Image(MateriaisViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")));
+					new Image(MateriaisViewController.class.getResourceAsStream("/images/fileIcons/edit_file.png")),
+					logger);
 		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		} catch (IllegalAccessError e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
@@ -174,22 +182,38 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		} catch (SQLIntegrityConstraintViolationException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "SQLIntegrityConstraintViolationException", e.getMessage(), AlertType.ERROR);
 		} catch (IllegalAccessError e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
-			e.printStackTrace();
 		} catch (SQLException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
 		}
 	}
 
 	@FXML
 	private void onBtPrintAction() {
 		ReportFactory rF = new ReportFactory();
-		rF.materialReportView(tableViewMaterial.getItems());
+		try {
+			rF.materialReportView(tableViewMaterial.getItems());
+		} catch (ReportException e) {
+			Alerts.showAlert("Error", "Error al crear reporte!", e.getMessage(), AlertType.ERROR);
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+		} catch (IOException e) {
+			Alerts.showAlert("Error", "Error al abrir ventana", e.getMessage(), AlertType.ERROR);
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+		}catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconcído", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
-	private boolean allowEditOrDelete(ActionEvent event) throws SQLException {
+	private boolean allowEditOrDelete(ActionEvent event) throws SQLException, IOException {
 		return Utils.isUserAdmin(event, logger);
 	}
 
@@ -230,22 +254,24 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 				return service.findAll();
 			}
 		};
-		
-		Utils.setTaskEvents(task,e -> {
+
+		Utils.setTaskEvents(task, e -> {
 			logger.doLog(Level.WARNING, task.getException().toString(), task.getException());
-			Alerts.showAlert("Error", task.getException().toString(), task.getException().getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", task.getException().toString(), task.getException().getMessage(),
+					AlertType.ERROR);
 		}, e -> {
 			try {
 				tableViewMaterial.setItems(FXCollections.observableArrayList(task.get()));
+				Utils.setDisableButtons(buttons, false);
 			} catch (InterruptedException | ExecutionException e1) {
 				logger.doLog(Level.WARNING, e1.toString(), e1);
-				Alerts.showAlert("Error", e1.toString(), e1.getMessage(), AlertType.ERROR);			
+				Alerts.showAlert("Error", e1.toString(), e1.getMessage(), AlertType.ERROR);
 			}
 			tableViewMaterial.refresh();
 		}, e -> {
 			Alerts.showAlert("Error", "Error de conexión", "Se agotó el tiempo de espera de la conexión",
 					AlertType.ERROR);
-		
+
 		});
 
 		exec.execute(task);
@@ -254,6 +280,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		initializeNodes();
+		buttons = Arrays.asList(btNew, btEdit, btDelete, btPrint);
 		Utils.setDisableButtons(buttons, true);
 
 		exec = Executors.newCachedThreadPool(runnable -> {
@@ -267,13 +294,6 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
 		tableColumnProvider.setCellValueFactory(new PropertyValueFactory<>("provider"));
-	}
-
-	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
-			Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction,
-				css, icon, logger);
 	}
 
 	@Override

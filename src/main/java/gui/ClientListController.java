@@ -3,22 +3,26 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 import application.Program;
 import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Cliente;
+import application.exceptions.ReportException;
 import application.log.LogUtils;
 import application.service.ClientService;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,14 +38,17 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import task.DBTask;
 
 public class ClientListController implements Initializable, DataChangeListener {
 
 	private ClientService service;
 
-	private ObservableList<Cliente> obsList;
-
 	private LogUtils logger;
+
+	private Executor exec;
+
+	private List<Button> buttons;
 
 	@FXML
 	private TableView<Cliente> tableViewClient;
@@ -101,7 +108,12 @@ public class ClientListController implements Initializable, DataChangeListener {
 		} catch (SQLException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
-		
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconcído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -127,27 +139,35 @@ public class ClientListController implements Initializable, DataChangeListener {
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
 		} catch (NullPointerException e1) {
 			Alerts.showAlert("Error", "NullPointerException", e1.getMessage(), AlertType.ERROR);
-		}catch (SQLException e) {
+		} catch (SQLException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "SQLException", e.getMessage(), AlertType.ERROR);
-		
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
+		} catch (ReportException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "ReportException", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconcído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
 	@FXML
-	public void onBtPrintAction() {
+	public void onBtPrintAction() throws IOException {
 		ReportFactory rF = new ReportFactory();
 		rF.clientReportView(tableViewClient.getItems());
 	}
 
-	private boolean allowEditOrDelete(ActionEvent event) throws SQLException {
+	private boolean allowEditOrDelete(ActionEvent event) throws SQLException, IOException {
 		return Utils.isUserAdmin(event, logger);
 	}
 
 	public void setClientService(ClientService service) {
 		this.service = service;
 	}
-	
+
 	public void setLogger(LogUtils logger) {
 		this.logger = logger;
 	}
@@ -155,6 +175,14 @@ public class ClientListController implements Initializable, DataChangeListener {
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		initializeNodes();
+		buttons = Arrays.asList(btDelete, btEdit, btNew, btPrint);
+		Utils.setDisableButtons(buttons, true);
+
+		exec = Executors.newCachedThreadPool(runnable -> {
+			Thread t = new Thread(runnable);
+			t.setDaemon(true);
+			return t;
+		});
 	}
 
 	private void initializeNodes() {
@@ -186,14 +214,27 @@ public class ClientListController implements Initializable, DataChangeListener {
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
 		}
-		// List<Cliente> list = new ArrayList<>();
-		// obsList = FXCollections.observableArrayList(list);
-		// tableViewClient.setItems(obsList);
 
-		List<Cliente> list = service.findAll();
-		obsList = FXCollections.observableArrayList(list);
-		tableViewClient.setItems(obsList);
-		tableViewClient.refresh();
+		DBTask<ClientService, List<Cliente>> task = new DBTask<ClientService, List<Cliente>>(service,
+				service -> service.findAll());
+
+		task.setOnSucceeded(e -> {
+			try {
+				tableViewClient.setItems(FXCollections.observableArrayList(task.get()));
+				tableViewClient.refresh();
+				Utils.setDisableButtons(buttons, false);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ExecutionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		});
+
+		exec.execute(task);
+
 	}
 
 	public void createDialogForm(Cliente obj, String absoluteName, Stage parentStage, String css, Image windowIcon) {
@@ -239,10 +280,7 @@ public class ClientListController implements Initializable, DataChangeListener {
 
 	private Cliente getClientFromTableView() {
 
-		// Integer row =
-		// tableViewClient.getSelectionModel().selectedIndexProperty().get();
 		Cliente client = tableViewClient.getSelectionModel().getSelectedItem();
-		// Integer id = tableColumnId.getCellData(row);
 		if (client == null) {
 			throw new NullPointerException("Cliente vacío o no seleccionado");
 		}

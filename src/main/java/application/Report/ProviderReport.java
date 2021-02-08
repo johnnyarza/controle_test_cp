@@ -22,7 +22,7 @@ import net.sf.jasperreports.view.JasperViewer;
 
 public class ProviderReport {
 
-	public static void viewProviderReport(List<Provider> providersList) {
+	public static void viewProviderReport(List<Provider> providersList) throws IOException,ReportException {
 		try {
 			if (providersList.size() == 0) {
 				throw new JRException("Lista de materiales vacía");
@@ -44,8 +44,6 @@ public class ProviderReport {
 
 		} catch (JRException e) {
 			throw new ReportException(e.getMessage());
-		} catch (IOException e) {
-			throw new ReportException(e.getMessage());
-		}
+		} 
 	}
 }

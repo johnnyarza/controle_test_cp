@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import application.Program;
@@ -135,7 +134,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			wrapper.concreteDesignService = new ConcreteDesignService();
 
 			Stage parentStage = Utils.currentStage(event);
-			createDialogForm("/gui/NewCompresionTestForm.fxml", "Nuevo Documento", parentStage,
+			Utils.createDialogForm("/gui/NewCompresionTestForm.fxml", "Nuevo Documento", parentStage,
 					(NewCompresionTestFormController controller) -> {
 						controller.setCompresionTestService(wrapper.compresionTestService);
 						controller.setClientService(wrapper.clientService);
@@ -149,11 +148,15 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 						this.entity = controller.getEntity();
 						wrapper.setBtCancelPressed(controller.getBtCancelPressed());
 					}, "/gui/NewCompresionTestForm.css", new Image(LoadCompresionTestViewController.class
-							.getResourceAsStream("/images/fileIcons/new_file.png")));
+							.getResourceAsStream("/images/fileIcons/new_file.png")),
+					logger);
 			if (!(wrapper.getBtCancelPressed())) {
 				showCompresionTestForm(parentStage);
 			}
 
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error Desconocído", e.getMessage(), AlertType.ERROR);
@@ -229,6 +232,9 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			Alerts.showAlert("Error", "NullPointerException", e2.getMessage(), AlertType.ERROR);
 		} catch (IllegalAccessException e) {
 			Alerts.showAlert("Error", "IllegalAccessException", e.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", "Error al abrir ventana!", AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
@@ -255,7 +261,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 		try {
 			wrapper.compresionTestService = new CompresionTestService();
-			createDialogForm("/gui/WarningDialog.fxml", "Aviso", Utils.currentStage(event),
+			Utils.createDialogForm("/gui/WarningDialog.fxml", "Aviso", Utils.currentStage(event),
 					(WarningDialogController controller) -> {
 						controller.setCompresionTestListList(compresionTestListList);
 						controller.setLateCorpoDeProvaList(lateCorpoDeProvaList);
@@ -268,7 +274,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 						this.entity = controller.getEntity();
 						wrapper.setBtCancelPressed(controller.getIsBtCancelPressed());
 					}, "/gui/WarningDialog.css",
-					new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/alert.png")));
+					new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/alert.png")), logger);
 			if (!(wrapper.getBtCancelPressed())) {
 				showCompresionTestForm(parentStage);
 			}
@@ -286,7 +292,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		this.client = null;
 		try {
 			wrapper.clientService = new ClientService();
-			createDialogForm("/gui/FindClientForm.fxml", "Elegir cliente para el reporte...", parentStage,
+			Utils.createDialogForm("/gui/FindClientForm.fxml", "Elegir cliente para el reporte...", parentStage,
 					(FindClientFormController controller) -> {// initial
 						controller.setEntity(null);
 						controller.setService(wrapper.clientService);
@@ -298,7 +304,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 							this.client = controller.getEntity();
 						}
 						this.btCancelPressed = controller.getPressedCancelButton();
-					}, "", new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/client.png")));
+					}, "", new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/client.png")),
+					logger);
 
 			if (!this.btCancelPressed) {
 				if (this.client == null) {
@@ -315,11 +322,17 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		} catch (SQLException e1) {
 			logger.doLog(Level.WARNING, e1.getMessage(), e1);
 			Alerts.showAlert("Error", "SQLException", e1.getMessage(), AlertType.ERROR);
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "IOException", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
 
-	private void showCompresionTestReportByClient(Integer id) throws SQLException {
+	private void showCompresionTestReportByClient(Integer id) throws SQLException, ReportException, IOException {
 		CorpoDeProvaService service = new CorpoDeProvaService();
 		ReportFactory rF = new ReportFactory();
 		rF.compresionTestReportViewByClient(service.findByClientId(id), client);
@@ -423,8 +436,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		return compresionTest;
 	}
 
-	private void createDialogFormCompresionTest(String absoluteName, Stage parentStage, CompresionTest obj,
-			String css) throws SQLException {
+	private void createDialogFormCompresionTest(String absoluteName, Stage parentStage, CompresionTest obj, String css)
+			throws SQLException {
 		try {
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -477,15 +490,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				this.isNewDoc = false;
 		} catch (IOException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error al crear ventana", "IOException", AlertType.ERROR);
+			Alerts.showAlert("Error", "Error al crear ventana", e.getMessage(), AlertType.ERROR);
 		}
-	}
-
-	private <T> void createDialogForm(String absoluteName, String title, Stage parentStage,
-			Consumer<T> initializingAction, Consumer<T> windowEventAction, Consumer<T> finalAction, String css,
-			Image icon) {
-		Utils.createDialogForm(absoluteName, title, parentStage, initializingAction, windowEventAction, finalAction,
-				css, icon, logger);
 	}
 
 	public void setCompresionTestListService(CompresionTestListService service) {
