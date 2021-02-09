@@ -11,8 +11,10 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import animatefx.animation.Bounce;
 import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Material;
@@ -26,7 +28,6 @@ import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -37,7 +38,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import task.DBTask;
 
 public class MateriaisViewController implements Initializable, DataChangeListener {
 
@@ -48,6 +51,17 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 	ObservableList<Material> obsList;
 
 	LogUtils logger;
+
+	@FXML
+	Circle circle1;
+
+	@FXML
+	Circle circle2;
+
+	@FXML
+	Circle circle3;
+
+	List<Bounce> bounces;
 
 	@FXML
 	private Button btNew;
@@ -207,7 +221,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		} catch (IOException e) {
 			Alerts.showAlert("Error", "Error al abrir ventana", e.getMessage(), AlertType.ERROR);
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconcído", e.getMessage(), AlertType.ERROR);
 		}
@@ -247,12 +261,12 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 			throw new NullPointerException("Material Service was null");
 		}
 
-		Task<List<Material>> task = new Task<List<Material>>() {
+		DBTask<MaterialService, List<Material>> task = new DBTask<MaterialService, List<Material>>(service,
+				service -> service.findAll());
 
-			@Override
-			protected List<Material> call() throws Exception {
-				return service.findAll();
-			}
+		Consumer<Bounce> bounceFinalAction = (Bounce b) -> {
+			b.stop();
+			b.getNode().setVisible(false);
 		};
 
 		Utils.setTaskEvents(task, e -> {
@@ -263,17 +277,20 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 			try {
 				tableViewMaterial.setItems(FXCollections.observableArrayList(task.get()));
 				Utils.setDisableButtons(buttons, false);
+				bounces.forEach(bounceFinalAction);
 			} catch (InterruptedException | ExecutionException e1) {
+				bounces.forEach(bounceFinalAction);
 				logger.doLog(Level.WARNING, e1.toString(), e1);
 				Alerts.showAlert("Error", e1.toString(), e1.getMessage(), AlertType.ERROR);
 			}
 			tableViewMaterial.refresh();
 		}, e -> {
+			bounces.forEach(bounceFinalAction);
 			Alerts.showAlert("Error", "Error de conexión", "Se agotó el tiempo de espera de la conexión",
 					AlertType.ERROR);
 
 		});
-
+		
 		exec.execute(task);
 	}
 
@@ -291,10 +308,15 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 	}
 
 	private void initializeNodes() {
+		initializeTable();
+		bounces = Utils.initiateBouncers(Arrays.asList(circle1, circle2, circle3));
+	}
+
+	private void initializeTable() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
 		tableColumnProvider.setCellValueFactory(new PropertyValueFactory<>("provider"));
-	}
+	};
 
 	@Override
 	public void onDataChange() {

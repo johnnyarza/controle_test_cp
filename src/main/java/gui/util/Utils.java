@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
+import animatefx.animation.Bounce;
 import application.domaim.CorpoDeProva;
 import application.log.LogUtils;
 import application.service.MigrationService;
@@ -47,11 +49,13 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 public class Utils {
@@ -315,7 +319,7 @@ public class Utils {
 		finalAction.accept(controller);
 
 	}
-	
+
 	public static boolean isUserAdmin(ActionEvent event, LogUtils logger) throws SQLException, IOException {
 
 		Stage parentStage = Utils.currentStage(event);
@@ -389,6 +393,20 @@ public class Utils {
 		}
 	};
 
+	public static List<Bounce> initiateBouncers(List<Circle> circles) {
+		var wrapper = new Object() {
+			public int i = 500;
+		};
 
+		List<Bounce> bounces = circles.stream().map(c -> new Bounce(c)).collect(Collectors.toList());
+
+		bounces.forEach(b -> {
+			b.setCycleCount(1000).setDelay(Duration.valueOf(wrapper.i + "ms"));
+			wrapper.i += 500;
+			b.play();
+		});
+
+		return bounces;
+	};
 
 }

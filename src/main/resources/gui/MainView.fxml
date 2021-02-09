@@ -1,48 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 
-<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="660.0" prefHeight="400.0" prefWidth="660.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainViewController">
-   <content>
-   
-      <VBox prefHeight="318.0" prefWidth="514.0">   
-         <children>
-         
-            <MenuBar fx:id="myMenuBar">
-              <menus>
-                  <Menu mnemonicParsing="false" styleClass="menu-bar-menu" text="Archivo">
-                    <items>
-                        <MenuItem fx:id="BtTest" mnemonicParsing="false" onAction="#onBtTestAction" text="Roturas" />
-                    </items>
-                  </Menu>
-                <Menu mnemonicParsing="false" styleClass="menu-bar-menu" text="Registros">
-                  <items>
-                    <MenuItem fx:id="onBtClientAction" mnemonicParsing="false" onAction="#onBtClientAction" text="Clientes" />
-                        <MenuItem fx:id="btDesign" mnemonicParsing="false" onAction="#onBtDesignAction" text="Dosificacíon" />
-                        <MenuItem fx:id="btMaterial" mnemonicParsing="false" onAction="#onBtMaterialAction" text="Materiales" />
-                        <MenuItem fx:id="btProvider" mnemonicParsing="false" onAction="#onBtProviderAction" text="Proveedores" />
-                  </items>
-                </Menu>
-                  <Menu mnemonicParsing="false" styleClass="menu-bar-menu" text="Configuraciones">
-                    <items>
-                      <MenuItem fx:id="BtConfigReport" mnemonicParsing="false" onAction="#onBtConfigReportAction" text="Relatorios" />
-                        <MenuItem fx:id="btConfigConnection" mnemonicParsing="false" onAction="#onBtConfigConnectionAction" text="Conexion" />
-                    </items>
-                  </Menu>
-                <Menu mnemonicParsing="false" styleClass="menu-bar-menu" text="Help">
-                  <items>
-                    <MenuItem fx:id="btAbout" mnemonicParsing="false" onAction="#onBtAboutAction" text="About" />
-                  </items>
-                </Menu>
-              </menus>
-            </MenuBar>
-            
-         </children>         
-      </VBox>
-      
-   </content>
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="660.0" prefHeight="400.0" prefWidth="660.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainViewController">
+	<content>
+
+		<VBox prefHeight="394.0" prefWidth="654.0">
+			<children>
+
+				<MenuBar fx:id="myMenuBar">
+					<menus>
+						<Menu mnemonicParsing="false" styleClass="menu-bar-menu" text="Archivo">
+							<items>
+								<MenuItem fx:id="BtTest" mnemonicParsing="false" onAction="#onBtTestAction" text="Roturas" />
+							</items>
+						</Menu>
+						<Menu mnemonicParsing="false" styleClass="menu-bar-menu" text="Registros">
+							<items>
+								<MenuItem fx:id="onBtClientAction" mnemonicParsing="false" onAction="#onBtClientAction" text="Clientes" />
+								<MenuItem fx:id="btDesign" mnemonicParsing="false" onAction="#onBtDesignAction" text="Dosificacíon" />
+								<MenuItem fx:id="btMaterial" mnemonicParsing="false" onAction="#onBtMaterialAction" text="Materiales" />
+								<MenuItem fx:id="btProvider" mnemonicParsing="false" onAction="#onBtProviderAction" text="Proveedores" />
+							</items>
+						</Menu>
+						<Menu mnemonicParsing="false" styleClass="menu-bar-menu" text="Configuraciones">
+							<items>
+								<MenuItem fx:id="BtConfigReport" mnemonicParsing="false" onAction="#onBtConfigReportAction" text="Relatorios" />
+								<MenuItem fx:id="btConfigConnection" mnemonicParsing="false" onAction="#onBtConfigConnectionAction" text="Conexion" />
+							</items>
+						</Menu>
+						<Menu mnemonicParsing="false" styleClass="menu-bar-menu" text="Help">
+							<items>
+								<MenuItem fx:id="btAbout" mnemonicParsing="false" onAction="#onBtAboutAction" text="About" />
+							</items>
+						</Menu>
+					</menus>
+				</MenuBar>
+            <HBox alignment="CENTER" prefHeight="369.0" prefWidth="654.0">
+               <children>
+      						<Circle fx:id="circle1" fill="#216eff00" radius="10.0" stroke="#00c3ff" strokeType="INSIDE" strokeWidth="6.0">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Circle>
+      						<Circle fx:id="circle2" fill="#1f93ff00" radius="10.0" stroke="#ea4848" strokeType="INSIDE" strokeWidth="6.0">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Circle>
+      						<Circle fx:id="circle3" fill="#1f93ff00" radius="10.0" stroke="#0adf4d" strokeType="INSIDE" strokeWidth="6.0">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Circle>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </HBox>
+
+			</children>
+		</VBox>
+
+	</content>
 </ScrollPane>

@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import animatefx.animation.Bounce;
 import application.Program;
 import application.Report.ReportFactory;
 import application.db.DbException;
@@ -35,6 +36,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import task.DBTask;
 
@@ -47,6 +49,17 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 	private LogUtils logger;
 
 	private String iconsDirPath = "/images/fileIcons/";
+	
+	@FXML
+	Circle circle1;
+
+	@FXML
+	Circle circle2;
+
+	@FXML
+	Circle circle3;
+	
+	List<Bounce> bounces;
 
 	@FXML
 	private Button btNew;
@@ -244,6 +257,9 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 				tableViewProvider.setItems(FXCollections.observableArrayList(findAllProvidersTask.get()));
 				tableViewProvider.refresh();
 				Utils.setDisableButtons(buttons, false);
+				bounces.forEach(b -> {
+					b.stop();
+					b.getNode().setVisible(false);});
 			} catch (ExecutionException | InterruptedException e1) {
 				logger.doLog(Level.WARNING, e1.getMessage(), e1);
 				Alerts.showAlert("Error", e1.getCause().toString(), e1.getMessage(), AlertType.ERROR);
@@ -255,6 +271,7 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 	}
 
 	private void initializeNodes() {
+		initiateBouncers();
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
 		tableColumnAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
@@ -264,7 +281,10 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 		Stage stage = (Stage) Program.getMainScene().getWindow();
 		tableViewProvider.prefHeightProperty().bind(stage.heightProperty());
 	}
-
+	private void initiateBouncers() {
+		bounces = Utils.initiateBouncers(Arrays.asList(circle1,circle2,circle3));
+	};
+	
 	private Provider getProviderFromTableView() {
 
 		Provider obj = tableViewProvider.getSelectionModel().getSelectedItem();

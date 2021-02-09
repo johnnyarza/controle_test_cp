@@ -13,6 +13,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
+import animatefx.animation.Bounce;
 import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.ConcreteDesign;
@@ -26,7 +27,6 @@ import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -37,7 +37,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import task.DBTask;
 
 public class ConcreteDesignViewController implements Initializable, DataChangeListener {
 
@@ -48,6 +50,17 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	private Executor exec;
 
 	private LogUtils logger;
+
+	@FXML
+	Circle circle1;
+
+	@FXML
+	Circle circle2;
+
+	@FXML
+	Circle circle3;
+
+	List<Bounce> bounces;
 
 	@FXML
 	private Button btNew;
@@ -260,13 +273,8 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	}
 
 	public void updateTableView() {
-		Task<List<ConcreteDesign>> task = new Task<List<ConcreteDesign>>() {
-
-			@Override
-			protected List<ConcreteDesign> call() throws Exception {
-				return service.findAllConcreteDesign();
-			}
-		};
+		DBTask<ConcreteDesignService, List<ConcreteDesign>> task = new DBTask<ConcreteDesignService, List<ConcreteDesign>>(
+				service, service -> service.findAllConcreteDesign());
 
 		Utils.setTaskEvents(task, e -> {
 			logger.doLog(Level.WARNING, task.getException().getMessage(), task.getException());
@@ -277,7 +285,15 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 				tableViewConcreteDesing.setItems(FXCollections.observableArrayList(task.get()));
 				tableViewConcreteDesing.refresh();
 				Utils.setDisableButtons(buttons, false);
+				bounces.forEach(b -> {
+					b.stop();
+					b.getNode().setVisible(false);
+				});
 			} catch (InterruptedException | ExecutionException e1) {
+				bounces.forEach(b -> {
+					b.stop();
+					b.getNode().setVisible(false);
+				});
 				logger.doLog(Level.WARNING, e1.getMessage(), e1);
 				Alerts.showAlert("Error", e1.toString(), e1.getMessage(), AlertType.ERROR);
 			}
@@ -290,13 +306,23 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	}
 
 	private void initializeNodes() {
+		initializeTable();
+		initializeBounce();
+
+	}
+
+	private void initializeBounce() {
+		bounces = Utils.initiateBouncers(Arrays.asList(circle1, circle2, circle3));
+	};
+
+	private void initializeTable() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnDesc.setCellValueFactory(new PropertyValueFactory<>("proporcion"));
 		tableColumnDesc.getStyleClass().add("description-column-style");
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("description"));
 		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));
 		Utils.formatTableColumnDouble(tableColumnSlump, 1);
-	}
+	};
 
 	private ConcreteDesign getConcreteDesingFromTableView() {
 		ConcreteDesign obj = tableViewConcreteDesing.getSelectionModel().getSelectedItem();

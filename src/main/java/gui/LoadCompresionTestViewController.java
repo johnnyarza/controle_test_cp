@@ -3,13 +3,19 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import animatefx.animation.Bounce;
 import application.Program;
 import application.Report.ReportFactory;
 import application.db.DbException;
@@ -30,7 +36,7 @@ import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -45,11 +51,15 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import task.DBTask;
 
 public class LoadCompresionTestViewController implements Initializable, DataChangeListener {
+
+	ExecutorService exec;
 
 	private Boolean isLocked = true;
 
@@ -60,8 +70,6 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	private CompresionTestService compresionTestService;
 
 	private CorpoDeProvaService corpoDeProvaService;
-
-	private ObservableList<CompresionTestList> obsList;
 
 	private List<CompresionTestList> compresionTestListList;
 
@@ -76,6 +84,17 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	private List<CorpoDeProva> lateCorpoDeProvaList;
 
 	private LogUtils logger;
+
+	@FXML
+	Circle circle1;
+
+	@FXML
+	Circle circle2;
+
+	@FXML
+	Circle circle3;
+
+	List<Bounce> bounces;
 
 	@FXML
 	private TableView<CompresionTestList> tableViewClient;
@@ -109,6 +128,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	@FXML
 	private Button btWarning;
+
+	private List<Button> buttons;
 
 	@FXML
 	public void onbtNewAction(ActionEvent event) {
@@ -349,12 +370,29 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
+		buttons = Arrays.asList(btDelete, btNew, btOpen, btReport, btWarning);
+		exec = Executors.newCachedThreadPool(runnable -> {
+			Thread t = new Thread(runnable);
+			t.setDaemon(true);
+			return t;
+		});
+		Utils.setDisableButtons(buttons, true);
 		initializeNodes();
 
 	}
 
 	private void initializeNodes() {
+		initializeBounces();
 		formatTableView();
+	}
+
+	private void initializeBounces() {
+		bounces = Utils.initiateBouncers(Arrays.asList(circle1, circle2, circle3));
+	};
+
+	public void updateViewData() {
+		updateTableView();
+		updateLateCorpoDeProva();
 	}
 
 	private void formatTableView() {
@@ -372,20 +410,48 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		tableViewClient.prefHeightProperty().bind(stage.heightProperty());
 	}
 
-	public void updateViewData() {
-		updateTableView();
-		updateLateCorpoDeProva();
-	}
-
 	private void updateTableView() {
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
 		}
+		DBTask<CompresionTestListService, List<CompresionTestList>> task = new DBTask<CompresionTestListService, List<CompresionTestList>>(
+				service, service -> service.findAll());
 
-		compresionTestListList = service.findAll();
-		obsList = FXCollections.observableArrayList(compresionTestListList);
-		tableViewClient.setItems(obsList);
-		tableViewClient.refresh();
+		Consumer<Bounce> bounceFinalAction = (Bounce b) -> {
+			b.stop();
+			b.getNode().setVisible(false);
+		};
+
+		EventHandler<WorkerStateEvent> onSucceeded = (WorkerStateEvent e) -> {
+			try {
+				compresionTestListList = task.get();
+				tableViewClient.setItems(FXCollections.observableArrayList(compresionTestListList));
+				tableViewClient.refresh();
+				Utils.setDisableButtons(buttons, false);
+				bounces.forEach(bounceFinalAction);
+			} catch (InterruptedException | ExecutionException e1) {
+				logger.doLog(Level.WARNING, e1.getMessage(), e1);
+				Alerts.showAlert("Error", e1.toString(), e1.getMessage(), AlertType.ERROR);
+			}
+		};
+
+		EventHandler<WorkerStateEvent> onFail = (WorkerStateEvent e) -> {
+			bounces.forEach(bounceFinalAction);
+			logger.doLog(Level.WARNING, task.getException().getMessage(), task.getException());
+			Alerts.showAlert("Error", task.getException().toString(), task.getException().getMessage(),
+					AlertType.ERROR);
+		};
+
+		EventHandler<WorkerStateEvent> onCancel = (WorkerStateEvent e) -> {
+			bounces.forEach(bounceFinalAction);
+			logger.doLog(Level.WARNING, task.getException().getMessage(), task.getException());
+			Alerts.showAlert("Error", task.getException().toString(), task.getException().getMessage(),
+					AlertType.ERROR);
+		};
+
+		Utils.setTaskEvents(task, onFail, onSucceeded, onCancel);
+
+		exec.execute(task);
 	}
 
 	private void updateLateCorpoDeProva() {

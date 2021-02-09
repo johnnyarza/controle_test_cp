@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import animatefx.animation.Bounce;
 import application.Program;
 import application.db.DB;
 import application.domaim.CompresionTest;
@@ -41,6 +42,8 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
 public class MainViewController implements Initializable {
 
@@ -55,8 +58,19 @@ public class MainViewController implements Initializable {
 	private CompresionTest compresionTest;
 
 	private LogUtils logger = new LogUtils();
-	
+
 	List<MenuItem> buttons;
+
+	@FXML
+	Circle circle1;
+
+	@FXML
+	Circle circle2;
+
+	@FXML
+	Circle circle3;
+	
+	List<Bounce> bounces;
 
 	@FXML
 	private MenuItem BtTest;
@@ -287,8 +301,7 @@ public class MainViewController implements Initializable {
 	}
 
 	private void testConnection() {
-		
-		
+
 		executor = Executors.newScheduledThreadPool(1);
 
 		EventHandler<WorkerStateEvent> onFail = (WorkerStateEvent e) -> {
@@ -301,7 +314,7 @@ public class MainViewController implements Initializable {
 			Alerts.showAlert("Error", "Error de conexión", "Se agotó el tiempo de espera de la conexión",
 					AlertType.ERROR);
 		};
-		
+
 		testConnectionTask = new Task<Boolean>() {
 			@Override
 			protected Boolean call() throws Exception {
@@ -315,17 +328,20 @@ public class MainViewController implements Initializable {
 		Utils.setTaskEvents(testConnectionTask, onFail, e -> {
 			try {
 				Utils.setDisableButtons(buttons, !testConnectionTask.get());
+				bounces.forEach(b -> {
+					b.stop();
+					b.getNode().setVisible(false);
+				});
 
-			} catch (InterruptedException e1) {
+			} catch (InterruptedException | ExecutionException e1) {
+				bounces.forEach(b -> {
+					b.stop();
+					b.getNode().setVisible(false);
+				});
 				logger.doLog(Level.WARNING, e1.getMessage(), e1);
-				Alerts.showAlert("InterruptedException", "Error de conexión", e1.getMessage(), AlertType.ERROR);
-			} catch (ExecutionException e1) {
-				logger.doLog(Level.WARNING, e1.getMessage(), e1);
-				Alerts.showAlert("InterruptedException", "Error de conexión", e1.getMessage(), AlertType.ERROR);
-
-			}
+				Alerts.showAlert("Error", e1.toString(), e1.getMessage(), AlertType.ERROR);
+			} 
 		}, onCancel);
-
 
 		exec.execute(testConnectionTask);
 
@@ -340,17 +356,35 @@ public class MainViewController implements Initializable {
 		executor.shutdown();
 	};
 
+	private void initiateBouncers() {
+		var wrapper = new Object() {
+			public int i = 500;
+		};
+		bounces = Arrays.asList(new Bounce(circle1), new Bounce(circle2), new Bounce(circle3));
+		bounces.forEach(b -> {
+			b.setCycleCount(1000).setDelay(Duration.valueOf(wrapper.i + "ms"));
+			wrapper.i += 500;
+			b.play();
+		});
+	};
+
+	private void iniateNodes() {
+		initiateBouncers();
+
+	};
+
 	@Override
 	public void initialize(URL uri, ResourceBundle rb) {
-		buttons = Arrays.asList(BtTest, btDesign, btMaterial, btProvider, onBtClientAction);
+		iniateNodes();
+		buttons = Arrays.asList(BtTest, btDesign, btProvider, btDesign, onBtClientAction, btMaterial);
 		Utils.setDisableButtons(buttons, true);
-		
+
 		exec = Executors.newCachedThreadPool(runnable -> {
 			Thread t = new Thread(runnable);
 			t.setDaemon(true);
 			return t;
 		});
-		
+
 		testConnection();
 	}
 

@@ -10,8 +10,10 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import animatefx.animation.Bounce;
 import application.Program;
 import application.Report.ReportFactory;
 import application.db.DbException;
@@ -23,7 +25,9 @@ import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -36,6 +40,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import task.DBTask;
@@ -49,6 +54,17 @@ public class ClientListController implements Initializable, DataChangeListener {
 	private Executor exec;
 
 	private List<Button> buttons;
+
+	@FXML
+	Circle circle1;
+
+	@FXML
+	Circle circle2;
+
+	@FXML
+	Circle circle3;
+
+	List<Bounce> bounces;
 
 	@FXML
 	private TableView<Cliente> tableViewClient;
@@ -187,8 +203,13 @@ public class ClientListController implements Initializable, DataChangeListener {
 
 	private void initializeNodes() {
 		formatTableVIiewClient();
+		initializeBounces();
 
 	}
+
+	private void initializeBounces() {
+		bounces = Utils.initiateBouncers(Arrays.asList(circle1, circle2, circle3));
+	};
 
 	private void formatTableVIiewClient() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -218,20 +239,38 @@ public class ClientListController implements Initializable, DataChangeListener {
 		DBTask<ClientService, List<Cliente>> task = new DBTask<ClientService, List<Cliente>>(service,
 				service -> service.findAll());
 
-		task.setOnSucceeded(e -> {
+		Consumer<Bounce> bounceFinalAction = (Bounce b) -> {
+			b.stop();
+			b.getNode().setVisible(false);
+		};
+
+		EventHandler<WorkerStateEvent> onSucceeded = (WorkerStateEvent e) -> {
 			try {
 				tableViewClient.setItems(FXCollections.observableArrayList(task.get()));
 				tableViewClient.refresh();
 				Utils.setDisableButtons(buttons, false);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				bounces.forEach(bounceFinalAction);
+			} catch (InterruptedException | ExecutionException e1) {			
+				logger.doLog(Level.WARNING, e1.getMessage(), e1);
+				Alerts.showAlert("Error", e1.toString(), e1.getMessage(), AlertType.ERROR);
 			}
+		};
 
-		});
+		EventHandler<WorkerStateEvent> onFail = (WorkerStateEvent e) -> {
+			bounces.forEach(bounceFinalAction);
+			logger.doLog(Level.WARNING, task.getException().getMessage(), task.getException());
+			Alerts.showAlert("Error", task.getException().toString(), task.getException().getMessage(),
+					AlertType.ERROR);
+		};
+
+		EventHandler<WorkerStateEvent> onCancel = (WorkerStateEvent e) -> {
+			bounces.forEach(bounceFinalAction);
+			logger.doLog(Level.WARNING, task.getException().getMessage(), task.getException());
+			Alerts.showAlert("Error", task.getException().toString(), task.getException().getMessage(),
+					AlertType.ERROR);
+		};
+
+		Utils.setTaskEvents(task, onFail, onSucceeded, onCancel);
 
 		exec.execute(task);
 

@@ -7,9 +7,10 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<VBox minWidth="420.0" prefHeight="347.0" prefWidth="496.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ProveedoresViewController">
+<VBox minWidth="420.0" prefHeight="347.0" prefWidth="496.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ProveedoresViewController">
    <children>
       <Label text="Lista de Proveedores">
          <font>
@@ -25,6 +26,25 @@
             <Button fx:id="btEdit" mnemonicParsing="false" onAction="#onBtEditAction" styleClass="custom-button" text="Editar" />
             <Button fx:id="btDelete" mnemonicParsing="false" onAction="#onBtDeleteAction" styleClass="delete-button" text="Apagar" />
             <Button fx:id="btPrint" mnemonicParsing="false" onAction="#onBtPrintAction" styleClass="custom-button" text="Imprimir" />
+            <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="240.0">
+               <children>
+                  			<Circle fx:id="circle1" fill="#216eff00" radius="8.0" stroke="#00c3ff" strokeType="INSIDE" strokeWidth="4.0">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Circle>
+      						<Circle fx:id="circle2" fill="#1f93ff00" radius="8.0" stroke="#ea4848" strokeType="INSIDE" strokeWidth="4.0">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Circle>
+      						<Circle fx:id="circle3" fill="#1f93ff00" radius="8.0" stroke="#0adf4d" strokeType="INSIDE" strokeWidth="4.0">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Circle>
+               </children>
+            </HBox>
          </children>
          <padding>
             <Insets bottom="8.0" left="8.0" top="8.0" />
