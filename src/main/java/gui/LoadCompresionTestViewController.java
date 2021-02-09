@@ -89,6 +89,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	Circle circle1;
 
 	@FXML
+
 	Circle circle2;
 
 	@FXML
@@ -199,6 +200,9 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		} catch (NullPointerException | SQLException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", e.getClass().getName(), e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "Error Desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -281,6 +285,9 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		};
 
 		try {
+			if (compresionTestListList == null) {
+				throw new NullPointerException("Lista de documentos vacía");
+			}
 			wrapper.compresionTestService = new CompresionTestService();
 			Utils.createDialogForm("/gui/WarningDialog.fxml", "Aviso", Utils.currentStage(event),
 					(WarningDialogController controller) -> {
@@ -299,6 +306,9 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			if (!(wrapper.getBtCancelPressed())) {
 				showCompresionTestForm(parentStage);
 			}
+		} catch (NullPointerException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
