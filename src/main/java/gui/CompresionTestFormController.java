@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,13 +16,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import org.joda.time.DateTimeComparator;
 
+import animatefx.animation.Bounce;
 import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.Cliente;
@@ -62,6 +66,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import task.DBTask;
@@ -98,6 +103,17 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	Map<String, ImageView> imgViewMap = new HashMap<>();
 
 	List<DataChangeListener> dataChangeListeners = new ArrayList<>();
+	
+	@FXML
+	Circle circle1;
+
+	@FXML
+	Circle circle2;
+
+	@FXML
+	Circle circle3;
+
+	List<Bounce> bounces;
 
 	@FXML
 	private ComboBox<ConcreteDesign> comboBoxConcreteDesign;
@@ -614,6 +630,15 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		Utils.formatCorpoDeProvaTableViewRowColor(tableViewCorpoDeProva);
 	}
 
+	public void dataChangeListenerSubscribe(DataChangeListener dataChangeListener) {
+		this.dataChangeListeners.add(dataChangeListener);
+	}
+
+	private void formatTableView() {
+		setTableColumnsCellValueFactory();
+		tableColumnCodigo.getStyleClass().add("description-column-style");
+	}
+
 	public CorpoDeProvaService getCorpoDeProvaService() {
 		return corpoDeProvaService;
 	}
@@ -622,8 +647,13 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		this.corpoDeProvaService = corpoDeProvaService;
 	}
 
-	public CompresionTest getCompresionTest() {
-		return compresionTest;
+	public void setLabelMessageText(Integer compresionTestId) {
+		Integer cpCount = corpoDeProvaService.countCorpoDeProvasToTestbyCompresionTestId(compresionTestId);
+		if (cpCount > 0) {
+			labelMessages.setText("Hay " + Integer.toString(cpCount) + " probeta(s) para Romper");
+		} else {
+			labelMessages.setText("");
+		}
 	}
 
 	public void setCompresionTest(CompresionTest compresionTest) {
@@ -634,211 +664,20 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		return compresionTestService;
 	}
 
-	public void setCompresionTestService(CompresionTestService compresionTestService) {
-		this.compresionTestService = compresionTestService;
+	public CompresionTest getCompresionTest() {
+		return compresionTest;
 	}
 
 	public ClientService getClientService() {
 		return clientService;
 	}
 
-	public void setClientService(ClientService clientService) {
-		this.clientService = clientService;
-	}
-
 	public ConcreteDesignService getConcreteDesignService() {
 		return concreteDesignService;
 	}
 
-	public void setConcreteDesignService(ConcreteDesignService concreteDesignService) {
-		this.concreteDesignService = concreteDesignService;
-	}
-
 	public Integer getChangesCount() {
 		return changesCount;
-	}
-
-	public void setChangesCount(Integer changesCount) {
-		this.changesCount = changesCount;
-	}
-
-	public void setLogger(LogUtils logger) {
-		this.logger = logger;
-	}
-
-	private void setLockButtonStyle() {
-		if (!isLocked) {
-			btLock.setGraphic(imgViewMap.get("btUnlock"));
-			btLock.getStyleClass().clear();
-			btLock.getStyleClass().add("button");
-			btLock.getStyleClass().add("unlocked-button");
-			return;
-		}
-
-		btLock.setGraphic(imgViewMap.get("btLock"));
-		btLock.getStyleClass().clear();
-		btLock.getStyleClass().add("button");
-		btLock.getStyleClass().add("locked-button");
-
-	}
-
-	private void setNodesDisable() {
-		comboBoxClient.setDisable(isLocked);
-		comboBoxConcreteProvider.setDisable(isLocked);
-		btSearchClient.setDisable(isLocked);
-		btSearchConcreteProvider.setDisable(isLocked);
-		txtObra.setDisable(isLocked);
-		txtAddress.setDisable(isLocked);
-		dpCreationDate.setDisable(isLocked);
-		comboBoxConcreteDesign.setDisable(isLocked);
-		btApagarProbeta.setDisable(isLocked);
-		btInserirProbeta.setDisable(isLocked);
-		btEditarCadastro.setDisable(isLocked);
-		btCopy.setDisable(isLocked);
-	}
-
-	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
-		initializeNodes();
-		exec = Executors.newCachedThreadPool(runnable -> {
-			Thread t = new Thread(runnable);
-			t.setDaemon(true);
-			return t;
-		});
-	}
-
-	private void initializeNodes() {
-		formatTableView();
-		initializeComboBoxClient();
-		tableViewCorpoDeProva.prefHeightProperty().bind(vbox.heightProperty());
-		btLock.getStyleClass().add("button");
-		btLock.getStyleClass().add("locked-button");
-		setButtonsGraphics();
-	}
-
-	private void formatTableView() {
-		setTableColumnsCellValueFactory();
-		tableColumnCodigo.getStyleClass().add("description-column-style");
-	}
-
-	private void setButtonsGraphics() {
-		imgViewMap.put("btLock", Utils.createImageView("/images/lock.png", 20.0, 20.0));
-		imgViewMap.put("btUnlock", Utils.createImageView("/images/unlock.png", 20.0, 20.0));
-		btLock.setGraphic(imgViewMap.get("btLock"));
-
-		Utils.setButtonGraphic("/images/print.png", btPrint, 20.0, 20.0);
-		Utils.setButtonGraphic("/images/lupa.png", btSearchClient, 15.0, 15.0);
-		Utils.setButtonGraphic("/images/lupa.png", btSearchConcreteProvider, 15.0, 15.0);
-
-		Utils.setButtonGraphic("/images/fileIcons/copy.png", btCopy, 20.0, 20.0);
-		Utils.setButtonGraphic("/images/filter_off.png", btClearFilter, 20.0, 20.0);
-		Utils.setButtonGraphic("/images/filter_on.png", btFilter, 20.0, 20.0);
-	}
-
-	private void setTableColumnsCellValueFactory() {
-		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
-		tableColumnCodigo.setCellValueFactory(new PropertyValueFactory<>("code"));
-
-		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));
-		Utils.formatTableColumnDouble(tableColumnSlump, 2);
-
-		tableColumnFechaMoldeo.setCellValueFactory(new PropertyValueFactory<>("moldeDate"));
-		Utils.formatTableColumnDate(tableColumnFechaMoldeo, "dd/MM/yyyy");
-
-		tableColumnFechaRotura.setCellValueFactory(new PropertyValueFactory<>("ruptureDate"));
-		Utils.formatTableColumnDate(tableColumnFechaRotura, "dd/MM/yyyy");
-
-		tableColumnEdad.setCellValueFactory(new PropertyValueFactory<>("days"));
-
-		tableColumnDiameter.setCellValueFactory(new PropertyValueFactory<>("diameter"));
-		Utils.formatTableColumnDouble(tableColumnDiameter, 2);
-
-		tableColumnHeight.setCellValueFactory(new PropertyValueFactory<>("height"));
-		Utils.formatTableColumnDouble(tableColumnHeight, 2);
-
-		tableColumnWeight.setCellValueFactory(new PropertyValueFactory<>("weight"));
-		Utils.formatTableColumnDouble(tableColumnWeight, 3);
-
-		tableColumnDensid.setCellValueFactory(new PropertyValueFactory<>("densid"));
-		Utils.formatTableColumnDouble(tableColumnDensid, 2);
-
-		tableColumnTonRupture.setCellValueFactory(new PropertyValueFactory<>("tonRupture"));
-		Utils.formatTableColumnDouble(tableColumnTonRupture, 2);
-
-		tableColumnfckRupture.setCellValueFactory(new PropertyValueFactory<>("fckRupture"));
-		Utils.formatTableColumnDouble(tableColumnfckRupture, 2);
-	}
-
-	public void setTxtListeners() {
-
-		txtObra.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				onChangeCount();
-			}
-		});
-
-		txtAddress.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				onChangeCount();
-			}
-		});
-	}
-
-	public void updateTableView() {
-		if (corpoDeProvaService == null) {
-			throw new IllegalStateException("Service was null");
-		}
-		//TODO create DBTask the others classes
-		DBTask<CorpoDeProvaService, List<CorpoDeProva>> task = new DBTask<CorpoDeProvaService, List<CorpoDeProva>>(
-				corpoDeProvaService, corpoDeProvaService -> corpoDeProvaService.findAll());
-
-		task.setOnSucceeded(e -> {
-			try {
-				tableViewCorpoDeProva.setItems(FXCollections.observableArrayList(task.get()));
-				Utils.formatCorpoDeProvaTableViewRowColor(tableViewCorpoDeProva);
-				tableViewCorpoDeProva.refresh();
-			} catch (ExecutionException | InterruptedException e1) {
-				logger.doLog(Level.WARNING, e1.getMessage(), e1);
-				Alerts.showAlert("Error", e1.getCause().toString(), e1.getMessage(), AlertType.ERROR);
-			}
-		});
-		exec.execute(task);
-
-	}
-
-	public void updateFormData() {
-		if (compresionTest == null) {
-			throw new IllegalStateException("Service was null");
-		}
-
-		txtid.setText((compresionTest.getId()).toString());
-
-		if (compresionTest.getClient() == null) {
-			comboBoxClient.getSelectionModel().selectFirst();
-		} else {
-			comboBoxClient.setValue(compresionTest.getClient());
-		}
-
-		if (compresionTest.getConcreteProvider() == null) {
-			comboBoxConcreteProvider.getSelectionModel().selectFirst();
-		} else {
-			comboBoxConcreteProvider.setValue(compresionTest.getConcreteProvider());
-		}
-
-		if (compresionTest.getConcreteDesign() == null) {
-			comboBoxConcreteDesign.getSelectionModel().selectFirst();
-		} else {
-			comboBoxConcreteDesign.setValue(compresionTest.getConcreteDesign());
-		}
-
-		if (compresionTest.getDate() != null) {
-			dpCreationDate.setValue(LocalDate.ofInstant(compresionTest.getDate().toInstant(), ZoneId.systemDefault()));
-
-		}
-		txtObra.setText(compresionTest.getObra());
-		txtAddress.setText(compresionTest.getAddress());
 	}
 
 	private void initializeComboBoxClient() {
@@ -853,6 +692,38 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		comboBoxClient.setButtonCell(factory.call(null));
 		comboBoxConcreteProvider.setCellFactory(factory);
 		comboBoxConcreteProvider.setButtonCell(factory.call(null));
+	}
+
+	public void setCompresionTestService(CompresionTestService compresionTestService) {
+		this.compresionTestService = compresionTestService;
+	}
+
+	public void setClientService(ClientService clientService) {
+		this.clientService = clientService;
+	}
+
+	public void setConcreteDesignService(ConcreteDesignService concreteDesignService) {
+		this.concreteDesignService = concreteDesignService;
+	}
+
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		initializeNodes();
+		exec = Executors.newCachedThreadPool(runnable -> {
+			Thread t = new Thread(runnable);
+			t.setDaemon(true);
+			return t;
+		});
+	}
+
+	private void initializeNodes() {
+		bounces = Utils.initiateBouncers(Arrays.asList(circle1,circle2,circle3));
+		formatTableView();
+		initializeComboBoxClient();
+		tableViewCorpoDeProva.prefHeightProperty().bind(vbox.heightProperty());
+		btLock.getStyleClass().add("button");
+		btLock.getStyleClass().add("locked-button");
+		setButtonsGraphics();
 	}
 
 	public void loadAssociatedObjects() {
@@ -896,13 +767,12 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		return list;
 	}
 
-	public void setLabelMessageText(Integer compresionTestId) {
-		Integer cpCount = corpoDeProvaService.countCorpoDeProvasToTestbyCompresionTestId(compresionTestId);
-		if (cpCount > 0) {
-			labelMessages.setText("Hay " + Integer.toString(cpCount) + " probeta(s) para Romper");
-		} else {
-			labelMessages.setText("");
-		}
+	public Boolean getIsLocked() {
+		return isLocked;
+	}
+
+	public Boolean getIsNewDoc() {
+		return isNewDoc;
 	}
 
 	@Override
@@ -919,16 +789,47 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		btCopy.setDisable(!isNewDoc);
 	}
 
-	public Boolean getIsLocked() {
-		return isLocked;
-	}
-
 	public void setIsLocked(Boolean isLocked) {
 		this.isLocked = isLocked;
 	}
 
-	public Boolean getIsNewDoc() {
-		return isNewDoc;
+	public void setChangesCount(Integer changesCount) {
+		this.changesCount = changesCount;
+	}
+
+	public void setLogger(LogUtils logger) {
+		this.logger = logger;
+	}
+
+	private void setLockButtonStyle() {
+		if (!isLocked) {
+			btLock.setGraphic(imgViewMap.get("btUnlock"));
+			btLock.getStyleClass().clear();
+			btLock.getStyleClass().add("button");
+			btLock.getStyleClass().add("unlocked-button");
+			return;
+		}
+
+		btLock.setGraphic(imgViewMap.get("btLock"));
+		btLock.getStyleClass().clear();
+		btLock.getStyleClass().add("button");
+		btLock.getStyleClass().add("locked-button");
+
+	}
+
+	private void setNodesDisable() {
+		comboBoxClient.setDisable(isLocked);
+		comboBoxConcreteProvider.setDisable(isLocked);
+		btSearchClient.setDisable(isLocked);
+		btSearchConcreteProvider.setDisable(isLocked);
+		txtObra.setDisable(isLocked);
+		txtAddress.setDisable(isLocked);
+		dpCreationDate.setDisable(isLocked);
+		comboBoxConcreteDesign.setDisable(isLocked);
+		btApagarProbeta.setDisable(isLocked);
+		btInserirProbeta.setDisable(isLocked);
+		btEditarCadastro.setDisable(isLocked);
+		btCopy.setDisable(isLocked);
 	}
 
 	public void setIsNewDoc(Boolean isNewDoc) {
@@ -998,8 +899,132 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		labelErrorConcreteDesign.setText(fields.contains("concreteDesign") ? errors.get("concreteDesign") : "");
 	}
 
-	public void dataChangeListenerSubscribe(DataChangeListener dataChangeListener) {
-		this.dataChangeListeners.add(dataChangeListener);
+	private void setButtonsGraphics() {
+		imgViewMap.put("btLock", Utils.createImageView("/images/lock.png", 20.0, 20.0));
+		imgViewMap.put("btUnlock", Utils.createImageView("/images/unlock.png", 20.0, 20.0));
+		btLock.setGraphic(imgViewMap.get("btLock"));
+
+		Utils.setButtonGraphic("/images/print.png", btPrint, 20.0, 20.0);
+		Utils.setButtonGraphic("/images/lupa.png", btSearchClient, 15.0, 15.0);
+		Utils.setButtonGraphic("/images/lupa.png", btSearchConcreteProvider, 15.0, 15.0);
+
+		Utils.setButtonGraphic("/images/fileIcons/copy.png", btCopy, 20.0, 20.0);
+		Utils.setButtonGraphic("/images/filter_off.png", btClearFilter, 20.0, 20.0);
+		Utils.setButtonGraphic("/images/filter_on.png", btFilter, 20.0, 20.0);
+	}
+
+	private void setTableColumnsCellValueFactory() {
+		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
+		tableColumnCodigo.setCellValueFactory(new PropertyValueFactory<>("code"));
+
+		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));
+		Utils.formatTableColumnDouble(tableColumnSlump, 2);
+
+		tableColumnFechaMoldeo.setCellValueFactory(new PropertyValueFactory<>("moldeDate"));
+		Utils.formatTableColumnDate(tableColumnFechaMoldeo, "dd/MM/yyyy");
+
+		tableColumnFechaRotura.setCellValueFactory(new PropertyValueFactory<>("ruptureDate"));
+		Utils.formatTableColumnDate(tableColumnFechaRotura, "dd/MM/yyyy");
+
+		tableColumnEdad.setCellValueFactory(new PropertyValueFactory<>("days"));
+
+		tableColumnDiameter.setCellValueFactory(new PropertyValueFactory<>("diameter"));
+		Utils.formatTableColumnDouble(tableColumnDiameter, 2);
+
+		tableColumnHeight.setCellValueFactory(new PropertyValueFactory<>("height"));
+		Utils.formatTableColumnDouble(tableColumnHeight, 2);
+
+		tableColumnWeight.setCellValueFactory(new PropertyValueFactory<>("weight"));
+		Utils.formatTableColumnDouble(tableColumnWeight, 3);
+
+		tableColumnDensid.setCellValueFactory(new PropertyValueFactory<>("densid"));
+		Utils.formatTableColumnDouble(tableColumnDensid, 2);
+
+		tableColumnTonRupture.setCellValueFactory(new PropertyValueFactory<>("tonRupture"));
+		Utils.formatTableColumnDouble(tableColumnTonRupture, 2);
+
+		tableColumnfckRupture.setCellValueFactory(new PropertyValueFactory<>("fckRupture"));
+		Utils.formatTableColumnDouble(tableColumnfckRupture, 2);
+	}
+
+	public void setTxtListeners() {
+
+		txtObra.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				onChangeCount();
+			}
+		});
+
+		txtAddress.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				onChangeCount();
+			}
+		});
+	}
+
+	
+public void updateTableView() {
+		if (corpoDeProvaService == null) {
+			throw new IllegalStateException("Service was null");
+		}
+
+		DBTask<CorpoDeProvaService, List<CorpoDeProva>> task = new DBTask<CorpoDeProvaService, List<CorpoDeProva>>(
+				corpoDeProvaService, corpoDeProvaService -> corpoDeProvaService
+						.findByCompresionTestIdWithTimeZone(compresionTest.getId(), TimeZone.getDefault()));
+		
+		Consumer<Bounce> bounceFinalAction = (Bounce b) -> {
+			b.stop();
+			b.getNode().setVisible(false);
+		};
+		
+		task.setOnSucceeded(e -> {
+			try {
+				tableViewCorpoDeProva.setItems(FXCollections.observableArrayList(task.get()));
+				Utils.formatCorpoDeProvaTableViewRowColor(tableViewCorpoDeProva);
+				tableViewCorpoDeProva.refresh();
+				bounces.forEach(bounceFinalAction);
+			} catch (ExecutionException | InterruptedException e1) {
+				logger.doLog(Level.WARNING, e1.getMessage(), e1);
+				Alerts.showAlert("Error", e1.getCause().toString(), e1.getMessage(), AlertType.ERROR);
+			}
+		});
+		exec.execute(task);
+
+	}
+
+	public void updateFormData() {
+		if (compresionTest == null) {
+			throw new IllegalStateException("Service was null");
+		}
+
+		txtid.setText((compresionTest.getId()).toString());
+
+		if (compresionTest.getClient() == null) {
+			comboBoxClient.getSelectionModel().selectFirst();
+		} else {
+			comboBoxClient.setValue(compresionTest.getClient());
+		}
+
+		if (compresionTest.getConcreteProvider() == null) {
+			comboBoxConcreteProvider.getSelectionModel().selectFirst();
+		} else {
+			comboBoxConcreteProvider.setValue(compresionTest.getConcreteProvider());
+		}
+
+		if (compresionTest.getConcreteDesign() == null) {
+			comboBoxConcreteDesign.getSelectionModel().selectFirst();
+		} else {
+			comboBoxConcreteDesign.setValue(compresionTest.getConcreteDesign());
+		}
+
+		if (compresionTest.getDate() != null) {
+			dpCreationDate.setValue(LocalDate.ofInstant(compresionTest.getDate().toInstant(), ZoneId.systemDefault()));
+
+		}
+		txtObra.setText(compresionTest.getObra());
+		txtAddress.setText(compresionTest.getAddress());
 	}
 
 }

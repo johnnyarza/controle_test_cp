@@ -172,6 +172,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 					}, "/gui/NewCompresionTestForm.css", new Image(LoadCompresionTestViewController.class
 							.getResourceAsStream("/images/fileIcons/new_file.png")),
 					logger);
+			
 			if (!(wrapper.getBtCancelPressed())) {
 				showCompresionTestForm(parentStage);
 			}
@@ -191,12 +192,12 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		try {
 			CompresionTest obj = getCompresionTestFromTableView();
 			Stage parentStage = Utils.currentStage(event);
+			
 			createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, obj,
 					"/gui/CompresionTestForm.css");
+			
 			updateViewData();
-			if (lateCorpoDeProvaList.size() > 0) {
-				Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
-			}
+			
 		} catch (NullPointerException | SQLException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", e.getClass().getName(), e.getMessage(), AlertType.ERROR);
@@ -386,13 +387,12 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			t.setDaemon(true);
 			return t;
 		});
-		Utils.setDisableButtons(buttons, true);
+		
 		initializeNodes();
 
 	}
 
-	private void initializeNodes() {
-		initializeBounces();
+	private void initializeNodes() {		
 		formatTableView();
 	}
 
@@ -401,6 +401,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	};
 
 	public void updateViewData() {
+		Utils.setDisableButtons(buttons, true);
+		initializeBounces();
 		updateTableView();
 		updateLateCorpoDeProva();
 	}
@@ -437,8 +439,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				compresionTestListList = task.get();
 				tableViewClient.setItems(FXCollections.observableArrayList(compresionTestListList));
 				tableViewClient.refresh();
-				Utils.setDisableButtons(buttons, false);
-				bounces.forEach(bounceFinalAction);
+
 			} catch (InterruptedException | ExecutionException e1) {
 				logger.doLog(Level.WARNING, e1.getMessage(), e1);
 				Alerts.showAlert("Error", e1.toString(), e1.getMessage(), AlertType.ERROR);
@@ -468,10 +469,47 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		try {
 			if (corpoDeProvaService == null)
 				throw new IllegalStateException("corpoDeProvaService was null");
+			DBTask<CorpoDeProvaService, List<CorpoDeProva>> task = new DBTask<CorpoDeProvaService, List<CorpoDeProva>>(
+					corpoDeProvaService,
+					corpoDeProvaService -> corpoDeProvaService.findLateCorpoDeProva(TimeZone.getDefault()));
+			Consumer<Bounce> bounceFinalAction = (Bounce b) -> {
+				b.stop();
+				b.getNode().setVisible(false);
+			};
+			EventHandler<WorkerStateEvent> onSucceeded = (WorkerStateEvent e) -> {
+				try {
+					lateCorpoDeProvaList = task.get();
+					formatWarningBtn(lateCorpoDeProvaList);
+					if (lateCorpoDeProvaList.size() > 0) {
+						Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
+					}
+					Utils.setDisableButtons(buttons, false);
+					bounces.forEach(bounceFinalAction);
+				} catch (InterruptedException | ExecutionException e1) {
+					logger.doLog(Level.WARNING, e1.getMessage(), e1);
+					Alerts.showAlert("Error", e1.toString(), e1.getMessage(), AlertType.ERROR);
+					bounces.forEach(bounceFinalAction);
+				}
+			};
 
-			lateCorpoDeProvaList = corpoDeProvaService.findLateCorpoDeProva(TimeZone.getDefault());
+			EventHandler<WorkerStateEvent> onFail = (WorkerStateEvent e) -> {
+				bounces.forEach(bounceFinalAction);
+				logger.doLog(Level.WARNING, task.getException().getMessage(), task.getException());
+				Alerts.showAlert("Error", task.getException().toString(), task.getException().getMessage(),
+						AlertType.ERROR);
+			};
 
-			formatWarningBtn(lateCorpoDeProvaList);
+			EventHandler<WorkerStateEvent> onCancel = (WorkerStateEvent e) -> {
+				bounces.forEach(bounceFinalAction);
+				logger.doLog(Level.WARNING, task.getException().getMessage(), task.getException());
+				Alerts.showAlert("Error", task.getException().toString(), task.getException().getMessage(),
+						AlertType.ERROR);
+			};
+			
+			Utils.setTaskEvents(task, onFail, onSucceeded, onCancel);
+			exec.execute(task);
+
+			
 		} catch (IllegalStateException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);

@@ -69,7 +69,7 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	Circle circle3;
-	
+
 	List<Bounce> bounces;
 
 	@FXML
@@ -120,12 +120,8 @@ public class MainViewController implements Initializable {
 				controller.setCorpoDeProvaService(wrapper.corpoDeProvaService);
 				controller.setCompresionTestService(wrapper.compresionTestService);
 				controller.setLogger(logger);
-
 				controller.updateViewData();
-
-				if (controller.getLateCorpoDeProvaList().size() > 0) {
-					Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
-				}
+				
 			}, "/gui/LoadCompresionTestView.css");
 		} catch (Exception e) {
 			Alerts.showAlert("Aviso", Exception.class.getName(), e.getMessage(), AlertType.ERROR);
@@ -253,52 +249,7 @@ public class MainViewController implements Initializable {
 		this.compresionTest = compresionTest;
 	}
 
-	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
 
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			VBox newVbox = loader.load();
-
-			Scene mainScene = Program.getMainScene();
-			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
-
-			Node mainMenu = mainVBox.getChildren().get(0);
-			mainVBox.getChildren().clear();
-			mainVBox.getChildren().add(mainMenu);
-			mainVBox.getChildren().addAll(newVbox.getChildren());
-
-			T controller = loader.getController();
-			initializingAction.accept(controller);
-
-		} catch (IOException e) {
-			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
-		}
-	}
-
-	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction, String css)
-			throws IOException {
-
-		FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-		VBox newVbox = loader.load();
-
-		Scene mainScene = Program.getMainScene();
-
-		if (!css.trim().equals("")) {
-			mainScene.getStylesheets().add(css);
-		}
-
-		VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
-
-		Node mainMenu = mainVBox.getChildren().get(0);
-		mainVBox.getChildren().clear();
-		mainVBox.getChildren().add(mainMenu);
-		mainVBox.getChildren().addAll(newVbox.getChildren());
-
-		T controller = loader.getController();
-		initializingAction.accept(controller);
-
-	}
 
 	private void testConnection() {
 
@@ -340,7 +291,7 @@ public class MainViewController implements Initializable {
 				});
 				logger.doLog(Level.WARNING, e1.getMessage(), e1);
 				Alerts.showAlert("Error", e1.toString(), e1.getMessage(), AlertType.ERROR);
-			} 
+			}
 		}, onCancel);
 
 		exec.execute(testConnectionTask);
@@ -388,4 +339,49 @@ public class MainViewController implements Initializable {
 		testConnection();
 	}
 
+	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction, String css)
+			throws IOException {
+
+		FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+		VBox newVbox = loader.load();
+
+		Scene mainScene = Program.getMainScene();
+
+		if (!css.trim().equals("")) {
+			mainScene.getStylesheets().add(css);
+		}
+
+		VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
+
+		Node mainMenu = mainVBox.getChildren().get(0);
+		mainVBox.getChildren().clear();
+		mainVBox.getChildren().add(mainMenu);
+		mainVBox.getChildren().addAll(newVbox.getChildren());
+
+		T controller = loader.getController();
+		initializingAction.accept(controller);
+
+	}
+	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
+
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			VBox newVbox = loader.load();
+
+			Scene mainScene = Program.getMainScene();
+			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
+
+			Node mainMenu = mainVBox.getChildren().get(0);
+			mainVBox.getChildren().clear();
+			mainVBox.getChildren().add(mainMenu);
+			mainVBox.getChildren().addAll(newVbox.getChildren());
+
+			T controller = loader.getController();
+			initializingAction.accept(controller);
+
+		} catch (IOException e) {
+			logger.doLog(Level.WARNING, e.getMessage(), e);
+			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
+		}
+	}
 }

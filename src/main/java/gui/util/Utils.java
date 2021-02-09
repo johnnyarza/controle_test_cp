@@ -403,6 +403,7 @@ public class Utils {
 		bounces.forEach(b -> {
 			b.setCycleCount(1000).setDelay(Duration.valueOf(wrapper.i + "ms"));
 			wrapper.i += 500;
+			b.getNode().setVisible(true);
 			b.play();
 		});
 

@@ -276,6 +276,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		}, e -> {
 			try {
 				tableViewMaterial.setItems(FXCollections.observableArrayList(task.get()));
+				tableViewMaterial.refresh();
 				Utils.setDisableButtons(buttons, false);
 				bounces.forEach(bounceFinalAction);
 			} catch (InterruptedException | ExecutionException e1) {

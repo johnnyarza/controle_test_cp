@@ -17,198 +17,224 @@
 <?import javafx.scene.text.Font?>
 
 <VBox fx:id="vbox" minWidth="400.0" prefHeight="401.0" prefWidth="1168.0" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.CompresionTestFormController">
-   <children>
-      <GridPane minHeight="90.0" prefHeight="90.0" vgap="2.0">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="173.0" minWidth="85.0" prefWidth="141.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="141.0" prefWidth="143.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="279.0" minWidth="60.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="279.0" minWidth="80.0" prefWidth="104.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="462.0" minWidth="143.0" prefWidth="164.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="60.0" prefWidth="66.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="124.99997558593748" minWidth="90.0" prefWidth="124.19998779296873" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="10.0" prefWidth="256.60001220703134" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="10.0" prefWidth="103.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-            <Label text="Documento n°:">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <Label text="Creado en:" GridPane.columnIndex="3" GridPane.rowIndex="2">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" />
-               </padding>
-            </Label>
-            <TextField fx:id="txtid" editable="false" maxWidth="50.0" GridPane.columnIndex="1" />
-            <TextField fx:id="txtObra" disable="true" promptText="Obra" GridPane.columnIndex="4" />
-            <TextField fx:id="txtAddress" disable="true" promptText="Ubicación" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <Label text="Obra:" GridPane.columnIndex="3">
-               <padding>
-                  <Insets left="5.0" />
-               </padding>
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <Label text="Ubicación:" GridPane.columnIndex="3" GridPane.rowIndex="1">
-               <GridPane.margin>
+	<children>
+		<GridPane minHeight="90.0" prefHeight="90.0" vgap="2.0">
+			<columnConstraints>
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="173.0" minWidth="85.0" prefWidth="141.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="141.0" prefWidth="143.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="279.0" minWidth="60.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="279.0" minWidth="80.0" prefWidth="104.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="462.0" minWidth="143.0" prefWidth="164.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="60.0" prefWidth="66.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="124.99997558593748" minWidth="90.0" prefWidth="124.19998779296873" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="10.0" prefWidth="256.60001220703134" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="613.0" minWidth="10.0" prefWidth="103.0" />
+			</columnConstraints>
+			<rowConstraints>
+				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+			</rowConstraints>
+			<children>
+				<Label text="Documento n°:">
+					<font>
+						<Font name="System Bold" size="14.0" />
+					</font>
+				</Label>
+				<Label text="Creado en:" GridPane.columnIndex="3" GridPane.rowIndex="2">
+					<font>
+						<Font name="System Bold" size="14.0" />
+					</font>
+					<padding>
+						<Insets left="5.0" />
+					</padding>
+				</Label>
+				<TextField fx:id="txtid" editable="false" maxWidth="50.0" GridPane.columnIndex="1" />
+				<TextField fx:id="txtObra" disable="true" promptText="Obra" GridPane.columnIndex="4" />
+				<TextField fx:id="txtAddress" disable="true" promptText="Ubicación" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+				<Label text="Obra:" GridPane.columnIndex="3">
+					<padding>
+						<Insets left="5.0" />
+					</padding>
+					<font>
+						<Font name="System Bold" size="14.0" />
+					</font>
+				</Label>
+				<Label text="Ubicación:" GridPane.columnIndex="3" GridPane.rowIndex="1">
+					<GridPane.margin>
+						<Insets />
+					</GridPane.margin>
+					<padding>
+						<Insets left="5.0" />
+					</padding>
+					<font>
+						<Font name="System Bold" size="14.0" />
+					</font>
+				</Label>
+				<HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="265.0" spacing="5.0" GridPane.columnIndex="7" GridPane.rowIndex="2">
+					<children>
+						<Button fx:id="btFilter" maxHeight="25.6" maxWidth="25.6" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtFilterAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" />
+						<Button fx:id="btClearFilter" maxHeight="25.6" maxWidth="25.6" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onbtClearFilterAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" />
+					</children>
+					<GridPane.margin>
+						<Insets left="2.0" />
+					</GridPane.margin>
+				</HBox>
+				<ComboBox fx:id="comboBoxClient" disable="true" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" promptText="Cliente" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+				<DatePicker fx:id="dpCreationDate" disable="true" editable="false" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" promptText="fecha" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+				<Label fx:id="labelErrorClient" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1">
+					<GridPane.margin>
+						<Insets left="5.0" />
+					</GridPane.margin>
+				</Label>
+				<Label fx:id="labelErrorDate" textFill="RED" GridPane.columnIndex="5" GridPane.rowIndex="2">
+					<GridPane.margin>
+						<Insets left="5.0" />
+					</GridPane.margin>
+				</Label>
+				<Label fx:id="labelErrorObra" textFill="RED" GridPane.columnIndex="5">
+					<GridPane.margin>
+						<Insets left="5.0" />
+					</GridPane.margin>
+				</Label>
+				<Label fx:id="labelErrorAddress" textFill="RED" GridPane.columnIndex="5" GridPane.rowIndex="1">
+					<GridPane.margin>
+						<Insets left="5.0" />
+					</GridPane.margin>
+				</Label>
+				<Label fx:id="labelMessages" prefHeight="20.0" prefWidth="330.0" textFill="RED" GridPane.columnIndex="7" GridPane.rowIndex="1">
+					<GridPane.margin>
+						<Insets left="5.0" />
+					</GridPane.margin>
+					<font>
+						<Font size="14.0" />
+					</font>
+				</Label>
+				<Label text="Dosificación / m³" GridPane.columnIndex="6">
+					<GridPane.margin>
+						<Insets left="5.0" />
+					</GridPane.margin>
+					<font>
+						<Font name="System Bold" size="14.0" />
+					</font>
+				</Label>
+				<ComboBox fx:id="comboBoxConcreteDesign" disable="true" onAction="#onChangeCount" prefHeight="25.0" prefWidth="373.0" GridPane.columnIndex="7" />
+				<Label fx:id="labelErrorConcreteDesign" textFill="RED" GridPane.columnIndex="8">
+					<GridPane.margin>
+						<Insets left="5.0" />
+					</GridPane.margin>
+				</Label>
+				<HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.rowIndex="1">
+					<children>
+						<Label text="Cliente:">
+							<font>
+								<Font name="System Bold" size="14.0" />
+							</font>
+						</Label>
+						<Button fx:id="btSearchClient" disable="true" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtSearchClientAction" prefHeight="20.0" prefWidth="20.0" />
+					</children>
+				</HBox>
+				<HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.rowIndex="2">
+					<children>
+						<Label text="Prov. Hormigon:">
+							<font>
+								<Font name="System Bold" size="14.0" />
+							</font>
+						</Label>
+						<Button fx:id="btSearchConcreteProvider" disable="true" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtSearchConcreteProviderAction" prefHeight="20.0" prefWidth="20.0" />
+					</children>
+				</HBox>
+				<ComboBox fx:id="comboBoxConcreteProvider" disable="true" onAction="#onChangeCount" prefWidth="150.0" promptText="Prov. Hormigón" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+				<Label fx:id="labelErrorConcreteProvider" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="2">
+					<GridPane.margin>
+						<Insets left="5.0" />
+					</GridPane.margin>
+				</Label>
+			</children>
+			<padding>
+				<Insets left="8.0" right="8.0" top="5.0" />
+			</padding>
+		</GridPane>
+		<TableView fx:id="tableViewCorpoDeProva" minWidth="400.0" prefHeight="276.0">
+			<columns>
+				<TableColumn fx:id="tableColumnId" prefWidth="72.0" styleClass="custom-align" text="Probeta iD" />
+				<TableColumn fx:id="tableColumnCodigo" prefWidth="200.0" styleClass="fitwidth" text="Descripción" />
+				<TableColumn fx:id="tableColumnSlump" prefWidth="75.0" styleClass="custom-align" text="Slump" />
+				<TableColumn fx:id="tableColumnFechaMoldeo" prefWidth="110.0" styleClass="custom-align" text="Fecha de Moldeo" />
+				<TableColumn fx:id="tableColumnFechaRotura" prefWidth="110.0" styleClass="custom-align" text="Fecha de Rotura" />
+				<TableColumn fx:id="tableColumnEdad" prefWidth="60.0" styleClass="custom-align" text="Edad" />
+				<TableColumn fx:id="tableColumnDiameter" prefWidth="60.33331298828125" styleClass="custom-align" text="Ø (cm)" />
+				<TableColumn fx:id="tableColumnHeight" prefWidth="75.3333740234375" styleClass="custom-align" text="Altura (cm)" />
+				<TableColumn fx:id="tableColumnWeight" prefWidth="78.0" styleClass="custom-align" text="Peso (kg)" />
+				<TableColumn fx:id="tableColumnDensid" prefWidth="101.33331298828125" styleClass="custom-align" text="Desidad (kg/m³)" />
+				<TableColumn fx:id="tableColumnTonRupture" prefWidth="85.66668701171875" styleClass="custom-align" text="Rotura (ton)" />
+				<TableColumn fx:id="tableColumnfckRupture" prefWidth="120.0" styleClass="custom-align" text="Resistencia (kg/cm²)" />
+			</columns>
+		</TableView>
+		<HBox alignment="CENTER_LEFT" minHeight="35.0" prefHeight="35.0" prefWidth="719.0" spacing="5.0">
+			<padding>
+				<Insets left="5.0" />
+			</padding>
+			<children>
+				<Button fx:id="btEditarCadastro" mnemonicParsing="false" onAction="#onBtEditarCadastroAction" styleClass="custom-button" text="Guardar Registro" textAlignment="CENTER" />
+				<Button fx:id="btInserirProbeta" mnemonicParsing="false" onAction="#onBtInserirProbetaAction" styleClass="custom-button" text="Insertar Probeta" />
+				<Button fx:id="btEditarProbeta" mnemonicParsing="false" onAction="#onBtEditarProbetaAction" styleClass="custom-button" text="Editar Probeta" />
+				<Button fx:id="btApagarProbeta" mnemonicParsing="false" onAction="#onBtApagarProbetaAction" styleClass="delete-button" text="Borrar Probeta" />
+				<Button fx:id="btCopy" contentDisplay="CENTER" graphicTextGap="2.0" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onBtCopyAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" textAlignment="CENTER" />
+				<Button fx:id="btPrint" contentDisplay="CENTER" graphicTextGap="2.0" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onbtPrintAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" textAlignment="CENTER" />
+				<Button fx:id="btClose" mnemonicParsing="false" onAction="#onBtCloseAction" styleClass="close-button" text="Cerrar" />
+				<Button fx:id="btLock" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onBtLockAction" prefHeight="25.6" prefWidth="25.6" />
+            <HBox alignment="BOTTOM_CENTER" prefHeight="35.0" prefWidth="361.0">
+               <children>
+						<Circle fx:id="circle1" fill="#216eff00" radius="10.0" stroke="#00c3ff" strokeType="INSIDE" strokeWidth="6.0">
+							<HBox.margin>
+								<Insets right="5.0" />
+							</HBox.margin>
+						</Circle>
+						<Circle fx:id="circle3" fill="#1f93ff00" radius="10.0" stroke="#0adf4d" strokeType="INSIDE" strokeWidth="6.0">
+							<HBox.margin>
+								<Insets right="5.0" />
+							</HBox.margin>
+						</Circle>
+						<Circle fx:id="circle2" fill="#1f93ff00" radius="10.0" stroke="#ea4848" strokeType="INSIDE" strokeWidth="6.0">
+							<HBox.margin>
+								<Insets right="5.0" />
+							</HBox.margin>
+						</Circle>
+               </children>
+               <opaqueInsets>
                   <Insets />
-               </GridPane.margin>
+               </opaqueInsets>
                <padding>
-                  <Insets left="5.0" />
-               </padding>
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="265.0" spacing="5.0" GridPane.columnIndex="7" GridPane.rowIndex="2">
-               <children>
-                  <Button fx:id="btFilter" maxHeight="25.6" maxWidth="25.6" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtFilterAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" />
-                  <Button fx:id="btClearFilter" maxHeight="25.6" maxWidth="25.6" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onbtClearFilterAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" />
-               </children>
-               <GridPane.margin>
-                  <Insets left="2.0" />
-               </GridPane.margin></HBox>
-            <ComboBox fx:id="comboBoxClient" disable="true" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" promptText="Cliente" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <DatePicker fx:id="dpCreationDate" disable="true" editable="false" onAction="#onChangeCount" prefHeight="25.0" prefWidth="202.0" promptText="fecha" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-            <Label fx:id="labelErrorClient" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin>
-            </Label>
-            <Label fx:id="labelErrorDate" textFill="RED" GridPane.columnIndex="5" GridPane.rowIndex="2">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin>
-            </Label>
-            <Label fx:id="labelErrorObra" textFill="RED" GridPane.columnIndex="5">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin>
-            </Label>
-            <Label fx:id="labelErrorAddress" textFill="RED" GridPane.columnIndex="5" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin>
-            </Label>
-            <Label fx:id="labelMessages" prefHeight="20.0" prefWidth="330.0" textFill="RED" GridPane.columnIndex="7" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label text="Dosificación / m³" GridPane.columnIndex="6">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin>
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <ComboBox fx:id="comboBoxConcreteDesign" disable="true" onAction="#onChangeCount" prefHeight="25.0" prefWidth="373.0" GridPane.columnIndex="7" />
-            <Label fx:id="labelErrorConcreteDesign" textFill="RED" GridPane.columnIndex="8">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin>
-            </Label>
-            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.rowIndex="1">
-               <children>
-                  <Label text="Cliente:">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Button fx:id="btSearchClient" disable="true" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtSearchClientAction" prefHeight="20.0" prefWidth="20.0" />
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.rowIndex="2">
-               <children>
-                  <Label text="Prov. Hormigon:">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Button fx:id="btSearchConcreteProvider" disable="true" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onBtSearchConcreteProviderAction" prefHeight="20.0" prefWidth="20.0" />
-               </children>
-            </HBox>
-            <ComboBox fx:id="comboBoxConcreteProvider" disable="true" onAction="#onChangeCount" prefWidth="150.0" promptText="Prov. Hormigón" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label fx:id="labelErrorConcreteProvider" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="2">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin>
-            </Label>
-         </children>
-         <padding>
-            <Insets left="8.0" right="8.0" top="5.0" />
-         </padding>
-      </GridPane>
-      <TableView fx:id="tableViewCorpoDeProva" minWidth="400.0" prefHeight="276.0">
-        <columns>
-          <TableColumn fx:id="tableColumnId" prefWidth="72.0" styleClass="custom-align" text="Probeta iD" />
-          <TableColumn fx:id="tableColumnCodigo" prefWidth="200.0" styleClass="fitwidth" text="Descripción" />
-            <TableColumn fx:id="tableColumnSlump" prefWidth="75.0" styleClass="custom-align" text="Slump" />
-            <TableColumn fx:id="tableColumnFechaMoldeo" prefWidth="110.0" styleClass="custom-align" text="Fecha de Moldeo" />
-            <TableColumn fx:id="tableColumnFechaRotura" prefWidth="110.0" styleClass="custom-align" text="Fecha de Rotura" />
-            <TableColumn fx:id="tableColumnEdad" prefWidth="60.0" styleClass="custom-align" text="Edad" />
-            <TableColumn fx:id="tableColumnDiameter" prefWidth="60.33331298828125" styleClass="custom-align" text="Ø (cm)" />
-            <TableColumn fx:id="tableColumnHeight" prefWidth="75.3333740234375" styleClass="custom-align" text="Altura (cm)" />
-            <TableColumn fx:id="tableColumnWeight" prefWidth="78.0" styleClass="custom-align" text="Peso (kg)" />
-            <TableColumn fx:id="tableColumnDensid" prefWidth="101.33331298828125" styleClass="custom-align" text="Desidad (kg/m³)" />
-            <TableColumn fx:id="tableColumnTonRupture" prefWidth="85.66668701171875" styleClass="custom-align" text="Rotura (ton)" />
-            <TableColumn fx:id="tableColumnfckRupture" prefWidth="120.0" styleClass="custom-align" text="Resistencia (kg/cm²)" />
-        </columns>
-      </TableView>
-      <HBox alignment="CENTER_LEFT" minHeight="35.0" prefHeight="35.0" prefWidth="719.0" spacing="5.0">
-         <padding>
-            <Insets left="5.0" />
-         </padding>
-         <children>
-            <Button fx:id="btEditarCadastro" mnemonicParsing="false" onAction="#onBtEditarCadastroAction" styleClass="custom-button" text="Guardar Registro" textAlignment="CENTER" />
-            <Button fx:id="btInserirProbeta" mnemonicParsing="false" onAction="#onBtInserirProbetaAction" styleClass="custom-button" text="Insertar Probeta" />
-            <Button fx:id="btEditarProbeta" mnemonicParsing="false" onAction="#onBtEditarProbetaAction" styleClass="custom-button" text="Editar Probeta" />
-            <Button fx:id="btApagarProbeta" mnemonicParsing="false" onAction="#onBtApagarProbetaAction" styleClass="delete-button" text="Borrar Probeta" />
-            <Button fx:id="btCopy" contentDisplay="CENTER" graphicTextGap="2.0" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onBtCopyAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" textAlignment="CENTER" />
-            <Button fx:id="btPrint" contentDisplay="CENTER" graphicTextGap="2.0" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onbtPrintAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" textAlignment="CENTER" />
-            <Button fx:id="btClose" mnemonicParsing="false" onAction="#onBtCloseAction" styleClass="close-button" text="Cerrar" />
-            <Button fx:id="btLock" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onBtLockAction" prefHeight="25.6" prefWidth="25.6" />
-            <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="222.0" spacing="5.0">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-               <children>
-                  <Label text="Mañana">
-                     <graphic>
-                        <Circle fill="#2ecc71" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
-                     </graphic>
-                  </Label>
-                  <Label text="Hoy">
-                     <graphic>
-                        <Circle fill="#f1c40f" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
-                     </graphic>
-                  </Label>
-                  <Label text="Retrasado">
-                     <graphic>
-                        <Circle fill="#e74c3c" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
-                     </graphic>
-                  </Label>
-               </children>
-               <padding>
-                  <Insets left="8.0" />
+                  <Insets bottom="3.0" />
                </padding>
             </HBox>
-         </children>
-      </HBox>
-   </children>
+				<HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="222.0" spacing="5.0">
+					<HBox.margin>
+						<Insets />
+					</HBox.margin>
+					<children>
+						<Label text="Mañana">
+							<graphic>
+								<Circle fill="#2ecc71" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+							</graphic>
+						</Label>
+						<Label text="Hoy">
+							<graphic>
+								<Circle fill="#f1c40f" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+							</graphic>
+						</Label>
+						<Label text="Retrasado">
+							<graphic>
+								<Circle fill="#e74c3c" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+							</graphic>
+						</Label>
+					</children>
+					<padding>
+						<Insets left="8.0" />
+					</padding>
+				</HBox>
+			</children>
+		</HBox>
+	</children>
 </VBox>
