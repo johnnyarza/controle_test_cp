@@ -76,10 +76,6 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	private ObservableList<CorpoDeProva> obsList;
 
-	private ObservableList<Cliente> obsListClient;
-
-	private ObservableList<ConcreteDesign> obsListConcreteDesign;
-
 	private CorpoDeProvaService corpoDeProvaService;
 
 	private CompresionTestService compresionTestService;
@@ -103,7 +99,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	Map<String, ImageView> imgViewMap = new HashMap<>();
 
 	List<DataChangeListener> dataChangeListeners = new ArrayList<>();
-	
+
 	@FXML
 	Circle circle1;
 
@@ -547,9 +543,11 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					"Hay datos no guardados!!");
 			if (result.get() == ButtonType.OK) {
 				Utils.currentStage(event).close();
+				notifyListeners();
 			}
 		} else {
 			Utils.currentStage(event).close();
+			notifyListeners();
 		}
 	}
 
@@ -648,12 +646,31 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	public void setLabelMessageText(Integer compresionTestId) {
-		Integer cpCount = corpoDeProvaService.countCorpoDeProvasToTestbyCompresionTestId(compresionTestId);
-		if (cpCount > 0) {
-			labelMessages.setText("Hay " + Integer.toString(cpCount) + " probeta(s) para Romper");
-		} else {
-			labelMessages.setText("");
+		if (corpoDeProvaService == null) {
+			throw new NullPointerException("Corpo de prova service was null");
 		}
+		DBTask<CorpoDeProvaService, Integer> task = new DBTask<CorpoDeProvaService, Integer>(corpoDeProvaService,
+				corpoDeProvaService -> corpoDeProvaService
+						.countCorpoDeProvasToTestbyCompresionTestId(compresionTestId));
+
+		task.setOnSucceeded(e -> {
+			Integer cpCount;
+			try {
+				cpCount = task.get();
+				if (cpCount > 0) {
+					labelMessages.setText("Hay " + Integer.toString(cpCount) + " probeta(s) para Romper");
+				} else {
+					labelMessages.setText("");
+				}
+			} catch (InterruptedException | ExecutionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		});
+
+		exec.execute(task);
+
 	}
 
 	public void setCompresionTest(CompresionTest compresionTest) {
@@ -717,7 +734,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	private void initializeNodes() {
-		bounces = Utils.initiateBouncers(Arrays.asList(circle1,circle2,circle3));
+		
 		formatTableView();
 		initializeComboBoxClient();
 		tableViewCorpoDeProva.prefHeightProperty().bind(vbox.heightProperty());
@@ -735,19 +752,43 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		if (clientService == null) {
 			throw new IllegalStateException("ClientService was null");
 		}
-		List<Cliente> list = clientService.findAll();
-		obsListClient = FXCollections.observableArrayList(list);
-		comboBoxClient.setItems(obsListClient);
-		comboBoxConcreteProvider.setItems(obsListClient);
+
+		DBTask<ClientService, List<Cliente>> task = new DBTask<ClientService, List<Cliente>>(clientService,
+				clientService -> clientService.findAll());
+
+		task.setOnSucceeded(e -> {
+			try {
+				List<Cliente> list = task.get();
+				comboBoxClient.setItems(FXCollections.observableArrayList(list));
+				comboBoxConcreteProvider.setItems(FXCollections.observableArrayList(list));
+			} catch (InterruptedException | ExecutionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+
+		exec.execute(task);
 	}
 
 	private void loadCompresionDesignComboBox() {
 		if (concreteDesignService == null) {
 			throw new IllegalStateException("concreteDesignService was null");
 		}
-		List<ConcreteDesign> list = concreteDesignService.findAllConcreteDesign();
-		obsListConcreteDesign = FXCollections.observableArrayList(list);
-		comboBoxConcreteDesign.setItems(obsListConcreteDesign);
+
+		DBTask<ConcreteDesignService, List<ConcreteDesign>> task = new DBTask<ConcreteDesignService, List<ConcreteDesign>>(
+				concreteDesignService, concreteDesignService -> concreteDesignService.findAllConcreteDesign());
+
+		task.setOnSucceeded(e -> {
+			try {
+				comboBoxConcreteDesign.setItems(FXCollections.observableArrayList(task.get()));
+			} catch (InterruptedException | ExecutionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+
+		exec.execute(task);
+
 	}
 
 	private CorpoDeProva getCorpoDeProvaView() {
@@ -777,9 +818,11 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@Override
 	public void onDataChange() {
+		bounces = Utils.initiateBouncers(Arrays.asList(circle1, circle2, circle3));
+		tableViewCorpoDeProva.setDisable(true);
 		updateFormData();
-		updateTableView();
 		setLabelMessageText(this.compresionTest.getId());
+		updateTableView();
 	}
 
 	public void setFormaLockedState() {
@@ -964,8 +1007,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		});
 	}
 
-	
-public void updateTableView() {
+	public void updateTableView() {
 		if (corpoDeProvaService == null) {
 			throw new IllegalStateException("Service was null");
 		}
@@ -973,17 +1015,18 @@ public void updateTableView() {
 		DBTask<CorpoDeProvaService, List<CorpoDeProva>> task = new DBTask<CorpoDeProvaService, List<CorpoDeProva>>(
 				corpoDeProvaService, corpoDeProvaService -> corpoDeProvaService
 						.findByCompresionTestIdWithTimeZone(compresionTest.getId(), TimeZone.getDefault()));
-		
+
 		Consumer<Bounce> bounceFinalAction = (Bounce b) -> {
 			b.stop();
 			b.getNode().setVisible(false);
 		};
-		
+
 		task.setOnSucceeded(e -> {
 			try {
 				tableViewCorpoDeProva.setItems(FXCollections.observableArrayList(task.get()));
 				Utils.formatCorpoDeProvaTableViewRowColor(tableViewCorpoDeProva);
 				tableViewCorpoDeProva.refresh();
+				tableViewCorpoDeProva.setDisable(false);
 				bounces.forEach(bounceFinalAction);
 			} catch (ExecutionException | InterruptedException e1) {
 				logger.doLog(Level.WARNING, e1.getMessage(), e1);
@@ -996,7 +1039,7 @@ public void updateTableView() {
 
 	public void updateFormData() {
 		if (compresionTest == null) {
-			throw new IllegalStateException("Service was null");
+			throw new IllegalStateException("Documento vacío");
 		}
 
 		txtid.setText((compresionTest.getId()).toString());
@@ -1026,5 +1069,9 @@ public void updateTableView() {
 		txtObra.setText(compresionTest.getObra());
 		txtAddress.setText(compresionTest.getAddress());
 	}
+
+	public void notifyListeners() {
+		this.dataChangeListeners.forEach(l -> l.onDataChange());
+	};
 
 }

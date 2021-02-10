@@ -162,7 +162,6 @@ public class NewCompresionTestFormController implements Initializable {
 			}
 			entity = getFormData();
 			compresionTestService.saveOrUpdate(entity);
-			notifyDataChangeListeners();
 			this.btCancelPressed = false;
 			Utils.currentStage(event).close();
 		} catch (DbException e) {

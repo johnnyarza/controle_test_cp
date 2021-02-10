@@ -172,7 +172,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 					}, "/gui/NewCompresionTestForm.css", new Image(LoadCompresionTestViewController.class
 							.getResourceAsStream("/images/fileIcons/new_file.png")),
 					logger);
-			
+
 			if (!(wrapper.getBtCancelPressed())) {
 				showCompresionTestForm(parentStage);
 			}
@@ -190,14 +190,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	public void onbtOpenAction(ActionEvent event) {
 		isNewDoc = false;
 		try {
-			CompresionTest obj = getCompresionTestFromTableView();
+			this.entity = getCompresionTestFromTableView();
 			Stage parentStage = Utils.currentStage(event);
-			
-			createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, obj,
-					"/gui/CompresionTestForm.css");
-			
-			updateViewData();
-			
+			showCompresionTestForm(parentStage);
+
 		} catch (NullPointerException | SQLException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", e.getClass().getName(), e.getMessage(), AlertType.ERROR);
@@ -373,10 +369,6 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	private void showCompresionTestForm(Stage parentStage) throws SQLException {
 		createDialogFormCompresionTest("/gui/CompresionTestForm.fxml", parentStage, this.entity,
 				"/gui/CompresionTestForm.css");
-		updateViewData();
-		if (lateCorpoDeProvaList.size() > 0) {
-			Alerts.showAlert("Aviso", "Hay probetas con fecha proxima o retrasadas", "", AlertType.WARNING);
-		}
 	}
 
 	@Override
@@ -387,12 +379,12 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			t.setDaemon(true);
 			return t;
 		});
-		
+
 		initializeNodes();
 
 	}
 
-	private void initializeNodes() {		
+	private void initializeNodes() {
 		formatTableView();
 	}
 
@@ -505,11 +497,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				Alerts.showAlert("Error", task.getException().toString(), task.getException().getMessage(),
 						AlertType.ERROR);
 			};
-			
+
 			Utils.setTaskEvents(task, onFail, onSucceeded, onCancel);
 			exec.execute(task);
 
-			
 		} catch (IllegalStateException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "IllegalStateException", e.getMessage(), AlertType.ERROR);
@@ -560,6 +551,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			CompresionTestFormController controller = loader.getController();
 
 			controller.setCorpoDeProvaService(new CorpoDeProvaService());
+			controller.dataChangeListenerSubscribe(this);
 			controller.setCompresionTestService(new CompresionTestService());
 			controller.setClientService(new ClientService());
 			controller.setConcreteDesignService(new ConcreteDesignService());
@@ -568,9 +560,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			controller.loadAssociatedObjects();
 			controller.setIsNewDoc(this.isNewDoc);
 			controller.setFormaLockedState();
-			controller.updateFormData();
-			controller.updateTableView();
-			controller.setLabelMessageText(obj.getId());
+			controller.onDataChange();
 			controller.setTxtListeners();
 			controller.setChangesCount(0);
 
@@ -592,9 +582,12 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 						Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acción",
 								"Segura que desea cerrar?", "Hay datos no guardados!!");
 						if (result.get() != ButtonType.OK) {
+							controller.notifyListeners();
 							we.consume();
+
 						}
 					}
+					controller.notifyListeners();
 				}
 			});
 
