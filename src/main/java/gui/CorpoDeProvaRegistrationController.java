@@ -128,7 +128,7 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 		try {
 			dpMoldeDate.setValue(LocalDate.now());
 		} catch (Exception e) {
-			Alerts.showAlert("Error", "Error saving Probeta", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error al insertar fecha", e.getMessage(), AlertType.ERROR);
 		}
 	}
 

@@ -734,7 +734,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	private void initializeNodes() {
-		
+
 		formatTableView();
 		initializeComboBoxClient();
 		tableViewCorpoDeProva.prefHeightProperty().bind(vbox.heightProperty());
@@ -820,6 +820,9 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	public void onDataChange() {
 		bounces = Utils.initiateBouncers(Arrays.asList(circle1, circle2, circle3));
 		tableViewCorpoDeProva.setDisable(true);
+		Utils.setDisableButtons(Arrays.asList(btApagarProbeta, btClearFilter, btClose, btCopy, btEditarCadastro,
+				btEditarProbeta, btFilter, btInserirProbeta, btLock, btPrint, btSearchClient, btSearchConcreteProvider),
+				true);
 		updateFormData();
 		setLabelMessageText(this.compresionTest.getId());
 		updateTableView();
@@ -1028,6 +1031,10 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 				tableViewCorpoDeProva.refresh();
 				tableViewCorpoDeProva.setDisable(false);
 				bounces.forEach(bounceFinalAction);
+				setFormaLockedState();
+				Utils.setDisableButtons(
+						Arrays.asList(btEditarProbeta, btPrint, btClose, btLock, btFilter, btClearFilter), false);
+
 			} catch (ExecutionException | InterruptedException e1) {
 				logger.doLog(Level.WARNING, e1.getMessage(), e1);
 				Alerts.showAlert("Error", e1.getCause().toString(), e1.getMessage(), AlertType.ERROR);

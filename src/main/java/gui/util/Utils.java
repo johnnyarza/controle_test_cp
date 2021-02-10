@@ -395,19 +395,29 @@ public class Utils {
 
 	public static List<Bounce> initiateBouncers(List<Circle> circles) {
 		var wrapper = new Object() {
-			public int i = 500;
+			int count = 1;
+			int i = 0;
 		};
 
 		List<Bounce> bounces = circles.stream().map(c -> new Bounce(c)).collect(Collectors.toList());
 
 		bounces.forEach(b -> {
-			b.setCycleCount(1000).setDelay(Duration.valueOf(wrapper.i + "ms"));
-			wrapper.i += 500;
+			wrapper.i = (wrapper.count == 3) ? wrapper.i + 200 : wrapper.i + 500;
+			wrapper.count = (wrapper.count == 3) ? 1 :wrapper.count + 1;
+			b.setCycleCount(1000).setDelay(Duration.valueOf(wrapper.i + "ms"));	
 			b.getNode().setVisible(true);
 			b.play();
+			
 		});
 
 		return bounces;
+	};
+	
+	public static void stopBouncers(List<Bounce> bounces) {
+		bounces.forEach(b->{
+			b.stop();
+			b.getNode().setVisible(false);
+		});
 	};
 
 }

@@ -63,11 +63,11 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	private Boolean isLocked = true;
 
+	private CompresionTestService compresionTestService;
+
 	private CompresionTestListService service;
 
 	private ClientService clientService;
-
-	private CompresionTestService compresionTestService;
 
 	private CorpoDeProvaService corpoDeProvaService;
 
@@ -190,11 +190,30 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 	public void onbtOpenAction(ActionEvent event) {
 		isNewDoc = false;
 		try {
-			this.entity = getCompresionTestFromTableView();
-			Stage parentStage = Utils.currentStage(event);
-			showCompresionTestForm(parentStage);
+			initializeBounces();
 
-		} catch (NullPointerException | SQLException e) {
+			CompresionTestList compresionTestList = tableViewClient.getSelectionModel().getSelectedItem();
+
+			DBTask<CompresionTestService, CompresionTest> task = new DBTask<CompresionTestService, CompresionTest>(
+					compresionTestService, compresionTestService -> compresionTestService
+							.findByIdWithTimeZone(compresionTestList.getCompresionTestId(), TimeZone.getDefault()));
+			
+			task.setOnSucceeded(t -> {
+				try {
+					this.entity = task.get();
+					Stage parentStage = Utils.currentStage(event);
+					Utils.stopBouncers(bounces);
+					showCompresionTestForm(parentStage);
+				} catch (InterruptedException | ExecutionException | SQLException e) {
+					Utils.stopBouncers(bounces);
+					logger.doLog(Level.WARNING, e.getMessage(), e);
+					Alerts.showAlert("Error", e.getClass().getName(), e.getMessage(), AlertType.ERROR);
+				}
+			});
+
+			exec.execute(task);
+
+		} catch (NullPointerException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", e.getClass().getName(), e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
@@ -531,10 +550,10 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 	private CompresionTest getCompresionTestFromTableView() throws SQLException {
 		CompresionTestList compresionTestList = tableViewClient.getSelectionModel().getSelectedItem();
-		CompresionTestService compresionTestService = new CompresionTestService();
 		if (compresionTestList == null) {
 			throw new NullPointerException("Ensayo vacío o no selecionado!");
 		}
+
 		CompresionTest compresionTest = compresionTestService
 				.findByIdWithTimeZone(compresionTestList.getCompresionTestId(), TimeZone.getDefault());
 
@@ -559,7 +578,6 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			controller.setLogger(logger);
 			controller.loadAssociatedObjects();
 			controller.setIsNewDoc(this.isNewDoc);
-			controller.setFormaLockedState();
 			controller.onDataChange();
 			controller.setTxtListeners();
 			controller.setChangesCount(0);
