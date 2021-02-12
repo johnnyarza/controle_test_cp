@@ -650,8 +650,15 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			throw new NullPointerException("Corpo de prova service was null");
 		}
 		DBTask<CorpoDeProvaService, Integer> task = new DBTask<CorpoDeProvaService, Integer>(corpoDeProvaService,
-				corpoDeProvaService -> corpoDeProvaService
-						.countCorpoDeProvasToTestbyCompresionTestId(compresionTestId));
+				corpoDeProvaService -> {
+//					try {
+//						Thread.sleep(5000);
+//					} catch (InterruptedException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
+					return corpoDeProvaService
+						.countCorpoDeProvasToTestbyCompresionTestId(compresionTestId);});
 
 		task.setOnSucceeded(e -> {
 			Integer cpCount;
@@ -1016,8 +1023,10 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		}
 
 		DBTask<CorpoDeProvaService, List<CorpoDeProva>> task = new DBTask<CorpoDeProvaService, List<CorpoDeProva>>(
-				corpoDeProvaService, corpoDeProvaService -> corpoDeProvaService
-						.findByCompresionTestIdWithTimeZone(compresionTest.getId(), TimeZone.getDefault()));
+				corpoDeProvaService, corpoDeProvaService -> {
+					
+					return corpoDeProvaService
+						.findByCompresionTestIdWithTimeZone(compresionTest.getId(), TimeZone.getDefault());});
 
 		Consumer<Bounce> bounceFinalAction = (Bounce b) -> {
 			b.stop();
