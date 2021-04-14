@@ -174,6 +174,7 @@ public class Utils {
 				if (item == null || empty) {
 					setStyle("");
 				} else {
+					getStyleClass().removeAll("late-row","today-row","tomorrow-row");
 					if (daysBetweenDates(item.getRuptureDate(), new Date()) == 0
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
 						getStyleClass().add("today-row");
