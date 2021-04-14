@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -72,6 +73,8 @@ import javafx.util.Callback;
 import task.DBTask;
 
 public class CompresionTestFormController implements Initializable, DataChangeListener {
+	private ExecutorService execService;
+
 	private Executor exec;
 
 	private ObservableList<CorpoDeProva> obsList;
@@ -657,8 +660,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 //						// TODO Auto-generated catch block
 //						e1.printStackTrace();
 //					}
-					return corpoDeProvaService
-						.countCorpoDeProvasToTestbyCompresionTestId(compresionTestId);});
+					return corpoDeProvaService.countCorpoDeProvasToTestbyCompresionTestId(compresionTestId);
+				});
 
 		task.setOnSucceeded(e -> {
 			Integer cpCount;
@@ -738,6 +741,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			t.setDaemon(true);
 			return t;
 		});
+
+		execService = Executors.newFixedThreadPool(2);
 	}
 
 	private void initializeNodes() {
@@ -833,6 +838,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		updateFormData();
 		setLabelMessageText(this.compresionTest.getId());
 		updateTableView();
+		
 	}
 
 	public void setFormaLockedState() {
@@ -967,6 +973,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	}
 
 	private void setTableColumnsCellValueFactory() {
+		
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnCodigo.setCellValueFactory(new PropertyValueFactory<>("code"));
 
@@ -1024,9 +1031,10 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 		DBTask<CorpoDeProvaService, List<CorpoDeProva>> task = new DBTask<CorpoDeProvaService, List<CorpoDeProva>>(
 				corpoDeProvaService, corpoDeProvaService -> {
-					
-					return corpoDeProvaService
-						.findByCompresionTestIdWithTimeZone(compresionTest.getId(), TimeZone.getDefault());});
+
+					return corpoDeProvaService.findByCompresionTestIdWithTimeZone(compresionTest.getId(),
+							TimeZone.getDefault());
+				});
 
 		Consumer<Bounce> bounceFinalAction = (Bounce b) -> {
 			b.stop();

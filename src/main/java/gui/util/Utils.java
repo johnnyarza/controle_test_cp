@@ -181,18 +181,19 @@ public class Utils {
 
 				if (item == null || empty) {
 					setStyle("");
-				} else {
+				} else {				
+					getStyleClass().removeAll("late-row","today-row","tomorrow-row");
 					if (daysBetweenDates(item.getRuptureDate(), new Date()) == 0
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
 						getStyleClass().add("today-row");
 						getStyleClass().add("table-row-cell");
 
-						// setStyle("-fx-background-color: #f1c40f");
+						//setStyle("-fx-background-color: #f1c40f");
 					} else if (item.getRuptureDate().compareTo(new Date()) < 0
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
 						getStyleClass().add("late-row");
 						getStyleClass().add("table-row-cell");
-						// setStyle("-fx-background-color: #e74c3c");
+						//setStyle("-fx-background-color: #e74c3c");
 					} else if (daysBetweenDates(item.getRuptureDate(), new Date()) == 1
 							&& (item.getTonRupture() == null || item.getTonRupture() == 0f)) {
 						// setStyle("-fx-background-color: #2ecc71");
