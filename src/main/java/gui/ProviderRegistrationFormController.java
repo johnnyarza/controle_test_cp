@@ -101,19 +101,19 @@ public class ProviderRegistrationFormController implements Initializable {
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
 
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
-			exception.addError("name", "Nombre vacío");
+			exception.addError("name", "Nombre vacÃ­o");
 		}
 
 		if (txtPhone.getText() == null || txtPhone.getText().trim().equals("")) {
-			exception.addError("phone", "Telefono vacío");
+			exception.addError("phone", "Telefono vacï¿½o");
 		}
 
 		if (txtAddress.getText() == null || txtAddress.getText().trim().equals("")) {
-			exception.addError("address", "Ubicación vacía");
+			exception.addError("address", "Proyecto vacÃ­o");
 		}
 
 		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
-			exception.addError("email", "Correo vacío");
+			exception.addError("email", "Correo vacÃ­o");
 		}
 
 		if (exception.getErrors().size() > 0) {
@@ -161,7 +161,7 @@ public class ProviderRegistrationFormController implements Initializable {
 	}
 
 	private void setErrorMessages(Map<String, String> errors) {
-		Set<String> fields = errors.keySet(); // Set é conjunto
+		Set<String> fields = errors.keySet(); // Set ï¿½ conjunto
 
 		labelErrorName.setText(fields.contains("name") ? errors.get("name") : "");
 		labelErrorPhone.setText(fields.contains("phone") ? errors.get("phone") : "");
