@@ -27,7 +27,7 @@ public class ClientReport {
 	public static void viewClientReport(List<Cliente> clientsList) {
 		try {
 			if (clientsList.size() == 0) {
-				throw new JRException("Lista de clientes vacía");
+				throw new JRException("Lista de clientes vacÃ­a");
 			}
 			
 			

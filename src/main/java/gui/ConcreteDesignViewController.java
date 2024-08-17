@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import application.Program;
 import application.Report.ReportFactory;
 import application.db.DbException;
 import application.domaim.ConcreteDesign;
@@ -90,7 +91,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 							ConcreteDesignViewController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocÃ­do", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -130,7 +131,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocÃ­do", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -150,7 +151,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 				throw new IllegalStateException("Service(s) was null");
 			}
 
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacción de acción",
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacciï¿½n de acciï¿½n",
 					"Seguro que desea apagar?", "");
 			if (result.get() == ButtonType.OK) {
 				service.deleteConcreteDesignById(obj.getId());
@@ -173,7 +174,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocÃ­do", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
@@ -221,7 +222,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	private ConcreteDesign getFormData() {
 		ConcreteDesign obj = tableViewConcreteDesing.getSelectionModel().getSelectedItem();
 		if (obj == null) {
-			throw new IllegalStateException("Diseño vacío o no seleccionado");
+			throw new IllegalStateException("Diseï¿½o vacï¿½o o no seleccionado");
 		}
 		return obj;
 	}
@@ -239,13 +240,18 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 		tableColumnDesc.getStyleClass().add("description-column-style");
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("description"));
 		tableColumnSlump.setCellValueFactory(new PropertyValueFactory<>("slump"));
+		
+		Stage stage = (Stage) Program.getMainScene().getWindow();
+		
+		tableViewConcreteDesing.prefHeightProperty().bind(stage.heightProperty());
+		
 		Utils.formatTableColumnDouble(tableColumnSlump, 1);
 	}
 
 	private ConcreteDesign getConcreteDesingFromTableView() {
 		ConcreteDesign obj = tableViewConcreteDesing.getSelectionModel().getSelectedItem();
 		if (obj == null) {
-			throw new IllegalStateException("Diseño vacío o no seleccionado");
+			throw new IllegalStateException("Diseï¿½o vacï¿½o o no seleccionado");
 		} else {
 			return obj;
 		}

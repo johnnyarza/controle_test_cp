@@ -662,7 +662,7 @@
 									<font fontName="Arial"/>
 									<paragraph leftIndent="1"/>
 								</textElement>
-								<text><![CDATA[Obra:]]></text>
+								<text><![CDATA[Proyecto:]]></text>
 							</staticText>
 						</jr:detailCell>
 					</jr:column>
@@ -737,7 +737,7 @@
 		<band height="79" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
 			<componentElement>
-				<reportElement x="0" y="0" width="802" height="60" uuid="a3cef55f-e849-4746-b283-eade2c244126">
+				<reportElement x="0" y="0" width="802" height="79" uuid="a3cef55f-e849-4746-b283-eade2c244126">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
@@ -1089,17 +1089,20 @@ Moldeo]]></text>
 				</textElement>
 				<text><![CDATA[NOTA: Los datos de este formulario y resultados son obtenidos unicamente de las muestras presentadas por el cliente. Las reimpresiones tendrán costo adicional.]]></text>
 			</staticText>
-			<textField pattern="&quot;&quot;">
-				<reportElement x="268" y="0" width="267" height="46" uuid="27b413d1-fd15-4351-9592-4f3d22ca87fc"/>
-				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="html">
-					<font fontName="Arial"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Hoja: " + $V{PAGE_NUMBER} + " / " + $V{PAGE_COUNT}]]></textFieldExpression>
-			</textField>
 			<image hAlign="Right" vAlign="Middle" onErrorType="Icon">
 				<reportElement x="535" y="0" width="267" height="46" uuid="56348a74-99b1-4dd6-9be8-30f6a588bc5f"/>
 				<imageExpression><![CDATA[$P{carimbo}]]></imageExpression>
 			</image>
+			<textField>
+				<reportElement x="360" y="0" width="100" height="46" uuid="1d8883f3-1a1e-44ff-8c52-bb646842915d"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Hoja: " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="460" y="0" width="100" height="46" uuid="996b1f05-391c-4ab6-9501-2d46186e4b55"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[" / " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnFooter>
 	<pageFooter>

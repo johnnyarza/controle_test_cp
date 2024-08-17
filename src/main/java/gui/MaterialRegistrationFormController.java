@@ -164,12 +164,12 @@ public class MaterialRegistrationFormController implements Initializable {
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
 
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
-			exception.addError("name", "Campo vacío");
+			exception.addError("name", "Campo vacÃ­o");
 		}
 		obj.setName(txtName.getText());
 
 		if (comboBoxProvider.getValue() == null) {
-			exception.addError("provider", "Campo vacío");
+			exception.addError("provider", "Campo vacÃ­o");
 		}
 		obj.setProvider(comboBoxProvider.getValue());
 
@@ -185,7 +185,7 @@ public class MaterialRegistrationFormController implements Initializable {
 	}
 
 	private void setErrorMessages(Map<String, String> errors) {
-		Set<String> fields = errors.keySet(); // Set é conjunto
+		Set<String> fields = errors.keySet(); // Set ï¿½ conjunto
 
 		labelErrorName.setText(fields.contains("name") ? errors.get("name") : "");
 		labelErrorProvider.setText(fields.contains("provider") ? errors.get("provider") : "");

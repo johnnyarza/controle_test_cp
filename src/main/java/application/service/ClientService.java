@@ -35,7 +35,7 @@ public class ClientService {
 			throw new DbException("Existen documentos que utilizan este cliente");
 		};
 		if (compresionTestService.findByConcreteProviderId(id, TimeZone.getDefault()).size() > 0) {
-			throw new DbException("Existen documentos que utilizan este cliente como proveedor de hormigón");
+			throw new DbException("Existen documentos que utilizan este cliente como proveedor de hormigÃ³n");
 		}
 		dao.deleteById(id);
 	}

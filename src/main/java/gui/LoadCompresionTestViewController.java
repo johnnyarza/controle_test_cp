@@ -10,6 +10,8 @@ import java.util.TimeZone;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import org.w3c.dom.events.Event;
+
 import application.Program;
 import application.Report.ReportFactory;
 import application.db.DbException;
@@ -41,6 +43,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -148,12 +151,12 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error Desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error DesconocÃ­do", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
 	@FXML
-	public void onbtOpenAction(ActionEvent event) {
+	public void onbtOpenAction(javafx.event.Event event) {
 		isNewDoc = false;
 		try {
 			CompresionTest obj = getCompresionTestFromTableView();
@@ -175,8 +178,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 			Stage parentStage = Utils.currentStage(event);
 			CompresionTest obj = getCompresionTestFromTableView();
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de accion",
-					"Seguro que desea apagar probeta?", "Después de apagados los datos seran perdidos");
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmaciï¿½n de accion",
+					"Seguro que desea apagar probeta?", "Despuï¿½s de apagados los datos seran perdidos");
 
 			if (result.get() == ButtonType.OK) {
 				Utils.createDialogForm("/gui/LoginForm.fxml", "Login", parentStage, (LoginFormController controller) -> {
@@ -217,7 +220,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			Alerts.showAlert("Error", "IllegalAccessException", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocÃ­do", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
@@ -259,7 +262,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			}
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocÃ­do", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -283,7 +286,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 			if (!this.btCancelPressed) {
 				if (this.client == null) {
-					throw new IllegalStateException("Cliente vacío");
+					throw new IllegalStateException("Cliente vacÃ­o");
 				}
 				showCompresionTestReportByClient(this.client.getId());
 			}
@@ -335,6 +338,17 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		Stage stage = (Stage) Program.getMainScene().getWindow();
 
 		tableViewClient.prefHeightProperty().bind(stage.heightProperty());
+		tableViewClient.setRowFactory(tv -> {
+			TableRow<CompresionTestList> row = new TableRow<>();
+			row.setOnMouseClicked(event -> {
+				if ( event.getClickCount() == 2 && (!row.isEmpty())) {
+					onbtOpenAction(event);
+					CompresionTestList rowData = row.getItem();
+					System.out.println(rowData);
+				}
+			});
+			return row;
+		});
 	}
 
 	public void updateViewData() {
@@ -393,7 +407,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 		CompresionTestList compresionTestList = tableViewClient.getSelectionModel().getSelectedItem();
 		CompresionTestService compresionTestService = new CompresionTestService();
 		if (compresionTestList == null) {
-			throw new NullPointerException("Ensayo vacío o no selecionado!");
+			throw new NullPointerException("Ensayo vacÃ­o o no selecionado!");
 		}
 		CompresionTest compresionTest = compresionTestService.findByIdWithTimeZone(compresionTestList.getCompresionTestId(),
 				TimeZone.getDefault());
@@ -427,7 +441,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			Stage dialogStage = new Stage();
 			dialogStage.getIcons()
 					.add(new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/test.png")));
-			dialogStage.setTitle("Roturas de probetas de hormigón");
+			dialogStage.setTitle("Roturas de probetas de hormigï¿½n");
 			dialogStage.setScene(new Scene(pane));
 			if (!css.trim().contentEquals(""))
 				dialogStage.getScene().getStylesheets().add(css);
@@ -439,7 +453,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				@Override
 				public void handle(WindowEvent we) {
 					if (controller.getChangesCount() > 0) {
-						Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acción", "Segura que desea cerrar?",
+						Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acciï¿½n", "Segura que desea cerrar?",
 								"Hay datos no guardados!!");
 						if (result.get() != ButtonType.OK) {
 							we.consume();

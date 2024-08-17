@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="vbox" minWidth="400.0" prefHeight="401.0" prefWidth="1168.0" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.CompresionTestFormController">
+<VBox fx:id="vbox" minWidth="400.0" prefHeight="401.0" prefWidth="1168.0" spacing="5.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.CompresionTestFormController">
    <children>
       <GridPane minHeight="90.0" prefHeight="90.0" vgap="2.0">
         <columnConstraints>
@@ -50,9 +50,9 @@
                </padding>
             </Label>
             <TextField fx:id="txtid" editable="false" maxWidth="50.0" GridPane.columnIndex="1" />
-            <TextField fx:id="txtObra" disable="true" promptText="Obra" GridPane.columnIndex="4" />
+            <TextField fx:id="txtObra" disable="true" promptText="Proyecto" GridPane.columnIndex="4" />
             <TextField fx:id="txtAddress" disable="true" promptText="Ubicación" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <Label text="Obra:" GridPane.columnIndex="3">
+            <Label text="Proyecto:" GridPane.columnIndex="3">
                <padding>
                   <Insets left="5.0" />
                </padding>

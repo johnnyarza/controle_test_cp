@@ -25,7 +25,7 @@ public class ProviderReport {
 	public static void viewProviderReport(List<Provider> providersList) {
 		try {
 			if (providersList.size() == 0) {
-				throw new JRException("Lista de materiales vacía");
+				throw new JRException("Lista de materiales vacÃ­a");
 			}
 					
 			JRBeanCollectionDataSource providersJRBean = new JRBeanCollectionDataSource(providersList);

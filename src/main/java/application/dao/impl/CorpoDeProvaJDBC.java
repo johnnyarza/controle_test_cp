@@ -409,7 +409,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 				DB.closeResultSet(rs);
 			}
 		} catch (Exception e2) {
-			Alerts.showAlert("Error", "Error desconocídos", e2.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocÃ­dos", e2.getMessage(), AlertType.ERROR);
 			LogUtils logger = new LogUtils();
 			logger.doLog(Level.WARNING, e2.getMessage(), e2);
 		}
@@ -419,7 +419,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 		try {
 			conn.rollback();
 		} catch (Exception e) {
-			Alerts.showAlert("Error", "Error desconocídos", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocÃ­dos", e.getMessage(), AlertType.ERROR);
 			LogUtils logger = new LogUtils();
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 		}

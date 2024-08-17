@@ -105,11 +105,11 @@ public class ProviderRegistrationFormController implements Initializable {
 		}
 
 		if (txtPhone.getText() == null || txtPhone.getText().trim().equals("")) {
-			exception.addError("phone", "Telefono vac�o");
+			exception.addError("phone", "Telefono vacío");
 		}
 
 		if (txtAddress.getText() == null || txtAddress.getText().trim().equals("")) {
-			exception.addError("address", "Proyecto vacío");
+			exception.addError("address", "ProyectoProyecto vacío");
 		}
 
 		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {

@@ -67,14 +67,14 @@ public class ConnectionConfigViewController implements Initializable {
 		try {
 
 			Optional<ButtonType> option = (Alerts.showConfirmationDialog("Aviso", "Seguro que desea continuar?",
-					"El programa será cerrado para aplicar las configuraciones"));
+					"El programa serï¿½ cerrado para aplicar las configuraciones"));
 			if (option.get() != ButtonType.OK) {
 				return;
 			}
 			Map<String, String> configs = getViewData();
 
 			FileUtils.writeConnectionProperties(configs);
-			Alerts.showAlert("Confimarción", "Configuraciones guardadas!", "", AlertType.INFORMATION);
+			Alerts.showAlert("Confimarciï¿½n", "Configuraciones guardadas!", "", AlertType.INFORMATION);
 			Platform.exit();
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
@@ -99,22 +99,22 @@ public class ConnectionConfigViewController implements Initializable {
 		String dburl;
 
 		if (txtIp.getText() != null && txtIp.getText().trim().equals("")) {
-			exception.addError("ip", "vacío");
+			exception.addError("ip", "vacÃ­o");
 		}
 
 		if (txtPort.getText() != null && txtPort.getText().trim().equals("")) {
-			exception.addError("port", "vacío");
+			exception.addError("port", "vacÃ­o");
 		}
 		dburl = "jdbc:mysql://" + txtIp.getText() + ":" + txtPort.getText() + "/?useTimezone=true&serverTimezone=UTC";
 		configs.put("dburl", dburl);
 
 		if (txtUser.getText() != null && txtUser.getText().trim().equals("")) {
-			exception.addError("user", "vacío");
+			exception.addError("user", "vacÃ­o");
 		}
 		configs.put("user", txtUser.getText());
 
 		if (pfPassword.getText() != null && pfPassword.getText().trim().equals("")) {
-			exception.addError("pass", "vacío");
+			exception.addError("pass", "vacÃ­o");
 		}
 		configs.put("password", EncriptaDecriptaApacheCodec.codificaBase64Encoder(pfPassword.getText()));
 

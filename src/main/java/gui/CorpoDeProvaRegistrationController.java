@@ -182,17 +182,17 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 	private void onBtDateCalcAction(ActionEvent event) {
 		try {
 
-			String response = Utils.getStringWithDialog("Sumar días", "Insertar días para sumar \na la fecha de moldeo",
+			String response = Utils.getStringWithDialog("Sumar dï¿½as", "Insertar dï¿½as para sumar \na la fecha de moldeo",
 					new Image(CorpoDeProva.class.getResourceAsStream("/images/calculator.png")));
 
 			if (StringUtils.isNumeric(response) && dpMoldeDate.getValue() != null) {
 				dpRuptureDate.setValue(dpMoldeDate.getValue().plusDays(Utils.tryParseToInt(response)));
 			}
 		} catch (NoSuchElementException e) {
-			Alerts.showAlert("Error", "Campo vacío o valor no numerico", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Campo vacÃ­o o valor no numerico", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocÃ­do", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
@@ -216,7 +216,7 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 			setErrorMessages(e1.getErrors());
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocÃ­do", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -253,17 +253,17 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
 
 		if (txtCode.getText() == null || txtCode.getText().trim().equals("")) {
-			exception.addError("code", "codigo vacío");
+			exception.addError("code", "codigo vacÃ­o");
 		}
 		obj.setCode(txtCode.getText());
 
 		if (txtSlump.getText() == null || txtSlump.getText().trim().equals("")) {
-			exception.addError("slump", "Slump vacío");
+			exception.addError("slump", "Slump vacÃ­o");
 		}
 		obj.setSlump(Utils.tryParseToDouble(txtSlump.getText()));
 
 		if (dpMoldeDate.getValue() == null) {
-			exception.addError("moldeDate", "Fecha vacía");
+			exception.addError("moldeDate", "Fecha vacÃ­a");
 		} else if (dpRuptureDate.getValue() != null) {
 			Instant instantBefore = Utils.getInsTantFromDatePicker(dpMoldeDate);
 			Instant instantAfter = Utils.getInsTantFromDatePicker(dpRuptureDate);
@@ -275,7 +275,7 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 		}
 
 		if (dpRuptureDate.getValue() == null) {
-			exception.addError("ruptureDate", "Fecha vacía");
+			exception.addError("ruptureDate", "Fecha vacÃ­a");
 
 		} else if (dpMoldeDate.getValue() != null) {
 			Instant instantBefore = Utils.getInsTantFromDatePicker(dpMoldeDate);
@@ -305,17 +305,17 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 		}
 
 		if (txtDiameter.getText() == null || txtDiameter.getText().trim().equals("")) {
-			exception.addError("diameter", "Diametro vacío");
+			exception.addError("diameter", "Diametro vacÃ­o");
 		}
 		obj.setDiameter(Utils.tryParseToDouble(txtDiameter.getText()));
 
 		if (txtHeight.getText() == null || txtHeight.getText().trim().equals("")) {
-			exception.addError("height", "Altura vacía");
+			exception.addError("height", "Altura vacÃ­a");
 		}
 		obj.setHeight(Utils.tryParseToDouble(txtHeight.getText()));
 
 		if (txtWeight.getText() == null || txtWeight.getText().trim().equals("")) {
-			exception.addError("weight", "Peso vacío");
+			exception.addError("weight", "Peso vacÃ­o");
 		}
 		obj.setWeight(Utils.tryParseToDouble(txtWeight.getText()));
 
@@ -335,7 +335,7 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 	}
 
 	private void setErrorMessages(Map<String, String> errors) {
-		Set<String> fields = errors.keySet(); // Set é conjunto
+		Set<String> fields = errors.keySet(); // Set ï¿½ conjunto
 
 		labelErrorCode.setText(fields.contains("code") ? errors.get("code") : "");
 		labelErrorSlump.setText(fields.contains("slump") ? errors.get("slump") : "");

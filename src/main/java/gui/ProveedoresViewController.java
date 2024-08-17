@@ -121,8 +121,8 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 				throw new IllegalAccessError("Accesso denegado");
 
 			Provider obj = getProviderFromTableView();
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de acción",
-					"Seguro que desea apagar?", "Los datos seleccionados serán perdidos");
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmaciï¿½n de acciï¿½n",
+					"Seguro que desea apagar?", "Los datos seleccionados serï¿½n perdidos");
 			if (result.get() == ButtonType.OK) {
 
 				if (service == null) {
@@ -147,7 +147,7 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 			Alerts.showAlert("Error", "IllegalStateException", e2.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocÃ­do", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -209,7 +209,7 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 
 		Provider obj = tableViewProvider.getSelectionModel().getSelectedItem();
 		if (obj == null) {
-			throw new NullPointerException("Proveedor no seleccionado o vacío");
+			throw new NullPointerException("Proveedor no seleccionado o vacÃ­o");
 		}
 		return obj;
 	}

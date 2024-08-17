@@ -50,7 +50,7 @@
             <Label text="iD:" />
             <Label text="Cliente:" GridPane.rowIndex="1" />
             <TextField fx:id="txtId" editable="false" maxWidth="40.0" GridPane.columnIndex="1" />
-            <Label text="Obra:" GridPane.rowIndex="3" />
+            <Label text="Proyecto:" GridPane.rowIndex="3" />
             <Label text="Ubicación:" GridPane.rowIndex="4" />
             <Label text="Diseño:" GridPane.rowIndex="5" />
             <Label fx:id="labelErrorObra" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="3">

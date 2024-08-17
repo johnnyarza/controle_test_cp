@@ -154,7 +154,7 @@ public class FindClientFormController implements Initializable {
 	private Cliente getClientFromTableView() {
 		Cliente client = tableViewClient.getSelectionModel().getSelectedItem();
 		if (client == null) {
-			throw new NullPointerException("Cliente vacío o no seleccionado");
+			throw new NullPointerException("Cliente vacÃ­o o no seleccionado");
 		}
 		return client;
 	}
@@ -167,11 +167,11 @@ public class FindClientFormController implements Initializable {
 			throw new IllegalStateException("Service was null");
 		}
 		if (!rdId.isSelected() && !rdName.isSelected()) {
-			throw new ValidationException("Seleccionar opción de busca");
+			throw new ValidationException("Seleccionar opciï¿½n de busca");
 		}
 		
 		if (txtId.getText() == null || txtId.getText().trim().equals("")) {
-			exception.addError("id", "vacío");
+			exception.addError("id", "vacÃ­o");
 		} else {
 			if (rdId.isSelected()) {
 				list.add(service.findById(Utils.tryParseToInt(txtId.getText())));

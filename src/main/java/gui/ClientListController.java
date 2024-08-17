@@ -233,7 +233,7 @@ public class ClientListController implements Initializable, DataChangeListener {
 		Cliente client = tableViewClient.getSelectionModel().getSelectedItem();
 		// Integer id = tableColumnId.getCellData(row);
 		if (client == null) {
-			throw new NullPointerException("Cliente vacío o no seleccionado");
+			throw new NullPointerException("Cliente vacÃ­o o no seleccionado");
 		}
 		return client;
 	}

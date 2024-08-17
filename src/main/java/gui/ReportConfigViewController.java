@@ -86,7 +86,7 @@ public class ReportConfigViewController implements Initializable {
 	@FXML
 	private void onBtEditAdmin(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		doSignIn(parentStage, "Hacer login con la cuenta que ser· modificada");
+		doSignIn(parentStage, "Hacer login con la cuenta que ser√° modificada");
 
 		if (user != null) {
 			editUser(parentStage);
@@ -96,7 +96,7 @@ public class ReportConfigViewController implements Initializable {
 	@FXML
 	private void onBtDeleteAdmin(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		doSignIn(parentStage, "Insertar datos de cuenta que ser· borrada");
+		doSignIn(parentStage, "Insertar datos de cuenta que ser√° borrada");
 		try {
 			if (user != null) {
 				UserService service = new UserService();

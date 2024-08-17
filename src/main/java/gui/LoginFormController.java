@@ -65,7 +65,7 @@ public class LoginFormController implements Initializable {
 			if (logOption == LogEnum.SIGNIN) {
 				setEntity(userService.findByNameAndPassword(entity));
 				if (entity == null) {
-					throw new LoginException("Usuario o contraseña no válidos");
+					throw new LoginException("Usuario o contraseï¿½a no vï¿½lidos");
 				}
 			}
 			if (logOption == LogEnum.SIGNUP ||logOption == LogEnum.EDIT ) {
@@ -80,13 +80,13 @@ public class LoginFormController implements Initializable {
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
 		} catch (LoginException e) {
-			Alerts.showAlert("Error", "Credenciales no válidas", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Credenciales no vï¿½lidas", e.getMessage(), AlertType.ERROR);
 		} catch (DbException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error Desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error DesconocÃ­do", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
@@ -99,8 +99,8 @@ public class LoginFormController implements Initializable {
 
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> errSet = errors.keySet();
-		userErrLabel.setText(errSet.contains("user") ? "vacío" : "");
-		passwordErrLabel.setText(errSet.contains("password") ? "vacío" : "");
+		userErrLabel.setText(errSet.contains("user") ? "vacÃ­o" : "");
+		passwordErrLabel.setText(errSet.contains("password") ? "vacÃ­o" : "");
 	}
 
 	private User getUserFromForm() {
@@ -111,13 +111,13 @@ public class LoginFormController implements Initializable {
 		
 		ValidationException exception = new ValidationException("Validation Error");
 		if (txtUser.getText().trim().equals("") || txtUser.getText() == null) {
-			exception.addError("user", "vacío");
+			exception.addError("user", "vacÃ­o");
 		}
 
 		user.setName(txtUser.getText());
 
 		if (pwField.getText().trim().equals("") || pwField.getText() == null) {
-			exception.addError("password", "vacío");
+			exception.addError("password", "vacÃ­o");
 		}
 		user.setPassword(pwField.getText());
 		user.setRole("adm");

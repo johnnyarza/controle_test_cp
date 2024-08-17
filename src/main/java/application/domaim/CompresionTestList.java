@@ -99,7 +99,7 @@ public class CompresionTestList {
 
 	@Override
 	public String toString() {
-		return "CompresionTestList [compresionTestId=" + compresionTestId + ", clientName=" + clientName + ", obra="
+		return "CompresionTestList [compresionTestId=" + compresionTestId + ", clientName=" + clientName + ", proyecto="
 				+ obra + ", address=" + address + ", creationDate=" + creationDate + "]";
 	}
 

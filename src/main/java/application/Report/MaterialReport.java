@@ -26,7 +26,7 @@ public class MaterialReport {
 	public static void viewMaterialReport(List<Material> materialsList) {
 		try {
 			if (materialsList.size() == 0) {
-				throw new JRException("Lista de materiales vacía");
+				throw new JRException("Lista de materiales vacÃ­a");
 			}
 					
 			JRBeanCollectionDataSource materialsJRBean = new JRBeanCollectionDataSource(materialsList);

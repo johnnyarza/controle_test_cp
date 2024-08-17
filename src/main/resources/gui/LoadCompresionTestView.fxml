@@ -46,7 +46,7 @@
         <columns>
           <TableColumn fx:id="tableColumnId" minWidth="50.0" prefWidth="50.0" styleClass="custom-align" text="Doc. Nª" />
           <TableColumn fx:id="tableColumnClientName" minWidth="100.0" prefWidth="100.0" styleClass="description-column-style" text="Cliente" />
-            <TableColumn fx:id="tableColumnObra" minWidth="100.0" prefWidth="100.0" styleClass="custom-align" text="Obra" />
+            <TableColumn fx:id="tableColumnObra" minWidth="100.0" prefWidth="100.0" styleClass="custom-align" text="Proyecto" />
             <TableColumn fx:id="tableColumnAddress" minWidth="100.0" prefWidth="100.0" styleClass="custom-align" text="Ubicación" />
             <TableColumn fx:id="tableColumnCreationDate" prefWidth="117.0" styleClass="custom-align" text="Fecha de Creacción" />
         </columns>

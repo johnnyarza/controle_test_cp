@@ -28,7 +28,7 @@ public class Program extends Application {
 		try {
 			createConfigFiles();
 			if (!FileUtils.checkLicenseKey()) {
-				Alerts.showAlert("Error", "CÛdigo serial no v·lido", null, AlertType.ERROR);
+				Alerts.showAlert("Error", "C√≥digo serial inv√°lido", null, AlertType.ERROR);
 				Platform.exit();
 			}
 			

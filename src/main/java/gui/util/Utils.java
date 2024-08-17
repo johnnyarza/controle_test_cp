@@ -26,6 +26,7 @@ import enums.LogEnum;
 import gui.CompresionTestFormController;
 import gui.LoginFormController;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -64,7 +65,7 @@ public class Utils {
 		return dlg.showAndWait().orElse("");
 	}
 
-	public static Stage currentStage(ActionEvent event) {
+	public static Stage currentStage(Event event) {
 		return (Stage) ((Node) event.getSource()).getScene().getWindow();
 	}
 

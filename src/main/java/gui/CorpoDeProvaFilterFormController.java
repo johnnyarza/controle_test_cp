@@ -84,10 +84,10 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 		}
 
 		if (dpFinalDate.getValue() == null) {
-			exception.addError("finalDate", "vacío");
+			exception.addError("finalDate", "vacÃ­o");
 		}
 		if (dpInitialDate.getValue() == null) {
-			exception.addError("initialDate", "vacío");
+			exception.addError("initialDate", "vacÃ­o");
 		}
 
 		if (dpInitialDate.getValue() != null && dpFinalDate.getValue() != null) {

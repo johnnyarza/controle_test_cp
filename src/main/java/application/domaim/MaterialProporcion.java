@@ -216,7 +216,7 @@ public class MaterialProporcion implements Serializable {
 		String str = "";
 		for (Material m : matList) {
 			if (!m.isAllNull()) {
-				str = m.getName() +'/' +m.getProvider().getName()+": " + Utils.doubleFormat(mapList.get(m)) + "kg/m³ - " + str;
+				str = m.getName() +'/' +m.getProvider().getName()+": " + Utils.doubleFormat(mapList.get(m)) + "kg/m2 - " + str;
 			}
 		}
 		

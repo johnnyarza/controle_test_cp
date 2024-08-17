@@ -73,7 +73,7 @@ public class WarningDialogController implements Initializable {
 	private CompresionTest getCompresionTestFromTableView(TableView<CompresionTestList> tableView) {
 		CompresionTestList compresionTestList = tableView.getSelectionModel().getSelectedItem();
 		if (compresionTestList == null) {
-			throw new NullPointerException("Ensayo vacío o no selecionado!");
+			throw new NullPointerException("Ensayo vacÃ­o o no selecionado!");
 		}
 		CompresionTest compresionTest = compresionTestService.findByIdWithTimeZone(compresionTestList.getCompresionTestId(),
 				TimeZone.getDefault());

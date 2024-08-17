@@ -95,6 +95,6 @@ public class CompresionTest implements Serializable{
 
 	@Override
 	public String toString() {
-		return  id + ", obra: " + obra;
+		return  id + ", proyecto: " + obra;
 	}
 }

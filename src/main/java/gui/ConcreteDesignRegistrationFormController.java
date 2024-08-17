@@ -179,7 +179,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		try {
 			ObservableList<Material> obsListUsingMaterials = getUsingMaterials();
 			if (obsListUsingMaterials.size() == 0) {
-				Alerts.showAlert("Aviso", "Aún no existen materiales en uso", null, AlertType.INFORMATION);
+				Alerts.showAlert("Aviso", "Aï¿½n no existen materiales en uso", null, AlertType.INFORMATION);
 				return;
 			}
 
@@ -269,19 +269,19 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		ValidationException exception = new ValidationException("Validation Exception");
 
 		if (countEmptyComboBoxes() == 8) {
-			exception.addError("general", "El disiño debe contener por lo menos 1 material");
+			exception.addError("general", "El disiï¿½o debe contener por lo menos 1 material");
 		}
 
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
-			exception.addError("name", "Campo Nombre no puede ser vacío");
+			exception.addError("name", "Campo Nombre no puede ser vacÃ­o");
 		}
 
 		if (txtFck.getText() == null || txtFck.getText().trim().equals("")) {
-			exception.addError("resistencia", "Campo resistencia no puede ser vacío");
+			exception.addError("resistencia", "Campo resistencia no puede ser vacÃ­o");
 		}
 
 		if (txtSlump.getText() == null || txtSlump.getText().trim().equals("")) {
-			exception.addError("slump", "Campo slump no puede ser vacío");
+			exception.addError("slump", "Campo slump no puede ser vacÃ­o");
 		}
 
 		if (this.materialService == null) {
@@ -426,7 +426,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		List<Material> list = materialService.findAll();
 		list.add(new Material());
 		if (list.size() == 0) {
-			throw new IllegalStateException("Lista de materiales vacía");
+			throw new IllegalStateException("Lista de materiales vacÃ­a");
 		}
 		obsListMaterial = FXCollections.observableArrayList(list);
 		for (int i = 0; i <= 7; i++) {

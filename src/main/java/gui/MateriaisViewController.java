@@ -112,7 +112,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 			Alerts.showAlert("Error", "IllegalAccessError", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocÃ­do", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -127,7 +127,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 				throw new IllegalStateException("Material service was null");
 			}
 			Material obj = getMarialFromTableView();
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de acción",
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmaciï¿½n de acciï¿½n",
 					"Seguro que desea apagar material?", "Los datos seleccionados seran perdidos");
 			if (result.get() == ButtonType.OK) {
 
@@ -178,7 +178,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 		Material obj = new Material();
 		obj = tableViewMaterial.getSelectionModel().getSelectedItem();
 		if (obj == null) {
-			throw new NullPointerException("Material no seleccionado o vacío");
+			throw new NullPointerException("Material no seleccionado o vacÃ­o");
 		}
 		return obj;
 	}

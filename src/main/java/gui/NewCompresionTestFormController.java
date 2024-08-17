@@ -304,27 +304,27 @@ public class NewCompresionTestFormController implements Initializable {
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
 		
 		if (comboBoxClient.getValue() == null) {
-			exception.addError("client","cliente vacío");
+			exception.addError("client","cliente vacÃ­o");
 		}
 		obj.setClient(comboBoxClient.getValue());
 		
 		if (comboBoxConcreteProvider.getValue() == null) {
-			exception.addError("provider","Proveedor vacío");
+			exception.addError("provider","Proveedor vacÃ­o");
 		}
 		obj.setConcreteProvider(comboBoxConcreteProvider.getValue());
 		
 		if (txtObra.getText() == null || txtObra.getText().trim().equals("")) {
-			exception.addError("obra","obra vacía");
+			exception.addError("obra","obra vacÃ­a");
 		}
 		obj.setObra(txtObra.getText());
 		
 		if (txtAddress.getText() == null || txtAddress.getText().trim().equals("")) {
-			exception.addError("address","ubicación vacía");
+			exception.addError("address","proyectoProyecto vacÃ­o");
 		}
 		obj.setAddress(txtAddress.getText());
 		
 		if (comboBoxConcreteDesign.getValue() == null) {
-			exception.addError("design", "diseño vacío");
+			exception.addError("design", "diseÃ±o vacÃ­o");
 		}
 		obj.setConcreteDesign(comboBoxConcreteDesign.getValue());
 		
@@ -338,7 +338,7 @@ public class NewCompresionTestFormController implements Initializable {
 	}
 
 	private void setErrorMessages(Map<String, String> errors) {
-		Set<String> fields = errors.keySet(); // Set é conjunto
+		Set<String> fields = errors.keySet(); // Set ï¿½ conjunto
 
 		labelErrorObra.setText(fields.contains("obra") ? errors.get("obra") : "");		
 		labelErrorClient.setText(fields.contains("client") ? errors.get("client") : "");

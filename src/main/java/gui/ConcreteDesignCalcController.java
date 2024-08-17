@@ -90,13 +90,13 @@ public class ConcreteDesignCalcController implements Initializable{
 	private void getFormData () {
 		ValidationException e = new ValidationException("Validation exception");
 		if (comboBoxOrigin.getValue() == null) {
-			e.addError("origin", "vacío");
+			e.addError("origin", "vacÃ­o");
 		}
 		if (comboBoxTarget.getValue() == null) {
-			e.addError("target", "vacío");
+			e.addError("target", "vacÃ­o");
 		}
 		if (txtPercentage.getText()==null || txtPercentage.getText().trim().equals("")) {
-			e.addError("percentage", "vacío");
+			e.addError("percentage", "vacÃ­o");
 		}
 		
 		if (e.getErrors().size() > 0) {
@@ -115,7 +115,7 @@ public class ConcreteDesignCalcController implements Initializable{
 	public void loadAssociateObjects () {
 		try {
 			if (obsListMaterial.size() == 0) {
-				throw new IllegalStateException("Lista de materiales vacía");
+				throw new IllegalStateException("Lista de materiales vacÃ­a");
 			}
 			comboBoxOrigin.setItems(obsListMaterial);
 			comboBoxTarget.setItems(obsListMaterial);

@@ -268,7 +268,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			setNodesDisable();
 
 		} catch (Exception e) {
-			Alerts.showAlert("Error", "Error desconoc�do", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
@@ -325,7 +325,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					new Image(CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconoc�do", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -336,7 +336,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			CorpoDeProva obj = getCorpoDeProvaView();
 			
 			if (isLocked && (obj.getTonRupture() != null && obj.getTonRupture() != 0.0)) {
-				throw new IllegalAccessException("La alteraci�n de este documento esta bloqueada");
+				throw new IllegalAccessException("La alteraciín de este documento esta bloqueada");
 			}
 			
 			if (isLocked && (DateTimeComparator.getDateOnlyInstance().compare(obj.getRuptureDate(), new Date()) < 0)) 
@@ -407,7 +407,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			Alerts.showAlert("Error", "Acceso denegado", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconoc�do", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 
 		}
 	}
@@ -459,7 +459,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			tableViewCorpoDeProva.refresh();
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconoc�do", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -738,7 +738,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 		CorpoDeProva cp = tableViewCorpoDeProva.getSelectionModel().getSelectedItem();
 		if (cp == null) {
-			throw new NullPointerException("Probeta vac�a o no seleccionada");
+			throw new NullPointerException("Probeta vacía o no seleccionada");
 		}
 		return cp;
 	}
@@ -746,7 +746,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	private List<CorpoDeProva> getCorpoDeProvaListFromTable() {
 		List<CorpoDeProva> list = tableViewCorpoDeProva.getItems();
 		if (list == null) {
-			throw new IllegalStateException("Lista de probetas vac�a");
+			throw new IllegalStateException("Lista de probetas vacía");
 		}
 		return list;
 	}
@@ -795,27 +795,27 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		ValidationException exception = new ValidationException("getCompresionTestFormData Error");
 
 		if (comboBoxClient.getValue() == null) {
-			exception.addError("client", "vac�o");
+			exception.addError("client", "vacío");
 		}
 
 		if (comboBoxConcreteProvider.getValue() == null) {
-			exception.addError("provider", "vac�o");
+			exception.addError("provider", "vacío");
 		}
 
 		if (comboBoxConcreteDesign.getValue() == null) {
-			exception.addError("concreteDesign", "vac�o");
+			exception.addError("concreteDesign", "vacío");
 		}
 
 		if (dpCreationDate.getValue() == null) {
-			exception.addError("date", "vac�o");
+			exception.addError("date", "vacío");
 		}
 
 		if (txtObra.getText() == null || txtObra.getText().trim().equals("")) {
-			exception.addError("obra", "vac�o");
+			exception.addError("obra", "vacío");
 		}
 
 		if (txtAddress.getText() == null || txtAddress.getText().trim().equals("")) {
-			exception.addError("address", "vac�o");
+			exception.addError("address", "vacío");
 		}
 
 		if (exception.getErrors().size() > 0) {

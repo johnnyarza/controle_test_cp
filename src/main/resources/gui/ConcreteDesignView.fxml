@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minWidth="417.0" prefHeight="316.0" prefWidth="896.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ConcreteDesignViewController">
+<VBox minWidth="417.0" prefHeight="316.0" prefWidth="896.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ConcreteDesignViewController">
    <children>
       <Label text="Dosificaciones">
          <font>
@@ -30,12 +30,12 @@
             <Insets bottom="8.0" left="8.0" top="8.0" />
          </padding>
       </HBox>
-      <TableView fx:id="tableViewConcreteDesing" minWidth="166.0" prefHeight="387.0" prefWidth="421.0">
+      <TableView fx:id="tableViewConcreteDesing" maxHeight="1.7976931348623157E308" prefHeight="254.0" prefWidth="914.0">
         <columns>
           <TableColumn fx:id="tableColumnId" minWidth="30.0" prefWidth="30.0" styleClass="custom-align" text="iD" />
-            <TableColumn fx:id="tableColumnName" maxWidth="500.0" minWidth="65.0" prefWidth="65.0" styleClass="custom-align" text="Nombre" />
-            <TableColumn fx:id="tableColumnSlump" minWidth="40.0" prefWidth="45.0" styleClass="custom-align" text="Slump" />
-          <TableColumn fx:id="tableColumnDesc" maxWidth="1.7976931348623157E308" minWidth="110.0" prefWidth="819.2000122070312" styleClass="description-column-style" text="Descripción" />
+            <TableColumn fx:id="tableColumnName" maxWidth="500.0" minWidth="65.0" prefWidth="151.19998168945312" styleClass="custom-align" text="Nombre" />
+            <TableColumn fx:id="tableColumnSlump" minWidth="4.800018310546875" prefWidth="69.60000610351562" styleClass="custom-align" text="Slump" />
+          <TableColumn fx:id="tableColumnDesc" maxWidth="1.7976931348623157E308" minWidth="110.0" prefWidth="643.2000122070312" styleClass="description-column-style" text="Descripción" />
         </columns>
       </TableView>
    </children>
