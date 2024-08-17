@@ -1,7 +1,6 @@
 package gui;
 
 import java.net.URL;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
 
 import java.text.SimpleDateFormat;
@@ -65,7 +64,7 @@ import javafx.util.Callback;
 
 public class CompresionTestFormController implements Initializable, DataChangeListener {
 
-	// TODO mudar as label escrita codigo para descrição
+	// TODO mudar as label escrita codigo para descriï¿½ï¿½o
 
 	private ObservableList<CorpoDeProva> obsList;
 
@@ -269,7 +268,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			setNodesDisable();
 
 		} catch (Exception e) {
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocï¿½do", e.getMessage(), AlertType.ERROR);
 		}
 
 	}
@@ -326,7 +325,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 					new Image(CompresionTestFormController.class.getResourceAsStream("/images/fileIcons/new_file.png")));
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocï¿½do", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -337,7 +336,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			CorpoDeProva obj = getCorpoDeProvaView();
 			
 			if (isLocked && (obj.getTonRupture() != null && obj.getTonRupture() != 0.0)) {
-				throw new IllegalAccessException("La alteración de este documento esta bloqueada");
+				throw new IllegalAccessException("La alteraciï¿½n de este documento esta bloqueada");
 			}
 			
 			if (isLocked && (DateTimeComparator.getDateOnlyInstance().compare(obj.getRuptureDate(), new Date()) < 0)) 
@@ -369,8 +368,8 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	@FXML
 	private void onBtApagarProbetaAction() {
 		try {
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de accion",
-					"Seguro que desea apagar probeta?", "Después de apagados los datos seran perdidos");
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmaciï¿½n de accion",
+					"Seguro que desea apagar probeta?", "Despuï¿½s de apagados los datos seran perdidos");
 
 			if (result.get() == ButtonType.OK) {
 				CorpoDeProva obj = getCorpoDeProvaView();
@@ -391,14 +390,14 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	private void onBtEditarCadastroAction() {
 		try {
 			if (isLocked) {
-				throw new IllegalAccessException("La alteración de este documento esta bloqueada");
+				throw new IllegalAccessException("La alteraciï¿½n de este documento esta bloqueada");
 			}
 			setErrorMessages(new HashMap<String, String>());
 			setCompresionTestFormData();
 			compresionTestService.saveOrUpdate(this.compresionTest);
 			onDataChange();
 			setChangesCount(0);
-			Alerts.showAlert("Acción conluida", "Cadastro actualizado", null, AlertType.INFORMATION);
+			Alerts.showAlert("Acciï¿½n conluida", "Cadastro actualizado", null, AlertType.INFORMATION);
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
 		} catch (DbException e1) {
@@ -408,7 +407,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			Alerts.showAlert("Error", "Acceso denegado", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocï¿½do", e.getMessage(), AlertType.ERROR);
 
 		}
 	}
@@ -416,7 +415,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	@FXML
 	private void onBtCloseAction(ActionEvent event) {
 		if (this.changesCount > 0) {
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acción", "Segura que desea cerrar?",
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acciï¿½n", "Segura que desea cerrar?",
 					"Hay datos no guardados!!");
 			if (result.get() == ButtonType.OK) {
 				Utils.currentStage(event).close();
@@ -460,7 +459,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 			tableViewCorpoDeProva.refresh();
 		} catch (Exception e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
-			Alerts.showAlert("Error", "Error desconocído", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Error desconocï¿½do", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -739,7 +738,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 		CorpoDeProva cp = tableViewCorpoDeProva.getSelectionModel().getSelectedItem();
 		if (cp == null) {
-			throw new NullPointerException("Probeta vacía o no seleccionada");
+			throw new NullPointerException("Probeta vacï¿½a o no seleccionada");
 		}
 		return cp;
 	}
@@ -747,7 +746,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	private List<CorpoDeProva> getCorpoDeProvaListFromTable() {
 		List<CorpoDeProva> list = tableViewCorpoDeProva.getItems();
 		if (list == null) {
-			throw new IllegalStateException("Lista de probetas vacía");
+			throw new IllegalStateException("Lista de probetas vacï¿½a");
 		}
 		return list;
 	}
@@ -796,27 +795,27 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		ValidationException exception = new ValidationException("getCompresionTestFormData Error");
 
 		if (comboBoxClient.getValue() == null) {
-			exception.addError("client", "vacío");
+			exception.addError("client", "vacï¿½o");
 		}
 
 		if (comboBoxConcreteProvider.getValue() == null) {
-			exception.addError("provider", "vacío");
+			exception.addError("provider", "vacï¿½o");
 		}
 
 		if (comboBoxConcreteDesign.getValue() == null) {
-			exception.addError("concreteDesign", "vacío");
+			exception.addError("concreteDesign", "vacï¿½o");
 		}
 
 		if (dpCreationDate.getValue() == null) {
-			exception.addError("date", "vacío");
+			exception.addError("date", "vacï¿½o");
 		}
 
 		if (txtObra.getText() == null || txtObra.getText().trim().equals("")) {
-			exception.addError("obra", "vacío");
+			exception.addError("obra", "vacï¿½o");
 		}
 
 		if (txtAddress.getText() == null || txtAddress.getText().trim().equals("")) {
-			exception.addError("address", "vacío");
+			exception.addError("address", "vacï¿½o");
 		}
 
 		if (exception.getErrors().size() > 0) {
