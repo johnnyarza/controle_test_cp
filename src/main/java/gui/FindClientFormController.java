@@ -167,7 +167,7 @@ public class FindClientFormController implements Initializable {
 			throw new IllegalStateException("Service was null");
 		}
 		if (!rdId.isSelected() && !rdName.isSelected()) {
-			throw new ValidationException("Seleccionar opci�n de busca");
+			throw new ValidationException("Seleccionar opción de busca");
 		}
 		
 		if (txtId.getText() == null || txtId.getText().trim().equals("")) {

@@ -182,7 +182,7 @@ public class CorpoDeProvaRegistrationController implements Initializable {
 	private void onBtDateCalcAction(ActionEvent event) {
 		try {
 
-			String response = Utils.getStringWithDialog("Sumar d�as", "Insertar d�as para sumar \na la fecha de moldeo",
+			String response = Utils.getStringWithDialog("Sumar días", "Insertar días para sumar \na la fecha de moldeo",
 					new Image(CorpoDeProva.class.getResourceAsStream("/images/calculator.png")));
 
 			if (StringUtils.isNumeric(response) && dpMoldeDate.getValue() != null) {

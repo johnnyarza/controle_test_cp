@@ -151,7 +151,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 				throw new IllegalStateException("Service(s) was null");
 			}
 
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacci�n de acci�n",
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmacción de acción",
 					"Seguro que desea apagar?", "");
 			if (result.get() == ButtonType.OK) {
 				service.deleteConcreteDesignById(obj.getId());
@@ -222,7 +222,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	private ConcreteDesign getFormData() {
 		ConcreteDesign obj = tableViewConcreteDesing.getSelectionModel().getSelectedItem();
 		if (obj == null) {
-			throw new IllegalStateException("Dise�o vac�o o no seleccionado");
+			throw new IllegalStateException("Dosificación vacía o no seleccionado");
 		}
 		return obj;
 	}
@@ -251,7 +251,7 @@ public class ConcreteDesignViewController implements Initializable, DataChangeLi
 	private ConcreteDesign getConcreteDesingFromTableView() {
 		ConcreteDesign obj = tableViewConcreteDesing.getSelectionModel().getSelectedItem();
 		if (obj == null) {
-			throw new IllegalStateException("Dise�o vac�o o no seleccionado");
+			throw new IllegalStateException("Dosificación vacía o no seleccionado");
 		} else {
 			return obj;
 		}

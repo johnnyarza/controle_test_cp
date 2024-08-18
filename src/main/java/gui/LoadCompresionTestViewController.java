@@ -178,8 +178,8 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 
 			Stage parentStage = Utils.currentStage(event);
 			CompresionTest obj = getCompresionTestFromTableView();
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmaci�n de accion",
-					"Seguro que desea apagar probeta?", "Despu�s de apagados los datos seran perdidos");
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de accion",
+					"Seguro que desea apagar probeta?", "Después de apagados los datos seran perdidos");
 
 			if (result.get() == ButtonType.OK) {
 				Utils.createDialogForm("/gui/LoginForm.fxml", "Login", parentStage, (LoginFormController controller) -> {
@@ -343,8 +343,6 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			row.setOnMouseClicked(event -> {
 				if ( event.getClickCount() == 2 && (!row.isEmpty())) {
 					onbtOpenAction(event);
-					CompresionTestList rowData = row.getItem();
-					System.out.println(rowData);
 				}
 			});
 			return row;
@@ -441,7 +439,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			Stage dialogStage = new Stage();
 			dialogStage.getIcons()
 					.add(new Image(LoadCompresionTestViewController.class.getResourceAsStream("/images/test.png")));
-			dialogStage.setTitle("Roturas de probetas de hormig�n");
+			dialogStage.setTitle("Roturas de probetas de hormigón");
 			dialogStage.setScene(new Scene(pane));
 			if (!css.trim().contentEquals(""))
 				dialogStage.getScene().getStylesheets().add(css);
@@ -453,7 +451,7 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 				@Override
 				public void handle(WindowEvent we) {
 					if (controller.getChangesCount() > 0) {
-						Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acci�n", "Segura que desea cerrar?",
+						Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmar acción", "Segura que desea cerrar?",
 								"Hay datos no guardados!!");
 						if (result.get() != ButtonType.OK) {
 							we.consume();

@@ -121,8 +121,8 @@ public class ProveedoresViewController implements Initializable, DataChangeListe
 				throw new IllegalAccessError("Accesso denegado");
 
 			Provider obj = getProviderFromTableView();
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmaci�n de acci�n",
-					"Seguro que desea apagar?", "Los datos seleccionados ser�n perdidos");
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de acción",
+					"Seguro que desea apagar?", "Los datos seleccionados serán perdidos");
 			if (result.get() == ButtonType.OK) {
 
 				if (service == null) {

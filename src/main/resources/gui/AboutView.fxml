@@ -16,7 +16,7 @@
             <Insets left="5.0" top="5.0" />
          </VBox.margin>
       </Label>
-      <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" text="Controle de Probetas&#10;Versão 0.0.5&#10;&#10;Desenvolvido por:&#10;Johnny Henrique H. V. Arza&#10;Engenheiro Civill, Me. em Estruturas de Concreto Armado&#10;&#10;johnnyarza@gmail.com&#10;https://www.linkedin.com/in/johnnyarza/&#10;">
+      <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" text="Controle de Probetas&#10;Versão 0.0.6&#10;&#10;Desenvolvido por:&#10;Johnny Henrique H. V. Arza&#10;Engenheiro Civill, Me. em Estruturas de Concreto Armado&#10;&#10;johnnyarza@gmail.com&#10;https://www.linkedin.com/in/johnnyarza/&#10;">
          <padding>
             <Insets top="5.0" />
          </padding>

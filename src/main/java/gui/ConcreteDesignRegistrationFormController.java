@@ -179,7 +179,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		try {
 			ObservableList<Material> obsListUsingMaterials = getUsingMaterials();
 			if (obsListUsingMaterials.size() == 0) {
-				Alerts.showAlert("Aviso", "A�n no existen materiales en uso", null, AlertType.INFORMATION);
+				Alerts.showAlert("Aviso", "Aún no existen materiales en uso", null, AlertType.INFORMATION);
 				return;
 			}
 
@@ -269,7 +269,7 @@ public class ConcreteDesignRegistrationFormController implements Initializable {
 		ValidationException exception = new ValidationException("Validation Exception");
 
 		if (countEmptyComboBoxes() == 8) {
-			exception.addError("general", "El disi�o debe contener por lo menos 1 material");
+			exception.addError("general", "La dofisicación debe contener por lo menos 1 material");
 		}
 
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {

@@ -15,7 +15,7 @@ public class ConcreteDesignService {
 	
 	public void deleteConcreteDesignById(Integer id) throws SQLIntegrityConstraintViolationException {
 		if (compresionTestService.compresionTestContainsConcreteDesingId(id)) {
-			throw new SQLIntegrityConstraintViolationException("La dosificacíon esta en uso");
+			throw new SQLIntegrityConstraintViolationException("La dosificaciÃ³n esta en uso");
 		}
 		dao.deleteById(id);
 	}

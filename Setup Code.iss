@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Probeta Control"
-#define MyAppVersion "0.0.5"
+#define MyAppVersion "0.0.6"
 #define MyAppPublisher "Johnny Arza"
 #define MyAppURL "johnnyarza@gmail.com"
 #define MyAppExeName "CpControl.exe"

@@ -65,7 +65,7 @@ public class LoginFormController implements Initializable {
 			if (logOption == LogEnum.SIGNIN) {
 				setEntity(userService.findByNameAndPassword(entity));
 				if (entity == null) {
-					throw new LoginException("Usuario o contrase�a no v�lidos");
+					throw new LoginException("Usuario o contraseña inválidos");
 				}
 			}
 			if (logOption == LogEnum.SIGNUP ||logOption == LogEnum.EDIT ) {
@@ -80,7 +80,7 @@ public class LoginFormController implements Initializable {
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
 		} catch (LoginException e) {
-			Alerts.showAlert("Error", "Credenciales no v�lidas", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", "Credenciales inválidas", e.getMessage(), AlertType.ERROR);
 		} catch (DbException e) {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 			Alerts.showAlert("Error", "DbException", e.getMessage(), AlertType.ERROR);

@@ -59,7 +59,7 @@ public class FileUtils {
 
 	public static Boolean fileExist(String absolutePath) throws FileNotFoundException {
 		if (absolutePath == null || absolutePath.trim().equals("")) {
-			throw new FileNotFoundException("Camino (absolutePath) vac韔");
+			throw new FileNotFoundException("Camino (absolutePath) vac铆o");
 		}
 		File file = new File(absolutePath);
 
@@ -153,8 +153,8 @@ public class FileUtils {
 		
 		if (!decodedKey.equals("2rHr3ZrKjf")) {
 			Dialog<String> dlg = new TextInputDialog();
-			dlg.setTitle("C骴igo Serial");
-			dlg.setHeaderText("Insertar c骴igo serial del programa");
+			dlg.setTitle("C贸digo Serial");
+			dlg.setHeaderText("Insertar c贸digo serial del programa");
 			
 			Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
 			stage.getIcons().add(new Image(FileUtils.class.getResourceAsStream("/images/sign_in.png")));
@@ -170,10 +170,10 @@ public class FileUtils {
 					Map<String, String> initialProps = new HashMap<>();
 					initialProps.put("key", EncriptaDecriptaApacheCodec.codificaBase64Encoder(keyStr));
 					writeProperties("key.properties", initialProps);
-					Alerts.showAlert("Informaci髇", "C骴igo serial guardado", null, AlertType.INFORMATION);
+					Alerts.showAlert("Informaci贸n", "C贸digo serial guardado", null, AlertType.INFORMATION);
 					return true;
 				}
-				Alerts.showAlert("Error", "C骴igo serial no v醠ido", null, AlertType.ERROR);
+				Alerts.showAlert("Error", "C贸digo serial inv谩lido", null, AlertType.ERROR);
 			} while (!keyStr.equals("2rHr3ZrKjf"));
 		}
 

@@ -67,14 +67,14 @@ public class ConnectionConfigViewController implements Initializable {
 		try {
 
 			Optional<ButtonType> option = (Alerts.showConfirmationDialog("Aviso", "Seguro que desea continuar?",
-					"El programa ser� cerrado para aplicar las configuraciones"));
+					"El programa será cerrado para aplicar las configuraciones"));
 			if (option.get() != ButtonType.OK) {
 				return;
 			}
 			Map<String, String> configs = getViewData();
 
 			FileUtils.writeConnectionProperties(configs);
-			Alerts.showAlert("Confimarci�n", "Configuraciones guardadas!", "", AlertType.INFORMATION);
+			Alerts.showAlert("Confimarción", "Configuraciones guardadas!", "", AlertType.INFORMATION);
 			Platform.exit();
 		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());

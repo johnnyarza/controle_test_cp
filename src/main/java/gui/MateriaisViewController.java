@@ -127,7 +127,7 @@ public class MateriaisViewController implements Initializable, DataChangeListene
 				throw new IllegalStateException("Material service was null");
 			}
 			Material obj = getMarialFromTableView();
-			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmaci�n de acci�n",
+			Optional<ButtonType> result = Alerts.showConfirmationDialog("Confirmación de acción",
 					"Seguro que desea apagar material?", "Los datos seleccionados seran perdidos");
 			if (result.get() == ButtonType.OK) {
 
