@@ -347,6 +347,13 @@ public class LoadCompresionTestViewController implements Initializable, DataChan
 			});
 			return row;
 		});
+		tableViewClient.widthProperty().addListener((obs, oldVal, newVal) -> {
+			double tableWidth = tableViewClient.getWidth();
+			System.out.println(tableWidth);
+			tableColumnClientName.setPrefWidth(tableWidth * 0.2); // 20% of TableView width
+			tableColumnObra.setPrefWidth(tableWidth * 0.2); // 20% of TableView width;
+			tableColumnAddress.setPrefWidth(tableWidth * 0.15); // 15% of TableView width
+		});
 	}
 
 	public void updateViewData() {

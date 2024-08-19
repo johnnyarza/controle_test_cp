@@ -167,11 +167,14 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 					null,
 					this.compresionTest.getId());
 		}
-		//TODO implement filter by date and range
-
-		return service.findByDatesAndCompresionTestId(TimeZone.getDefault(),
+		
+		//filter by date and range		
+		System.out.println("date and range");
+		return service.findByDatesAndIdAndCompresionTestId(TimeZone.getDefault(),
 				Date.from(Utils.getInsTantFromDatePicker(dpInitialDate)),
-				Date.from(Utils.getInsTantFromDatePicker(dpFinalDate)), this.compresionTest.getId());
+				Date.from(Utils.getInsTantFromDatePicker(dpFinalDate)),
+				range,
+				this.compresionTest.getId());
 	}
 
 	@FXML

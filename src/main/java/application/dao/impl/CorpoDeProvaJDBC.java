@@ -433,6 +433,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 
 		PreparedStatement st = null;
 		ResultSet rs = null;
+		String rangeQuery = "";
 		
 		try {
 			
@@ -447,32 +448,50 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 				st.setInt(3, compresionTestId);
 			} 
 			
+			//Partial Query for range
+			if (idRange != null && !idRange.trim().isEmpty()) {
+		    	List<String> segments = Arrays.asList(idRange.trim().replaceAll("\\s+","").split(","));
+		    	Integer counter = 0;	    	
+		    	//TODO check when range is only 1 number
+				for (String string : segments) {
+		    		String[] splitRange = string.split("-");
+		    		
+		    		if (counter == 0 ) {
+		    			rangeQuery = rangeQuery + "BETWEEN " + splitRange[0] + " AND " + splitRange[1];
+		    		} else {
+		    			rangeQuery = rangeQuery + " OR id BETWEEN " + splitRange[0] + " AND " + splitRange[1];
+		    		}
+		    		
+		    		counter++;
+				}
+			}
+			
 			//Filter by range only
 			if (idRange != null && !idRange.trim().isEmpty() && initialDate == null && finalDate == null) {
 				String query = "";
 				query = "SELECT * FROM cp_db.corpo_de_provas " + " where corpo_de_provas.compresionTest_Id = ? "
 						+ "AND corpo_de_provas.id ";
-				
-		    	List<String> segments = Arrays.asList(idRange.trim().replaceAll("\\s+","").split(","));
-		    	Integer counter = 0;
-		    			    	
-				for (String string : segments) {
-		    		String[] splitRange = string.split("-");
-		    		
-		    		if (counter == 0 ) {
-		    			query = query + "BETWEEN " + splitRange[0] + " AND " + splitRange[1];
-		    		} else {
-		    			query = query + " OR id BETWEEN " + splitRange[0] + " AND " + splitRange[1];
-		    		}
-		    		
-		    		counter++;
-				}
-				
+				query = query + rangeQuery;
+			
 				st = conn.prepareStatement(query);
 				st.setInt(1, compresionTestId);
 			}
 			
-
+			//TODO implement filter by date and range
+			if (idRange != null && !idRange.trim().isEmpty() && initialDate != null && finalDate != null) {
+				String query = "";
+				query = query + "select * from (select * from (select * from corpo_de_provas where compresionTest_Id = ?)"
+						+ " as TableByTestId where "
+						+ "dateMolde >= ? and dateMolde <= ?) as TableByDates where id ";
+				query = query + rangeQuery;
+				
+				System.out.println(query);
+				st = conn.prepareStatement(query);
+				st.setInt(1, compresionTestId);
+				st.setDate(2, new java.sql.Date(initialDate.getTime()));
+				st.setDate(3, new java.sql.Date(finalDate.getTime()));
+			}
+			
 			rs = st.executeQuery();
 			List<CorpoDeProva> list = new ArrayList<>();
 
