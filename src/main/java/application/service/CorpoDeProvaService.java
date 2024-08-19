@@ -52,6 +52,12 @@ public class CorpoDeProvaService {
 			Integer compresionTestId) {
 		return dao.findByDatesAndCompresionTestId(tZ, initialDate, finalDate, compresionTestId);
 	}
+	
+	public List<CorpoDeProva> findByDatesAndIdAndCompresionTestId(TimeZone tZ, Date initialDate, Date finalDate,
+			String idRange, Integer compresionTestId) {
+		return dao.findByDatesAndIdAndCompresionTestId(tZ, initialDate, finalDate, idRange, compresionTestId);
+	}
+	
 	public List<CorpoDeProva> findLateCorpoDeProva(TimeZone tZ) {
 		return dao.findLateCorpoDeProva(tZ);
 	}

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -308,6 +309,7 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 			st = conn.prepareStatement("SELECT * FROM cp_db.corpo_de_provas " + "WHERE corpo_de_provas.dateMolde >= ? "
 					+ "AND corpo_de_provas.dateMolde <= ? " + "AND corpo_de_provas.compresionTest_Id = ?");
 
+			
 			st.setDate(1, new java.sql.Date(initialDate.getTime()));
 			st.setDate(2, new java.sql.Date(finalDate.getTime()));
 			st.setInt(3, compresionTestId);
@@ -424,4 +426,68 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 			logger.doLog(Level.WARNING, e.getMessage(), e);
 		}
 	}
+
+	@Override
+	public List<CorpoDeProva> findByDatesAndIdAndCompresionTestId(TimeZone tZ, Date initialDate, Date finalDate,
+			String idRange, Integer compresionTestId) {
+
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try {
+			
+			//Filter by dates only
+			if (initialDate != null && finalDate != null && (idRange == null || idRange.trim().isEmpty() )) {
+				System.out.println("DB just dates");
+				st = conn.prepareStatement("SELECT * FROM cp_db.corpo_de_provas " + "WHERE corpo_de_provas.dateMolde >= ? "
+						+ "AND corpo_de_provas.dateMolde <= ? " + "AND corpo_de_provas.compresionTest_Id = ?");
+				
+				st.setDate(1, new java.sql.Date(initialDate.getTime()));
+				st.setDate(2, new java.sql.Date(finalDate.getTime()));
+				st.setInt(3, compresionTestId);
+			} 
+			
+			//Filter by range only
+			if (idRange != null && !idRange.trim().isEmpty() && initialDate == null && finalDate == null) {
+				String query = "";
+				query = "SELECT * FROM cp_db.corpo_de_provas " + " where corpo_de_provas.compresionTest_Id = ? "
+						+ "AND corpo_de_provas.id ";
+				
+		    	List<String> segments = Arrays.asList(idRange.trim().replaceAll("\\s+","").split(","));
+		    	Integer counter = 0;
+		    			    	
+				for (String string : segments) {
+		    		String[] splitRange = string.split("-");
+		    		
+		    		if (counter == 0 ) {
+		    			query = query + "BETWEEN " + splitRange[0] + " AND " + splitRange[1];
+		    		} else {
+		    			query = query + " OR id BETWEEN " + splitRange[0] + " AND " + splitRange[1];
+		    		}
+		    		
+		    		counter++;
+				}
+				
+				st = conn.prepareStatement(query);
+				st.setInt(1, compresionTestId);
+			}
+			
+
+			rs = st.executeQuery();
+			List<CorpoDeProva> list = new ArrayList<>();
+
+			while (rs.next()) {
+				list.add(instantiateCorpoDeProvaWithTimeZone(tZ, rs));
+			}
+			return list;
+
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+	}
+
+
 }

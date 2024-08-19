@@ -18,6 +18,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import application.domaim.CorpoDeProva;
 import application.log.LogUtils;
@@ -51,11 +53,18 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.StringConverter;
 
+
 public class Utils {
 
 	private static NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
 	private static DecimalFormat df = (DecimalFormat) format;
 
+	public static Boolean regexValidator (String regexPattern, String string) {
+		Pattern pattern = Pattern.compile(regexPattern);
+		Matcher matcher = pattern.matcher(string);
+		Boolean matchFound = matcher.find();
+		return matchFound;
+	}
 	public static String getStringWithDialog(String title, String header, Image image) {
 		Dialog<String> dlg = new TextInputDialog();
 		dlg.setTitle(title);

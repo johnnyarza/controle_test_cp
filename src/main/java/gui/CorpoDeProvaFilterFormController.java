@@ -2,12 +2,14 @@ package gui;
 
 import java.net.URL;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 import application.db.DbException;
 import application.domaim.CompresionTest;
@@ -25,6 +27,9 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.paint.Color;
 
 public class CorpoDeProvaFilterFormController implements Initializable {
 
@@ -35,7 +40,9 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 	private CompresionTest compresionTest;
 
 	private Boolean isCancelButtonPressed = false;
-
+	
+	private final Pattern pattern = Pattern.compile("^[0-9]+(?:(?:\\s*,\\s*|-)[0-9]+)*$");
+	
 	@FXML
 	private Button btFilter;
 
@@ -47,12 +54,18 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 
 	@FXML
 	private DatePicker dpFinalDate;
+	
+	@FXML
+	private TextField textFieldRange;
 
 	@FXML
 	private Label labelErrorInitialDate;
 
 	@FXML
 	private Label labelErrorFinalDate;
+	
+	@FXML
+	private Label labelErrorRange;
 
 	@FXML
 	private void onBtFilterAction(ActionEvent event) {
@@ -65,6 +78,8 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 			Alerts.showAlert("Error", "Error filtrando probetas", e.getMessage(), AlertType.ERROR);
 		} catch (ValidationException e1) {
 			setLabelErrorMessages(e1.getErrors());
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "Error filtrando probetas", e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -73,24 +88,43 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 
 		labelErrorInitialDate.setText(errorNames.contains("initialDate") ? errors.get("initialDate") : "");
 		labelErrorFinalDate.setText(errorNames.contains("finalDate") ? errors.get("finalDate") : "");
-
+		labelErrorRange.setText(errorNames.contains("range") ? errors.get("range") : "Ejemplo: 1-3\r\n"
+				+ "1-3, 4-8,....");
+		labelErrorRange.setTextFill(errorNames.contains("range") ? Color.RED : Color.BLACK);
 	}
 
 	private List<CorpoDeProva> getFormData() {
 		ValidationException exception = new ValidationException("Validation Exception");
+		LocalDate finalDate = dpFinalDate.getValue();
+		LocalDate initialDate = dpInitialDate.getValue();
+		String range = textFieldRange.getText();
+		System.out.println(finalDate);
+		System.out.println(initialDate);
 
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
 		}
-
-		if (dpFinalDate.getValue() == null) {
+		
+		if (finalDate == null && initialDate == null && (range == null || range.trim().isEmpty())) {
 			exception.addError("finalDate", "vacío");
-		}
-		if (dpInitialDate.getValue() == null) {
 			exception.addError("initialDate", "vacío");
+			exception.addError("range", "vacío");
 		}
-
-		if (dpInitialDate.getValue() != null && dpFinalDate.getValue() != null) {
+		
+		//Validating input dates
+		if ((finalDate != null || initialDate != null)) {
+			if (finalDate == null) {
+				exception.addError("finalDate", "vacío");
+				System.out.println("Range vacio, final date vacío");
+			}
+			if (initialDate == null) {
+				exception.addError("initialDate", "vacío");
+				System.out.println("Range vacio, initial date vacío");
+			}			
+		}
+		
+		//Validating input dates
+		if (initialDate != null && finalDate != null) {
 			Instant instantBefore = Utils.getInsTantFromDatePicker(dpInitialDate);
 			Instant instantAfter = Utils.getInsTantFromDatePicker(dpFinalDate);
 
@@ -101,13 +135,39 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 				exception.addError("finalDate", "Fecha anterior a moldeo");
 			}
 		}
-
+		
+		//Validating input id
+		if (range != null && !range.trim().isEmpty()) {
+			Boolean matchFound = Utils.regexValidator("^[0-9]+(?:(?:\\s*,\\s*|-)[0-9]+)*$", range);
+			
+			if (!matchFound) {
+				exception.addError("range", "Rango inválido");
+			}
+		};
+		
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
 		if (this.compresionTest.getId() == null) {
 			throw new IllegalStateException("compresionTestId was null");
 		}
+		
+		//Get data from DB by id range only
+		if((range != null && !range.trim().isEmpty()) && (initialDate == null && finalDate == null)) {
+			System.out.println("just range");
+			return service.findByDatesAndIdAndCompresionTestId(TimeZone.getDefault(), null, null, range, this.compresionTest.getId());
+		}
+		
+		//Get data from DB by dates only
+		if ((range == null || range.trim().isEmpty()) && (initialDate != null && finalDate != null)) {
+			System.out.println("just dates");
+			return service.findByDatesAndIdAndCompresionTestId(TimeZone.getDefault(),
+					Date.from(Utils.getInsTantFromDatePicker(dpInitialDate)),
+					Date.from(Utils.getInsTantFromDatePicker(dpFinalDate)),
+					null,
+					this.compresionTest.getId());
+		}
+		//TODO implement filter by date and range
 
 		return service.findByDatesAndCompresionTestId(TimeZone.getDefault(),
 				Date.from(Utils.getInsTantFromDatePicker(dpInitialDate)),
@@ -128,6 +188,8 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 	private void initializeNodes() {
 		btFilter.getStyleClass().add("safe-button");
 		btClose.getStyleClass().add("dangerous-button");
+		labelErrorRange.setText("Ejemplo: 1-3\r\n"
+				+ "1-3, 4-8,....");
 	}
 
 	public Boolean getIsCancelButtonPressed() {
