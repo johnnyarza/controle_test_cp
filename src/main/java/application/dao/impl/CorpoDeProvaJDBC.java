@@ -439,7 +439,6 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 			
 			//Filter by dates only
 			if (initialDate != null && finalDate != null && (idRange == null || idRange.trim().isEmpty() )) {
-				System.out.println("DB just dates");
 				st = conn.prepareStatement("SELECT * FROM cp_db.corpo_de_provas " + "WHERE corpo_de_provas.dateMolde >= ? "
 						+ "AND corpo_de_provas.dateMolde <= ? " + "AND corpo_de_provas.compresionTest_Id = ?");
 				
@@ -485,7 +484,6 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 						+ "dateMolde >= ? and dateMolde <= ?) as TableByDates where id ";
 				query = query + rangeQuery;
 				
-				System.out.println(query);
 				st = conn.prepareStatement(query);
 				st.setInt(1, compresionTestId);
 				st.setDate(2, new java.sql.Date(initialDate.getTime()));

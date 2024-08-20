@@ -13,7 +13,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{23BF4812-C9C9-4D49-95A5-2686076DF715}
+AppId={{A9BA60F2-C6D7-4302-B164-0662FD5C827E}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -28,7 +28,7 @@ DisableProgramGroupPage=yes
 ;PrivilegesRequired=lowest
 OutputDir=C:\Users\Johnny\Documents\ProbetaControlInstall
 OutputBaseFilename=ProbetaControl_{#MyAppVersion}-Setup
-Password=
+Password=12t0ERu
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern

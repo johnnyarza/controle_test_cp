@@ -17,7 +17,7 @@
    <children>
       <VBox prefHeight="175.0" prefWidth="330.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label text="Filtrar Probetas por Fecha de Moldeo">
+            <Label text="Filtrar Probetas">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
