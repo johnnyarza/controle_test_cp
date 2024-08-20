@@ -146,7 +146,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="11" isBold="true"/>
 								</textElement>
-								<text><![CDATA[Proporcion]]></text>
+								<text><![CDATA[Proporción]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
@@ -166,19 +166,22 @@
 	<columnFooter>
 		<band height="48" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
-			<textField pattern="&quot;&quot;">
-				<reportElement x="185" y="0" width="185" height="46" uuid="8432f55e-f095-48f8-9b22-8b1090d1a6a8"/>
-				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="html">
-					<font fontName="Arial"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Hoja: " + $V{PAGE_NUMBER} + " / " + $V{PAGE_COUNT}]]></textFieldExpression>
-			</textField>
 			<textField>
 				<reportElement x="0" y="0" width="184" height="46" uuid="acc20cb4-b6fd-40d1-a18f-f40f67e7908a"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Impreso en: " +(new SimpleDateFormat("dd/MM/yyyy").format(new Date()))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="0" width="100" height="48" uuid="7359a395-748b-4fa3-b45a-8016f84e9ca4"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Hoja: " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="280" y="0" width="100" height="48" uuid="0fc85281-efbd-42a6-9e4d-d8e7f17851c9"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[" / " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>

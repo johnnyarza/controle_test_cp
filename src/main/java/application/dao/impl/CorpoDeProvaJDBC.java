@@ -452,12 +452,13 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 			if (idRange != null && !idRange.trim().isEmpty()) {
 		    	List<String> segments = Arrays.asList(idRange.trim().replaceAll("\\s+","").split(","));
 		    	Integer counter = 0;	    	
-		    	//TODO check when range is only 1 number
+
 				for (String string : segments) {
 		    		String[] splitRange = string.split("-");
 		    		
 		    		if (counter == 0 ) {
-		    			rangeQuery = rangeQuery + "BETWEEN " + splitRange[0] + " AND " + splitRange[1];
+		    			rangeQuery = rangeQuery + "BETWEEN " + splitRange[0] + " AND " + 
+		    							splitRange[splitRange.length == 1 ? 0 : 1];
 		    		} else {
 		    			rangeQuery = rangeQuery + " OR id BETWEEN " + splitRange[0] + " AND " + splitRange[1];
 		    		}
@@ -477,7 +478,6 @@ public class CorpoDeProvaJDBC implements CorpoDeProvaDao {
 				st.setInt(1, compresionTestId);
 			}
 			
-			//TODO implement filter by date and range
 			if (idRange != null && !idRange.trim().isEmpty() && initialDate != null && finalDate != null) {
 				String query = "";
 				query = query + "select * from (select * from (select * from corpo_de_provas where compresionTest_Id = ?)"

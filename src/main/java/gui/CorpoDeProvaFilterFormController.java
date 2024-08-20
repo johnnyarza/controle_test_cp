@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.regex.Pattern;
-
 import application.db.DbException;
 import application.domaim.CompresionTest;
 import application.domaim.CorpoDeProva;
@@ -28,7 +26,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.paint.Color;
 
 public class CorpoDeProvaFilterFormController implements Initializable {
@@ -40,8 +37,6 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 	private CompresionTest compresionTest;
 
 	private Boolean isCancelButtonPressed = false;
-	
-	private final Pattern pattern = Pattern.compile("^[0-9]+(?:(?:\\s*,\\s*|-)[0-9]+)*$");
 	
 	@FXML
 	private Button btFilter;

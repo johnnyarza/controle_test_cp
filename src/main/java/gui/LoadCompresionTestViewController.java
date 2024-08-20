@@ -10,8 +10,6 @@ import java.util.TimeZone;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-import org.w3c.dom.events.Event;
-
 import application.Program;
 import application.Report.ReportFactory;
 import application.db.DbException;

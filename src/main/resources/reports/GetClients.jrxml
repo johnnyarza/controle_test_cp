@@ -255,19 +255,22 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html"/>
 				<textFieldExpression><![CDATA["Pto. Quijarro, Av. Bolivia, 210 • TEL: 3-978-2323 / CEL: 689-21153 • E-mail: henry.hjva@gmail.com • Prov. German Bush - Santa Cruz"]]></textFieldExpression>
 			</textField>
-			<textField pattern="&quot;&quot;">
-				<reportElement x="185" y="0" width="185" height="46" uuid="9dc7f0ad-00af-4465-93ec-2bfd104475c3"/>
-				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="html">
-					<font fontName="Arial"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Hoja: " + $V{PAGE_NUMBER} + " / " + $V{PAGE_COUNT}]]></textFieldExpression>
-			</textField>
 			<textField>
 				<reportElement x="0" y="0" width="184" height="46" uuid="365d8847-3548-4f51-9245-3f91c5a7b200"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Impreso en: " +(new SimpleDateFormat("dd/MM/yyyy").format(new Date()))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="16" width="100" height="30" uuid="27066fc6-2af7-4b97-9aee-70a8310ab470"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Hoja: " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="280" y="16" width="100" height="30" uuid="d2d8db28-050a-48f6-956e-28a911a0e312"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[" / " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
