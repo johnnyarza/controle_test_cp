@@ -93,8 +93,6 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 		LocalDate finalDate = dpFinalDate.getValue();
 		LocalDate initialDate = dpInitialDate.getValue();
 		String range = textFieldRange.getText();
-		System.out.println(finalDate);
-		System.out.println(initialDate);
 
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
@@ -110,11 +108,9 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 		if ((finalDate != null || initialDate != null)) {
 			if (finalDate == null) {
 				exception.addError("finalDate", "vacío");
-				System.out.println("Range vacio, final date vacío");
 			}
 			if (initialDate == null) {
 				exception.addError("initialDate", "vacío");
-				System.out.println("Range vacio, initial date vacío");
 			}			
 		}
 		
@@ -149,13 +145,11 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 		
 		//Get data from DB by id range only
 		if((range != null && !range.trim().isEmpty()) && (initialDate == null && finalDate == null)) {
-			System.out.println("just range");
 			return service.findByDatesAndIdAndCompresionTestId(TimeZone.getDefault(), null, null, range, this.compresionTest.getId());
 		}
 		
 		//Get data from DB by dates only
 		if ((range == null || range.trim().isEmpty()) && (initialDate != null && finalDate != null)) {
-			System.out.println("just dates");
 			return service.findByDatesAndIdAndCompresionTestId(TimeZone.getDefault(),
 					Date.from(Utils.getInsTantFromDatePicker(dpInitialDate)),
 					Date.from(Utils.getInsTantFromDatePicker(dpFinalDate)),
@@ -164,7 +158,6 @@ public class CorpoDeProvaFilterFormController implements Initializable {
 		}
 		
 		//filter by date and range		
-		System.out.println("date and range");
 		return service.findByDatesAndIdAndCompresionTestId(TimeZone.getDefault(),
 				Date.from(Utils.getInsTantFromDatePicker(dpInitialDate)),
 				Date.from(Utils.getInsTantFromDatePicker(dpFinalDate)),

@@ -21,7 +21,11 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import application.domaim.CorpoDeProva;
+import application.exceptions.SaveFileException;
 import application.log.LogUtils;
 import application.service.UserService;
 import enums.LogEnum;
@@ -58,6 +62,46 @@ public class Utils {
 
 	private static NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
 	private static DecimalFormat df = (DecimalFormat) format;
+	
+	public static String getExistingOrNewFilePath(String suggestedFileName, String fileExtDesciption, 
+			String fileExt) throws SaveFileException, IOException {
+		// Create a file chooser for selecting an existing file or specifying a new file
+        JFileChooser fileChooser = new JFileChooser();
+        
+        // Set a suggested file name
+        File suggestedFile = new File(suggestedFileName);
+        fileChooser.setSelectedFile(suggestedFile);
+        
+
+        // Add a file filter to show only .txt files
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(fileExtDesciption, fileExt);
+        fileChooser.setFileFilter(filter);
+        
+        int fileSelection = fileChooser.showSaveDialog(null);
+        
+        if (fileSelection == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            
+            // Ensure the file has a .txt extension
+            if (!selectedFile.getName().toLowerCase().endsWith("." + fileExt)) {
+                selectedFile = new File(selectedFile.getAbsolutePath() + "." + fileExt);
+            }
+         
+            if (selectedFile.exists()) {
+            	return selectedFile.getAbsolutePath();
+            } else {
+            	if (selectedFile.createNewFile()) {
+            		return selectedFile.getAbsolutePath();
+                } else {
+                	throw new SaveFileException("An error occurred while creating the file");
+                }	
+            }
+        }
+        if (fileSelection == JFileChooser.CANCEL_OPTION) {
+        	throw new SaveFileException("Operación cancelada");
+        }
+		return null;
+	}
 
 	public static Boolean regexValidator (String regexPattern, String string) {
 		Pattern pattern = Pattern.compile(regexPattern);
@@ -275,8 +319,9 @@ public class Utils {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(filter);
 		File file = fileChooser.showOpenDialog(dialogParentStage);
+		
 		if (file == null || !(file.isFile())) {
-			throw new FileNotFoundException("Error al Cargar Imagen");
+			throw new FileNotFoundException("Error al Cargar Archivo");
 		}
 		return file.getAbsolutePath();
 	}

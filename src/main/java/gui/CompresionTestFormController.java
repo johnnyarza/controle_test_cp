@@ -1,12 +1,23 @@
 package gui;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
+
+import org.apache.poi.ss.format.CellFormatType;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.DateTimeComparator;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +37,7 @@ import application.domaim.CompresionTest;
 import application.domaim.ConcreteDesign;
 import application.domaim.CorpoDeProva;
 import application.exceptions.ReportException;
+import application.exceptions.SaveFileException;
 import application.exceptions.ValidationException;
 import application.log.LogUtils;
 import application.service.ClientService;
@@ -59,6 +71,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -142,6 +155,9 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	private Button btCopy;
 
 	@FXML
+	private Button btExcel;
+	
+	@FXML
 	private Button btSearchConcreteProvider;
 
 	@FXML
@@ -215,6 +231,90 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 
 	@FXML
 	private Label labelMessages;
+	
+	@FXML
+	private void onBtExcelAction (ActionEvent event) {
+		List<CorpoDeProva> list = getCorpoDeProvaListFromTable();
+		String filePath = null;
+		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String date = dateFormatter.format(compresionTest.getDate().toInstant()
+				.atZone(ZoneId.systemDefault()).toLocalDate());
+
+		try {
+			String suggestedFileName = date + "-" + compresionTest.getId().toString() + "-" 
+					+ compresionTest.getClient().getName() + "-" + compresionTest.getObra();
+
+			if (list.isEmpty()) {
+				throw new Exception("Lista vacía");
+			}
+		filePath = Utils.getExistingOrNewFilePath(suggestedFileName, "Excel (.xlsx)", "xlsx");
+		
+			writeExcelFile(list, filePath);
+			Alerts.showAlert("Aviso", "Archivo guardado", "El archivo se ha guardado correctamente", 
+					AlertType.INFORMATION);
+		} catch (SaveFileException e) {
+			Alerts.showAlert("Error", "Error al salvar", e.getMessage(), AlertType.ERROR);
+		} catch (Exception e) {
+			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+		}
+	}
+	
+	private void writeExcelFile(List<CorpoDeProva> list,String filePath) throws IOException {
+		try (Workbook workbook = new XSSFWorkbook()){
+			Sheet sheet = workbook.createSheet("Sheet1");
+
+            // Create header row
+            Row headerRow = sheet.createRow(0);
+            Cell headerCell1 = headerRow.createCell(0);
+            headerCell1.setCellValue("Probeta iD");
+            Cell headerCell2 = headerRow.createCell(1);
+            headerCell2.setCellValue("Descripción");
+            Cell headerCell3 = headerRow.createCell(2);
+            headerCell3.setCellValue("Slump");
+            Cell headerCell4 = headerRow.createCell(3);
+            headerCell4.setCellValue("Fecha de moldeo");
+            Cell headerCell5 = headerRow.createCell(4);
+            headerCell5.setCellValue("Fecha de rotura");
+            Cell headerCell6 = headerRow.createCell(5);
+            headerCell6.setCellValue("Edad");
+            Cell headerCell7 = headerRow.createCell(6);
+            headerCell7.setCellValue("DIA (cm)");
+            Cell headerCell8 = headerRow.createCell(7);
+            headerCell8.setCellValue("Altura (cm)");           
+            Cell headerCell9 = headerRow.createCell(8);
+            headerCell9.setCellValue("Peso (kg)");
+            Cell headerCell10 = headerRow.createCell(9);
+            headerCell10.setCellValue("Densidad (kg/m3)");
+            Cell headerCell11 = headerRow.createCell(10);
+            headerCell11.setCellValue("Rotura (ton)");
+            Cell headerCell12 = headerRow.createCell(11);
+            headerCell12.setCellValue("Resistencia (kg/cm2)");
+            
+            // Populate data rows
+            int rowNum = 1;
+            for (CorpoDeProva corpoDeProva : list) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(corpoDeProva.getId());
+                row.createCell(1).setCellValue(corpoDeProva.getCode());
+                row.createCell(2).setCellValue(corpoDeProva.getSlump());
+                row.createCell(3).setCellValue(corpoDeProva.getMoldeDate());
+                //TODO set cell format date
+                row.createCell(4).setCellValue(corpoDeProva.getRuptureDate());
+                row.createCell(5).setCellValue(corpoDeProva.getDays());
+                row.createCell(6).setCellValue(corpoDeProva.getDiameter());
+                row.createCell(7).setCellValue(corpoDeProva.getHeight());
+                row.createCell(8).setCellValue(corpoDeProva.getWeight());
+                row.createCell(9).setCellValue(corpoDeProva.getDensid());
+                row.createCell(10).setCellValue(corpoDeProva.getTonRupture());
+                row.createCell(11).setCellValue(corpoDeProva.getFckRupture());
+            } 
+            
+            // Write the output to a file
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+		}
+	}
 
 	@FXML
 	private void onBtCopyAction(ActionEvent event) {
@@ -593,6 +693,7 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		Utils.setButtonGraphic("/images/fileIcons/copy.png", btCopy, 20.0, 20.0);
 		Utils.setButtonGraphic("/images/filter_off.png", btClearFilter, 20.0, 20.0);
 		Utils.setButtonGraphic("/images/filter_on.png", btFilter, 20.0, 20.0);		
+		Utils.setButtonGraphic("/images/excel.png", btExcel, 20.0, 20.0);	
 	}
 
 	private void setTableColumnsCellValueFactory() {
@@ -857,6 +958,5 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 	public void dataChangeListenerSubscribe(DataChangeListener dataChangeListener) {
 		this.dataChangeListeners.add(dataChangeListener);
 	}
-
 	
 }

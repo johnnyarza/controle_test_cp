@@ -28,6 +28,7 @@ import javafx.stage.Stage;
 
 public class FileUtils {
 
+
 	public static Path writeProperties(String propertieFileName, Map<String, String> properties) throws IOException {
 
 		Path path = Paths.get(System.getProperty("user.home"), "cp_configs", propertieFileName);

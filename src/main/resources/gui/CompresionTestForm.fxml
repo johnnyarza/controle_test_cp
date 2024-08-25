@@ -183,6 +183,7 @@
             <Button fx:id="btPrint" contentDisplay="CENTER" graphicTextGap="2.0" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onbtPrintAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" textAlignment="CENTER" />
             <Button fx:id="btClose" mnemonicParsing="false" onAction="#onBtCloseAction" styleClass="close-button" text="Cerrar" />
             <Button fx:id="btLock" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onBtLockAction" prefHeight="25.6" prefWidth="25.6" />
+            <Button fx:id="btExcel" maxHeight="25.6" maxWidth="25.6" minHeight="25.6" minWidth="25.6" mnemonicParsing="false" onAction="#onBtExcelAction" prefHeight="25.6" prefWidth="25.6" styleClass="custom-button" />
             <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="222.0" spacing="5.0">
                <HBox.margin>
                   <Insets />
