@@ -6,7 +6,9 @@ import java.net.URL;
 
 import org.apache.poi.ss.format.CellFormatType;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -255,13 +257,17 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		} catch (SaveFileException e) {
 			Alerts.showAlert("Error", "Error al salvar", e.getMessage(), AlertType.ERROR);
 		} catch (Exception e) {
-			Alerts.showAlert("Error", "NullPointerException", e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Error", e.getStackTrace().toString(), e.getMessage(), AlertType.ERROR);
 		}
 	}
 	
 	private void writeExcelFile(List<CorpoDeProva> list,String filePath) throws IOException {
 		try (Workbook workbook = new XSSFWorkbook()){
 			Sheet sheet = workbook.createSheet("Sheet1");
+			//FORMAT CELL STYLE TO DATE
+			 CreationHelper creationHelper = workbook.getCreationHelper();
+		     CellStyle cellStyle = workbook.createCellStyle();
+		     cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat("dd-MM-yyyy"));
 
             // Create header row
             Row headerRow = sheet.createRow(0);
@@ -270,11 +276,11 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
             Cell headerCell2 = headerRow.createCell(1);
             headerCell2.setCellValue("Descripción");
             Cell headerCell3 = headerRow.createCell(2);
-            headerCell3.setCellValue("Slump");
+            headerCell3.setCellValue("Slump");         
             Cell headerCell4 = headerRow.createCell(3);
-            headerCell4.setCellValue("Fecha de moldeo");
+            headerCell4.setCellValue("Fecha de moldeo");         
             Cell headerCell5 = headerRow.createCell(4);
-            headerCell5.setCellValue("Fecha de rotura");
+            headerCell5.setCellValue("Fecha de rotura");            
             Cell headerCell6 = headerRow.createCell(5);
             headerCell6.setCellValue("Edad");
             Cell headerCell7 = headerRow.createCell(6);
@@ -297,9 +303,16 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
                 row.createCell(0).setCellValue(corpoDeProva.getId());
                 row.createCell(1).setCellValue(corpoDeProva.getCode());
                 row.createCell(2).setCellValue(corpoDeProva.getSlump());
-                row.createCell(3).setCellValue(corpoDeProva.getMoldeDate());
-                //TODO set cell format date
-                row.createCell(4).setCellValue(corpoDeProva.getRuptureDate());
+                
+                Cell moldeDateCell = row.createCell(3);
+                moldeDateCell.setCellStyle(cellStyle);
+                moldeDateCell.setCellValue(corpoDeProva.getMoldeDate());
+                
+                Cell ruptureDate = row.createCell(4);
+                ruptureDate.setCellStyle(cellStyle);
+                ruptureDate.setCellValue(corpoDeProva.getRuptureDate());
+                
+                
                 row.createCell(5).setCellValue(corpoDeProva.getDays());
                 row.createCell(6).setCellValue(corpoDeProva.getDiameter());
                 row.createCell(7).setCellValue(corpoDeProva.getHeight());
@@ -307,8 +320,12 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
                 row.createCell(9).setCellValue(corpoDeProva.getDensid());
                 row.createCell(10).setCellValue(corpoDeProva.getTonRupture());
                 row.createCell(11).setCellValue(corpoDeProva.getFckRupture());
+                
             } 
-            
+            //Adjust cols width
+            for (int colIndex = 0; colIndex <= 11; colIndex++) {
+            	sheet.setColumnWidth(colIndex, 15 * 256);
+            }
             // Write the output to a file
             try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
                 workbook.write(fileOut);
@@ -525,7 +542,6 @@ public class CompresionTestFormController implements Initializable, DataChangeLi
 		}
 	}
 
-	//TODO IMPLEMENT EXPORT TO EXCEL
 	@FXML
 	private void onbtPrintAction() {
 		try {
