@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using MySqlConnector;
 using ProbetaControl.Data.Schema;
+using ProbetaControl.Services;
 
 namespace ProbetaControl.Tests.Infrastructure
 {
@@ -35,6 +36,16 @@ namespace ProbetaControl.Tests.Infrastructure
 
         /// <summary>Connection string for the restricted app account (SELECT, INSERT, UPDATE).</summary>
         public string AppConnectionString => Build(_settings.AppUser, _settings.AppPassword, Name);
+
+        /// <summary>The restricted app account as the app itself would configure it.</summary>
+        public ConnectionSettings AppConnectionSettings => new ConnectionSettings
+        {
+            Host = _server.Host,
+            Port = _server.Port,
+            Database = Name,
+            UserName = _settings.AppUser,
+            Password = _settings.AppPassword,
+        };
 
         public static async Task<ThrowawayDatabase> CreateAsync(TestServer server, TestSettings settings)
         {
