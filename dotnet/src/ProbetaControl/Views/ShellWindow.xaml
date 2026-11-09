@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:ProbetaControl.ViewModels"
         xmlns:views="clr-namespace:ProbetaControl.Views"
+        xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors"
         Style="{StaticResource AppWindow}"
         Title="{Binding WindowTitle}"
         Width="1200" Height="760" MinWidth="960" MinHeight="560"
@@ -50,10 +51,16 @@
             <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,16,0" VerticalAlignment="Center">
                 <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.User}"
                       Stroke="{StaticResource Brush.HeaderMutedText}" />
-                <TextBlock Text="{Binding CurrentUserName}" Margin="6,0,16,0" VerticalAlignment="Center"
-                           Foreground="{StaticResource Brush.HeaderMutedText}" />
+                <StackPanel Margin="8,0,16,0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CurrentUserName}" Foreground="{StaticResource Brush.HeaderText}" />
+                    <TextBlock Text="{Binding CurrentUserRole}" Foreground="{StaticResource Brush.HeaderMutedText}"
+                               FontSize="{StaticResource FontSize.Small}" />
+                </StackPanel>
+                <Button Style="{StaticResource HeaderIconButton}" Command="{Binding LogoutCommand}"
+                        Width="30" Height="30" Padding="0" ToolTip="Cerrar sesión" Margin="0,0,8,0"
+                        AutomationProperties.Name="Cerrar sesión" b:ButtonIcon.Icon="{StaticResource Icon.Logout}" />
                 <Button Style="{StaticResource HeaderIconButton}" Command="{Binding HelpCommand}"
-                        Width="30" Height="30" Padding="0" ToolTip="Ayuda (F1)"
+                        Width="30" Height="30" Padding="0" ToolTip="Ayuda (F1)" AutomationProperties.Name="Ayuda"
                         Content="?" FontSize="14" FontWeight="SemiBold" />
             </StackPanel>
         </Grid>

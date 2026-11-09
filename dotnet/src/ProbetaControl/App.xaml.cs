@@ -6,7 +6,9 @@ using System.Windows.Threading;
 using ProbetaControl.Services;
 using ProbetaControl.ViewModels;
 using ProbetaControl.ViewModels.Infrastructure;
+using ProbetaControl.ViewModels.Startup;
 using ProbetaControl.Views;
+using ProbetaControl.Views.Startup;
 
 namespace ProbetaControl
 {
@@ -27,6 +29,7 @@ namespace ProbetaControl
             AppCulture.Apply();
             AppLog.Cleanup();
             AppLog.Info("Start " + typeof(App).Assembly.GetName().Version);
+            BindingErrorLog.Enable();
 
             ErrorSink.Handler = ReportError;
             DispatcherUnhandledException += OnDispatcherUnhandledException;
@@ -44,8 +47,55 @@ namespace ProbetaControl
                 return;
             }
 
-            // Phase 4 adds: startup checks (config → connection → schema version) → login window.
-            var shell = new ShellWindow { DataContext = new ShellViewModel() };
+            ShowStartup(null);
+        }
+
+        /// <summary>Startup checks and login. <paramref name="signedOutServices"/> is set after "Cerrar sesión".</summary>
+        private void ShowStartup(AppServices signedOutServices)
+        {
+            var viewModel = new StartupViewModel(new ConfigStore(), signedOutServices);
+            var window = new StartupWindow { DataContext = viewModel };
+            var completed = false;
+
+            viewModel.Completed += services =>
+            {
+                completed = true;
+                ShowShell(services);
+                window.Close();
+            };
+            viewModel.ExitRequested += window.Close;
+            window.Closed += (_, __) =>
+            {
+                if (!completed)
+                {
+                    Shutdown();
+                }
+            };
+
+            MainWindow = window;
+            window.Show();
+            _ = viewModel.StartAsync();
+        }
+
+        private void ShowShell(AppServices services)
+        {
+            var loggingOut = false;
+            var shell = new ShellWindow();
+            shell.DataContext = new ShellViewModel(services, logout: () =>
+            {
+                loggingOut = true;
+                AppLog.Info("Logout " + services.Session.CurrentUser?.UserName);
+                ShowStartup(services);
+                shell.Close();
+            });
+            shell.Closed += (_, __) =>
+            {
+                if (!loggingOut)
+                {
+                    Shutdown();
+                }
+            };
+
             MainWindow = shell;
             shell.Show();
         }

@@ -37,6 +37,16 @@ namespace ProbetaControl.Tests.Infrastructure
         /// <summary>Connection string for the restricted app account (SELECT, INSERT, UPDATE).</summary>
         public string AppConnectionString => Build(_settings.AppUser, _settings.AppPassword, Name);
 
+        /// <summary>The test admin account (ALL on probeta_test_*), as if someone configured it in the app.</summary>
+        public ConnectionSettings AdminConnectionSettings => new ConnectionSettings
+        {
+            Host = _server.Host,
+            Port = _server.Port,
+            Database = Name,
+            UserName = _settings.AdminUser,
+            Password = _settings.AdminPassword,
+        };
+
         /// <summary>The restricted app account as the app itself would configure it.</summary>
         public ConnectionSettings AppConnectionSettings => new ConnectionSettings
         {

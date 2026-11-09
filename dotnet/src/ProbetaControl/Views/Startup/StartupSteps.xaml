@@ -1,0 +1,219 @@
+<!-- Views of the startup steps (view model → template). Merged into StartupWindow and the settings dialog. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:ProbetaControl.ViewModels.Startup"
+                    xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors">
+
+    <!-- Conectando… -->
+    <DataTemplate DataType="{x:Type s:ConnectingStepViewModel}">
+        <StackPanel Margin="0,24,0,24">
+            <TextBlock Text="{Binding Text}" Margin="0,0,0,12" />
+            <ProgressBar IsIndeterminate="True" />
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Problem -->
+    <DataTemplate DataType="{x:Type s:ProblemStepViewModel}">
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Warning}" Stroke="{StaticResource Brush.Warning}" />
+                <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" Margin="8,0,0,0" />
+            </StackPanel>
+            <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Margin="0,0,0,20" />
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="Actualizar base de datos" Command="{Binding UpdateDatabaseCommand}" Margin="0,0,8,0"
+                        Visibility="{Binding CanUpdateDatabase, Converter={StaticResource BoolToVisibility}}" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Reintentar" Command="{Binding RetryCommand}" IsDefault="True" />
+            </StackPanel>
+            <Border Height="1" Background="{StaticResource Brush.Divider}" Margin="0,16,0,8" />
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource SubtleButton}" Command="{Binding ConfigureCommand}" Margin="-8,0,8,0"
+                        b:ButtonIcon.Icon="{StaticResource Icon.Settings}" Content="Configurar conexión" />
+                <Button Style="{StaticResource SubtleButton}" Content="Salir" Command="{Binding ExitCommand}" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Connection settings -->
+    <DataTemplate DataType="{x:Type s:ConnectionSettingsViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="Conexión a la base de datos" />
+            <TextBlock Style="{StaticResource MutedText}" Text="{Binding Intro}" Margin="0,0,0,16" />
+
+            <Border Style="{StaticResource MessageBanner}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="90" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Servidor" />
+                    <TextBox Text="{Binding Host, UpdateSourceTrigger=PropertyChanged}" b:FocusBehavior.FocusOnLoad="True" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Host]}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Puerto" />
+                    <TextBox Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Port]}" />
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Base de datos" />
+                <TextBox Text="{Binding Database, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Database]}" />
+            </StackPanel>
+
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Usuario de MySQL" />
+                <TextBox Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Style="{StaticResource MutedText}" FontSize="{StaticResource FontSize.Small}" Margin="0,2,0,0"
+                           Text="Cuenta de MySQL del programa (por ejemplo specimen_app). No es el usuario con el que inicia sesión." />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[UserName]}" />
+            </StackPanel>
+
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Contraseña de MySQL" />
+                <PasswordBox b:PasswordBoxBinding.Password="{Binding Password}" />
+            </StackPanel>
+
+            <TextBlock Style="{StaticResource MutedText}" FontSize="{StaticResource FontSize.Small}" Margin="0,0,0,12"
+                       Text="Se guarda cifrada para este equipo en ProbetaControl.config, junto al programa." />
+
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,0,0,12"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+
+            <DockPanel>
+                <Button DockPanel.Dock="Left" Content="Probar conexión" Command="{Binding TestCommand}" />
+                <StackPanel Style="{StaticResource DialogButtons}" Margin="0">
+                    <Button Content="{Binding CancelText}" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                    <Button Style="{StaticResource PrimaryButton}" Content="Guardar" Command="{Binding SaveCommand}" IsDefault="True" />
+                </StackPanel>
+            </DockPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Database update -->
+    <DataTemplate DataType="{x:Type s:DatabaseUpdateViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="Actualizar base de datos" />
+            <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Margin="0,0,0,8" />
+            <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,16"
+                       Text="Ingrese una cuenta de MySQL con permiso para modificar la estructura (por ejemplo specimen_admin). La contraseña no se guarda." />
+
+            <Border Style="{StaticResource MessageBanner}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+
+            <StackPanel IsEnabled="{Binding IsFinished, Converter={StaticResource InverseBool}}">
+                <StackPanel Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Usuario administrador de MySQL" />
+                    <TextBox Text="{Binding AdminUser, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[AdminUser]}" />
+                </StackPanel>
+                <StackPanel Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Contraseña" />
+                    <PasswordBox b:PasswordBoxBinding.Password="{Binding AdminPassword}" b:FocusBehavior.FocusOnLoad="True" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[AdminPassword]}" />
+                </StackPanel>
+            </StackPanel>
+
+            <ItemsControl ItemsSource="{Binding Log}" Margin="0,0,0,12">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Style="{StaticResource MutedText}" Text="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,0,0,12"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="Volver" Command="{Binding BackCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Actualizar" Command="{Binding UpdateCommand}" IsDefault="True"
+                        Visibility="{Binding IsFinished, Converter={StaticResource InverseBoolToVisibility}}" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Continuar" Command="{Binding ContinueCommand}"
+                        Visibility="{Binding IsFinished, Converter={StaticResource BoolToVisibility}}" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Login -->
+    <DataTemplate DataType="{x:Type s:LoginViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="Iniciar sesión" Margin="0,0,0,16" />
+
+            <Border Style="{StaticResource MessageBanner}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Usuario" />
+                <TextBox Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
+                         b:FocusBehavior.FocusOnLoad="{Binding HasRememberedUser, Converter={StaticResource InverseBool}, Mode=OneTime}" />
+            </StackPanel>
+
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Contraseña" />
+                <PasswordBox b:PasswordBoxBinding.Password="{Binding Password}"
+                             b:FocusBehavior.FocusOnLoad="{Binding HasRememberedUser, Mode=OneTime}" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[UserName]}" />
+            </StackPanel>
+
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,0,0,12"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+
+            <DockPanel Margin="0,4,0,0">
+                <Button DockPanel.Dock="Left" Style="{StaticResource SubtleButton}" Command="{Binding ConfigureCommand}"
+                        ToolTip="Configurar conexión a la base de datos"
+                        b:ButtonIcon.Icon="{StaticResource Icon.Settings}" Content="Conexión" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Entrar" Command="{Binding LoginCommand}" IsDefault="True"
+                        HorizontalAlignment="Right" MinWidth="96" />
+            </DockPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Change password -->
+    <DataTemplate DataType="{x:Type s:ChangePasswordViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="Cambiar contraseña" />
+            <TextBlock Text="{Binding Intro}" TextWrapping="Wrap" Margin="0,0,0,16" />
+
+            <Border Style="{StaticResource MessageBanner}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Contraseña actual" />
+                <PasswordBox b:PasswordBoxBinding.Password="{Binding CurrentPassword}" b:FocusBehavior.FocusOnLoad="True" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[CurrentPassword]}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Contraseña nueva" />
+                <PasswordBox b:PasswordBoxBinding.Password="{Binding NewPassword}" />
+                <TextBlock Style="{StaticResource MutedText}" FontSize="{StaticResource FontSize.Small}" Text="{Binding Rule}" Margin="0,2,0,0" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[NewPassword]}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Repetir contraseña nueva" />
+                <PasswordBox b:PasswordBoxBinding.Password="{Binding ConfirmPassword}" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[ConfirmPassword]}" />
+            </StackPanel>
+
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,0,0,12"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0"
+                        Visibility="{Binding CanCancel, Converter={StaticResource BoolToVisibility}}" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Guardar" Command="{Binding SaveCommand}" IsDefault="True" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+</ResourceDictionary>

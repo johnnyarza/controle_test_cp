@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Windows.Input;
+using ProbetaControl.Services;
 using ProbetaControl.ViewModels.Infrastructure;
 
 namespace ProbetaControl.ViewModels
@@ -11,10 +12,19 @@ namespace ProbetaControl.ViewModels
     {
         private NavigationItem _selectedNavigationItem;
         private PageViewModel _currentPage;
-        private string _currentUserName = "Sin sesión";
 
-        public ShellViewModel()
+        public ShellViewModel(AppServices services, Action logout)
         {
+            Services = services ?? throw new ArgumentNullException(nameof(services));
+            var user = services.Session.CurrentUser;
+            CurrentUserName = user.DisplayName;
+            CurrentUserRole = user.UserName + " · " + DisplayText.Role(user.Role);
+            LogoutCommand = new RelayCommand(() =>
+            {
+                CurrentPage?.OnNavigatedFrom();
+                logout();
+            });
+
             NavigationItems = new ObservableCollection<NavigationItem>
             {
                 new NavigationItem("Ensayos", () => new PlaceholderPageViewModel("Ensayos")),
@@ -56,13 +66,15 @@ namespace ProbetaControl.ViewModels
             private set => SetProperty(ref _currentPage, value);
         }
 
-        public string CurrentUserName
-        {
-            get => _currentUserName;
-            set => SetProperty(ref _currentUserName, value);
-        }
+        public AppServices Services { get; }
+
+        public string CurrentUserName { get; }
+
+        public string CurrentUserRole { get; }
 
         public ICommand HelpCommand { get; }
+
+        public ICommand LogoutCommand { get; }
 
         private async void NavigateTo(NavigationItem item)
         {

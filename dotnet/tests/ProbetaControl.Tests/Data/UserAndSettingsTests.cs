@@ -132,7 +132,26 @@ namespace ProbetaControl.Tests.Data
             settings.Password = "incorrecta";
             var result = await StartupChecker.CheckDatabaseAsync(settings);
             Assert.That(result.Status, Is.EqualTo(StartupStatus.CannotConnect));
-            Assert.That(result.Message, Does.Contain("contraseña"));
+            Assert.That(result.Message, Does.Contain("contraseña").And.Contain("specimen_app"));
+        }
+
+        [Test]
+        public async Task Startup_check_refuses_an_account_that_can_delete_or_change_the_structure()
+        {
+            // specimen_test has ALL PRIVILEGES on probeta_test_* through a wildcard database grant.
+            var result = await StartupChecker.CheckDatabaseAsync(Database.AdminConnectionSettings);
+
+            Assert.That(result.Status, Is.EqualTo(StartupStatus.AccountTooPowerful));
+            Assert.That(result.Message, Does.Contain("DELETE").And.Contain("DROP").And.Contain("specimen_app"));
+        }
+
+        [Test]
+        public async Task The_app_account_has_no_forbidden_rights()
+        {
+            using (var connection = await OpenAsAppAsync())
+            {
+                Assert.That(await StartupChecker.GetForbiddenPrivilegesAsync(connection, default), Is.Empty);
+            }
         }
     }
 }

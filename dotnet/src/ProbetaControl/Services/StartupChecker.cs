@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32;
@@ -13,6 +14,9 @@ namespace ProbetaControl.Services
         NeedsConnectionSettings,
         CannotConnect,
         UnsupportedServer,
+
+        /// <summary>The configured MySQL account could delete or change the structure (e.g. root).</summary>
+        AccountTooPowerful,
         DatabaseNeedsUpdate,
         ProgramNeedsUpdate,
     }
@@ -102,6 +106,16 @@ namespace ProbetaControl.Services
                         return new StartupResult(StartupStatus.UnsupportedServer,
                             $"El servidor MySQL es la versión {connection.ServerVersion}; se necesita 8.0.16 o posterior.", settings);
                     }
+
+                    var forbidden = await GetForbiddenPrivilegesAsync(connection, cancellationToken).ConfigureAwait(false);
+                    if (forbidden.Count > 0)
+                    {
+                        AppLog.Info($"Connection account {settings.UserName} refused: has {string.Join(", ", forbidden)}");
+                        return new StartupResult(StartupStatus.AccountTooPowerful,
+                            $"La cuenta de MySQL \"{settings.UserName}\" tiene permisos que el programa no debe usar " +
+                            $"({string.Join(", ", forbidden)}). Configure la cuenta del programa (por ejemplo specimen_app), " +
+                            "que solo puede consultar, agregar y modificar datos.", settings);
+                    }
                 }
 
                 var version = await new SchemaMigrator(settings.BuildConnectionString())
@@ -130,6 +144,39 @@ namespace ProbetaControl.Services
             }
         }
 
+        /// <summary>
+        /// Rights the app's account must NOT have on its database: the app archives instead of deleting,
+        /// and only an administrator account changes the structure. Looks at global, database (including
+        /// wildcard grants such as `probeta\_%`) and table grants of the connected account.
+        /// </summary>
+        internal static async Task<IReadOnlyList<string>> GetForbiddenPrivilegesAsync(MySqlConnection connection,
+            CancellationToken cancellationToken)
+        {
+            const string sql =
+                "SELECT DISTINCT p.PRIVILEGE_TYPE FROM ( " +
+                "  SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.USER_PRIVILEGES " +
+                "  UNION ALL " +
+                "  SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.SCHEMA_PRIVILEGES WHERE DATABASE() LIKE TABLE_SCHEMA " +
+                "  UNION ALL " +
+                "  SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.TABLE_PRIVILEGES WHERE TABLE_SCHEMA = DATABASE() " +
+                ") p " +
+                "WHERE p.GRANTEE = CONCAT('''', SUBSTRING_INDEX(CURRENT_USER(), '@', 1), '''@''', SUBSTRING_INDEX(CURRENT_USER(), '@', -1), '''') " +
+                "AND p.PRIVILEGE_TYPE IN ('DELETE', 'DROP', 'ALTER', 'CREATE') " +
+                "ORDER BY p.PRIVILEGE_TYPE";
+
+            var privileges = new List<string>();
+            using (var command = new MySqlCommand(sql, connection))
+            using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
+            {
+                while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    privileges.Add(reader.GetString(0));
+                }
+            }
+
+            return privileges;
+        }
+
         internal static Version ParseServerVersion(string text)
         {
             var numeric = (text ?? string.Empty).Split('-')[0];
@@ -143,7 +190,10 @@ namespace ProbetaControl.Services
                 case MySqlErrorCode.UnableToConnectToHost:
                     return "No se pudo conectar al servidor de base de datos. Revise que el servidor esté encendido y la red funcione.";
                 case MySqlErrorCode.AccessDenied:
-                    return "El servidor rechazó el usuario o la contraseña de la conexión.";
+                    return "El servidor rechazó el usuario o la contraseña de MySQL. Use la cuenta de MySQL del programa " +
+                           "(por ejemplo specimen_app), no el usuario con el que inicia sesión en el programa.";
+                case MySqlErrorCode.DatabaseAccessDenied:
+                    return "La cuenta de MySQL no tiene acceso a esa base de datos. Use la cuenta del programa (por ejemplo specimen_app).";
                 case MySqlErrorCode.UnknownDatabase:
                     return "La base de datos indicada no existe en el servidor.";
                 default:

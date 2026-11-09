@@ -4,28 +4,7 @@
     <DockPanel LastChildFill="True">
         <TextBlock DockPanel.Dock="Top" Style="{StaticResource PageTitle}" Text="{Binding Title}" />
         <Border Style="{StaticResource Card}" VerticalAlignment="Top">
-            <StackPanel>
-                <TextBlock Style="{StaticResource MutedText}" Text="{Binding Message}" Margin="0,0,0,16" />
-                <!-- Theme check: one of each button kind. -->
-                <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource PrimaryButton}" Margin="0,0,8,0">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Plus}" />
-                            <TextBlock Text="Nuevo" Margin="6,0,0,0" />
-                        </StackPanel>
-                    </Button>
-                    <Button Margin="0,0,8,0">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Edit}" />
-                            <TextBlock Text="Editar" Margin="6,0,0,0" />
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource SubtleButton}" ToolTip="Imprimir">
-                        <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Print}" />
-                    </Button>
-                    <Button Margin="8,0,0,0" IsEnabled="False" Content="Deshabilitado" />
-                </StackPanel>
-            </StackPanel>
+            <TextBlock Style="{StaticResource MutedText}" Text="{Binding Message}" />
         </Border>
     </DockPanel>
 </UserControl>
