@@ -6,8 +6,9 @@
         xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors"
         Style="{StaticResource AppWindow}"
         Title="{Binding WindowTitle}"
-        Width="1200" Height="760" MinWidth="960" MinHeight="560"
-        WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        Width="1200" Height="760" MinWidth="760" MinHeight="480"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        x:Name="Root">
 
     <Window.Resources>
         <!-- Page view model → view. -->
@@ -35,12 +36,14 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="16,0,28,0">
-                <Image Source="{StaticResource WindowIcon.App}" Width="26" Height="26"
+            <!-- Narrow window: title text hides below 900 px, user name below 1100 px (icon tooltip instead). -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="16,0,20,0">
+                <Image Source="{StaticResource WindowIcon.App}" Width="26" Height="26" ToolTip="Probeta Control"
                        RenderOptions.BitmapScalingMode="HighQuality" VerticalAlignment="Center" />
-                <TextBlock Text="Probeta Control" Margin="10,0,0,0" VerticalAlignment="Center"
+                <TextBlock Text="Probeta Control" Margin="10,0,8,0" VerticalAlignment="Center"
                            FontSize="{StaticResource FontSize.Section}" FontWeight="SemiBold"
-                           Foreground="{StaticResource Brush.HeaderText}" />
+                           Foreground="{StaticResource Brush.HeaderText}"
+                           Visibility="{Binding ActualWidth, ElementName=Root, Converter={StaticResource MinWidthToVisibility}, ConverterParameter=900}" />
             </StackPanel>
 
             <ListBox Grid.Column="1" Style="{StaticResource HeaderNavList}"
@@ -48,10 +51,18 @@
                      SelectedItem="{Binding SelectedNavigationItem}"
                      DisplayMemberPath="Title" />
 
-            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,16,0" VerticalAlignment="Center">
-                <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.User}"
-                      Stroke="{StaticResource Brush.HeaderMutedText}" />
-                <StackPanel Margin="8,0,16,0" VerticalAlignment="Center">
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="8,0,16,0" VerticalAlignment="Center">
+                <Border Background="{StaticResource Brush.Transparent}" VerticalAlignment="Center" Margin="0,0,12,0">
+                    <Border.ToolTip>
+                        <TextBlock>
+                            <Run Text="{Binding CurrentUserName, Mode=OneWay}" /><LineBreak /><Run Text="{Binding CurrentUserRole, Mode=OneWay}" />
+                        </TextBlock>
+                    </Border.ToolTip>
+                    <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.User}"
+                          Stroke="{StaticResource Brush.HeaderMutedText}" />
+                </Border>
+                <StackPanel Margin="-4,0,16,0" VerticalAlignment="Center"
+                            Visibility="{Binding ActualWidth, ElementName=Root, Converter={StaticResource MinWidthToVisibility}, ConverterParameter=1100}">
                     <TextBlock Text="{Binding CurrentUserName}" Foreground="{StaticResource Brush.HeaderText}" />
                     <TextBlock Text="{Binding CurrentUserRole}" Foreground="{StaticResource Brush.HeaderMutedText}"
                                FontSize="{StaticResource FontSize.Small}" />
@@ -75,11 +86,11 @@
             <!-- Busy overlay for the current page -->
             <Grid Background="{StaticResource Brush.BusyOverlay}"
                   Visibility="{Binding CurrentPage.IsBusy, Converter={StaticResource BoolToVisibility}}">
-                <Border Style="{StaticResource Card}" Width="360" Padding="20"
-                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border Style="{StaticResource Card}" MaxWidth="360" Padding="20" Margin="16"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Center">
                     <StackPanel>
                         <TextBlock Text="{Binding CurrentPage.BusyMessage}" TextWrapping="Wrap" Margin="0,0,0,12" />
-                        <ProgressBar Width="320" HorizontalAlignment="Left" IsIndeterminate="{Binding CurrentPage.IsBusy}" />
+                        <ProgressBar IsIndeterminate="{Binding CurrentPage.IsBusy}" />
                         <Button Content="Cancelar" HorizontalAlignment="Right" Margin="0,16,0,0"
                                 Command="{Binding CurrentPage.CancelBusyCommand}"
                                 Visibility="{Binding CurrentPage.CanCancelBusy, Converter={StaticResource BoolToVisibility}}" />

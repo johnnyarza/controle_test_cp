@@ -3,31 +3,34 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Style="{StaticResource AppWindow}"
         Title="Probeta Control"
-        Width="480" SizeToContent="Height" ResizeMode="CanMinimize"
+        Width="480" MinWidth="420" MinHeight="320" SizeToContent="Height"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <ResourceDictionary Source="StartupSteps.xaml" />
     </Window.Resources>
 
-    <StackPanel>
-        <!-- Header -->
-        <Grid Background="{StaticResource Brush.Header}" Height="64">
-            <StackPanel Orientation="Horizontal" Margin="24,0" VerticalAlignment="Center">
-                <Image Source="{StaticResource WindowIcon.App}" Width="32" Height="32" RenderOptions.BitmapScalingMode="HighQuality" />
-                <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                    <TextBlock Text="Probeta Control" FontSize="{StaticResource FontSize.Section}" FontWeight="SemiBold"
-                               Foreground="{StaticResource Brush.HeaderText}" />
-                    <TextBlock Text="{Binding Version}" FontSize="{StaticResource FontSize.Small}"
-                               Foreground="{StaticResource Brush.HeaderMutedText}" />
+    <!-- Resizable: the card keeps a readable width (max 560) and scrolls when the window is short. -->
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top">
+            <Grid Background="{StaticResource Brush.Header}" Height="64">
+                <StackPanel Orientation="Horizontal" Margin="24,0" VerticalAlignment="Center">
+                    <Image Source="{StaticResource WindowIcon.App}" Width="32" Height="32" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Probeta Control" FontSize="{StaticResource FontSize.Section}" FontWeight="SemiBold"
+                                   Foreground="{StaticResource Brush.HeaderText}" />
+                        <TextBlock Text="{Binding Version}" FontSize="{StaticResource FontSize.Small}"
+                                   Foreground="{StaticResource Brush.HeaderMutedText}" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
-        </Grid>
-        <Border Height="3" Background="{StaticResource Brush.Accent}" />
+            </Grid>
+            <Border Height="3" Background="{StaticResource Brush.Accent}" />
+        </StackPanel>
 
-        <!-- Current step -->
-        <Border Style="{StaticResource Card}" Margin="20" Padding="24">
-            <ContentControl Content="{Binding CurrentStep}" Focusable="False" />
-        </Border>
-    </StackPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+            <Border Style="{StaticResource Card}" Margin="20" Padding="24" MaxWidth="560" VerticalAlignment="Top">
+                <ContentControl Content="{Binding CurrentStep}" Focusable="False" />
+            </Border>
+        </ScrollViewer>
+    </DockPanel>
 </Window>
