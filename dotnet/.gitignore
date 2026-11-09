@@ -1,0 +1,10 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+TestResults/
+FodyWeavers.xsd
+
+# Local test credentials
+tests/test.env

@@ -1,0 +1,22 @@
+<Project>
+  <!-- Shared settings for every project under dotnet/. -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Authors>Johnny Arza</Authors>
+    <Company>HJVA</Company>
+    <Product>Probeta Control</Product>
+    <Copyright>© HJVA</Copyright>
+    <Version>0.1.0</Version>
+    <NeutralLanguage>es</NeutralLanguage>
+    <!-- Only English satellite resources from packages; avoids extra culture folders next to the exe. -->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Lets net48 build without the 4.8 Developer Pack installed. -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+</Project>
