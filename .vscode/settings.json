@@ -1,0 +1,5 @@
+{
+    // The Java extension imports the legacy Maven project. Keep its metadata in its own storage
+    // instead of rewriting the committed Eclipse files (.project, .classpath, .settings/).
+    "java.import.generatesMetadataFilesAtProjectRoot": false
+}
