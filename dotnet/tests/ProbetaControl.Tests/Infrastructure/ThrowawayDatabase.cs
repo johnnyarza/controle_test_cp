@@ -9,7 +9,7 @@ namespace ProbetaControl.Tests.Infrastructure
 {
     /// <summary>
     /// A probeta_test_* database that exists for one test fixture: created and migrated with the
-    /// test admin account, opened to the restricted app account, dropped at the end.
+    /// test admin account, used through the restricted app account, dropped at the end.
     /// </summary>
     public sealed class ThrowawayDatabase
     {
@@ -46,18 +46,21 @@ namespace ProbetaControl.Tests.Infrastructure
             await database.ExecuteAsServerAdminAsync(
                 $"CREATE DATABASE `{name}` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci");
 
-            database.AppliedScripts = await new SchemaMigrator(database.AdminConnectionString).MigrateAsync();
-
-            await database.ExecuteAsServerAdminAsync(
-                $"GRANT SELECT, INSERT, UPDATE ON `{name}`.* TO '{settings.AppUser}'@'localhost'");
+            try
+            {
+                // The app test account already has SELECT/INSERT/UPDATE on probeta_test_* (setup script).
+                database.AppliedScripts = await new SchemaMigrator(database.AdminConnectionString).MigrateAsync();
+            }
+            catch
+            {
+                await database.DropAsync();
+                throw;
+            }
 
             return database;
         }
 
-        public async Task DropAsync()
-        {
-            await RevokeAndDropAsync(Name);
-        }
+        public Task DropAsync() => ExecuteAsServerAdminAsync($"DROP DATABASE IF EXISTS `{Name}`");
 
         /// <summary>Removes databases left behind by test runs that crashed more than a day ago.</summary>
         private async Task DropStaleDatabasesAsync()
@@ -86,22 +89,8 @@ namespace ProbetaControl.Tests.Infrastructure
 
             foreach (var name in stale)
             {
-                await RevokeAndDropAsync(name);
+                await ExecuteAsServerAdminAsync($"DROP DATABASE IF EXISTS `{name}`");
             }
-        }
-
-        private async Task RevokeAndDropAsync(string name)
-        {
-            try
-            {
-                await ExecuteAsServerAdminAsync($"REVOKE ALL PRIVILEGES ON `{name}`.* FROM '{_settings.AppUser}'@'localhost'");
-            }
-            catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.NonExistingGrant)
-            {
-                // Never granted (creation failed before the GRANT).
-            }
-
-            await ExecuteAsServerAdminAsync($"DROP DATABASE IF EXISTS `{name}`");
         }
 
         private async Task ExecuteAsServerAdminAsync(string sql)
