@@ -1,0 +1,56 @@
+<!--
+    Shared frame of every list page (binds to ListPageViewModel): title, toolbar, loading bar,
+    empty-state text, "Mostrando X de Y" and "Mostrar más". The page's DataGrid goes inside:
+        <ContentControl Style="{StaticResource ListPageFrame}"> <DataGrid … /> </ContentControl>
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors">
+
+    <Style x:Key="ListPageFrame" TargetType="ContentControl">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource PageTitle}" Text="{Binding Title}" />
+
+                        <WrapPanel DockPanel.Dock="Top" Style="{StaticResource Toolbar}">
+                            <TextBox Style="{StaticResource SearchBox}" Width="280" Margin="0,0,8,8" Tag="Buscar…"
+                                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                     AutomationProperties.Name="Buscar" b:FocusBehavior.FocusOnLoad="True" />
+                            <CheckBox Content="Mostrar archivados" IsChecked="{Binding IncludeArchived}"
+                                      VerticalAlignment="Center" Margin="4,0,16,8" />
+                            <Button Style="{StaticResource PrimaryButton}" Content="Nuevo" Command="{Binding NewCommand}"
+                                    b:ButtonIcon.Icon="{StaticResource Icon.Plus}" Margin="0,0,8,8" />
+                            <Button Content="Editar" Command="{Binding EditCommand}"
+                                    b:ButtonIcon.Icon="{StaticResource Icon.Edit}" Margin="0,0,8,8" />
+                            <Button Content="{Binding ArchiveText}" Command="{Binding ToggleArchiveCommand}"
+                                    b:ButtonIcon.Icon="{StaticResource Icon.Archive}" Margin="0,0,8,8"
+                                    ToolTip="{Binding ArchiveToolTip}" ToolTipService.ShowOnDisabled="True" />
+                            <Button Style="{StaticResource SubtleButton}" Command="{Binding RefreshCommand}"
+                                    b:ButtonIcon.Icon="{StaticResource Icon.Refresh}" Margin="0,0,8,8"
+                                    ToolTip="Actualizar (F5)" AutomationProperties.Name="Actualizar" />
+                        </WrapPanel>
+
+                        <DockPanel DockPanel.Dock="Bottom" Margin="0,8,0,0" LastChildFill="False">
+                            <TextBlock DockPanel.Dock="Left" Style="{StaticResource MutedText}" Text="{Binding StatusText}"
+                                       VerticalAlignment="Center" />
+                            <Button DockPanel.Dock="Right" Content="Mostrar más" Command="{Binding LoadMoreCommand}"
+                                    Visibility="{Binding HasMore, Converter={StaticResource BoolToVisibility}}" />
+                        </DockPanel>
+
+                        <Grid>
+                            <ContentPresenter />
+                            <ProgressBar VerticalAlignment="Top" Height="3" Margin="1,1,1,0" IsIndeterminate="{Binding IsLoading}"
+                                         Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
+                            <TextBlock Style="{StaticResource EmptyState}" Text="{Binding EmptyText}"
+                                       Visibility="{Binding EmptyText, Converter={StaticResource NotEmptyToVisibility}}" />
+                        </Grid>
+                    </DockPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

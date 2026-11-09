@@ -15,5 +15,8 @@ namespace ProbetaControl.ViewModels
         public string Title { get; }
 
         public Func<PageViewModel> CreatePage { get; }
+
+        /// <summary>Also the accessible name of the tab (screen readers, UI automation).</summary>
+        public override string ToString() => Title;
     }
 }

@@ -1,0 +1,18 @@
+<Window x:Class="ProbetaControl.Views.Dialogs.DialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Style="{StaticResource AppWindow}"
+        Title="{Binding Title}"
+        AutomationProperties.Name="{Binding Title}"
+        Width="480" MinWidth="380" MinHeight="200" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+
+    <Window.Resources>
+        <ResourceDictionary Source="DialogTemplates.xaml" />
+    </Window.Resources>
+
+    <!-- Resizable; the form scrolls if the window is made shorter than its content. -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+        <ContentControl Content="{Binding}" Margin="24,20,24,20" Focusable="False" />
+    </ScrollViewer>
+</Window>

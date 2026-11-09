@@ -13,6 +13,9 @@ Add an item whenever a question comes up that a user would also ask. The help it
   (`specimen_app`), not for a program user. Program users (`admin`, operators) are entered on the
   login screen. Schema updates ask for a third account with structure rights (`specimen_admin`),
   which is never saved.
+- **Only administrators archive and restore.** Operators can create and edit clients, providers and
+  materials; the "Archivar"/"Restaurar" button is disabled for them (tooltip explains why).
+  Archived records are hidden, never deleted: "Mostrar archivados" shows them in grey.
 - **Over-privileged MySQL accounts are refused.** The connection cannot be saved with an account
   that can DELETE, DROP, ALTER or CREATE (e.g. `root`). Explain why: records are archived, never
   deleted, and the program must not be able to change the database structure.

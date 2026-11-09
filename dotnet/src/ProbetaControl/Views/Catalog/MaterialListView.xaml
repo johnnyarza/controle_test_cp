@@ -1,0 +1,21 @@
+<UserControl x:Class="ProbetaControl.Views.Catalog.MaterialListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors">
+    <UserControl.InputBindings>
+        <KeyBinding Key="F5" Command="{Binding RefreshCommand}" />
+        <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewCommand}" />
+    </UserControl.InputBindings>
+
+    <ContentControl Style="{StaticResource ListPageFrame}">
+        <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}"
+                  RowStyle="{StaticResource ArchivableDataGridRow}"
+                  b:DataGridBehavior.OpenCommand="{Binding EditCommand}"
+                  AutomationProperties.Name="{Binding Title}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Nombre" Binding="{Binding Name}" Width="*" MinWidth="200" />
+                <DataGridTextColumn Header="Proveedor" Binding="{Binding ProviderName}" Width="*" MinWidth="180" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </ContentControl>
+</UserControl>

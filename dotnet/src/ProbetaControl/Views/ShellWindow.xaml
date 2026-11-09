@@ -4,6 +4,8 @@
         xmlns:vm="clr-namespace:ProbetaControl.ViewModels"
         xmlns:views="clr-namespace:ProbetaControl.Views"
         xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors"
+        xmlns:catalog="clr-namespace:ProbetaControl.ViewModels.Catalog"
+        xmlns:catalogViews="clr-namespace:ProbetaControl.Views.Catalog"
         Style="{StaticResource AppWindow}"
         Title="{Binding WindowTitle}"
         Width="1200" Height="760" MinWidth="760" MinHeight="480"
@@ -14,6 +16,15 @@
         <!-- Page view model → view. -->
         <DataTemplate DataType="{x:Type vm:PlaceholderPageViewModel}">
             <views:PlaceholderPageView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type catalog:ClientsPageViewModel}">
+            <catalogViews:ContactListView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type catalog:ProvidersPageViewModel}">
+            <catalogViews:ContactListView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type catalog:MaterialsPageViewModel}">
+            <catalogViews:MaterialListView />
         </DataTemplate>
     </Window.Resources>
 

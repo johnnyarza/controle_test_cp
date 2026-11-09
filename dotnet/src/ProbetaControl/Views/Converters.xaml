@@ -1,0 +1,16 @@
+<!--
+    Value converters used by views. Kept in their own dictionary (merged in App.xaml before the view
+    dictionaries) because templates inside a merged dictionary can only see sibling merged dictionaries,
+    not keys declared directly in App.xaml.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:views="clr-namespace:ProbetaControl.Views">
+
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    <views:InverseBoolConverter x:Key="InverseBool" />
+    <views:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility" />
+    <views:NotEmptyToVisibilityConverter x:Key="NotEmptyToVisibility" />
+    <views:MinWidthToVisibilityConverter x:Key="MinWidthToVisibility" />
+
+</ResourceDictionary>

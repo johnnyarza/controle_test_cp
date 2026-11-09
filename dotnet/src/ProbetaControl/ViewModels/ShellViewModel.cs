@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Windows.Input;
 using ProbetaControl.Services;
+using ProbetaControl.ViewModels.Catalog;
 using ProbetaControl.ViewModels.Infrastructure;
 
 namespace ProbetaControl.ViewModels
@@ -13,9 +14,10 @@ namespace ProbetaControl.ViewModels
         private NavigationItem _selectedNavigationItem;
         private PageViewModel _currentPage;
 
-        public ShellViewModel(AppServices services, Action logout)
+        public ShellViewModel(AppServices services, IDialogService dialogs, Action logout)
         {
             Services = services ?? throw new ArgumentNullException(nameof(services));
+            var session = services.Session;
             var user = services.Session.CurrentUser;
             CurrentUserName = user.DisplayName;
             CurrentUserRole = user.UserName + " · " + DisplayText.Role(user.Role);
@@ -28,9 +30,9 @@ namespace ProbetaControl.ViewModels
             NavigationItems = new ObservableCollection<NavigationItem>
             {
                 new NavigationItem("Ensayos", () => new PlaceholderPageViewModel("Ensayos")),
-                new NavigationItem("Clientes", () => new PlaceholderPageViewModel("Clientes")),
-                new NavigationItem("Proveedores", () => new PlaceholderPageViewModel("Proveedores")),
-                new NavigationItem("Materiales", () => new PlaceholderPageViewModel("Materiales")),
+                new NavigationItem("Clientes", () => new ClientsPageViewModel(services.Clients, dialogs, session)),
+                new NavigationItem("Proveedores", () => new ProvidersPageViewModel(services.Providers, dialogs, session)),
+                new NavigationItem("Materiales", () => new MaterialsPageViewModel(services.Materials, services.Providers, dialogs, session)),
                 new NavigationItem("Dosificaciones", () => new PlaceholderPageViewModel("Dosificaciones")),
                 new NavigationItem("Configuración", () => new PlaceholderPageViewModel("Configuración")),
             };

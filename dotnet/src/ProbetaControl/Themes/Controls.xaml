@@ -377,7 +377,7 @@
                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{StaticResource Radius.Control}"
                             SnapsToDevicePixels="True">
-                        <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" Focusable="False"
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="False"
                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                       HorizontalScrollBarVisibility="{TemplateBinding HorizontalScrollBarVisibility}"
                                       VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}" />
@@ -408,6 +408,35 @@
         </Style.Triggers>
     </Style>
 
+    <!-- Search field with a magnifier icon; the placeholder text goes in Tag. -->
+    <Style x:Key="SearchBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="Padding" Value="28,4,6,4" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{StaticResource Radius.Control}"
+                            SnapsToDevicePixels="True">
+                        <Grid>
+                            <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Search}" HorizontalAlignment="Left"
+                                  Margin="8,0,0,0" Stroke="{StaticResource Brush.TextMuted}" />
+                            <TextBlock x:Name="Placeholder" Text="{TemplateBinding Tag}" Foreground="{StaticResource Brush.TextMuted}"
+                                       Margin="30,0,6,0" VerticalAlignment="Center" IsHitTestVisible="False" Visibility="Collapsed"
+                                       TextTrimming="CharacterEllipsis" />
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False"
+                                          VerticalAlignment="Center" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="Placeholder" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="PasswordBox">
         <Setter Property="Foreground" Value="{StaticResource Brush.Text}" />
         <Setter Property="Background" Value="{StaticResource Brush.Surface}" />
@@ -425,7 +454,7 @@
                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{StaticResource Radius.Control}"
                             SnapsToDevicePixels="True">
-                        <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" Focusable="False"
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="False"
                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
                 </ControlTemplate>
@@ -718,6 +747,32 @@
                 <Setter Property="Background" Value="{StaticResource Brush.PrimarySoft}" />
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <!-- Row style for grids whose items expose IsArchived: archived rows in grey. -->
+    <Style x:Key="ArchivableDataGridRow" TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsArchived}" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource Brush.ArchivedText}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Toolbar above a list: wraps onto a second line when the window is narrow. Children get Margin 0,0,8,8. -->
+    <Style x:Key="Toolbar" TargetType="WrapPanel">
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="Margin" Value="0,0,0,4" />
+    </Style>
+
+    <!-- Text shown in the middle of an empty list. -->
+    <Style x:Key="EmptyState" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource Brush.TextMuted}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Margin" Value="24,48,24,24" />
+        <Setter Property="IsHitTestVisible" Value="False" />
     </Style>
 
     <!-- Read-only, virtualized list grid. Large tables are paged by the view model, never loaded whole. -->

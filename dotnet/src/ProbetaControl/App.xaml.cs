@@ -8,6 +8,7 @@ using ProbetaControl.ViewModels;
 using ProbetaControl.ViewModels.Infrastructure;
 using ProbetaControl.ViewModels.Startup;
 using ProbetaControl.Views;
+using ProbetaControl.Views.Dialogs;
 using ProbetaControl.Views.Startup;
 
 namespace ProbetaControl
@@ -15,6 +16,8 @@ namespace ProbetaControl
     public partial class App : Application
     {
         private const string Title = "Probeta Control";
+
+        private bool _showingError;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -81,7 +84,7 @@ namespace ProbetaControl
         {
             var loggingOut = false;
             var shell = new ShellWindow();
-            shell.DataContext = new ShellViewModel(services, logout: () =>
+            shell.DataContext = new ShellViewModel(services, new WpfDialogService(), logout: () =>
             {
                 loggingOut = true;
                 AppLog.Info("Logout " + services.Session.CurrentUser?.UserName);
@@ -116,6 +119,28 @@ namespace ProbetaControl
             {
                 ex = aggregate.InnerException;
             }
+
+            // A message box keeps the UI running underneath; if the same error fires again meanwhile
+            // (e.g. during layout), log it instead of stacking boxes until the stack overflows.
+            if (_showingError)
+            {
+                AppLog.Error("Error while another error is shown", ex);
+                return;
+            }
+
+            _showingError = true;
+            try
+            {
+                ShowError(ex);
+            }
+            finally
+            {
+                _showingError = false;
+            }
+        }
+
+        private void ShowError(Exception ex)
+        {
 
             string text;
             var icon = MessageBoxImage.Warning;
