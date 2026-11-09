@@ -1,0 +1,74 @@
+{
+    // Build and test tasks for the C# port (dotnet/). Ctrl+Shift+B runs "build".
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "detail": "Debug build of ProbetaControl.exe (used before every debug session)",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "build",
+                "${workspaceFolder}/dotnet/src/ProbetaControl/ProbetaControl.csproj",
+                "-c",
+                "Debug",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "silent",
+                "clear": true
+            }
+        },
+        {
+            "label": "build release",
+            "detail": "Release build: the single ProbetaControl.exe to hand out",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "build",
+                "${workspaceFolder}/dotnet/src/ProbetaControl/ProbetaControl.csproj",
+                "-c",
+                "Release",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": "build"
+        },
+        {
+            "label": "clean",
+            "detail": "Deletes bin/obj of the app (fixes stale-build errors such as 'BG1002 ... .baml cannot be found')",
+            "type": "shell",
+            "command": "Remove-Item -Recurse -Force -ErrorAction SilentlyContinue '${workspaceFolder}/dotnet/src/ProbetaControl/bin', '${workspaceFolder}/dotnet/src/ProbetaControl/obj'",
+            "options": {
+                "shell": {
+                    "executable": "powershell.exe",
+                    "args": ["-NoProfile", "-Command"]
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "test",
+            "detail": "All NUnit tests (database tests need dotnet/tests/test.env)",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "test",
+                "${workspaceFolder}/dotnet/ProbetaControl.sln",
+                "/property:GenerateFullPaths=true"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }
+    ]
+}

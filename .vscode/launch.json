@@ -1,0 +1,39 @@
+{
+    // F5 debugging for the C# port. "clr" is the C# extension's debugger for .NET Framework (Windows only).
+    // The app reads ProbetaControl.config from its own folder, so the Debug build has its own
+    // connection settings: the first debug run asks for them once.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Probeta Control",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/dotnet/src/ProbetaControl/bin/Debug/net48/ProbetaControl.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/dotnet/src/ProbetaControl/bin/Debug/net48",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "justMyCode": true,
+            "requireExactSource": false
+        },
+        {
+            "name": "Probeta Control (--selftest)",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/dotnet/src/ProbetaControl/bin/Debug/net48/ProbetaControl.exe",
+            "args": ["--selftest"],
+            "cwd": "${workspaceFolder}/dotnet/src/ProbetaControl/bin/Debug/net48",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "justMyCode": true
+        },
+        {
+            "name": "Attach to running Probeta Control",
+            "type": "clr",
+            "request": "attach",
+            "processName": "ProbetaControl.exe"
+        }
+    ]
+}
