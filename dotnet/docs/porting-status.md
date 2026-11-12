@@ -28,7 +28,8 @@ _Last updated: 2026-11-11 (end of phase 4, group 3)._
 3. Done: Dosificaciones: list + editor with fck, slump (optional) and a material table (add / remove /
    reorder rows, up to 8, total kg/m³, water/cement ratio from the material types), and the percentage
    calculator (target quantity = origin quantity × % / 100, previewed before applying). Designs used by
-   ensayos show a warning and only an administrator can change them. Also added in this group: material
+   ensayos show a warning and only an administrator can change them; "Duplicar" makes an editable
+   copy. Also added in this group: material
    type (Cemento / Agua / Agregado / Aditivo / Otro) and the "in use" rule for archiving.
 4. **Next:** Ensayos list: newest first, due-specimen count, filters. This becomes the default page.
 5. Test detail: header, specimen grid (red = overdue, yellow = due today/tomorrow), add/edit/copy/archive
@@ -99,7 +100,9 @@ _Last updated: 2026-11-11 (end of phase 4, group 3)._
   Name the bound property like the error key (e.g. `Fck` as text) so the field also gets the red border.
   Numbers are typed as text and parsed with `NumberInput`. Wider dialogs override `PreferredWidth`.
 - Buttons: text as content plus `b:ButtonIcon.Icon`; icon-only buttons need
-  `AutomationProperties.Name` and a tooltip.
+  `AutomationProperties.Name` and a tooltip. Menu items take the same `b:ButtonIcon.Icon`.
+- List rows: `RowStyle="{StaticResource ListPageDataGridRow}"` gives archived rows in grey and the
+  right-click menu (Editar / Archivar or Restaurar), bound to the page's commands through the row's `Tag`.
 - Colours only through the `Brush.*` keys of `Themes/Colors.xaml`.
 
 ### Pitfalls already hit

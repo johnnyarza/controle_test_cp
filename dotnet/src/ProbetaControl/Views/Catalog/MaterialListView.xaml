@@ -9,7 +9,7 @@
 
     <ContentControl Style="{StaticResource ListPageFrame}">
         <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}"
-                  RowStyle="{StaticResource ArchivableDataGridRow}"
+                  RowStyle="{StaticResource ListPageDataGridRow}"
                   b:DataGridBehavior.OpenCommand="{Binding EditCommand}"
                   AutomationProperties.Name="{Binding Title}">
             <DataGrid.Columns>

@@ -4,7 +4,7 @@ using System.Windows.Media;
 namespace ProbetaControl.Views.Behaviors
 {
     /// <summary>
-    /// Icon for a button, drawn by the button template before the text:
+    /// Icon for a button (or a menu item), drawn by the template before the text:
     /// <c>&lt;Button b:ButtonIcon.Icon="{StaticResource Icon.Plus}" Content="Nuevo" /&gt;</c>.
     /// Keeping Content as plain text gives every button an accessible name automatically;
     /// icon-only buttons set AutomationProperties.Name and a ToolTip instead.

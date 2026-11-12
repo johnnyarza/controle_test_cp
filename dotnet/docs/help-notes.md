@@ -16,6 +16,9 @@ Add an item whenever a question comes up that a user would also ask. The help it
 - **Only administrators archive and restore.** Operators can create and edit clients, providers and
   materials; the "Archivar"/"Restaurar" button is disabled for them (tooltip explains why).
   Archived records are hidden, never deleted: "Mostrar archivados" shows them in grey.
+- **Right-click menu on lists.** Right-clicking a row (or the menu key / Shift+F10 on the selected row)
+  selects it and offers "Editar" and "Archivar" ("Restaurar" on an archived row), the same as the
+  toolbar buttons (Dosificaciones also has "Duplicar"); double-click or Enter also opens "Editar".
 - **Records in use can't be archived.** "Archivar" shows a warning (no question) listing up to 5 of the
   records that still use it, and how many more:
   - a client: active ensayos where it is the client or the concrete provider;
@@ -47,7 +50,11 @@ Add an item whenever a question comes up that a user would also ask. The help it
 - **Designs used by ensayos.** Opening one shows a warning with the number of ensayos (archived ones
   included): changing it also changes their data and reports. Only an administrator can change it;
   an operator sees it read-only ("Cerrar" instead of "Guardar"). To change a mix that is already in use
-  without touching old reports, create a new design instead.
+  without touching old reports, create a new design instead ("Duplicar", below).
+- **Duplicar.** Dosificaciones has "Duplicar" (toolbar and right-click menu), for operators too: it opens
+  a new design with the same fck, slump, materials and quantities, named "… (copia)". The description
+  must be unique, so rename it before saving. Archived materials are not copied (a yellow note names
+  them). The original design is not changed.
 - **Archived materials.** A design keeps showing a material that was archived later, marked
   "(archivado)", and can still be saved with it. New designs can only pick active materials.
 - **Calculadora.** Fills the quantity of one material as a percentage of another

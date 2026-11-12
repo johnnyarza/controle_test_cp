@@ -39,6 +39,8 @@ namespace ProbetaControl.ViewModels.Infrastructure
             LoadMoreCommand = new AsyncRelayCommand(() => LoadAsync(append: true), () => HasMore && !IsLoading);
             NewCommand = new AsyncRelayCommand(() => EditAsync(null));
             EditCommand = new AsyncRelayCommand(() => EditAsync(SelectedItem), () => SelectedItem != null);
+            DuplicateCommand = new AsyncRelayCommand(
+                () => OpenEditorAsync(CreateDuplicate(SelectedItem)), () => SelectedItem != null && SupportsDuplicate);
             ToggleArchiveCommand = new AsyncRelayCommand(ToggleArchiveAsync, () => SelectedItem != null && CanArchive);
         }
 
@@ -80,6 +82,7 @@ namespace ProbetaControl.ViewModels.Infrastructure
                 if (SetProperty(ref _selectedItem, value))
                 {
                     OnPropertyChanged(nameof(ArchiveText));
+                    OnPropertyChanged(nameof(SelectedIsArchived));
                     CommandManager.InvalidateRequerySuggested();
                 }
             }
@@ -109,7 +112,10 @@ namespace ProbetaControl.ViewModels.Infrastructure
             : string.IsNullOrWhiteSpace(SearchText) ? EmptyListText : $"No hay resultados para \"{SearchText.Trim()}\".";
 
         /// <summary>"Archivar" or "Restaurar", depending on the selected row.</summary>
-        public string ArchiveText => SelectedItem != null && IsArchived(SelectedItem) ? "Restaurar" : "Archivar";
+        public string ArchiveText => SelectedIsArchived ? "Restaurar" : "Archivar";
+
+        /// <summary>The selected row is archived (archive actions show "Restaurar" and its icon).</summary>
+        public bool SelectedIsArchived => SelectedItem != null && IsArchived(SelectedItem);
 
         /// <summary>Archiving and restoring are for administrators.</summary>
         public bool CanArchive => Session.IsAdmin;
@@ -125,6 +131,14 @@ namespace ProbetaControl.ViewModels.Infrastructure
         public ICommand NewCommand { get; }
 
         public ICommand EditCommand { get; }
+
+        /// <summary>Opens a new record pre-filled from the selected one (pages with <see cref="SupportsDuplicate"/>).</summary>
+        public ICommand DuplicateCommand { get; }
+
+        /// <summary>The page offers "Duplicar" (toolbar and right-click menu); it then overrides <see cref="CreateDuplicate"/>.</summary>
+        public virtual bool SupportsDuplicate => false;
+
+        public virtual string DuplicateToolTip => "Nuevo registro a partir del seleccionado";
 
         public ICommand ToggleArchiveCommand { get; }
 
@@ -243,9 +257,13 @@ namespace ProbetaControl.ViewModels.Infrastructure
             }
         }
 
-        private async Task EditAsync(T item)
+        /// <summary>Editor for a new record copied from <paramref name="item"/>; only called when <see cref="SupportsDuplicate"/>.</summary>
+        protected virtual EditorDialogViewModel CreateDuplicate(T item) => throw new NotSupportedException();
+
+        private Task EditAsync(T item) => OpenEditorAsync(CreateEditor(item));
+
+        private async Task OpenEditorAsync(EditorDialogViewModel editor)
         {
-            var editor = CreateEditor(item);
             if (Dialogs.Show(editor))
             {
                 await LoadAsync(append: false, selectId: editor.SavedId);
@@ -298,6 +316,7 @@ namespace ProbetaControl.ViewModels.Infrastructure
             OnPropertyChanged(nameof(StatusText));
             OnPropertyChanged(nameof(EmptyText));
             OnPropertyChanged(nameof(ArchiveText));
+            OnPropertyChanged(nameof(SelectedIsArchived));
             CommandManager.InvalidateRequerySuggested();
         }
     }

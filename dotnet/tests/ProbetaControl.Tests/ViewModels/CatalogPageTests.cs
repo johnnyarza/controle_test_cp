@@ -120,6 +120,7 @@ namespace ProbetaControl.Tests.ViewModels
             await SearchAsync(page, client.Name);
             page.SelectedItem = page.Items.Single();
             Assert.That(page.ArchiveText, Is.EqualTo("Archivar"));
+            Assert.That(page.SelectedIsArchived, Is.False);
 
             dialogs.AnswerConfirm(false);
             await ((AsyncRelayCommand)page.ToggleArchiveCommand).ExecuteAsync();
@@ -135,6 +136,7 @@ namespace ProbetaControl.Tests.ViewModels
             page.SelectedItem = page.Items.Single();
             Assert.That(page.SelectedItem.IsArchived, Is.True);
             Assert.That(page.ArchiveText, Is.EqualTo("Restaurar"));
+            Assert.That(page.SelectedIsArchived, Is.True, "the menu and the toolbar show the Restore icon");
 
             dialogs.AnswerConfirm(true);
             await ((AsyncRelayCommand)page.ToggleArchiveCommand).ExecuteAsync();

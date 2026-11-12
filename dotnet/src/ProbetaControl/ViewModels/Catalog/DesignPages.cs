@@ -32,6 +32,14 @@ namespace ProbetaControl.ViewModels.Catalog
         protected override EditorDialogViewModel CreateEditor(ConcreteDesign item) =>
             new DesignEditorViewModel(_designs, _materials, Dialogs, item?.Id);
 
+        /// <summary>A mix already used by ensayos is changed by making a copy (operators can't edit it).</summary>
+        public override bool SupportsDuplicate => true;
+
+        public override string DuplicateToolTip => "Nueva dosificación con los datos y materiales de la seleccionada";
+
+        protected override EditorDialogViewModel CreateDuplicate(ConcreteDesign item) =>
+            DesignEditorViewModel.CopyOf(_designs, _materials, Dialogs, item.Id);
+
         protected override Task SetArchivedAsync(ConcreteDesign item, bool archived) => _designs.SetArchivedAsync(item, archived);
 
         protected override Task<string> GetArchiveBlockerAsync(ConcreteDesign item) => _designs.GetArchiveBlockerAsync(item);
@@ -54,6 +62,7 @@ namespace ProbetaControl.ViewModels.Catalog
         private readonly MaterialService _materials;
         private readonly IDialogService _dialogs;
         private readonly int? _id;
+        private int? _copyFromId;
         private readonly List<Material> _active = new List<Material>();
         private readonly Dictionary<string, DesignMaterialRowViewModel> _rowsByErrorKey = new Dictionary<string, DesignMaterialRowViewModel>();
         private ConcreteDesign _record = new ConcreteDesign();
@@ -89,7 +98,22 @@ namespace ProbetaControl.ViewModels.Catalog
             }
         }
 
-        public override string Title => _id == null ? "Nueva dosificación" : "Editar dosificación";
+        /// <summary>
+        /// "Duplicar": a new design pre-filled with the description (+ " (copia)"), fck, slump and materials of
+        /// <paramref name="sourceId"/>. Archived materials are left out (new designs only use active ones).
+        /// </summary>
+        public static DesignEditorViewModel CopyOf(ConcreteDesignService designs, MaterialService materials, IDialogService dialogs, int sourceId)
+        {
+            var editor = new DesignEditorViewModel(designs, materials, dialogs, null) { _copyFromId = sourceId };
+            editor.Rows.Clear();
+            return editor;
+        }
+
+        /// <summary>Suffix of a copied description; the description must be unique, so the user renames it.</summary>
+        public const string CopySuffix = " (copia)";
+
+        public override string Title => _copyFromId != null ? "Duplicar dosificación"
+            : _id == null ? "Nueva dosificación" : "Editar dosificación";
 
         public override double PreferredWidth => 680;
 
@@ -142,7 +166,10 @@ namespace ProbetaControl.ViewModels.Catalog
             ? "Relación agua/cemento: kg de agua / kg de cemento"
             : "Relación agua/cemento: necesita materiales de tipo Cemento y Agua con su cantidad (el tipo se elige en Materiales)";
 
-        /// <summary>"Esta dosificación se usa en N ensayos…", or null when no test uses it.</summary>
+        /// <summary>
+        /// "Esta dosificación se usa en N ensayos…" (editing), "No se copiaron…" (duplicating with archived
+        /// materials), or null.
+        /// </summary>
         public string UsageWarning
         {
             get => _usageWarning;
@@ -213,6 +240,41 @@ namespace ProbetaControl.ViewModels.Catalog
                     row.QuantityText = NumberInput.Format(used.QuantityKgPerM3);
                 }
             }
+            else if (_copyFromId != null)
+            {
+                var source = await _designs.GetAsync(_copyFromId.Value) ?? throw new NotFoundException("la dosificación");
+                Description = CopyDescription(source.Description);
+                Fck = NumberInput.Format(source.Fck);
+                Slump = NumberInput.Format(source.Slump);
+
+                var skipped = new List<string>();
+                foreach (var used in source.Materials.Where(m => m.MaterialId.HasValue).OrderBy(m => m.Position))
+                {
+                    var material = _active.FirstOrDefault(m => m.Id == used.MaterialId.Value);
+                    if (material == null)
+                    {
+                        skipped.Add(used.MaterialName);
+                        continue;
+                    }
+
+                    var row = AddRow(focus: false);
+                    row.Material = material;
+                    row.QuantityText = NumberInput.Format(used.QuantityKgPerM3);
+                }
+
+                if (skipped.Count > 0)
+                {
+                    UsageWarning = (skipped.Count == 1
+                        ? $"No se copió el material \"{skipped[0]}\" porque está archivado."
+                        : "No se copiaron los materiales " + string.Join(", ", skipped.Select(n => $"\"{n}\"")) + " porque están archivados.")
+                        + " Elija otro si hace falta.";
+                }
+
+                if (Rows.Count == 0)
+                {
+                    AddRow(focus: false);
+                }
+            }
 
             SyncOptions();
         });
@@ -249,6 +311,19 @@ namespace ProbetaControl.ViewModels.Catalog
             ConcreteDesignService.Validate(_record, errors).ThrowIfAny();
             await _designs.SaveAsync(_record);
             SavedId = _record.Id;
+        }
+
+        /// <summary>"H-21" → "H-21 (copia)", cut so it stays within the 150 characters of a description.</summary>
+        internal static string CopyDescription(string description)
+        {
+            const int MaxLength = 150;
+            var text = (description ?? string.Empty).Trim();
+            if (text.Length + CopySuffix.Length > MaxLength)
+            {
+                text = text.Substring(0, MaxLength - CopySuffix.Length).TrimEnd();
+            }
+
+            return text + CopySuffix;
         }
 
         internal void RemoveRow(DesignMaterialRowViewModel row) => Rows.Remove(row);

@@ -277,5 +277,95 @@ namespace ProbetaControl.Tests.ViewModels
             Assert.That(page.EditCommand.CanExecute(null), Is.True);
             Assert.That(page.ToggleArchiveCommand.CanExecute(null), Is.False);
         }
+
+        [Test]
+        public async Task Duplicar_opens_a_prefilled_new_design_without_archived_materials()
+        {
+            var materials = await NewMaterialsAsync("Cemento", "Arena", "Aditivo");
+            var source = new ConcreteDesign
+            {
+                Description = Unique("H-30"),
+                Fck = 300,
+                Slump = 12,
+                Materials =
+                {
+                    new ConcreteDesignMaterial { Position = 1, MaterialId = materials[1].Id, QuantityKgPerM3 = 800 },
+                    new ConcreteDesignMaterial { Position = 2, MaterialId = materials[2].Id, QuantityKgPerM3 = 3.1m },
+                    new ConcreteDesignMaterial { Position = 3, MaterialId = materials[0].Id, QuantityKgPerM3 = 380 },
+                },
+            };
+            await Services.Designs.SaveAsync(source);
+            await Services.Designs.SetArchivedAsync(source, true);
+            await Services.Materials.SetArchivedAsync(materials[2], true);
+            await Services.Designs.SetArchivedAsync(source, false);
+
+            // Operators can duplicate (it's how they change a design that ensayos already use).
+            var op = new User { UserName = Unique("op").Replace(" ", "_"), Role = UserRoles.Operator };
+            await Services.UserAdmin.CreateAsync(op, "operador123");
+            Session.SignIn(op);
+
+            var dialogs = new ScriptedDialogs();
+            var page = NewPage(dialogs);
+            Assert.That(page.SupportsDuplicate, Is.True);
+            page.SearchText = source.Description;
+            await Wait.UntilAsync(() => !page.IsLoading && page.Items.Count == 1);
+            Assert.That(page.DuplicateCommand.CanExecute(null), Is.False, "nothing selected");
+            page.SelectedItem = page.Items.Single();
+            Assert.That(page.DuplicateCommand.CanExecute(null), Is.True);
+
+            dialogs.Answer(dialog =>
+            {
+                var editor = (DesignEditorViewModel)dialog;
+                Assert.That(editor.Title, Is.EqualTo("Duplicar dosificación"));
+                Assert.That(editor.Description, Is.EqualTo(source.Description + " (copia)"));
+                Assert.That(editor.Fck, Is.EqualTo("300"));
+                Assert.That(editor.Slump, Is.EqualTo("12"));
+                Assert.That(editor.Rows.Select(r => (r.Material.Id, r.QuantityText)),
+                    Is.EqualTo(new[] { (materials[1].Id, "800"), (materials[0].Id, "380") }), "same order, archived one left out");
+                Assert.That(editor.UsageWarning, Is.EqualTo($"No se copió el material \"{materials[2].Name}\" porque está archivado. Elija otro si hace falta."));
+                Assert.That(editor.CanEdit, Is.True);
+
+                editor.Rows[1].QuantityText = "400";
+                Assert.That(ScriptedDialogs.Save(editor), Is.True);
+                return true;
+            });
+            await ((AsyncRelayCommand)page.DuplicateCommand).ExecuteAsync();
+
+            page.SearchText = source.Description;
+            await Wait.UntilAsync(() => !page.IsLoading && page.Items.Count == 2);
+            var copy = page.Items.Single(d => d.Id != source.Id);
+            Assert.That(copy.Description, Is.EqualTo(source.Description + " (copia)"));
+            Assert.That(copy.Materials.Select(m => (m.Position, m.MaterialId, m.QuantityKgPerM3)),
+                Is.EqualTo(new[] { (1, (int?)materials[1].Id, (decimal?)800), (2, (int?)materials[0].Id, (decimal?)400) }));
+            var original = await Services.Designs.GetAsync(source.Id);
+            Assert.That(original.Materials, Has.Count.EqualTo(3), "the source design is untouched");
+
+            // Duplicating the same design again: the description is taken, so the user must rename it.
+            page.SelectedItem = page.Items.Single(d => d.Id == source.Id);
+            dialogs.Answer(dialog =>
+            {
+                var editor = (DesignEditorViewModel)dialog;
+                Assert.That(ScriptedDialogs.Save(editor), Is.False);
+                Assert.That(editor.Errors["Description"], Is.EqualTo("Ya existe una dosificación con esa descripción."));
+                return false;
+            });
+            await ((AsyncRelayCommand)page.DuplicateCommand).ExecuteAsync();
+        }
+
+        [Test]
+        public void Copy_description_stays_within_150_characters()
+        {
+            Assert.That(DesignEditorViewModel.CopyDescription(" H-21 "), Is.EqualTo("H-21 (copia)"));
+            var copy = DesignEditorViewModel.CopyDescription(new string('x', 150));
+            Assert.That(copy, Has.Length.EqualTo(150));
+            Assert.That(copy, Does.EndWith("x (copia)"));
+        }
+
+        [Test]
+        public void Other_list_pages_do_not_offer_duplicar()
+        {
+            var page = new MaterialsPageViewModel(Services.Materials, Services.Providers, new ScriptedDialogs(), Session);
+            Assert.That(page.SupportsDuplicate, Is.False);
+        }
     }
 }
