@@ -58,6 +58,9 @@ namespace ProbetaControl.Models
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
+
+        /// <summary>Only tests with untested specimens whose rupture date is today or earlier.</summary>
+        public bool OnlyDue { get; set; }
     }
 
     /// <summary>Specimen filter inside one test (legacy "Filtrar probetas"): mold dates and/or ID ranges.</summary>

@@ -4,7 +4,7 @@ The legacy Java/JavaFX app (repo root, `src/`) is being rewritten as a WPF app o
 in `dotnet/`, on branch `csharp-port`. The Java code stays untouched until the C# version reaches parity
 and is signed off.
 
-_Last updated: 2026-11-11 (end of phase 4, group 3)._
+_Last updated: 2026-11-11 (end of phase 4, group 4)._
 
 ## Status
 
@@ -32,11 +32,15 @@ _Last updated: 2026-11-11 (end of phase 4, group 3)._
    copy. The list shows the selected design's materials in a resizable panel below it. Also added in
    this group: material type (Cemento / Agua / Agregado / Aditivo / Otro) and the "in use" rule for
    archiving.
-4. **Next:** Ensayos list: newest first, due-specimen count, filters. This becomes the default page.
-5. Test detail: header, specimen grid (red = overdue, yellow = due today/tomorrow), add/edit/copy/archive
-   specimens, filter by mold dates and ID ranges (`1-5, 8`), admin unlock, "N probetas para romper",
-   specimen form calculators (average of two readings, rupture date = mold date + N days),
-   and the client search dialog (client and concrete provider).
+4. Done: Ensayos (start page): newest first, "Para romper" badge (untested specimens due today or
+   earlier), search, client filter, "Solo con probetas para romper (N)"; new / edit test header form
+   (date field with calendar, client and concrete provider via the client search dialog, "Igual que el
+   cliente", design, project, address); "Nuevo cliente" inside the client search. Locked tests open
+   read-only for operators.
+5. **Next:** Test detail (double-click on an ensayo): header, specimen grid (red = overdue, yellow =
+   due today/tomorrow), add/edit/copy/archive specimens, filter by mold dates and ID ranges (`1-5, 8`),
+   admin unlock, "N probetas para romper", specimen form calculators (average of two readings,
+   rupture date = mold date + N days).
 6. Due-specimens warning dialog; Configuración (report logo/stamp stored in the DB, user administration,
    connection settings, change own password); Acerca de.
 
@@ -63,6 +67,10 @@ _Last updated: 2026-11-11 (end of phase 4, group 3)._
 - Legacy data will be migrated (phase 7). Excel export is kept. One QR label per specimen.
 - Screen text in Spanish; code, tables and stored values in English. Dates `dd/MM/yyyy`, invariant culture.
   Number fields accept a comma or a point as decimal separator (`NumberInput`); lists show a point.
+  Dates are typed day first (`DateInput`: `05/11/2026`, `5-11-26`, `5.11.2026`) in the `DateBox` field,
+  never with the PC's regional settings; the stock DatePicker is not used for that reason.
+- Tests are locked: an operator changes only the tests they created in this session (or that an
+  administrator unlocks in group 5); administrators change any test (`AppSession.IsTestUnlocked`).
 - Every window must handle resizing (minimums fit about 900 × 500).
 
 ## Development setup

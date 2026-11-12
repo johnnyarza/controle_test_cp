@@ -19,9 +19,25 @@ namespace ProbetaControl.Data
             "JOIN Clients cp ON cp.Id = t.ConcreteProviderId " +
             "JOIN ConcreteDesigns d ON d.Id = t.ConcreteDesignId ";
 
+        /// <summary>Untested, active specimens of test t due today (@today) or earlier.</summary>
+        private const string DueSpecimen =
+            "SELECT 1 FROM Specimens s WHERE s.CompressionTestId = t.Id AND s.IsArchived = 0 " +
+            "AND s.RuptureLoadTon IS NULL AND s.RuptureDate <= @today";
+
         public CompressionTestRepository(DbConnectionFactory db, IAuditContext audit)
             : base(db, audit)
         {
+        }
+
+        /// <summary>Active tests with at least one specimen to break today or earlier.</summary>
+        public async Task<int> CountWithDueAsync(DateTime today, CancellationToken cancellationToken = default)
+        {
+            using (var connection = await Db.OpenAsync(cancellationToken).ConfigureAwait(false))
+            {
+                return await connection.ExecuteScalarAsync<int>(Cmd(
+                    "SELECT COUNT(*) FROM CompressionTests t WHERE t.IsArchived = 0 AND EXISTS (" + DueSpecimen + ")",
+                    new { today = today.Date }, null, cancellationToken)).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -37,14 +53,14 @@ namespace ProbetaControl.Data
                 "AND (@clientId IS NULL OR t.ClientId = @clientId) " +
                 "AND (@dateFrom IS NULL OR t.TestDate >= @dateFrom) " +
                 "AND (@dateTo IS NULL OR t.TestDate <= @dateTo) " +
-                "AND (@pattern IS NULL OR t.Id = @number OR c.Name LIKE @pattern OR t.ProjectName LIKE @pattern OR t.Address LIKE @pattern) ";
+                "AND (@pattern IS NULL OR t.Id = @number OR c.Name LIKE @pattern OR t.ProjectName LIKE @pattern OR t.Address LIKE @pattern) " +
+                "AND (NOT @onlyDue OR EXISTS (" + DueSpecimen + ")) ";
 
             var sql =
                 "SELECT COUNT(*) " + from + where + "; " +
                 "SELECT t.Id, t.ClientId, c.Name AS ClientName, t.ProjectName, t.Address, t.TestDate, t.IsArchived, " +
                 "  (SELECT COUNT(*) FROM Specimens s WHERE s.CompressionTestId = t.Id AND s.IsArchived = 0) AS SpecimenCount, " +
-                "  (SELECT COUNT(*) FROM Specimens s WHERE s.CompressionTestId = t.Id AND s.IsArchived = 0 " +
-                "     AND s.RuptureLoadTon IS NULL AND s.RuptureDate <= @today) AS DueCount " +
+                "  (" + DueSpecimen.Replace("SELECT 1", "SELECT COUNT(*)") + ") AS DueCount " +
                 from + where + "ORDER BY t.TestDate DESC, t.Id DESC LIMIT @limit OFFSET @offset";
 
             int.TryParse(query.Text?.Trim(), out var number);
@@ -58,6 +74,7 @@ namespace ProbetaControl.Data
                 dateTo = query.DateTo?.Date,
                 pattern = Contains(query.Text),
                 number,
+                onlyDue = query.OnlyDue,
                 today = today.Date,
                 limit = query.Page.Limit,
                 offset = query.Page.Offset,

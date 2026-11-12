@@ -58,6 +58,18 @@ namespace ProbetaControl.Services
             return this;
         }
 
+        /// <summary>Moves an error to another key, e.g. "ClientId" onto the form's "ClientName" field.</summary>
+        public ValidationErrors Rename(string from, string to)
+        {
+            if (_errors.TryGetValue(from, out var message))
+            {
+                _errors.Remove(from);
+                Add(to, message);
+            }
+
+            return this;
+        }
+
         public void ThrowIfAny()
         {
             if (HasErrors)

@@ -31,6 +31,26 @@ Add an item whenever a question comes up that a user would also ask. The help it
   that can DELETE, DROP, ALTER or CREATE (e.g. `root`). Explain why: records are archived, never
   deleted, and the program must not be able to change the database structure.
 
+## Ensayos
+
+- **Start page.** The program opens on Ensayos, newest first. "Para romper" (red badge) counts the
+  probetas without a rupture load whose rupture date is today or already passed. "Solo con
+  probetas para romper (N)" shows only those ensayos; N counts them over all clients.
+- **Searching.** Buscar finds the ensayo number, client, project or address. "Cliente: Todos los
+  clientes" opens the client search to show one client's ensayos; the × removes the filter.
+- **Client search dialog.** Type part of the name, phone or e-mail; double-click, Enter or "Elegir"
+  picks the client. With a single match it is already selected. Only active clients are listed.
+  When choosing the client or concrete provider of an ensayo, "Nuevo cliente" creates one (name
+  pre-filled with the search) and chooses it at once; the list filter doesn't offer it.
+- **Dates.** Typed day first: "05/11/2026", "5/11/26", "5-11-2026" and "5.11.2026" are all
+  5 November 2026 (the PC's regional settings don't matter). The calendar button (or Alt+↓ / F4)
+  opens a calendar; the field tidies the text to dd/mm/aaaa when you leave it.
+- **New ensayo.** Fecha (today by default), Cliente and Proveedor del hormigón (both chosen with
+  "Buscar…"; "Igual que el cliente" copies the client), Dosificación, Proyecto / obra, Ubicación.
+- **Locked ensayos.** An operator can change the ensayos they created since logging in; others open
+  read-only ("El ensayo está bloqueado…", "Cerrar"). An administrator can change any ensayo, and
+  (group 5) unlock one for an operator. Archiving ensayos is for administrators.
+
 ## Dosificaciones
 
 - **Materials panel.** The list shows description, fck, slump, a/c and the number of materials (hover

@@ -225,7 +225,8 @@ namespace ProbetaControl.ViewModels.Infrastructure
             }
         }
 
-        private async Task ReloadReportingErrorsAsync()
+        /// <summary>Reloads the first page (e.g. after a filter changed); errors go to the error dialog.</summary>
+        protected async Task ReloadReportingErrorsAsync()
         {
             try
             {

@@ -37,6 +37,7 @@
     <Geometry x:Key="Icon.ArrowDown">M 8,2.5 V 13.5 M 3.5,9 L 8,13.5 L 12.5,9</Geometry>
     <Geometry x:Key="Icon.Trash">M 2,4 H 14 M 6,4 V 2 H 10 V 4 M 3.5,4 L 4.5,14.5 H 11.5 L 12.5,4 M 6.5,7 V 12 M 9.5,7 V 12</Geometry>
     <Geometry x:Key="Icon.Save">M 2.5,1.5 H 11.5 L 14.5,4.5 V 14.5 H 1.5 V 1.5 Z M 4.5,1.5 V 5.5 H 10.5 V 1.5 M 4.5,14.5 V 9.5 H 11.5 V 14.5</Geometry>
+    <Geometry x:Key="Icon.Calendar">M 1.5,3 H 14.5 V 14.5 H 1.5 Z M 1.5,6.5 H 14.5 M 5,1.5 V 4.5 M 11,1.5 V 4.5 M 4.5,9.5 H 5.5 M 7.5,9.5 H 8.5 M 10.5,9.5 H 11.5 M 4.5,12 H 5.5 M 7.5,12 H 8.5</Geometry>
 
     <Style x:Key="IconPath" TargetType="Path">
         <Setter Property="Width" Value="16" />

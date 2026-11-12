@@ -375,4 +375,57 @@ namespace ProbetaControl.Tests.Domain
             Assert.That(converter.Convert("x", null, "Invert", null).ToString(), Is.EqualTo("Collapsed"));
         }
     }
+
+    /// <summary>Typed dates are always day first, whatever the PC's regional settings.</summary>
+    [TestFixture]
+    public class DateInputTests
+    {
+        [TestCase("05/11/2026", 2026, 11, 5)]
+        [TestCase("5/11/2026", 2026, 11, 5)]
+        [TestCase(" 5-11-26 ", 2026, 11, 5)]
+        [TestCase("5.11.2026", 2026, 11, 5)]
+        [TestCase("29/02/2028", 2028, 2, 29)]
+        public void Reads_day_month_year(string text, int year, int month, int day)
+        {
+            Assert.That(DateInput.TryParse(text, out var value), Is.True);
+            Assert.That(value, Is.EqualTo(new DateTime(year, month, day)));
+        }
+
+        [TestCase("31/02/2026")]
+        [TestCase("13/13/2026")]
+        [TestCase("2026-11-05")]
+        [TestCase("5/11")]
+        [TestCase("hoy")]
+        [TestCase("05/11/202")]
+        public void Rejects_what_is_not_a_date(string text)
+        {
+            Assert.That(DateInput.TryParse(text, out _), Is.False);
+            var errors = new ValidationErrors();
+            DateInput.Parse("TestDate", text, errors);
+            Assert.That(errors.HasErrors, Is.True);
+        }
+
+        [Test]
+        public void Empty_is_null_unless_required_and_format_is_dd_mm_yyyy()
+        {
+            Assert.That(DateInput.TryParse("  ", out var value), Is.True);
+            Assert.That(value, Is.Null);
+
+            var errors = new ValidationErrors();
+            DateInput.Parse("TestDate", "", errors, required: true);
+            var ex = Assert.Throws<ValidationException>(() => errors.ThrowIfAny());
+            Assert.That(ex.Errors["TestDate"], Is.EqualTo("Campo obligatorio."));
+
+            Assert.That(DateInput.Format(new DateTime(2026, 3, 8)), Is.EqualTo("08/03/2026"));
+            Assert.That(DateInput.Format(null), Is.Empty);
+        }
+
+        [Test]
+        public void Validation_errors_can_move_to_the_form_field()
+        {
+            var errors = new ValidationErrors().Add("ClientId", "Seleccione el cliente.").Rename("ClientId", "ClientName");
+            var ex = Assert.Throws<ValidationException>(() => errors.ThrowIfAny());
+            Assert.That(ex.Errors.Keys, Is.EqualTo(new[] { "ClientName" }));
+        }
+    }
 }

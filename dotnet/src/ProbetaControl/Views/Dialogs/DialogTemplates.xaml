@@ -3,6 +3,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:i="clr-namespace:ProbetaControl.ViewModels.Infrastructure"
                     xmlns:c="clr-namespace:ProbetaControl.ViewModels.Catalog"
+                    xmlns:t="clr-namespace:ProbetaControl.ViewModels.CompressionTests"
                     xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors">
 
     <!-- Yes / no question -->
@@ -332,6 +333,138 @@
                 <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
                 <Button Style="{StaticResource PrimaryButton}" Content="Aplicar" Command="{Binding ApplyCommand}" IsDefault="True"
                         ToolTip="Escribe el resultado en la cantidad del material de destino" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Client search (client / concrete provider of a test, client filter of the test list) -->
+    <DataTemplate DataType="{x:Type c:ClientPickerViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" Margin="0,0,0,12" />
+
+            <DockPanel Margin="0,0,0,8">
+                <!-- Not when filtering the test list. The new client is chosen at once. -->
+                <Button DockPanel.Dock="Right" Content="Nuevo cliente" Command="{Binding NewClientCommand}" Margin="8,0,0,0"
+                        b:ButtonIcon.Icon="{StaticResource Icon.Plus}"
+                        ToolTip="Crear el cliente (con el nombre buscado) y elegirlo"
+                        Visibility="{Binding CanCreate, Converter={StaticResource BoolToVisibility}}" />
+                <TextBox Style="{StaticResource SearchBox}" Tag="Buscar por nombre, teléfono o correo…"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         AutomationProperties.Name="Buscar" b:FocusBehavior.FocusOnLoad="True" />
+            </DockPanel>
+
+            <!-- Fixed height: the dialog scrolls, and an unbounded grid would load every row at once. -->
+            <Grid Height="320">
+                <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}"
+                          b:DataGridBehavior.OpenCommand="{Binding ChooseCommand}" AutomationProperties.Name="Clientes">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nombre" Binding="{Binding Name}" Width="*" MinWidth="160" />
+                        <DataGridTextColumn Header="Teléfono" Binding="{Binding Phone}" Width="120" />
+                        <DataGridTextColumn Header="Dirección" Binding="{Binding Address}" Width="*" MinWidth="120" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                <ProgressBar VerticalAlignment="Top" Height="3" Margin="1,1,1,0" IsIndeterminate="{Binding IsLoading}"
+                             Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
+                <TextBlock Style="{StaticResource EmptyState}" Text="{Binding EmptyText}"
+                           Visibility="{Binding EmptyText, Converter={StaticResource NotEmptyToVisibility}}" />
+            </Grid>
+
+            <DockPanel Margin="0,8,0,16" LastChildFill="False">
+                <TextBlock DockPanel.Dock="Left" Style="{StaticResource MutedText}" Text="{Binding StatusText}" VerticalAlignment="Center" />
+                <Button DockPanel.Dock="Right" Content="Mostrar más" Command="{Binding LoadMoreCommand}"
+                        Visibility="{Binding HasMore, Converter={StaticResource BoolToVisibility}}" />
+            </DockPanel>
+
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Elegir" Command="{Binding ChooseCommand}" IsDefault="True" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Test header: date, client, concrete provider, design, project, address -->
+    <DataTemplate DataType="{x:Type t:TestEditorViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" Margin="0,0,0,16" />
+
+            <Border Style="{StaticResource MessageBanner}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+
+            <!-- Locked test (operator): view only. -->
+            <Border Background="{StaticResource Brush.WarningSoft}" BorderBrush="{StaticResource Brush.Warning}" BorderThickness="1"
+                    CornerRadius="{StaticResource Radius.Control}" Padding="10,8" Margin="0,0,0,14"
+                    Visibility="{Binding LockWarning, Converter={StaticResource NotEmptyToVisibility}}">
+                <DockPanel>
+                    <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Lock}" Stroke="{StaticResource Brush.Warning}"
+                          VerticalAlignment="Top" Margin="0,1,8,0" />
+                    <TextBlock Text="{Binding LockWarning}" TextWrapping="Wrap" AutomationProperties.Name="Aviso" />
+                </DockPanel>
+            </Border>
+
+            <StackPanel IsEnabled="{Binding CanEdit}">
+                <StackPanel Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Fecha" />
+                    <TextBox Style="{StaticResource DateBox}" Text="{Binding TestDate, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.Name="Fecha" ToolTip="dd/mm/aaaa" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[TestDate]}" />
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Cliente" />
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="Buscar…" Command="{Binding ChooseClientCommand}" Margin="8,0,0,0"
+                                b:ButtonIcon.Icon="{StaticResource Icon.Search}" b:FocusBehavior.FocusOnLoad="True"
+                                AutomationProperties.Name="Buscar cliente" />
+                        <TextBox Text="{Binding ClientName, Mode=OneWay}" IsReadOnly="True" Focusable="False"
+                                 AutomationProperties.Name="Cliente" />
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[ClientName]}" />
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Proveedor del hormigón" />
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="Buscar…" Command="{Binding ChooseConcreteProviderCommand}" Margin="8,0,0,0"
+                                b:ButtonIcon.Icon="{StaticResource Icon.Search}" AutomationProperties.Name="Buscar proveedor del hormigón" />
+                        <Button DockPanel.Dock="Right" Style="{StaticResource SubtleButton}" Content="Igual que el cliente"
+                                Command="{Binding UseClientAsProviderCommand}" Margin="8,0,0,0"
+                                ToolTip="El cliente también suministra el hormigón" />
+                        <TextBox Text="{Binding ConcreteProviderName, Mode=OneWay}" IsReadOnly="True" Focusable="False"
+                                 AutomationProperties.Name="Proveedor del hormigón" />
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[ConcreteProviderName]}" />
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Dosificación" />
+                    <ComboBox ItemsSource="{Binding Designs}" SelectedValuePath="Id" DisplayMemberPath="Description"
+                              SelectedValue="{Binding ConcreteDesignId}" AutomationProperties.Name="Dosificación" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[ConcreteDesignId]}" />
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Proyecto / obra" />
+                    <TextBox Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}" MaxLength="200"
+                             AutomationProperties.Name="Proyecto" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[ProjectName]}" />
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Ubicación" />
+                    <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" MaxLength="200"
+                             AutomationProperties.Name="Ubicación" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Address]}" />
+                </StackPanel>
+            </StackPanel>
+
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,0,0,12"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="{Binding CloseText}" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Guardar" Command="{Binding SaveCommand}" IsDefault="True"
+                        Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibility}}" />
             </StackPanel>
         </StackPanel>
     </DataTemplate>

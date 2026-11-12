@@ -23,6 +23,12 @@ namespace ProbetaControl.Services
 
         public Task<CompressionTest> GetAsync(int id, CancellationToken cancellationToken = default) => _repository.GetAsync(id, cancellationToken);
 
+        public DateTime Today => _clock.Today;
+
+        /// <summary>Active tests with specimens to break today or earlier.</summary>
+        public Task<int> CountWithDueAsync(CancellationToken cancellationToken = default) =>
+            _repository.CountWithDueAsync(_clock.Today, cancellationToken);
+
         /// <param name="testUnlocked">Admin, unlocked by an admin, or a test created in this session.</param>
         public Task SaveAsync(CompressionTest test, bool testUnlocked, CancellationToken cancellationToken = default)
         {
@@ -31,7 +37,14 @@ namespace ProbetaControl.Services
                 Require(SpecimenEditPolicy.CanChangeStructure(testUnlocked));
             }
 
-            var errors = new ValidationErrors()
+            Validate(test).ThrowIfAny();
+            return test.Id == 0 ? _repository.InsertAsync(test, cancellationToken) : _repository.UpdateAsync(test, cancellationToken);
+        }
+
+        /// <summary>Header rules. Keys: ProjectName, Address, ClientId, ConcreteProviderId, ConcreteDesignId, TestDate.</summary>
+        public static ValidationErrors Validate(CompressionTest test, ValidationErrors errors = null)
+        {
+            errors = (errors ?? new ValidationErrors())
                 .Required("ProjectName", test.ProjectName)
                 .MaxLength("ProjectName", test.ProjectName, 200)
                 .Required("Address", test.Address)
@@ -57,8 +70,7 @@ namespace ProbetaControl.Services
                 errors.Add("TestDate", "Ingrese la fecha.");
             }
 
-            errors.ThrowIfAny();
-            return test.Id == 0 ? _repository.InsertAsync(test, cancellationToken) : _repository.UpdateAsync(test, cancellationToken);
+            return errors;
         }
 
         public Task SetArchivedAsync(CompressionTest test, bool archived, bool testUnlocked, CancellationToken cancellationToken = default)

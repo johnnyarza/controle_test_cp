@@ -531,6 +531,77 @@
         </Setter>
     </Style>
 
+    <!--
+        Date field (dd/mm/aaaa) with a calendar button; wired by b:DateBox (see Views/Behaviors/DateBox.cs).
+        Bind Text to a string property with UpdateSourceTrigger=PropertyChanged.
+    -->
+    <Style x:Key="DateBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="b:DateBox.IsEnabled" Value="True" />
+        <Setter Property="MaxLength" Value="10" />
+        <Setter Property="Width" Value="150" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Padding" Value="6,4,2,4" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{StaticResource Radius.Control}"
+                            SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False" VerticalAlignment="Center"
+                                          HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" />
+                            <ToggleButton x:Name="PART_Toggle" Grid.Column="1" Width="30" Focusable="False" Cursor="Hand"
+                                          IsChecked="{Binding IsOpen, ElementName=PART_Popup, Mode=TwoWay}"
+                                          ToolTip="Elegir en el calendario (Alt+↓)" AutomationProperties.Name="Calendario">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="Bd" Background="Transparent" CornerRadius="0,4,4,0">
+                                            <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Calendar}"
+                                                  Stroke="{StaticResource Brush.TextSecondary}" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush.SurfaceHover}" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush.PrimarySoft}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <Popup x:Name="PART_Popup" StaysOpen="False" Placement="Bottom" AllowsTransparency="True"
+                                   PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                <Border Margin="0,2,8,8" Background="{StaticResource Brush.Surface}" BorderBrush="{StaticResource Brush.Border}"
+                                        BorderThickness="1" CornerRadius="{StaticResource Radius.Control}" Padding="4">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="8" ShadowDepth="2" Direction="315" Opacity="0.18" />
+                                    </Border.Effect>
+                                    <!-- Spanish month and day names; weeks start on Monday. -->
+                                    <Calendar x:Name="PART_Calendar" Language="es-ES" FirstDayOfWeek="Monday"
+                                              BorderThickness="0" Background="Transparent" />
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- A click on the button while the calendar is open just closes it (no reopen). -->
+                        <Trigger SourceName="PART_Popup" Property="IsOpen" Value="True">
+                            <Setter TargetName="PART_Toggle" Property="IsHitTestVisible" Value="False" />
+                        </Trigger>
+                        <Trigger Property="IsReadOnly" Value="True">
+                            <Setter TargetName="PART_Toggle" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="PasswordBox">
         <Setter Property="Foreground" Value="{StaticResource Brush.Text}" />
         <Setter Property="Background" Value="{StaticResource Brush.Surface}" />

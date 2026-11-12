@@ -44,7 +44,15 @@ namespace ProbetaControl.ViewModels.Infrastructure
         public bool IsBusy
         {
             get => _isBusy;
-            private set => SetProperty(ref _isBusy, value);
+            private set
+            {
+                if (SetProperty(ref _isBusy, value))
+                {
+                    // Commands gated on !IsBusy (e.g. "Buscar…" after the form loads) must re-check now,
+                    // not at the user's next click or key press.
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+                }
+            }
         }
 
         public string Message
@@ -144,6 +152,15 @@ namespace ProbetaControl.ViewModels.Infrastructure
             }
 
             Raise(changed);
+        }
+
+        /// <summary>Clears one field, e.g. when the user picked a value for it in a dialog.</summary>
+        public void Clear(string field)
+        {
+            if (field != null && _errors.Remove(field))
+            {
+                Raise(new[] { field });
+            }
         }
 
         public void Clear()

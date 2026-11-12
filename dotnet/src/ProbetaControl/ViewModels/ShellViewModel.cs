@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Windows.Input;
 using ProbetaControl.Services;
 using ProbetaControl.ViewModels.Catalog;
+using ProbetaControl.ViewModels.CompressionTests;
 using ProbetaControl.ViewModels.Infrastructure;
 
 namespace ProbetaControl.ViewModels
@@ -29,7 +30,7 @@ namespace ProbetaControl.ViewModels
 
             NavigationItems = new ObservableCollection<NavigationItem>
             {
-                new NavigationItem("Ensayos", () => new PlaceholderPageViewModel("Ensayos")),
+                new NavigationItem("Ensayos", () => new TestsPageViewModel(services.Tests, services.Clients, services.Designs, dialogs, session)),
                 new NavigationItem("Clientes", () => new ClientsPageViewModel(services.Clients, dialogs, session)),
                 new NavigationItem("Proveedores", () => new ProvidersPageViewModel(services.Providers, dialogs, session)),
                 new NavigationItem("Materiales", () => new MaterialsPageViewModel(services.Materials, services.Providers, dialogs, session)),
