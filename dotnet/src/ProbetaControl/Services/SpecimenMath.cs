@@ -41,6 +41,10 @@ namespace ProbetaControl.Services
             return (double)ruptureLoadTon.Value * 1000 / areaCm2;
         }
 
+        /// <summary>Strength as a percentage of the design fck (100 = reached it). Null without a result or an fck.</summary>
+        public static double? PercentOfFck(double? strengthKgPerCm2, decimal designFck) =>
+            strengthKgPerCm2.HasValue && designFck > 0 ? strengthKgPerCm2.Value / (double)designFck * 100 : (double?)null;
+
         public static SpecimenStatus Status(Specimen specimen, DateTime today)
         {
             if (specimen.IsArchived)

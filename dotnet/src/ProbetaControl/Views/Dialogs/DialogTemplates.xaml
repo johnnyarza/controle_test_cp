@@ -469,4 +469,359 @@
         </StackPanel>
     </DataTemplate>
 
+    <!--
+        Probeta form (layout A): sections Identificación, Fechas (moldeo + edad = rotura), Medidas, Rotura with
+        result tiles (densidad, resistencia, % del fck).
+    -->
+    <DataTemplate DataType="{x:Type t:SpecimenEditorViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" Margin="0,0,0,2" />
+            <TextBlock Style="{StaticResource MutedText}" Text="{Binding StartNote}"
+                       Visibility="{Binding StartNote, Converter={StaticResource NotEmptyToVisibility}}" />
+            <Border Height="14" />
+
+            <Border Style="{StaticResource MessageBanner}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+
+            <Border Background="{StaticResource Brush.WarningSoft}" BorderBrush="{StaticResource Brush.Warning}" BorderThickness="1"
+                    CornerRadius="{StaticResource Radius.Control}" Padding="10,8" Margin="0,0,0,14"
+                    Visibility="{Binding Notice, Converter={StaticResource NotEmptyToVisibility}}">
+                <DockPanel>
+                    <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Lock}" Stroke="{StaticResource Brush.Warning}"
+                          VerticalAlignment="Top" Margin="0,1,8,0" />
+                    <TextBlock Text="{Binding Notice}" TextWrapping="Wrap" AutomationProperties.Name="Aviso" />
+                </DockPanel>
+            </Border>
+
+            <!-- Identificación -->
+            <TextBlock Style="{StaticResource SectionLabel}" Text="IDENTIFICACIÓN" />
+            <Grid Margin="0,0,0,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="120" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Descripción" />
+                    <TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" IsReadOnly="{Binding IsMeasurementsReadOnly}"
+                             AutomationProperties.Name="Descripción" b:FocusBehavior.FocusOnLoad="True" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Code]}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Slump (cm)" />
+                    <TextBox Text="{Binding Slump, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right"
+                             IsReadOnly="{Binding IsMeasurementsReadOnly}" AutomationProperties.Name="Slump" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Slump]}" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Fechas: moldeo + edad = rotura -->
+            <Border Style="{StaticResource Tile}" Padding="14,10,14,0" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource SectionLabel}" Text="FECHAS" />
+                    <WrapPanel>
+                        <StackPanel Style="{StaticResource FormField}" Margin="0,0,8,6">
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Moldeo" />
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox Style="{StaticResource DateBox}" Width="140" Text="{Binding MoldDate, UpdateSourceTrigger=PropertyChanged}"
+                                         IsReadOnly="{Binding IsMeasurementsReadOnly}" AutomationProperties.Name="Fecha de moldeo" ToolTip="dd/mm/aaaa" />
+                                <Button Content="Hoy" Command="{Binding TodayCommand}" Margin="4,0,0,0" Padding="8,5" ToolTip="Moldeada hoy" />
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[MoldDate]}" />
+                        </StackPanel>
+                        <TextBlock Text="+" Foreground="{StaticResource Brush.TextMuted}" Margin="0,26,8,0" FontSize="15" />
+                        <StackPanel Style="{StaticResource FormField}" Margin="0,0,8,6">
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Edad (días)" />
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox Text="{Binding AgeDays, UpdateSourceTrigger=PropertyChanged}" Width="52" MaxLength="4" TextAlignment="Right"
+                                         IsReadOnly="{Binding IsMeasurementsReadOnly}" AutomationProperties.Name="Edad en días"
+                                         ToolTip="Con la fecha de moldeo calcula la fecha de rotura" />
+                                <Button Content="7" Command="{Binding AgeCommand}" CommandParameter="7" Margin="4,0,0,0" Padding="9,5" MinWidth="34"
+                                        ToolTip="Rotura a los 7 días" AutomationProperties.Name="7 días" />
+                                <Button Content="14" Command="{Binding AgeCommand}" CommandParameter="14" Margin="4,0,0,0" Padding="9,5" MinWidth="34"
+                                        ToolTip="Rotura a los 14 días" AutomationProperties.Name="14 días" />
+                                <Button Content="28" Command="{Binding AgeCommand}" CommandParameter="28" Margin="4,0,0,0" Padding="9,5" MinWidth="34"
+                                        ToolTip="Rotura a los 28 días" AutomationProperties.Name="28 días" />
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[AgeDays]}" />
+                        </StackPanel>
+                        <TextBlock Text="=" Foreground="{StaticResource Brush.TextMuted}" Margin="0,26,8,0" FontSize="15" />
+                        <StackPanel Style="{StaticResource FormField}" Margin="0,0,0,6">
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Rotura" />
+                            <TextBox Style="{StaticResource DateBox}" Width="140" Text="{Binding RuptureDate, UpdateSourceTrigger=PropertyChanged}"
+                                     IsReadOnly="{Binding IsMeasurementsReadOnly}" AutomationProperties.Name="Fecha de rotura" ToolTip="dd/mm/aaaa" />
+                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[RuptureDate]}" />
+                        </StackPanel>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Medidas -->
+            <TextBlock Style="{StaticResource SectionLabel}" Text="MEDIDAS" />
+            <UniformGrid Columns="3" Margin="0,0,0,4">
+                <StackPanel Style="{StaticResource FormField}" Margin="0,0,12,16">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Diámetro (cm)" />
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Command="{Binding AverageDiameterCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Calculator}"
+                                Margin="4,0,0,0" ToolTip="Promedio de dos lecturas" AutomationProperties.Name="Promedio del diámetro" />
+                        <TextBox Text="{Binding DiameterCm, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right"
+                                 IsReadOnly="{Binding IsMeasurementsReadOnly}" AutomationProperties.Name="Diámetro" />
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[DiameterCm]}" />
+                </StackPanel>
+                <StackPanel Style="{StaticResource FormField}" Margin="0,0,12,16">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Altura (cm)" />
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Command="{Binding AverageHeightCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Calculator}"
+                                Margin="4,0,0,0" ToolTip="Promedio de dos lecturas" AutomationProperties.Name="Promedio de la altura" />
+                        <TextBox Text="{Binding HeightCm, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right"
+                                 IsReadOnly="{Binding IsMeasurementsReadOnly}" AutomationProperties.Name="Altura" />
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[HeightCm]}" />
+                </StackPanel>
+                <StackPanel Style="{StaticResource FormField}" Margin="0,0,0,16">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Peso (kg)" />
+                    <TextBox Text="{Binding WeightKg, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right"
+                             IsReadOnly="{Binding IsMeasurementsReadOnly}" AutomationProperties.Name="Peso" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[WeightKg]}" />
+                </StackPanel>
+            </UniformGrid>
+
+            <!-- Rotura + results -->
+            <TextBlock Style="{StaticResource SectionLabel}" Text="ROTURA" />
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Rotura (t)" />
+                    <TextBox Text="{Binding RuptureLoadTon, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right"
+                             IsReadOnly="{Binding IsLoadReadOnly}" AutomationProperties.Name="Rotura en toneladas"
+                             b:FocusBehavior.FocusOnLoad="{Binding IsMeasurementsReadOnly}" ToolTip="Vacío hasta romper la probeta" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[RuptureLoadTon]}" />
+                </StackPanel>
+                <Border Grid.Column="2" Style="{StaticResource Tile}" VerticalAlignment="Bottom">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TileLabel}" Text="Densidad" />
+                        <TextBlock Style="{StaticResource TileValue}" Text="{Binding DensityText}" AutomationProperties.Name="Densidad" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="4" Style="{StaticResource Tile}" VerticalAlignment="Bottom">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TileLabel}" Text="Resistencia" />
+                        <TextBlock Style="{StaticResource TileValue}" Text="{Binding StrengthValueText}" AutomationProperties.Name="Resistencia" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="6" Style="{StaticResource Tile}" VerticalAlignment="Bottom">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TileLabel}" Text="{Binding PercentLabel}" />
+                        <TextBlock Style="{StaticResource TileValue}" Text="{Binding PercentText}" AutomationProperties.Name="Porcentaje del fck" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,0,0,12"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="{Binding CloseText}" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Guardar" Command="{Binding SaveCommand}" IsDefault="True"
+                        Visibility="{Binding CanSave, Converter={StaticResource BoolToVisibility}}" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Registrar rotura (layout C): the probeta read-only, one large field for the load, live result -->
+    <DataTemplate DataType="{x:Type t:RuptureEntryViewModel}">
+        <StackPanel>
+            <DockPanel Margin="0,0,0,14">
+                <Border DockPanel.Dock="Right" Style="{StaticResource Chip}" x:Name="StatusChip">
+                    <TextBlock x:Name="StatusChipText" Text="{Binding StatusText}" FontWeight="SemiBold" FontSize="{StaticResource FontSize.Small}"
+                               AutomationProperties.Name="Estado de la probeta" />
+                </Border>
+                <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" Margin="0" VerticalAlignment="Center" />
+            </DockPanel>
+
+            <Border Style="{StaticResource MessageBanner}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+
+            <Border Background="{StaticResource Brush.WarningSoft}" BorderBrush="{StaticResource Brush.Warning}" BorderThickness="1"
+                    CornerRadius="{StaticResource Radius.Control}" Padding="10,8" Margin="0,0,0,14"
+                    Visibility="{Binding Notice, Converter={StaticResource NotEmptyToVisibility}}">
+                <DockPanel>
+                    <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Lock}" Stroke="{StaticResource Brush.Warning}"
+                          VerticalAlignment="Top" Margin="0,1,8,0" />
+                    <TextBlock Text="{Binding Notice}" TextWrapping="Wrap" AutomationProperties.Name="Aviso" />
+                </DockPanel>
+            </Border>
+
+            <!-- What is being broken -->
+            <Border Style="{StaticResource Tile}" Padding="14,10" Margin="0,0,0,16">
+                <UniformGrid Columns="3">
+                    <StackPanel Margin="0,0,8,8"><TextBlock Style="{StaticResource TileLabel}" Text="Descripción" /><TextBlock Text="{Binding Specimen.Code}" TextTrimming="CharacterEllipsis" /></StackPanel>
+                    <StackPanel Margin="0,0,8,8"><TextBlock Style="{StaticResource TileLabel}" Text="Moldeo" /><TextBlock Text="{Binding MoldDateText}" /></StackPanel>
+                    <StackPanel Margin="0,0,0,8"><TextBlock Style="{StaticResource TileLabel}" Text="Edad" /><TextBlock Text="{Binding AgeText}" /></StackPanel>
+                    <StackPanel Margin="0,0,8,0"><TextBlock Style="{StaticResource TileLabel}" Text="Diámetro" /><TextBlock Text="{Binding Specimen.DiameterCm, StringFormat={}{0:0.00} cm}" /></StackPanel>
+                    <StackPanel Margin="0,0,8,0"><TextBlock Style="{StaticResource TileLabel}" Text="Altura" /><TextBlock Text="{Binding Specimen.HeightCm, StringFormat={}{0:0.00} cm}" /></StackPanel>
+                    <StackPanel><TextBlock Style="{StaticResource TileLabel}" Text="Peso" /><TextBlock Text="{Binding Specimen.WeightKg, StringFormat={}{0:0.000} kg}" /></StackPanel>
+                </UniformGrid>
+            </Border>
+
+            <!-- The one thing to type -->
+            <TextBlock Text="Rotura (toneladas)" FontWeight="SemiBold" Margin="0,0,0,6" />
+            <TextBox Text="{Binding RuptureLoadTon, UpdateSourceTrigger=PropertyChanged}" Width="200" HorizontalAlignment="Left"
+                     FontSize="22" TextAlignment="Right" Padding="10,6" IsReadOnly="{Binding CanSave, Converter={StaticResource InverseBool}}"
+                     AutomationProperties.Name="Rotura en toneladas" b:FocusBehavior.FocusOnLoad="True" />
+            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[RuptureLoadTon]}" />
+            <Border Height="12" />
+
+            <UniformGrid Columns="2" Margin="0,0,0,12">
+                <Border Style="{StaticResource Tile}" Margin="0,0,12,0" Padding="14,8">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TileLabel}" Text="Resistencia" />
+                        <TextBlock Style="{StaticResource TileValueLarge}" AutomationProperties.Name="Resistencia">
+                            <Run Text="{Binding StrengthText, Mode=OneWay}" />
+                            <Run Text="kg/cm²" FontSize="13" FontWeight="Normal" Foreground="{StaticResource Brush.TextMuted}" />
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Tile}" Padding="14,8" Background="{StaticResource Brush.SuccessSoft}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TileLabel}" Text="{Binding PercentLabel}" Foreground="{StaticResource Brush.Success}" />
+                        <TextBlock Style="{StaticResource TileValueLarge}" Text="{Binding PercentText}" Foreground="{StaticResource Brush.Success}"
+                                   AutomationProperties.Name="Porcentaje del fck" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,16"
+                        Visibility="{Binding LockNote, Converter={StaticResource NotEmptyToVisibility}}">
+                <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Lock}" Stroke="{StaticResource Brush.TextMuted}"
+                      Width="14" Height="14" Margin="0,0,6,0" />
+                <TextBlock Style="{StaticResource MutedText}" Text="{Binding LockNote}" FontSize="{StaticResource FontSize.Small}" />
+            </StackPanel>
+
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,0,0,12"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+
+            <WrapPanel HorizontalAlignment="Right">
+                <Button Content="{Binding CloseText}" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Content="{Binding NextText}" Command="{Binding SaveAndNextCommand}" Margin="0,0,8,0"
+                        ToolTip="Guarda y abre la siguiente probeta para romper"
+                        Visibility="{Binding HasNext, Converter={StaticResource BoolToVisibility}}" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Guardar" Command="{Binding SaveCommand}" IsDefault="True"
+                        Visibility="{Binding CanSave, Converter={StaticResource BoolToVisibility}}" />
+            </WrapPanel>
+        </StackPanel>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Status}" Value="Overdue">
+                <Setter TargetName="StatusChip" Property="Background" Value="{StaticResource Brush.RowOverdue}" />
+                <Setter TargetName="StatusChipText" Property="Foreground" Value="{StaticResource Brush.Error}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Status}" Value="DueSoon">
+                <Setter TargetName="StatusChip" Property="Background" Value="{StaticResource Brush.RowDueSoon}" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- Average of two readings (diameter / height) -->
+    <DataTemplate DataType="{x:Type t:AverageCalculatorViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" />
+            <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,16"
+                       Text="Mida dos veces (por ejemplo, en cruz) y se usa el promedio." />
+            <WrapPanel>
+                <StackPanel Style="{StaticResource FormField}" Width="160" Margin="0,0,16,0">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Lectura 1" />
+                    <TextBox Text="{Binding Reading1, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right"
+                             AutomationProperties.Name="Lectura 1" b:FocusBehavior.FocusOnLoad="True" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Reading1]}" />
+                </StackPanel>
+                <StackPanel Style="{StaticResource FormField}" Width="160">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Lectura 2" />
+                    <TextBox Text="{Binding Reading2, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right"
+                             AutomationProperties.Name="Lectura 2" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Reading2]}" />
+                </StackPanel>
+            </WrapPanel>
+            <TextBlock Margin="0,0,0,20">
+                <Run Foreground="{StaticResource Brush.TextSecondary}" Text="{Binding Label, Mode=OneWay}" />
+                <Run Foreground="{StaticResource Brush.TextSecondary}" Text="promedio:" />
+                <Run FontWeight="SemiBold" Text="{Binding ResultText, Mode=OneWay}" />
+            </TextBlock>
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Usar promedio" Command="{Binding ApplyCommand}" IsDefault="True" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Specimen filter: mold dates and/or probeta numbers -->
+    <DataTemplate DataType="{x:Type t:SpecimenFilterViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" Margin="0,0,0,16" />
+            <WrapPanel>
+                <StackPanel Style="{StaticResource FormField}" Width="170" Margin="0,0,16,0">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Moldeo desde" />
+                    <TextBox Style="{StaticResource DateBox}" Text="{Binding MoldDateFrom, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.Name="Moldeo desde" b:FocusBehavior.FocusOnLoad="True" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[MoldDateFrom]}" />
+                </StackPanel>
+                <StackPanel Style="{StaticResource FormField}" Width="170">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Moldeo hasta" />
+                    <TextBox Style="{StaticResource DateBox}" Text="{Binding MoldDateTo, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.Name="Moldeo hasta" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[MoldDateTo]}" />
+                </StackPanel>
+            </WrapPanel>
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Probetas (Nº)" />
+                <TextBox Text="{Binding IdRanges, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Números de probeta" />
+                <TextBlock Style="{StaticResource MutedText}" Text="Ejemplo: 1-5, 8, 10-12. Vacío = todas." Margin="0,4,0,0" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[IdRanges]}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Filtrar" Command="{Binding ApplyCommand}" IsDefault="True"
+                        b:ButtonIcon.Icon="{StaticResource Icon.Filter}" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Administrator unlocks a test for the signed-in user -->
+    <DataTemplate DataType="{x:Type t:AdminUnlockViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" />
+            <TextBlock Style="{StaticResource MutedText}" Text="{Binding Explanation}" Margin="0,0,0,16" />
+            <Border Style="{StaticResource MessageBanner}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Usuario administrador" />
+                <TextBox Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Usuario administrador"
+                         b:FocusBehavior.FocusOnLoad="True" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[UserName]}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Contraseña" />
+                <PasswordBox b:PasswordBoxBinding.Password="{Binding Password}" AutomationProperties.Name="Contraseña" />
+            </StackPanel>
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,0,0,12"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Desbloquear" Command="{Binding SaveCommand}" IsDefault="True"
+                        b:ButtonIcon.Icon="{StaticResource Icon.Unlock}" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
 </ResourceDictionary>

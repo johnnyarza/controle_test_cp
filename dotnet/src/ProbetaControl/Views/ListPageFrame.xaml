@@ -15,7 +15,7 @@
     -->
     <ContextMenu x:Key="ListRowMenu" x:Shared="False"
                  DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
-        <MenuItem Header="Editar" FontWeight="SemiBold" Command="{Binding EditCommand}"
+        <MenuItem Header="{Binding EditText}" FontWeight="SemiBold" Command="{Binding EditCommand}"
                   b:ButtonIcon.Icon="{StaticResource Icon.Edit}" />
         <MenuItem Header="Duplicar" Command="{Binding DuplicateCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Copy}"
                   Visibility="{Binding SupportsDuplicate, Converter={StaticResource BoolToVisibility}}" />
@@ -56,7 +56,7 @@
                                       VerticalAlignment="Center" Margin="4,0,16,8" />
                             <Button Style="{StaticResource PrimaryButton}" Content="Nuevo" Command="{Binding NewCommand}"
                                     b:ButtonIcon.Icon="{StaticResource Icon.Plus}" Margin="0,0,8,8" />
-                            <Button Content="Editar" Command="{Binding EditCommand}"
+                            <Button Content="{Binding EditText}" Command="{Binding EditCommand}"
                                     b:ButtonIcon.Icon="{StaticResource Icon.Edit}" Margin="0,0,8,8" />
                             <Button Content="Duplicar" Command="{Binding DuplicateCommand}"
                                     b:ButtonIcon.Icon="{StaticResource Icon.Copy}" Margin="0,0,8,8"

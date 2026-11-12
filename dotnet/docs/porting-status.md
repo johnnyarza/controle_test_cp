@@ -4,7 +4,7 @@ The legacy Java/JavaFX app (repo root, `src/`) is being rewritten as a WPF app o
 in `dotnet/`, on branch `csharp-port`. The Java code stays untouched until the C# version reaches parity
 and is signed off.
 
-_Last updated: 2026-11-11 (end of phase 4, group 4)._
+_Last updated: 2026-11-11 (end of phase 4, group 5)._
 
 ## Status
 
@@ -37,12 +37,16 @@ _Last updated: 2026-11-11 (end of phase 4, group 4)._
    (date field with calendar, client and concrete provider via the client search dialog, "Igual que el
    cliente", design, project, address); "Nuevo cliente" inside the client search. Locked tests open
    read-only for operators.
-5. **Next:** Test detail (double-click on an ensayo): header, specimen grid (red = overdue, yellow =
-   due today/tomorrow), add/edit/copy/archive specimens, filter by mold dates and ID ranges (`1-5, 8`),
-   admin unlock, "N probetas para romper", specimen form calculators (average of two readings,
-   rupture date = mold date + N days).
-6. Due-specimens warning dialog; Configuración (report logo/stamp stored in the DB, user administration,
-   connection settings, change own password); Acerca de.
+5. Done: Ensayo detail page (Abrir / double-click; "Nuevo" opens the new ensayo at once; "← Ensayos"
+   returns to the list as it was). Layout chosen by the user from mockups: title with lock chip and
+   "Editar datos" / "Desbloquear…", header on one line, indicator tiles (probetas, para romper, rotas,
+   average strength + % fck), full-width probetas table (red = overdue, yellow = due today/tomorrow,
+   Estado and % fck columns). Probeta form in sections (Moldeo + Edad = Rotura, Hoy, average of two
+   readings, live density / strength / % fck, pre-filled from the newest probeta); "Registrar rotura"
+   quick dialog with "Guardar y siguiente" (also double-click / Ctrl+R on an unbroken probeta).
+   Copiar, Archivar, filter by mold dates and numbers (`1-5, 8`), Desbloquear / Bloquear.
+6. **Next:** Due-specimens warning dialog; Configuración (report logo/stamp stored in the DB, user
+   administration, connection settings, change own password); Acerca de.
 
 ## Decisions
 
@@ -70,7 +74,8 @@ _Last updated: 2026-11-11 (end of phase 4, group 4)._
   Dates are typed day first (`DateInput`: `05/11/2026`, `5-11-26`, `5.11.2026`) in the `DateBox` field,
   never with the PC's regional settings; the stock DatePicker is not used for that reason.
 - Tests are locked: an operator changes only the tests they created in this session (or that an
-  administrator unlocks in group 5); administrators change any test (`AppSession.IsTestUnlocked`).
+  administrator unlocks with "Desbloquear"); administrators change any test (`AppSession.IsTestUnlocked`).
+  Archiving probetas is for administrators, like every other archive.
 - Every window must handle resizing (minimums fit about 900 × 500).
 
 ## Development setup

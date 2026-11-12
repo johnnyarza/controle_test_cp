@@ -49,7 +49,40 @@ Add an item whenever a question comes up that a user would also ask. The help it
   "Buscar…"; "Igual que el cliente" copies the client), Dosificación, Proyecto / obra, Ubicación.
 - **Locked ensayos.** An operator can change the ensayos they created since logging in; others open
   read-only ("El ensayo está bloqueado…", "Cerrar"). An administrator can change any ensayo, and
-  (group 5) unlock one for an operator. Archiving ensayos is for administrators.
+  unlock one for an operator. Archiving ensayos is for administrators.
+
+## Ensayo (detail page)
+
+- **Opening.** "Abrir", double-click or Enter on an ensayo; "Nuevo" asks for the header and then opens
+  the new ensayo. "← Ensayos" (or Alt+←) returns to the list with the same search and filters.
+- **Colours.** Red = retrasada (rupture date passed, not broken); yellow = to break today or tomorrow;
+  grey = archived. The Estado column says the same in words (Retrasada, Hoy, Mañana, Pendiente, Rota),
+  so colour is never the only clue. "N probetas para romper" counts today's and overdue ones.
+- **Locked / unlocked.** The line under the header says what the user may do. Locked: an operator can
+  only type the rupture load of a probeta due today or later (the form says so and starts on
+  "Rotura (t)"); overdue or already broken probetas need an administrator. "Desbloquear" asks an
+  administrator's user and password and unlocks this ensayo for the signed-in operator until
+  "Bloquear" or logout. Administrators are always unlocked.
+- **Layout.** Title with the lock state (Bloqueado / Desbloqueado / Administrador) and "Editar datos",
+  the header on one line, four tiles (probetas, para romper, rotas, average strength with % fck; they
+  always cover the whole ensayo, filter or not), then the probetas table with its buttons.
+- **Registrar rotura** (button, Ctrl+R, right-click, or double-click / Enter on a probeta without a
+  load): a small dialog showing the probeta read-only with one large field for the load and the
+  resulting strength and % fck. "Guardar y siguiente (Nº X)" saves and opens the next probeta due
+  today or earlier, so the day's probetas are broken one after another. Double-click on a broken
+  probeta opens the full form ("Editar").
+- **Probeta form.** Sections Identificación, Fechas (Moldeo + Edad = Rotura), Medidas, Rotura.
+  "Hoy" fills the mold date; Edad (días) or the 7 / 14 / 28 buttons fill the rupture
+  date (changing the rupture date updates the age; changing the mold date keeps the age). The
+  calculator button next to Diámetro / Altura averages two readings. Densidad and Resistencia are
+  shown as you type, with the strength as a percentage of the design fck. A new probeta starts with
+  the slump, diameter and height of the ensayo's newest probeta (a note says which); the weight and
+  the dates are typed each time. Saving locks the measurements (legacy rule).
+- **% fck.** The grid shows each broken probeta's strength as a percentage of the design fck
+  (shown with the design in the header). Early ages naturally give lower values.
+- **Copiar.** A new probeta with the selected one's measurements and dates, without its rupture load.
+- **Filtrar.** By mold date range and/or probeta numbers ("1-5, 8, 10-12"); the active filter shows in
+  a blue bar with "Quitar filtro". The due count always covers the whole ensayo.
 
 ## Dosificaciones
 

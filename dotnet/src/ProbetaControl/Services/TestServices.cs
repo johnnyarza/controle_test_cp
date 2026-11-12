@@ -101,6 +101,8 @@ namespace ProbetaControl.Services
 
         public DateTime Today => _clock.Today;
 
+        public Task<Specimen> GetAsync(int id, CancellationToken cancellationToken = default) => _repository.GetAsync(id, cancellationToken);
+
         public Task<IReadOnlyList<Specimen>> ListByTestAsync(int compressionTestId, SpecimenFilter filter = null,
             CancellationToken cancellationToken = default) =>
             _repository.ListByTestAsync(compressionTestId, filter, cancellationToken);

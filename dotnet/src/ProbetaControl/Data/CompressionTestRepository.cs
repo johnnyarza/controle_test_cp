@@ -13,7 +13,8 @@ namespace ProbetaControl.Data
 
         private const string Select =
             "SELECT t.Id, t.ClientId, t.ConcreteProviderId, t.ConcreteDesignId, t.ProjectName, t.Address, t.TestDate, " +
-            "t.IsArchived, t.RowVersion, c.Name AS ClientName, cp.Name AS ConcreteProviderName, d.Description AS ConcreteDesignDescription " +
+            "t.IsArchived, t.RowVersion, c.Name AS ClientName, cp.Name AS ConcreteProviderName, d.Description AS ConcreteDesignDescription, " +
+            "d.Fck AS ConcreteDesignFck " +
             "FROM CompressionTests t " +
             "JOIN Clients c ON c.Id = t.ClientId " +
             "JOIN Clients cp ON cp.Id = t.ConcreteProviderId " +

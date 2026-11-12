@@ -34,6 +34,9 @@ namespace ProbetaControl.Models
         /// <summary>Read-only, filled by queries.</summary>
         public string ConcreteDesignDescription { get; set; }
 
+        /// <summary>Read-only, filled by queries: the design strength (kg/cm²) results are compared with.</summary>
+        public decimal ConcreteDesignFck { get; set; }
+
         public IReadOnlyDictionary<string, object> GetAuditValues() => new Dictionary<string, object>
         {
             ["ClientId"] = ClientId,

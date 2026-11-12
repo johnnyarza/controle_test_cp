@@ -19,7 +19,9 @@ namespace ProbetaControl.Tests.ViewModels
         }
 
         private TestsPageViewModel NewPage(ScriptedDialogs dialogs) =>
-            new TestsPageViewModel(Services.Tests, Services.Clients, Services.Designs, dialogs, Session);
+            new TestsPageViewModel(Services, dialogs, Navigator);
+
+        private RecordingNavigator Navigator { get; set; } = new RecordingNavigator();
 
         private TestEditorViewModel NewEditor(ScriptedDialogs dialogs, int? id = null) =>
             new TestEditorViewModel(Services.Tests, Services.Clients, Services.Designs, Session, dialogs, id);
@@ -85,6 +87,11 @@ namespace ProbetaControl.Tests.ViewModels
             Assert.That(page.Items[0].SpecimenCount, Is.EqualTo(3));
             Assert.That(page.Items[0].DueCount, Is.EqualTo(1));
             Assert.That(page.Items[1].DueCount, Is.Zero);
+
+            Assert.That(page.EditText, Is.EqualTo("Abrir"));
+            page.SelectedItem = page.Items[1];
+            await ((AsyncRelayCommand)page.EditCommand).ExecuteAsync();
+            Assert.That(((TestDetailPageViewModel)Navigator.Opened.Last()).TestId, Is.EqualTo(older.Id), "Abrir opens the ensayo");
             Assert.That(page.DueTestCount, Is.GreaterThanOrEqualTo(1));
             Assert.That(page.OnlyDueText, Does.StartWith("Solo con probetas para romper ("));
 
@@ -207,6 +214,8 @@ namespace ProbetaControl.Tests.ViewModels
             var created = page.SelectedItem;
             Assert.That(created?.ProjectName, Is.EqualTo("Edificio Mirador"));
             Assert.That(created.TestDate, Is.EqualTo(Today.AddDays(-2)), "8-3-26 is 8 March 2026");
+            var opened = (TestDetailPageViewModel)Navigator.Opened.Last();
+            Assert.That(opened.TestId, Is.EqualTo(created.Id), "a new ensayo opens at once, ready for its probetas");
             Assert.That(Session.IsTestUnlocked(created.Id), Is.True, "its creator may keep editing it");
 
             var stored = await Services.Tests.GetAsync(created.Id);

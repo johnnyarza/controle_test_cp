@@ -47,6 +47,9 @@ namespace ProbetaControl.Services
         /// <summary>A test created by this user, or unlocked for them by an administrator.</summary>
         public void UnlockTest(int testId) => _unlockedTests.Add(testId);
 
+        /// <summary>"Bloquear": the operator gives the unlock back before leaving the PC.</summary>
+        public void LockTest(int testId) => _unlockedTests.Remove(testId);
+
         public void RequireAdmin()
         {
             if (!IsAdmin)

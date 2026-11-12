@@ -17,6 +17,8 @@ namespace ProbetaControl.ViewModels.CompressionTests
     /// </summary>
     public sealed class TestsPageViewModel : ListPageViewModel<CompressionTestListItem>
     {
+        private readonly AppServices _services;
+        private readonly IPageNavigator _navigator;
         private readonly CompressionTestService _tests;
         private readonly ClientService _clients;
         private readonly ConcreteDesignService _designs;
@@ -24,17 +26,21 @@ namespace ProbetaControl.ViewModels.CompressionTests
         private bool _onlyDue;
         private int _dueTestCount;
 
-        public TestsPageViewModel(CompressionTestService tests, ClientService clients, ConcreteDesignService designs,
-            IDialogService dialogs, AppSession session)
-            : base("Ensayos", dialogs, session)
+        public TestsPageViewModel(AppServices services, IDialogService dialogs, IPageNavigator navigator)
+            : base("Ensayos", dialogs, services.Session)
         {
-            _tests = tests;
-            _clients = clients;
-            _designs = designs;
+            _services = services;
+            _navigator = navigator;
+            _tests = services.Tests;
+            _clients = services.Clients;
+            _designs = services.Designs;
 
             ChooseClientFilterCommand = new RelayCommand(ChooseClientFilter);
             ClearClientFilterCommand = new RelayCommand(() => ClientFilter = null, () => ClientFilter != null);
         }
+
+        /// <summary>Double-click, Enter and "Abrir" open the ensayo with its probetas.</summary>
+        public override string EditText => "Abrir";
 
         /// <summary>Only this client's tests; null for all.</summary>
         public Client ClientFilter
@@ -111,6 +117,29 @@ namespace ProbetaControl.ViewModels.CompressionTests
         protected override EditorDialogViewModel CreateEditor(CompressionTestListItem item) =>
             new TestEditorViewModel(_tests, _clients, _designs, Session, Dialogs, item?.Id);
 
+        /// <summary>
+        /// An existing ensayo opens its detail page. "Nuevo" asks for the header first and then opens the new
+        /// ensayo, ready for its probetas (as in the legacy app).
+        /// </summary>
+        protected override async Task EditAsync(CompressionTestListItem item)
+        {
+            if (item != null)
+            {
+                OpenDetail(item.Id);
+                return;
+            }
+
+            var editor = CreateEditor(null);
+            if (Dialogs.Show(editor))
+            {
+                await LoadAsync(append: false, selectId: editor.SavedId);
+                OpenDetail(editor.SavedId);
+            }
+        }
+
+        private void OpenDetail(int testId) =>
+            _navigator.Open(new TestDetailPageViewModel(_services, Dialogs, _navigator, testId));
+
         protected override async Task SetArchivedAsync(CompressionTestListItem item, bool archived)
         {
             var test = await _tests.GetAsync(item.Id) ?? throw new NotFoundException("el ensayo");
@@ -142,6 +171,8 @@ namespace ProbetaControl.ViewModels.CompressionTests
     {
         public const string LockedMessage = "El ensayo está bloqueado: solo un administrador puede modificar sus datos.";
 
+        private readonly AppServices _services;
+        private readonly IPageNavigator _navigator;
         private readonly CompressionTestService _tests;
         private readonly ClientService _clients;
         private readonly ConcreteDesignService _designs;

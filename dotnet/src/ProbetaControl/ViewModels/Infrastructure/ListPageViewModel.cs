@@ -140,6 +140,9 @@ namespace ProbetaControl.ViewModels.Infrastructure
 
         public virtual string DuplicateToolTip => "Nuevo registro a partir del seleccionado";
 
+        /// <summary>Text of the toolbar button and menu item that open the selected row ("Abrir" for ensayos).</summary>
+        public virtual string EditText => "Editar";
+
         public ICommand ToggleArchiveCommand { get; }
 
         protected abstract string EmptyListText { get; }
@@ -261,7 +264,8 @@ namespace ProbetaControl.ViewModels.Infrastructure
         /// <summary>Editor for a new record copied from <paramref name="item"/>; only called when <see cref="SupportsDuplicate"/>.</summary>
         protected virtual EditorDialogViewModel CreateDuplicate(T item) => throw new NotSupportedException();
 
-        private Task EditAsync(T item) => OpenEditorAsync(CreateEditor(item));
+        /// <summary>"Nuevo" (item null), "Editar", double-click and Enter. Pages that open a detail page override it.</summary>
+        protected virtual Task EditAsync(T item) => OpenEditorAsync(CreateEditor(item));
 
         private async Task OpenEditorAsync(EditorDialogViewModel editor)
         {

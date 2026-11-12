@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Windows.Input;
@@ -10,10 +11,11 @@ using ProbetaControl.ViewModels.Infrastructure;
 namespace ProbetaControl.ViewModels
 {
     /// <summary>Main window: top-bar navigation, the current page and the signed-in user.</summary>
-    public sealed class ShellViewModel : ObservableObject
+    public sealed class ShellViewModel : ObservableObject, IPageNavigator
     {
         private NavigationItem _selectedNavigationItem;
         private PageViewModel _currentPage;
+        private readonly Stack<PageViewModel> _backStack = new Stack<PageViewModel>();
 
         public ShellViewModel(AppServices services, IDialogService dialogs, Action logout)
         {
@@ -30,7 +32,7 @@ namespace ProbetaControl.ViewModels
 
             NavigationItems = new ObservableCollection<NavigationItem>
             {
-                new NavigationItem("Ensayos", () => new TestsPageViewModel(services.Tests, services.Clients, services.Designs, dialogs, session)),
+                new NavigationItem("Ensayos", () => new TestsPageViewModel(services, dialogs, this)),
                 new NavigationItem("Clientes", () => new ClientsPageViewModel(services.Clients, dialogs, session)),
                 new NavigationItem("Proveedores", () => new ProvidersPageViewModel(services.Providers, dialogs, session)),
                 new NavigationItem("Materiales", () => new MaterialsPageViewModel(services.Materials, services.Providers, dialogs, session)),
@@ -79,11 +81,38 @@ namespace ProbetaControl.ViewModels
 
         public ICommand LogoutCommand { get; }
 
-        private async void NavigateTo(NavigationItem item)
+        /// <summary>Opens a detail page; <see cref="Back"/> returns to the current one as it was.</summary>
+        public void Open(PageViewModel page)
+        {
+            if (CurrentPage != null)
+            {
+                CurrentPage.OnNavigatedFrom();
+                _backStack.Push(CurrentPage);
+            }
+
+            Show(page);
+        }
+
+        public void Back()
+        {
+            if (_backStack.Count == 0)
+            {
+                return;
+            }
+
+            CurrentPage?.OnNavigatedFrom();
+            Show(_backStack.Pop());
+        }
+
+        private void NavigateTo(NavigationItem item)
         {
             CurrentPage?.OnNavigatedFrom();
+            _backStack.Clear();
+            Show(item.CreatePage());
+        }
 
-            var page = item.CreatePage();
+        private async void Show(PageViewModel page)
+        {
             CurrentPage = page;
 
             try
