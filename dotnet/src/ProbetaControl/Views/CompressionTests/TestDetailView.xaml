@@ -70,7 +70,7 @@
             <!-- Title row; header actions on the right -->
             <DockPanel Margin="0,0,0,8">
                 <Button DockPanel.Dock="Left" Style="{StaticResource SubtleButton}" Content="Ensayos" Command="{Binding BackCommand}"
-                        b:ButtonIcon.Icon="{StaticResource Icon.Back}" Margin="-8,0,8,0" VerticalAlignment="Center"
+                        b:ButtonIcon.Icon="{StaticResource Icon.Back}" Margin="0,0,8,0" VerticalAlignment="Center"
                         ToolTip="Volver a la lista de ensayos (Alt+←)" AutomationProperties.Name="Volver a Ensayos" />
                 <WrapPanel DockPanel.Dock="Right" VerticalAlignment="Center">
                     <Button Content="Editar datos" Command="{Binding EditHeaderCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Edit}"
