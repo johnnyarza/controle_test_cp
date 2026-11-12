@@ -8,6 +8,11 @@ namespace ProbetaControl.Models
 
         public string Name { get; set; }
 
+        /// <summary>One of <see cref="MaterialTypes"/>.</summary>
+        public string MaterialType { get; set; } = MaterialTypes.Other;
+
+        public string TypeLabel => MaterialTypes.Label(MaterialType);
+
         public int? ProviderId { get; set; }
 
         /// <summary>Read-only, filled by queries.</summary>
@@ -17,9 +22,13 @@ namespace ProbetaControl.Models
 
         public int RowVersion { get; set; }
 
+        /// <summary>"Arena fina – Arenera Sur": the same material name can come from two providers.</summary>
+        public string DisplayName => string.IsNullOrEmpty(ProviderName) ? Name : Name + " – " + ProviderName;
+
         public IReadOnlyDictionary<string, object> GetAuditValues() => new Dictionary<string, object>
         {
             ["Name"] = Name,
+            ["MaterialType"] = MaterialType,
             ["ProviderId"] = ProviderId,
         };
 

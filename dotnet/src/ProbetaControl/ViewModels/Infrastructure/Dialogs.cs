@@ -24,6 +24,9 @@ namespace ProbetaControl.ViewModels.Infrastructure
 
         public abstract string Title { get; }
 
+        /// <summary>Starting width of the window; the user can still resize it.</summary>
+        public virtual double PreferredWidth => 480;
+
         /// <summary>Runs when the dialog opens (e.g. load fresh data). Errors appear in the dialog.</summary>
         public virtual Task InitializeAsync() => Task.CompletedTask;
 
@@ -86,5 +89,29 @@ namespace ProbetaControl.ViewModels.Infrastructure
         public ICommand ConfirmCommand { get; }
 
         public ICommand CancelCommand { get; }
+    }
+
+    /// <summary>A warning with a single "Aceptar" button (e.g. why a record can't be archived).</summary>
+    public sealed class MessageDialogViewModel : DialogViewModel
+    {
+        public MessageDialogViewModel(string title, string text)
+        {
+            Title = title;
+            Text = text;
+            CloseCommand = new RelayCommand(() => Close(true));
+        }
+
+        public override string Title { get; }
+
+        public string Text { get; }
+
+        public ICommand CloseCommand { get; }
+    }
+
+    public static class DialogServiceExtensions
+    {
+        /// <summary>Shows a warning the user can only acknowledge.</summary>
+        public static void Warn(this IDialogService dialogs, string title, string message) =>
+            dialogs.Show(new MessageDialogViewModel(title, message));
     }
 }

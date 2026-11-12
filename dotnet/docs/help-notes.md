@@ -16,6 +16,41 @@ Add an item whenever a question comes up that a user would also ask. The help it
 - **Only administrators archive and restore.** Operators can create and edit clients, providers and
   materials; the "Archivar"/"Restaurar" button is disabled for them (tooltip explains why).
   Archived records are hidden, never deleted: "Mostrar archivados" shows them in grey.
+- **Records in use can't be archived.** "Archivar" shows a warning (no question) listing up to 5 of the
+  records that still use it, and how many more:
+  - a client: active ensayos where it is the client or the concrete provider;
+  - a provider: active materials;
+  - a material: active dosificaciones;
+  - a dosificación: active ensayos.
+  Archived records don't count, so the way out is to archive those first (or change the material /
+  provider on them). Restoring is never blocked.
 - **Over-privileged MySQL accounts are refused.** The connection cannot be saved with an account
   that can DELETE, DROP, ALTER or CREATE (e.g. `root`). Explain why: records are archived, never
   deleted, and the program must not be able to change the database structure.
+
+## Dosificaciones
+
+- **Decimal numbers.** Every numeric field accepts a comma or a point as the decimal separator
+  ("12,5" = "12.5"). Thousands separators are not accepted ("1.234,5" gives "Número no válido."),
+  so a value is never misread. Lists show a point.
+- **Material table.** One row per material with its kg/m³, at most 8 rows; at least one material is
+  required. "Agregar material" adds a row (disabled at 8, tooltip says why); the bin removes a row; the
+  arrows change the order, which is the order saved and printed (rows are renumbered 1..n). Each row's
+  list only offers materials not used on another row. Empty rows are ignored when saving. The total
+  kg/m³ is shown under the quantities.
+- **Material type and a/c.** Each material has a Tipo: Cemento, Agua, Agregado, Aditivo or Otro
+  (Materiales → Editar). The design form and the Dosificaciones list show the water/cement ratio
+  a/c = kg of Agua / kg of Cemento (2 decimals); it shows "—" until the design has a Cemento and an
+  Agua with quantities. After the database update (script 011) existing materials get a type guessed
+  from their name (cemento…, agua…, arena/grava/piedra/árido…, aditivo…); the rest are "Otro" and
+  should be checked once.
+- **Designs used by ensayos.** Opening one shows a warning with the number of ensayos (archived ones
+  included): changing it also changes their data and reports. Only an administrator can change it;
+  an operator sees it read-only ("Cerrar" instead of "Guardar"). To change a mix that is already in use
+  without touching old reports, create a new design instead.
+- **Archived materials.** A design keeps showing a material that was archived later, marked
+  "(archivado)", and can still be saved with it. New designs can only pick active materials.
+- **Calculadora.** Fills the quantity of one material as a percentage of another
+  (destino = origen × % / 100), e.g. an admixture at 0,8 % of the cement. It needs at least two
+  materials chosen and the origin's quantity typed; it shows the result before "Aplicar" and writes it
+  into the destination row (3 decimals). It doesn't save: the design is saved with "Guardar".

@@ -51,6 +51,28 @@ namespace ProbetaControl.Data
             }, cancellationToken);
 
         /// <summary>
+        /// Counts the rows matched by <paramref name="fromWhere"/> ("FROM … WHERE …", parameter @id) and reads
+        /// the first few of their names.
+        /// </summary>
+        protected async Task<Models.RecordUsage> GetUsageAsync(string fromWhere, string nameExpression, string orderBy, int id,
+            CancellationToken cancellationToken)
+        {
+            var sql = $"SELECT COUNT(*) {fromWhere}; " +
+                      $"SELECT {nameExpression} {fromWhere} ORDER BY {orderBy} LIMIT {Models.RecordUsage.MaxExamples}";
+
+            using (var connection = await Db.OpenAsync(cancellationToken).ConfigureAwait(false))
+            using (var results = await connection.QueryMultipleAsync(Cmd(sql, new { id }, null, cancellationToken)).ConfigureAwait(false))
+            {
+                var count = await results.ReadSingleAsync<int>().ConfigureAwait(false);
+                var names = (await results.ReadAsync<string>().ConfigureAwait(false)).AsList();
+                return new Models.RecordUsage(count, names);
+            }
+        }
+
+        /// <summary>A compression test (alias t) named as "Obra (dd/MM/yyyy)".</summary>
+        protected const string TestNameExpression = "CONCAT(t.ProjectName, ' (', DATE_FORMAT(t.TestDate, '%d/%m/%Y'), ')')";
+
+        /// <summary>
         /// Archives or restores a row if nobody changed it since it was read; writes the audit row.
         /// Returns the new RowVersion.
         /// </summary>

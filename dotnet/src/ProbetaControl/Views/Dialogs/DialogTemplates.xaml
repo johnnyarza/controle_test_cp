@@ -18,6 +18,22 @@
         </StackPanel>
     </DataTemplate>
 
+    <!-- Warning with a single button -->
+    <DataTemplate DataType="{x:Type i:MessageDialogViewModel}">
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Warning}" Stroke="{StaticResource Brush.Warning}"
+                      Margin="0,0,8,0" />
+                <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" Margin="0" />
+            </StackPanel>
+            <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Margin="0,4,0,20" />
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Style="{StaticResource PrimaryButton}" Content="Aceptar" Command="{Binding CloseCommand}"
+                        IsDefault="True" IsCancel="True" b:FocusBehavior.FocusOnLoad="True" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
     <!-- Client / provider form (same fields) -->
     <DataTemplate x:Key="ContactEditorTemplate">
         <StackPanel>
@@ -81,6 +97,13 @@
                 <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Name]}" />
             </StackPanel>
             <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Tipo" />
+                <ComboBox ItemsSource="{Binding MaterialTypeOptions}" SelectedValuePath="Value" DisplayMemberPath="Label"
+                          SelectedValue="{Binding MaterialType}" AutomationProperties.Name="Tipo"
+                          ToolTip="Con Cemento y Agua, las dosificaciones calculan la relación agua/cemento (a/c)" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[MaterialType]}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource FormField}">
                 <TextBlock Style="{StaticResource FieldLabel}" Text="Proveedor" />
                 <ComboBox ItemsSource="{Binding Providers}" SelectedItem="{Binding Provider}" DisplayMemberPath="Name"
                           AutomationProperties.Name="Proveedor" />
@@ -92,6 +115,223 @@
             <StackPanel Style="{StaticResource DialogButtons}">
                 <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
                 <Button Style="{StaticResource PrimaryButton}" Content="Guardar" Command="{Binding SaveCommand}" IsDefault="True" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Concrete design form: description, fck, slump and the material table (up to 8 rows) -->
+    <DataTemplate DataType="{x:Type c:DesignEditorViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" Margin="0,0,0,16" />
+
+            <Border Style="{StaticResource MessageBanner}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+
+            <!-- Used by tests: changes reach their reports (operators: view only). -->
+            <Border Background="{StaticResource Brush.WarningSoft}" BorderBrush="{StaticResource Brush.Warning}" BorderThickness="1"
+                    CornerRadius="{StaticResource Radius.Control}" Padding="10,8" Margin="0,0,0,14"
+                    Visibility="{Binding UsageWarning, Converter={StaticResource NotEmptyToVisibility}}">
+                <DockPanel>
+                    <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Warning}" Stroke="{StaticResource Brush.Warning}"
+                          VerticalAlignment="Top" Margin="0,1,8,0" />
+                    <TextBlock Text="{Binding UsageWarning}" TextWrapping="Wrap" AutomationProperties.Name="Aviso" />
+                </DockPanel>
+            </Border>
+
+            <StackPanel IsEnabled="{Binding CanEdit}">
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Descripción" />
+                <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" MaxLength="150"
+                         AutomationProperties.Name="Descripción" b:FocusBehavior.FocusOnLoad="True" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Description]}" />
+            </StackPanel>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="fck (kg/cm²)" />
+                    <TextBox Text="{Binding Fck, UpdateSourceTrigger=PropertyChanged}" MaxLength="12"
+                             AutomationProperties.Name="fck (kg/cm²)" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Fck]}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Slump (cm, opcional)" />
+                    <TextBox Text="{Binding Slump, UpdateSourceTrigger=PropertyChanged}" MaxLength="10"
+                             AutomationProperties.Name="Slump (cm)" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Slump]}" />
+                </StackPanel>
+            </Grid>
+
+            <TextBlock Style="{StaticResource SectionTitle}" Text="Materiales" Margin="0,4,0,6" />
+
+            <!-- The table: header, one row per material, footer with the actions and the total.
+                 Header and rows share the column widths: number | material | quantity | row buttons. -->
+            <Border BorderBrush="{StaticResource Brush.Border}" BorderThickness="1"
+                    CornerRadius="{StaticResource Radius.Control}" Background="{StaticResource Brush.Surface}">
+                <StackPanel>
+                    <Border Background="{StaticResource Brush.SurfaceMuted}" Padding="8,6"
+                            BorderBrush="{StaticResource Brush.Divider}" BorderThickness="0,0,0,1"
+                            CornerRadius="3,3,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="4" />
+                                <ColumnDefinition Width="92" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="#" Margin="0" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource FieldLabel}" Text="Material" Margin="0" />
+                            <TextBlock Grid.Column="3" Style="{StaticResource FieldLabel}" Text="kg/m³" Margin="0"
+                                       HorizontalAlignment="Right" />
+                        </Grid>
+                    </Border>
+
+                    <TextBlock Style="{StaticResource MutedText}" Margin="8,10" TextWrapping="Wrap"
+                               Text="Sin materiales. Use &quot;Agregar material&quot; para agregar el primero."
+                               Visibility="{Binding HasRows, Converter={StaticResource InverseBoolToVisibility}}" />
+
+                    <ItemsControl ItemsSource="{Binding Rows}" Focusable="False" KeyboardNavigation.TabNavigation="Continue"
+                                  AutomationProperties.Name="Materiales">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="8,5" BorderBrush="{StaticResource Brush.Divider}" BorderThickness="0,0,0,1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="24" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="8" />
+                                            <ColumnDefinition Width="100" />
+                                            <ColumnDefinition Width="4" />
+                                            <ColumnDefinition Width="92" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Style="{StaticResource MutedText}" Text="{Binding Number}" VerticalAlignment="Center" />
+                                        <ComboBox Grid.Column="1" ItemsSource="{Binding Options}" SelectedItem="{Binding Material}"
+                                                  DisplayMemberPath="DisplayName" TextSearch.TextPath="DisplayName"
+                                                  AutomationProperties.Name="{Binding MaterialLabel}"
+                                                  b:FocusBehavior.FocusOnLoad="{Binding FocusOnLoad, Mode=OneTime}" />
+                                        <TextBox Grid.Column="3" Text="{Binding QuantityText, UpdateSourceTrigger=PropertyChanged}"
+                                                 TextAlignment="Right" MaxLength="14" IsEnabled="{Binding IsFilled}"
+                                                 AutomationProperties.Name="{Binding QuantityLabel}" />
+                                        <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <Button Style="{StaticResource SubtleButton}" Command="{Binding MoveUpCommand}"
+                                                    Width="28" Height="28" MinHeight="28" MinWidth="28" Padding="0"
+                                                    b:ButtonIcon.Icon="{StaticResource Icon.ArrowUp}"
+                                                    ToolTip="Subir" AutomationProperties.Name="Subir" />
+                                            <Button Style="{StaticResource SubtleButton}" Command="{Binding MoveDownCommand}"
+                                                    Width="28" Height="28" MinHeight="28" MinWidth="28" Padding="0" Margin="4,0"
+                                                    b:ButtonIcon.Icon="{StaticResource Icon.ArrowDown}"
+                                                    ToolTip="Bajar" AutomationProperties.Name="Bajar" />
+                                            <Button Style="{StaticResource SubtleButton}" Command="{Binding RemoveCommand}"
+                                                    Width="28" Height="28" MinHeight="28" MinWidth="28" Padding="0"
+                                                    b:ButtonIcon.Icon="{StaticResource Icon.Trash}"
+                                                    ToolTip="Quitar este material" AutomationProperties.Name="Quitar material" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5"
+                                                   Style="{StaticResource FieldError}" Text="{Binding Error}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Total, under the quantity column. -->
+                    <Border Padding="8,6" Background="{StaticResource Brush.SurfaceMuted}"
+                            BorderBrush="{StaticResource Brush.Divider}" BorderThickness="0,0,0,1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="4" />
+                                <ColumnDefinition Width="92" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="1" Text="{Binding WaterCementRatioText}" FontWeight="SemiBold"
+                                       HorizontalAlignment="Left" VerticalAlignment="Center"
+                                       ToolTip="{Binding WaterCementRatioToolTip}" ToolTipService.ShowOnDisabled="True"
+                                       AutomationProperties.Name="Relación agua/cemento" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource FieldLabel}" Text="Total" Margin="0"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="3" Text="{Binding TotalText}" FontWeight="SemiBold"
+                                       HorizontalAlignment="Right" Margin="0,0,9,0" TextTrimming="CharacterEllipsis"
+                                       ToolTip="{Binding TotalText}" AutomationProperties.Name="Total (kg/m³)" />
+                        </Grid>
+                    </Border>
+
+                    <WrapPanel Margin="8,8,0,0">
+                        <Button Content="Agregar material" Command="{Binding AddMaterialCommand}" Margin="0,0,8,8"
+                                b:ButtonIcon.Icon="{StaticResource Icon.Plus}"
+                                ToolTip="{Binding AddMaterialToolTip}" ToolTipService.ShowOnDisabled="True" />
+                        <Button Content="Calculadora" Command="{Binding CalculatorCommand}" Margin="0,0,8,8"
+                                b:ButtonIcon.Icon="{StaticResource Icon.Calculator}"
+                                ToolTip="Calcular la cantidad de un material como porcentaje de otro" />
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Materials]}" Margin="0,4,0,0" />
+            </StackPanel>
+
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,8,0,12"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+
+            <StackPanel Style="{StaticResource DialogButtons}" Margin="0,12,0,0">
+                <Button Content="{Binding CloseText}" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Guardar" Command="{Binding SaveCommand}" IsDefault="True"
+                        Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibility}}" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Percentage calculator of the design form -->
+    <DataTemplate DataType="{x:Type c:ReplacementCalculatorViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" />
+            <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,16"
+                       Text="Calcula la cantidad del material de destino como un porcentaje de la cantidad del material de origen (por ejemplo, un aditivo como % del cemento)." />
+
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Material de origen" />
+                <ComboBox ItemsSource="{Binding Rows}" SelectedItem="{Binding Origin}" DisplayMemberPath="DisplayText"
+                          AutomationProperties.Name="Material de origen" b:FocusBehavior.FocusOnLoad="True" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Origin]}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Material de destino" />
+                <ComboBox ItemsSource="{Binding Rows}" SelectedItem="{Binding Target}" DisplayMemberPath="DisplayText"
+                          AutomationProperties.Name="Material de destino" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Target]}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Porcentaje (%)" />
+                <TextBox Text="{Binding Percentage, UpdateSourceTrigger=PropertyChanged}" MaxLength="10"
+                         Width="120" HorizontalAlignment="Left" TextAlignment="Right"
+                         AutomationProperties.Name="Porcentaje" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Percentage]}" />
+            </StackPanel>
+
+            <Border Style="{StaticResource Card}" Padding="12,10" Margin="0,0,0,8">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Destino = Origen × % / 100" />
+                    <TextBlock Text="{Binding ResultText}" FontSize="{StaticResource FontSize.Section}" FontWeight="SemiBold"
+                               AutomationProperties.Name="Resultado" />
+                </StackPanel>
+            </Border>
+
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Aplicar" Command="{Binding ApplyCommand}" IsDefault="True"
+                        ToolTip="Escribe el resultado en la cantidad del material de destino" />
             </StackPanel>
         </StackPanel>
     </DataTemplate>

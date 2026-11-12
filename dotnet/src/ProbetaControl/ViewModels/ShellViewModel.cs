@@ -33,7 +33,7 @@ namespace ProbetaControl.ViewModels
                 new NavigationItem("Clientes", () => new ClientsPageViewModel(services.Clients, dialogs, session)),
                 new NavigationItem("Proveedores", () => new ProvidersPageViewModel(services.Providers, dialogs, session)),
                 new NavigationItem("Materiales", () => new MaterialsPageViewModel(services.Materials, services.Providers, dialogs, session)),
-                new NavigationItem("Dosificaciones", () => new PlaceholderPageViewModel("Dosificaciones")),
+                new NavigationItem("Dosificaciones", () => new DesignsPageViewModel(services.Designs, services.Materials, dialogs, session)),
                 new NavigationItem("Configuración", () => new PlaceholderPageViewModel("Configuración")),
             };
 

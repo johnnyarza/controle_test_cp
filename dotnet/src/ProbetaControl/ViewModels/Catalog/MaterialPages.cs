@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -29,6 +30,8 @@ namespace ProbetaControl.ViewModels.Catalog
 
         protected override Task SetArchivedAsync(Material item, bool archived) => _materials.SetArchivedAsync(item, archived);
 
+        protected override Task<string> GetArchiveBlockerAsync(Material item) => _materials.GetArchiveBlockerAsync(item);
+
         protected override int GetId(Material item) => item.Id;
 
         protected override bool IsArchived(Material item) => item.IsArchived;
@@ -46,6 +49,7 @@ namespace ProbetaControl.ViewModels.Catalog
         private readonly int? _id;
         private Material _record = new Material();
         private string _name = string.Empty;
+        private string _materialType = MaterialTypes.Other;
         private Provider _provider = NoProvider;
 
         public MaterialEditorViewModel(MaterialService materials, ProviderService providers, int? id)
@@ -63,6 +67,15 @@ namespace ProbetaControl.ViewModels.Catalog
         {
             get => _name;
             set => SetProperty(ref _name, value);
+        }
+
+        public IReadOnlyList<MaterialTypeOption> MaterialTypeOptions => MaterialTypes.All;
+
+        /// <summary>One of <see cref="MaterialTypes"/> (combo box SelectedValue).</summary>
+        public string MaterialType
+        {
+            get => _materialType;
+            set => SetProperty(ref _materialType, value);
         }
 
         public Provider Provider
@@ -87,6 +100,7 @@ namespace ProbetaControl.ViewModels.Catalog
 
             _record = await _materials.GetAsync(_id.Value) ?? throw new NotFoundException("el material");
             Name = _record.Name;
+            MaterialType = _record.MaterialType;
             if (_record.ProviderId.HasValue)
             {
                 var current = Providers.FirstOrDefault(p => p.Id == _record.ProviderId.Value);
@@ -103,6 +117,7 @@ namespace ProbetaControl.ViewModels.Catalog
         protected override async Task SaveCoreAsync()
         {
             _record.Name = Name;
+            _record.MaterialType = MaterialType;
             _record.ProviderId = Provider == NoProvider ? (int?)null : Provider.Id;
             await _materials.SaveAsync(_record);
             SavedId = _record.Id;

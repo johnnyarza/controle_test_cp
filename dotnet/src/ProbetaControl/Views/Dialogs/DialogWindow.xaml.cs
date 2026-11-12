@@ -14,6 +14,9 @@ namespace ProbetaControl.Views.Dialogs
             InitializeComponent();
             _viewModel = viewModel;
             DataContext = viewModel;
+
+            // Set before showing (a binding would apply after the window has already been sized).
+            Width = viewModel.PreferredWidth;
             viewModel.CloseRequested += OnCloseRequested;
             Loaded += OnLoaded;
             Closing += (_, __) => _closing = true;

@@ -252,10 +252,23 @@ namespace ProbetaControl.ViewModels.Infrastructure
             }
         }
 
+        /// <summary>Why the item can't be archived (Spanish), or null. Checked before asking for confirmation.</summary>
+        protected virtual Task<string> GetArchiveBlockerAsync(T item) => Task.FromResult<string>(null);
+
         private async Task ToggleArchiveAsync()
         {
             var item = SelectedItem;
             var archive = !IsArchived(item);
+            if (archive)
+            {
+                var blocker = await GetArchiveBlockerAsync(item);
+                if (blocker != null)
+                {
+                    Dialogs.Warn("No se puede archivar", blocker);
+                    return;
+                }
+            }
+
             var confirmed = archive
                 ? Dialogs.Confirm("Archivar", $"¿Archivar {Describe(item)}?\n\nDejará de aparecer en las listas, pero no se borra: podrá restaurarlo con \"Mostrar archivados\".", "Archivar", destructive: true)
                 : Dialogs.Confirm("Restaurar", $"¿Restaurar {Describe(item)}?", "Restaurar");
@@ -265,7 +278,17 @@ namespace ProbetaControl.ViewModels.Infrastructure
                 return;
             }
 
-            await SetArchivedAsync(item, archive);
+            try
+            {
+                await SetArchivedAsync(item, archive);
+            }
+            catch (InUseException ex)
+            {
+                // Someone started using it between the check and the confirmation.
+                Dialogs.Warn("No se puede archivar", ex.Message);
+                return;
+            }
+
             await LoadAsync(append: false, selectId: GetId(item));
         }
 

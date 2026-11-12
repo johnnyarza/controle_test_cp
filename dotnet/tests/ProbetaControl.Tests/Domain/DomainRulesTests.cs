@@ -251,3 +251,93 @@ namespace ProbetaControl.Tests.Domain
         }
     }
 }
+
+namespace ProbetaControl.Tests.Domain
+{
+    [TestFixture]
+    public class NumberInputTests
+    {
+        [TestCase("12.5", 12.5)]
+        [TestCase("12,5", 12.5)]
+        [TestCase(" 350 ", 350)]
+        [TestCase("-1", -1)]
+        public void Accepts_point_or_comma_as_decimal_separator(string text, decimal expected)
+        {
+            Assert.That(NumberInput.TryParse(text, out var value), Is.True);
+            Assert.That(value, Is.EqualTo(expected));
+        }
+
+        [TestCase("")]
+        [TestCase("   ")]
+        [TestCase(null)]
+        public void Empty_text_is_no_value(string text)
+        {
+            Assert.That(NumberInput.TryParse(text, out var value), Is.True);
+            Assert.That(value, Is.Null);
+        }
+
+        [TestCase("1.234,5")]
+        [TestCase("1,234.5")]
+        [TestCase("25O")]
+        [TestCase("12 kg")]
+        public void Rejects_thousands_separators_and_letters(string text)
+        {
+            Assert.That(NumberInput.TryParse(text, out _), Is.False);
+        }
+
+        [Test]
+        public void Formats_without_trailing_zeros()
+        {
+            Assert.That(NumberInput.Format(350.000m), Is.EqualTo("350"));
+            Assert.That(NumberInput.Format(12.50m), Is.EqualTo("12.5"));
+            Assert.That(NumberInput.Format(1.2254m), Is.EqualTo("1.225"));
+            Assert.That(NumberInput.Format(null), Is.Empty);
+        }
+
+        [Test]
+        public void Design_without_materials_is_rejected()
+        {
+            var errors = ConcreteDesignService.Validate(new ConcreteDesign { Description = "H-21", Fck = 210 });
+            var ex = Assert.Throws<ValidationException>(errors.ThrowIfAny);
+            Assert.That(ex.Errors.Keys, Is.EquivalentTo(new[] { "Materials" }));
+        }
+    }
+
+    public class MaterialTypeAndUsageTests
+    {
+        [TestCase(190, 340, 0.56)]
+        [TestCase(175, 350, 0.5)]
+        [TestCase(200, 300, 0.67)]
+        public void Water_cement_ratio_is_rounded_to_two_decimals(decimal water, decimal cement, decimal expected)
+        {
+            Assert.That(Calculators.WaterCementRatio(water, cement), Is.EqualTo(expected));
+        }
+
+        [TestCase(0, 340)]
+        [TestCase(190, 0)]
+        public void Water_cement_ratio_needs_both_materials(decimal water, decimal cement)
+        {
+            Assert.That(Calculators.WaterCementRatio(water, cement), Is.Null);
+        }
+
+        [Test]
+        public void Unknown_material_types_show_as_otro()
+        {
+            Assert.That(MaterialTypes.Label(MaterialTypes.Admixture), Is.EqualTo("Aditivo"));
+            Assert.That(MaterialTypes.Label("sand"), Is.EqualTo("Otro"));
+            Assert.That(MaterialTypes.IsValid("sand"), Is.False);
+            Assert.That(new Material().MaterialType, Is.EqualTo(MaterialTypes.Other));
+        }
+
+        [Test]
+        public void In_use_message_lists_the_records_and_how_many_more()
+        {
+            var one = InUseException.BuildMessage("el material \"Cemento\"", new RecordUsage(1, new[] { "H-21" }),
+                "dosificación activa", "dosificaciones activas", "Consejo.");
+            Assert.That(one, Is.EqualTo("No se puede archivar el material \"Cemento\" porque se usa en 1 dosificación activa:\n• H-21\n\nConsejo."));
+
+            var many = InUseException.BuildMessage("x", new RecordUsage(8, new[] { "a", "b", "c", "d", "e" }), "s", "p", "C.");
+            Assert.That(many, Does.Contain("se usa en 8 p:").And.Contain("• e\n• … y 3 más\n\nC."));
+        }
+    }
+}

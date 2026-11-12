@@ -14,6 +14,7 @@
                   AutomationProperties.Name="{Binding Title}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Nombre" Binding="{Binding Name}" Width="*" MinWidth="200" />
+                <DataGridTextColumn Header="Tipo" Binding="{Binding TypeLabel}" Width="110" />
                 <DataGridTextColumn Header="Proveedor" Binding="{Binding ProviderName}" Width="*" MinWidth="180" />
             </DataGrid.Columns>
         </DataGrid>

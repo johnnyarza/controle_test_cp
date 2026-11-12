@@ -114,6 +114,11 @@ namespace ProbetaControl.Data
             : base(db, audit, "Clients", "Ya existe un cliente con ese nombre.")
         {
         }
+
+        /// <summary>Active tests where the client is the client or the concrete provider, newest first.</summary>
+        public Task<RecordUsage> GetUsageAsync(int id, CancellationToken cancellationToken = default) => GetUsageAsync(
+            "FROM CompressionTests t WHERE t.IsArchived = 0 AND (t.ClientId = @id OR t.ConcreteProviderId = @id)",
+            TestNameExpression, "t.TestDate DESC, t.Id DESC", id, cancellationToken);
     }
 
     public sealed class ProviderRepository : ContactRepository<Provider>
@@ -122,5 +127,9 @@ namespace ProbetaControl.Data
             : base(db, audit, "Providers", "Ya existe un proveedor con ese nombre.")
         {
         }
+
+        /// <summary>Active materials of the provider.</summary>
+        public Task<RecordUsage> GetUsageAsync(int id, CancellationToken cancellationToken = default) => GetUsageAsync(
+            "FROM Materials m WHERE m.IsArchived = 0 AND m.ProviderId = @id", "m.Name", "m.Name", id, cancellationToken);
     }
 }

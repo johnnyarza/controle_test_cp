@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
@@ -43,6 +44,44 @@ namespace ProbetaControl.Tests.Schema
         {
             var applied = await new SchemaMigrator(Database.AdminConnectionString).MigrateAsync();
             Assert.That(applied, Is.Empty);
+        }
+
+        [Test]
+        public async Task Script_011_guesses_material_types_from_their_names()
+        {
+            var updates = SchemaScript.LoadEmbedded().Single(s => s.Version == 11).Sql
+                .Split(';').Where(s => s.Contains("UPDATE Materials")).Select(s => s.Substring(s.IndexOf("UPDATE Materials", StringComparison.Ordinal))).ToList();
+            Assert.That(updates, Has.Count.EqualTo(4));
+
+            var tag = Guid.NewGuid().ToString("N").Substring(0, 6);
+            var names = new[] { "Cemento IP-30", "AGUA potable", "Árido fino", "Arena gruesa", "Aditivo SP", "Fibra de vidrio", "Agua" };
+            using (var connection = await OpenAsAdminAsync())
+            {
+                foreach (var name in names)
+                {
+                    await connection.ExecuteAsync("INSERT INTO Materials (Name) VALUES (@name)", new { name = name + " " + tag });
+                }
+
+                foreach (var update in updates)
+                {
+                    await connection.ExecuteAsync(update);
+                }
+
+                var types = (await connection.QueryAsync<(string Name, string MaterialType)>(
+                    "SELECT Name, MaterialType FROM Materials WHERE Name LIKE @pattern ORDER BY Id", new { pattern = "% " + tag }))
+                    .ToDictionary(r => r.Name.Substring(0, r.Name.Length - tag.Length - 1), r => r.MaterialType);
+
+                Assert.That(types["Cemento IP-30"], Is.EqualTo("cement"));
+                Assert.That(types["AGUA potable"], Is.EqualTo("water"));
+                Assert.That(types["Árido fino"], Is.EqualTo("aggregate"), "accents ignored");
+                Assert.That(types["Arena gruesa"], Is.EqualTo("aggregate"));
+                Assert.That(types["Aditivo SP"], Is.EqualTo("admixture"));
+                Assert.That(types["Fibra de vidrio"], Is.EqualTo("other"));
+
+                var ex = Assert.ThrowsAsync<MySqlException>(() =>
+                    connection.ExecuteAsync("UPDATE Materials SET MaterialType = 'sand' WHERE Name = @name", new { name = "Agua " + tag }));
+                Assert.That(ex.Number, Is.EqualTo(CheckConstraintViolated));
+            }
         }
 
         [Test]

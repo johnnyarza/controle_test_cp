@@ -32,6 +32,10 @@
     <Geometry x:Key="Icon.Settings">M 1.5,4 H 14.5 M 1.5,8 H 14.5 M 1.5,12 H 14.5 M 5,2.5 V 5.5 M 11,6.5 V 9.5 M 7,10.5 V 13.5</Geometry>
     <Geometry x:Key="Icon.Qr">M 1.5,1.5 H 6.5 V 6.5 H 1.5 Z M 9.5,1.5 H 14.5 V 6.5 H 9.5 Z M 1.5,9.5 H 6.5 V 14.5 H 1.5 Z M 9.5,9.5 H 11.5 M 13.5,9.5 H 14.5 M 9.5,12 H 14.5 M 9.5,14.5 H 11.5</Geometry>
     <Geometry x:Key="Icon.Specimen">M 3,3.5 A 5,1.5 0 1 0 13,3.5 A 5,1.5 0 1 0 3,3.5 M 3,3.5 V 12.5 A 5,1.5 0 0 0 13,12.5 V 3.5</Geometry>
+    <Geometry x:Key="Icon.Calculator">M 3,1.5 H 13 V 14.5 H 3 Z M 5,3.5 H 11 V 6 H 5 Z M 5.5,9 H 6 M 7.75,9 H 8.25 M 10,9 H 10.5 M 5.5,12 H 6 M 7.75,12 H 8.25 M 10,12 H 10.5</Geometry>
+    <Geometry x:Key="Icon.ArrowUp">M 8,13.5 V 2.5 M 3.5,7 L 8,2.5 L 12.5,7</Geometry>
+    <Geometry x:Key="Icon.ArrowDown">M 8,2.5 V 13.5 M 3.5,9 L 8,13.5 L 12.5,9</Geometry>
+    <Geometry x:Key="Icon.Trash">M 2,4 H 14 M 6,4 V 2 H 10 V 4 M 3.5,4 L 4.5,14.5 H 11.5 L 12.5,4 M 6.5,7 V 12 M 9.5,7 V 12</Geometry>
     <Geometry x:Key="Icon.Save">M 2.5,1.5 H 11.5 L 14.5,4.5 V 14.5 H 1.5 V 1.5 Z M 4.5,1.5 V 5.5 H 10.5 V 1.5 M 4.5,14.5 V 9.5 H 11.5 V 14.5</Geometry>
 
     <Style x:Key="IconPath" TargetType="Path">

@@ -4,14 +4,14 @@ The legacy Java/JavaFX app (repo root, `src/`) is being rewritten as a WPF app o
 in `dotnet/`, on branch `csharp-port`. The Java code stays untouched until the C# version reaches parity
 and is signed off.
 
-_Last updated: 2026-11-09 (end of phase 4, group 2)._
+_Last updated: 2026-11-11 (end of phase 4, group 3)._
 
 ## Status
 
 | Phase | Content | State |
 |---|---|---|
 | 1 | Solution, single-exe packing (Costura), theme (`Themes/`), shell window, async MVVM base | Done |
-| 2 | Numbered schema scripts 001–010, `SchemaMigrator`, dev accounts, NUnit + throwaway databases | Done |
+| 2 | Numbered schema scripts 001–010 (011, material type, added in phase 4), `SchemaMigrator`, dev accounts, NUnit + throwaway databases | Done |
 | 3 | Models, Dapper repositories (paging, audit, RowVersion, archive), services, business rules, login, DPAPI config, startup checks | Done |
 | 4 | Screens, in six groups (review after each) | In progress |
 | 5 | PDF reports (PDFsharp), Excel export (ClosedXML), QR labels (QRCoder) | To do |
@@ -25,9 +25,12 @@ _Last updated: 2026-11-09 (end of phase 4, group 2)._
 
 1. Done: startup checks, connection settings, database update, login, forced password change, logout.
 2. Done: Clientes, Proveedores, Materiales (list pages + edit dialogs).
-3. **Next:** Dosificaciones: list + editor with up to 8 material slots (kg/m³), fck, slump, and the
-   replacement calculator (target quantity = origin quantity × % / 100).
-4. Ensayos list: newest first, due-specimen count, filters. This becomes the default page.
+3. Done: Dosificaciones: list + editor with fck, slump (optional) and a material table (add / remove /
+   reorder rows, up to 8, total kg/m³, water/cement ratio from the material types), and the percentage
+   calculator (target quantity = origin quantity × % / 100, previewed before applying). Designs used by
+   ensayos show a warning and only an administrator can change them. Also added in this group: material
+   type (Cemento / Agua / Agregado / Aditivo / Otro) and the "in use" rule for archiving.
+4. **Next:** Ensayos list: newest first, due-specimen count, filters. This becomes the default page.
 5. Test detail: header, specimen grid (red = overdue, yellow = due today/tomorrow), add/edit/copy/archive
    specimens, filter by mold dates and ID ranges (`1-5, 8`), admin unlock, "N probetas para romper",
    specimen form calculators (average of two readings, rupture date = mold date + N days),
@@ -49,9 +52,15 @@ _Last updated: 2026-11-09 (end of phase 4, group 2)._
   and edit. On a locked test an operator may only record a pending rupture load.
 - Large tables: all database access is async, lists are searched and paged on the server
   (100 rows at a time), long work shows a cancellable busy overlay.
+- A record can't be archived while active records use it (client → ensayos, provider → materials,
+  material → dosificaciones, dosificación → ensayos); the user gets a warning listing them.
+  Checked in the services, so every screen gets it.
+- A dosificación used by any ensayo (archived ones included) can be changed only by an administrator.
+- Quantities stay in kg/m³ for every material (no litres or % units).
 - Logo and stamp for reports are stored in the database (same on every PC).
 - Legacy data will be migrated (phase 7). Excel export is kept. One QR label per specimen.
 - Screen text in Spanish; code, tables and stored values in English. Dates `dd/MM/yyyy`, invariant culture.
+  Number fields accept a comma or a point as decimal separator (`NumberInput`); lists show a point.
 - Every window must handle resizing (minimums fit about 900 × 500).
 
 ## Development setup
@@ -87,6 +96,8 @@ _Last updated: 2026-11-09 (end of phase 4, group 2)._
   `Views/Dialogs/DialogTemplates.xaml`; opened through `IDialogService`. Tests answer dialogs with
   `ScriptedDialogs`.
 - Forms: field errors via `Errors[Field]` and the `FieldError` style; banner via `MessageBanner`.
+  Name the bound property like the error key (e.g. `Fck` as text) so the field also gets the red border.
+  Numbers are typed as text and parsed with `NumberInput`. Wider dialogs override `PreferredWidth`.
 - Buttons: text as content plus `b:ButtonIcon.Icon`; icon-only buttons need
   `AutomationProperties.Name` and a tooltip.
 - Colours only through the `Brush.*` keys of `Themes/Colors.xaml`.
@@ -99,6 +110,9 @@ _Last updated: 2026-11-09 (end of phase 4, group 2)._
 - Don't put `Padding` on a text box's `PART_ContentHost` (WPF applies it already).
 - Items and dialogs are announced by `ToString()`: override it to return the visible title.
 - A build failing with "BG1002 … .baml cannot be found": run the "clean" task.
+- Per-row combo box lists (e.g. materials not used on other rows): edit the row's collection in place;
+  replacing `ItemsSource` can make the combo push a null selection back to the view model.
+- Error tooltips bind `(Validation.Errors)/ErrorContent`, not `[0]` (logs a binding error when errors clear).
 - MySQL: `MySqlErrorCode` has no value for 3819 (check constraint), so compare `ex.Number`; use
   `INSERT … AS alias ON DUPLICATE KEY UPDATE` instead of `VALUES()`.
 

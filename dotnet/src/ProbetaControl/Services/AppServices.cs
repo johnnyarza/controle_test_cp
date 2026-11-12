@@ -22,7 +22,7 @@ namespace ProbetaControl.Services
             Clients = new ClientService(new ClientRepository(db, session));
             Providers = new ProviderService(new ProviderRepository(db, session));
             Materials = new MaterialService(new MaterialRepository(db, session));
-            Designs = new ConcreteDesignService(new ConcreteDesignRepository(db, session));
+            Designs = new ConcreteDesignService(new ConcreteDesignRepository(db, session), session);
             Tests = new CompressionTestService(new CompressionTestRepository(db, session), Clock);
             Specimens = new SpecimenService(new SpecimenRepository(db, session), Clock);
             ReportImages = new ReportImageService(new AppSettingsRepository(db, session), session);

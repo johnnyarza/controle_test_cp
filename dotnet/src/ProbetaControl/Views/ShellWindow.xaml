@@ -26,6 +26,9 @@
         <DataTemplate DataType="{x:Type catalog:MaterialsPageViewModel}">
             <catalogViews:MaterialListView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type catalog:DesignsPageViewModel}">
+            <catalogViews:DesignListView />
+        </DataTemplate>
     </Window.Resources>
 
     <Window.InputBindings>

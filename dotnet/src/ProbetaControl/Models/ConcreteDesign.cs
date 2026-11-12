@@ -26,6 +26,17 @@ namespace ProbetaControl.Models
         /// <summary>Filled slots only, ordered by position.</summary>
         public List<ConcreteDesignMaterial> Materials { get; set; } = new List<ConcreteDesignMaterial>();
 
+        /// <summary>One line for lists: "Cemento 350 · Arena 800 · Grava 1000" (kg/m³).</summary>
+        public string MaterialsSummary => string.Join(" · ", Materials
+            .Where(m => m.MaterialId.HasValue)
+            .OrderBy(m => m.Position)
+            .Select(m => string.Format(CultureInfo.InvariantCulture, "{0} {1:0.###}", m.MaterialName, m.QuantityKgPerM3)));
+
+        /// <summary>Water / cement by weight (materials typed Agua and Cemento); null when either is missing.</summary>
+        public decimal? WaterCementRatio => Services.Calculators.WaterCementRatio(
+            Materials.Where(m => m.MaterialId.HasValue && m.MaterialType == MaterialTypes.Water).Sum(m => m.QuantityKgPerM3 ?? 0),
+            Materials.Where(m => m.MaterialId.HasValue && m.MaterialType == MaterialTypes.Cement).Sum(m => m.QuantityKgPerM3 ?? 0));
+
         public IReadOnlyDictionary<string, object> GetAuditValues()
         {
             var values = new Dictionary<string, object>
@@ -63,5 +74,8 @@ namespace ProbetaControl.Models
 
         /// <summary>Read-only, filled by queries.</summary>
         public string ProviderName { get; set; }
+
+        /// <summary>Read-only, filled by queries (<see cref="MaterialTypes"/>).</summary>
+        public string MaterialType { get; set; }
     }
 }

@@ -5,6 +5,7 @@
         Title="{Binding Title}"
         AutomationProperties.Name="{Binding Title}"
         Width="480" MinWidth="380" MinHeight="200" SizeToContent="Height"
+        MaxHeight="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Height}"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
 
     <Window.Resources>

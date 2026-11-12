@@ -19,7 +19,7 @@ namespace ProbetaControl.Data
         private const string DesignColumns = "Id, Description, Fck, Slump, IsArchived, RowVersion";
 
         private const string SlotSelect =
-            "SELECT s.ConcreteDesignId, s.Position, s.MaterialId, s.QuantityKgPerM3, m.Name AS MaterialName, p.Name AS ProviderName " +
+            "SELECT s.ConcreteDesignId, s.Position, s.MaterialId, s.QuantityKgPerM3, m.Name AS MaterialName, m.MaterialType, p.Name AS ProviderName " +
             "FROM ConcreteDesignMaterials s " +
             "JOIN Materials m ON m.Id = s.MaterialId " +
             "LEFT JOIN Providers p ON p.Id = m.ProviderId ";
@@ -101,6 +101,21 @@ namespace ProbetaControl.Data
             }, cancellationToken), "Description", DuplicateMessage);
         }
 
+        /// <summary>Active tests made with the design, newest first.</summary>
+        public Task<RecordUsage> GetUsageAsync(int id, CancellationToken cancellationToken = default) => GetUsageAsync(
+            "FROM CompressionTests t WHERE t.IsArchived = 0 AND t.ConcreteDesignId = @id",
+            TestNameExpression, "t.TestDate DESC, t.Id DESC", id, cancellationToken);
+
+        /// <summary>All tests made with the design, archived ones included (their reports show the design too).</summary>
+        public async Task<int> CountTestsAsync(int id, CancellationToken cancellationToken = default)
+        {
+            using (var connection = await Db.OpenAsync(cancellationToken).ConfigureAwait(false))
+            {
+                return await connection.ExecuteScalarAsync<int>(Cmd(
+                    "SELECT COUNT(*) FROM CompressionTests WHERE ConcreteDesignId = @id", new { id }, null, cancellationToken)).ConfigureAwait(false);
+            }
+        }
+
         public async Task SetArchivedAsync(ConcreteDesign design, bool archived, CancellationToken cancellationToken = default)
         {
             design.RowVersion = await SetArchivedAsync(Table, design.Id, design.RowVersion, archived, cancellationToken).ConfigureAwait(false);
@@ -144,6 +159,7 @@ namespace ProbetaControl.Data
                     QuantityKgPerM3 = s.QuantityKgPerM3,
                     MaterialName = s.MaterialName,
                     ProviderName = s.ProviderName,
+                    MaterialType = s.MaterialType,
                 }).ToList();
             }
         }
@@ -185,6 +201,8 @@ namespace ProbetaControl.Data
             public string MaterialName { get; set; }
 
             public string ProviderName { get; set; }
+
+            public string MaterialType { get; set; }
         }
     }
 }

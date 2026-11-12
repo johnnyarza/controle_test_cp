@@ -25,6 +25,8 @@ namespace ProbetaControl.ViewModels.Catalog
 
         protected override Task SetArchivedAsync(T item, bool archived) => _service.SetArchivedAsync(item, archived);
 
+        protected override Task<string> GetArchiveBlockerAsync(T item) => _service.GetArchiveBlockerAsync(item);
+
         protected override int GetId(T item) => item.Id;
 
         protected override bool IsArchived(T item) => item.IsArchived;

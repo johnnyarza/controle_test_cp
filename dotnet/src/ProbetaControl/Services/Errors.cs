@@ -84,6 +84,36 @@ namespace ProbetaControl.Services
         }
     }
 
+    /// <summary>A record can't be archived while active records still use it; the message says which.</summary>
+    public sealed class InUseException : Exception
+    {
+        public InUseException(string message)
+            : base(message)
+        {
+        }
+
+        /// <summary>
+        /// "No se puede archivar el material "Cemento" porque se usa en 2 dosificaciones activas:
+        /// • H-21 • H-25 (y 3 más). advice".
+        /// </summary>
+        public static string BuildMessage(string what, Models.RecordUsage usage, string singular, string plural, string advice)
+        {
+            var text = new System.Text.StringBuilder()
+                .Append($"No se puede archivar {what} porque se usa en {usage.Count} {(usage.Count == 1 ? singular : plural)}:");
+            foreach (var name in usage.Examples)
+            {
+                text.Append("\n• ").Append(name);
+            }
+
+            if (usage.Count > usage.Examples.Count)
+            {
+                text.Append($"\n• … y {usage.Count - usage.Examples.Count} más");
+            }
+
+            return text.Append("\n\n").Append(advice).ToString();
+        }
+    }
+
     /// <summary>The signed-in user may not do this.</summary>
     public sealed class AccessDeniedException : Exception
     {
