@@ -31,6 +31,8 @@
 
   <ItemGroup>
     <Resource Include="Assets\*.png" />
+    <!-- Also the window icon (title bar, taskbar); the exe's own icon comes from ApplicationIcon. -->
+    <Resource Include="Assets\app.ico" />
   </ItemGroup>
 
   <ItemGroup>

@@ -851,11 +851,12 @@
             <!--
                 One flat list (ensayo heading, its probetas, next heading…) with a virtualizing panel: only the rows
                 on screen are built, so hundreds of probetas open at once. The fixed height bounds the list inside
-                the dialog's own scroll viewer, which virtualization needs.
+                the dialog's own scroll viewer, which virtualization needs. "Standard", not "Recycling": a recycled
+                row container briefly binds its old template to a heading (binding errors in the log).
             -->
             <Border BorderBrush="{StaticResource Brush.Border}" BorderThickness="1" CornerRadius="{StaticResource Radius.Control}" Margin="0,0,0,10">
                 <ItemsControl ItemsSource="{Binding Items}" MaxHeight="380" Focusable="False"
-                              VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                              VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Standard"
                               VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.CanContentScroll="True"
                               AutomationProperties.Name="Ensayos con probetas para romper">
                     <ItemsControl.Template>

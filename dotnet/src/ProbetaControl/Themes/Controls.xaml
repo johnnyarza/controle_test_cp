@@ -26,7 +26,8 @@
         <Setter Property="Foreground" Value="{StaticResource Brush.Text}" />
         <Setter Property="FontFamily" Value="{StaticResource Font.Ui}" />
         <Setter Property="FontSize" Value="{StaticResource FontSize.Body}" />
-        <Setter Property="Icon" Value="{StaticResource WindowIcon.App}" />
+        <!-- The .ico (not app.png): Windows then picks its hand-tuned 16 / 32 px images for the title bar and taskbar. -->
+        <Setter Property="Icon" Value="pack://application:,,,/ProbetaControl;component/Assets/app.ico" />
         <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
