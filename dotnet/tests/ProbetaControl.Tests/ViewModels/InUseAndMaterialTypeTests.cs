@@ -104,7 +104,7 @@ namespace ProbetaControl.Tests.ViewModels
             Assert.That(asClient.Message, Does.Contain("1 ensayo activo").And.Contain("Torre Norte (07/03/2026)"));
             Assert.ThrowsAsync<InUseException>(() => Services.Clients.SetArchivedAsync(concreteProvider, true));
 
-            await Services.Tests.SetArchivedAsync(test, true, testUnlocked: true);
+            await Services.Tests.SetArchivedAsync(test, true);
             await Services.Clients.SetArchivedAsync(client, true);
             Assert.That(client.IsArchived, Is.True, "archived tests don't count");
         }
@@ -156,7 +156,7 @@ namespace ProbetaControl.Tests.ViewModels
             var unused = await NewDesignWithAsync((cement, 300));
             var client = await NewClientAsync();
             var test = await NewTestWithAsync(client.Id, client.Id, used.Id, "Puente");
-            await Services.Tests.SetArchivedAsync(test, true, testUnlocked: true); // archived tests still count
+            await Services.Tests.SetArchivedAsync(test, true); // archived tests still count
 
             Session.SignIn(await NewOperatorAsync());
 

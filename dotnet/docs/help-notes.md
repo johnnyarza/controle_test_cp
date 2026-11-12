@@ -13,8 +13,9 @@ Add an item whenever a question comes up that a user would also ask. The help it
   (`specimen_app`), not for a program user. Program users (`admin`, operators) are entered on the
   login screen. Schema updates ask for a third account with structure rights (`specimen_admin`),
   which is never saved.
-- **Only administrators archive and restore.** Operators can create and edit clients, providers and
-  materials; the "Archivar"/"Restaurar" button is disabled for them (tooltip explains why).
+- **Only administrators archive and restore.** Operators can create and edit clients, providers,
+  materials, dosificaciones and ensayos; the "Archivar"/"Restaurar" button is disabled for them (tooltip
+  explains why), and the program refuses it even if it were reached another way.
   Archived records are hidden, never deleted: "Mostrar archivados" shows them in grey.
 - **Right-click menu on lists.** Right-clicking a row (or the menu key / Shift+F10 on the selected row)
   selects it and offers "Editar" and "Archivar" ("Restaurar" on an archived row), the same as the
@@ -50,6 +51,34 @@ Add an item whenever a question comes up that a user would also ask. The help it
 - **Locked ensayos.** An operator can change the ensayos they created since logging in; others open
   read-only ("El ensayo está bloqueado…", "Cerrar"). An administrator can change any ensayo, and
   unlock one for an operator. Archiving ensayos is for administrators.
+
+## Aviso de probetas para romper
+
+- **When it appears.** Right after logging in, if there are unbroken probetas whose rupture date is
+  today or tomorrow, or already passed. It lists them by ensayo, most urgent first, with the counts
+  (retrasadas / hoy / mañana) and the same colours as the ensayo page.
+- **Abrir ensayo** closes the warning and opens that ensayo; "← Ensayos" goes back to the list.
+- **No volver a mostrar hoy en este equipo** hides it until tomorrow, on this PC and Windows user only.
+  The Ensayos list still shows "Para romper" and "Solo con probetas para romper".
+
+## Configuración
+
+- **What each user sees.** Administrators: Usuarios, Logo y sello, Conexión, Mi contraseña, Acerca de.
+  Operators: Conexión, Mi contraseña, Acerca de.
+- **Usuarios.** "Nuevo usuario" asks for the user name (no spaces), full name, role and a first
+  password (minimum 8 characters) that the user must change at the first login. "Restablecer
+  contraseña…" sets a temporary password with the same rule. "Archivar" stops the user from logging in
+  (never deleted; "Mostrar archivados" + "Restaurar"). Your own user can't be archived or reset here
+  (use Mi contraseña), your own role can't be changed, and there must always be one active administrator.
+- **Logo y sello.** The images printed on reports, stored in the database so every PC prints the same.
+  PNG or JPG, up to 2 MB; a file that only has a .png/.jpg name but is another format is refused.
+  The image is saved as soon as it is chosen; "Quitar" removes it.
+- **Conexión.** Shows the server, database and MySQL account of this PC. "Cambiar conexión…" closes
+  the session and opens the connection form of the startup window; after saving, log in again.
+- **Mi contraseña.** Current password, new password twice (minimum 8 characters, different from the
+  current one).
+- **Acerca de.** Program version, database version, MySQL server version, PC name and the log folder
+  ("Abrir carpeta de registros"), useful when asking for support.
 
 ## Ensayo (detail page)
 

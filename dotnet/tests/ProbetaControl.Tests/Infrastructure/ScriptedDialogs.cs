@@ -35,6 +35,21 @@ namespace ProbetaControl.Tests.Infrastructure
         public bool Confirm(string title, string message, string confirmText, bool destructive = false) =>
             Show(new ConfirmDialogViewModel(title, message, confirmText, destructive));
 
+        private readonly Queue<string> _files = new Queue<string>();
+
+        /// <summary>The next "open file" dialog returns <paramref name="path"/> (null = cancelled).</summary>
+        public void AnswerFile(string path) => _files.Enqueue(path);
+
+        public string ChooseFile(string title, string filter)
+        {
+            if (_files.Count == 0)
+            {
+                throw new InvalidOperationException("Unexpected file dialog: " + title);
+            }
+
+            return _files.Dequeue();
+        }
+
         /// <summary>Presses Guardar and reports whether the dialog closed (saved) or stayed open (errors).</summary>
         public static bool Save(EditorDialogViewModel editor)
         {

@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using ProbetaControl.Services;
 using ProbetaControl.ViewModels.Catalog;
 using ProbetaControl.ViewModels.CompressionTests;
 using ProbetaControl.ViewModels.Infrastructure;
+using ProbetaControl.ViewModels.Settings;
 
 namespace ProbetaControl.ViewModels
 {
@@ -17,10 +19,16 @@ namespace ProbetaControl.ViewModels
         private PageViewModel _currentPage;
         private readonly Stack<PageViewModel> _backStack = new Stack<PageViewModel>();
 
-        public ShellViewModel(AppServices services, IDialogService dialogs, Action logout)
+        private readonly IDialogService _dialogs;
+
+        /// <param name="logout">"Cerrar sesión": back to the login window.</param>
+        /// <param name="changeConnection">Configuración → Conexión: sign out and open the connection settings.</param>
+        public ShellViewModel(AppServices services, IDialogService dialogs, Action logout, Action changeConnection = null)
         {
             Services = services ?? throw new ArgumentNullException(nameof(services));
+            _dialogs = dialogs;
             var session = services.Session;
+            var changeConnectionAction = changeConnection ?? logout;
             var user = services.Session.CurrentUser;
             CurrentUserName = user.DisplayName;
             CurrentUserRole = user.UserName + " · " + DisplayText.Role(user.Role);
@@ -37,7 +45,11 @@ namespace ProbetaControl.ViewModels
                 new NavigationItem("Proveedores", () => new ProvidersPageViewModel(services.Providers, dialogs, session)),
                 new NavigationItem("Materiales", () => new MaterialsPageViewModel(services.Materials, services.Providers, dialogs, session)),
                 new NavigationItem("Dosificaciones", () => new DesignsPageViewModel(services.Designs, services.Materials, dialogs, session)),
-                new NavigationItem("Configuración", () => new PlaceholderPageViewModel("Configuración")),
+                new NavigationItem("Configuración", () => new SettingsPageViewModel(services, dialogs, () =>
+                {
+                    CurrentPage?.OnNavigatedFrom();
+                    changeConnectionAction();
+                })),
             };
 
             // Enabled in phase 6, when the embedded help exists.
@@ -80,6 +92,37 @@ namespace ProbetaControl.ViewModels
         public ICommand HelpCommand { get; }
 
         public ICommand LogoutCommand { get; }
+
+        /// <summary>
+        /// Right after login: the probetas due today or tomorrow plus the overdue ones, unless there are none or the
+        /// user chose "No volver a mostrar hoy" on this PC. "Abrir ensayo" opens that ensayo over the Ensayos list.
+        /// </summary>
+        public async Task ShowDueWarningAsync()
+        {
+            var today = Services.Clock.Today;
+            if (LocalSettings.DueWarningHiddenOn == today)
+            {
+                return;
+            }
+
+            var due = await Services.Specimens.ListDueAsync();
+            if (due.Count == 0)
+            {
+                return;
+            }
+
+            var dialog = new DueSpecimensViewModel(due, today);
+            _dialogs.Show(dialog);
+            if (dialog.HideToday)
+            {
+                LocalSettings.DueWarningHiddenOn = today;
+            }
+
+            if (dialog.OpenTestId.HasValue)
+            {
+                Open(new TestDetailPageViewModel(Services, _dialogs, this, dialog.OpenTestId.Value));
+            }
+        }
 
         /// <summary>Opens a detail page; <see cref="Back"/> returns to the current one as it was.</summary>
         public void Open(PageViewModel page)

@@ -325,11 +325,11 @@ namespace ProbetaControl.Tests.ViewModels
         public async Task A_design_archived_later_stays_on_its_test_marked_archived()
         {
             var test = await NewTestAsync(await NewClientAsync(), Unique("Silo"), daysAgo: 1);
-            await Services.Tests.SetArchivedAsync(test, true, testUnlocked: true);
+            await Services.Tests.SetArchivedAsync(test, true);
             var design = await Services.Designs.GetAsync(test.ConcreteDesignId);
             await Services.Designs.SetArchivedAsync(design, true);
             test = await Services.Tests.GetAsync(test.Id);
-            await Services.Tests.SetArchivedAsync(test, false, testUnlocked: true);
+            await Services.Tests.SetArchivedAsync(test, false);
 
             var editor = NewEditor(new ScriptedDialogs(), test.Id);
             await editor.InitializeAsync();

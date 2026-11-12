@@ -143,7 +143,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
         protected override async Task SetArchivedAsync(CompressionTestListItem item, bool archived)
         {
             var test = await _tests.GetAsync(item.Id) ?? throw new NotFoundException("el ensayo");
-            await _tests.SetArchivedAsync(test, archived, Session.IsTestUnlocked(item.Id));
+            await _tests.SetArchivedAsync(test, archived);
         }
 
         protected override int GetId(CompressionTestListItem item) => item.Id;

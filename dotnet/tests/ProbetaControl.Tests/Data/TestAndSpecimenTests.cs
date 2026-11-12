@@ -134,7 +134,7 @@ namespace ProbetaControl.Tests.Data
         }
 
         [Test]
-        public async Task Locked_test_refuses_overdue_specimens_new_specimens_and_archiving()
+        public async Task Locked_test_refuses_overdue_specimens_and_new_specimens()
         {
             var test = await NewTestAsync();
             var overdue = NewSpecimen(test.Id, Today.AddDays(-10), 7);
@@ -146,7 +146,31 @@ namespace ProbetaControl.Tests.Data
 
             Assert.ThrowsAsync<AccessDeniedException>(() =>
                 Services.Specimens.SaveAsync(NewSpecimen(test.Id, Today, 7), testUnlocked: false));
-            Assert.ThrowsAsync<AccessDeniedException>(() => Services.Specimens.SetArchivedAsync(overdue, true, testUnlocked: false));
+        }
+
+        [Test]
+        public async Task Only_administrators_archive_and_restore_tests_and_specimens()
+        {
+            var test = await NewTestAsync();
+            var specimen = NewSpecimen(test.Id, Today, 7);
+            await Services.Specimens.SaveAsync(specimen, testUnlocked: true);
+
+            // Even the operator who created the test in this session (test unlocked for them) may not archive.
+            await SignInNewOperatorAsync();
+            Session.UnlockTest(test.Id);
+
+            var denied = Assert.ThrowsAsync<AccessDeniedException>(() => Services.Specimens.SetArchivedAsync(specimen, true));
+            Assert.That(denied.Message, Is.EqualTo(AppSession.ArchiveAdminOnly));
+            Assert.ThrowsAsync<AccessDeniedException>(() => Services.Tests.SetArchivedAsync(test, true));
+            Assert.That((await Services.Tests.GetAsync(test.Id)).IsArchived, Is.False, "nothing was archived");
+
+            SignInAsAdmin();
+            await Services.Specimens.SetArchivedAsync(specimen, true);
+            await Services.Tests.SetArchivedAsync(test, true);
+
+            await SignInNewOperatorAsync();
+            Assert.ThrowsAsync<AccessDeniedException>(() => Services.Specimens.SetArchivedAsync(specimen, false), "restoring too");
+            Assert.ThrowsAsync<AccessDeniedException>(() => Services.Tests.SetArchivedAsync(test, false), "restoring too");
         }
 
         [Test]
@@ -155,7 +179,7 @@ namespace ProbetaControl.Tests.Data
             var test = await NewTestAsync();
             var specimen = NewSpecimen(test.Id, Today, 7);
             await Services.Specimens.SaveAsync(specimen, testUnlocked: true);
-            await Services.Specimens.SetArchivedAsync(specimen, true, testUnlocked: true);
+            await Services.Specimens.SetArchivedAsync(specimen, true);
 
             Assert.That(await Services.Specimens.ListByTestAsync(test.Id), Is.Empty);
             var all = await Services.Specimens.ListByTestAsync(test.Id, new SpecimenFilter { IncludeArchived = true });

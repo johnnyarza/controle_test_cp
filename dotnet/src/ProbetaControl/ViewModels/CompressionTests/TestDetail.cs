@@ -408,7 +408,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
                 return;
             }
 
-            await _services.Specimens.SetArchivedAsync(row.Specimen, archive, IsUnlocked);
+            await _services.Specimens.SetArchivedAsync(row.Specimen, archive);
             await LoadAsync(row.Id);
         }
 

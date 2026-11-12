@@ -16,6 +16,12 @@ namespace ProbetaControl.Views.Dialogs
         public bool Confirm(string title, string message, string confirmText, bool destructive = false) =>
             Show(new ConfirmDialogViewModel(title, message, confirmText, destructive));
 
+        public string ChooseFile(string title, string filter)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog { Title = title, Filter = filter, CheckFileExists = true };
+            return dialog.ShowDialog(ActiveWindow()) == true ? dialog.FileName : null;
+        }
+
         private static Window ActiveWindow() =>
             Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive) ?? Application.Current.MainWindow;
     }

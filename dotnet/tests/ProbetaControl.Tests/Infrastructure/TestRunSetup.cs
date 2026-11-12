@@ -14,6 +14,12 @@ namespace ProbetaControl.Tests
         {
             // Keep test noise out of the real %LOCALAPPDATA%\ProbetaControl\logs.
             AppLog.Folder = Path.Combine(Path.GetTempPath(), "ProbetaControl.Tests", "logs");
+            LocalSettings.FilePath = Path.Combine(Path.GetTempPath(), "ProbetaControl.Tests", "local.ini");
+
+            // Pages load in the background (e.g. the shell's start page); a failure there is written to the
+            // test output instead of crashing the test run from an async void.
+            ProbetaControl.ViewModels.Infrastructure.ErrorSink.Handler =
+                ex => TestContext.Progress.WriteLine("ErrorSink: " + ex);
         }
     }
 }

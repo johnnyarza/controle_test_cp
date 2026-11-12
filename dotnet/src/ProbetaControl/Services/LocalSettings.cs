@@ -11,13 +11,25 @@ namespace ProbetaControl.Services
     /// </summary>
     public static class LocalSettings
     {
-        private static readonly string FilePath = Path.Combine(
+        /// <summary>Replaceable so tests never touch the real file.</summary>
+        internal static string FilePath { get; set; } = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ProbetaControl", "local.ini");
 
         public static string LastUserName
         {
             get => Read().TryGetValue("LastUserName", out var value) ? value : null;
             set => Write("LastUserName", value);
+        }
+
+        /// <summary>"No volver a mostrar hoy" of the due-probetas warning: the day it was hidden.</summary>
+        public static DateTime? DueWarningHiddenOn
+        {
+            get => Read().TryGetValue("DueWarningHiddenOn", out var value)
+                   && DateTime.TryParseExact(value, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture,
+                       System.Globalization.DateTimeStyles.None, out var day)
+                ? day
+                : (DateTime?)null;
+            set => Write("DueWarningHiddenOn", value?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture));
         }
 
         private static Dictionary<string, string> Read()

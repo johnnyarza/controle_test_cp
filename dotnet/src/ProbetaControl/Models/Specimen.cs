@@ -70,6 +70,8 @@ namespace ProbetaControl.Models
         public string ClientName { get; set; }
 
         public string ProjectName { get; set; }
+
+        public string ConcreteDesignDescription { get; set; }
     }
 
     /// <summary>Stored in English, shown in Spanish; also the grid row colour.</summary>

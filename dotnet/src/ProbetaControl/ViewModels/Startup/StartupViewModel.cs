@@ -13,14 +13,17 @@ namespace ProbetaControl.ViewModels.Startup
     public sealed class StartupViewModel : ObservableObject
     {
         private readonly ConfigStore _config;
+        private readonly bool _changeConnection;
         private AppServices _services;
         private object _currentStep;
 
         /// <param name="signedOutServices">After "Cerrar sesión": skip the checks and go straight to login.</param>
-        public StartupViewModel(ConfigStore config, AppServices signedOutServices = null)
+        /// <param name="changeConnection">From Configuración → Conexión: open the connection settings first.</param>
+        public StartupViewModel(ConfigStore config, AppServices signedOutServices = null, bool changeConnection = false)
         {
             _config = config;
             _services = signedOutServices;
+            _changeConnection = changeConnection;
         }
 
         /// <summary>Signed in and ready: open the main window with these services.</summary>
@@ -43,7 +46,17 @@ namespace ProbetaControl.ViewModels.Startup
             }
         }
 
-        public Task StartAsync() => _services != null ? ShowLoginAsync() : CheckAsync();
+        public Task StartAsync()
+        {
+            if (_changeConnection)
+            {
+                // Cancelling goes back through the normal checks with the saved settings.
+                ShowConnectionSettings(null);
+                return Task.CompletedTask;
+            }
+
+            return _services != null ? ShowLoginAsync() : CheckAsync();
+        }
 
         private async Task CheckAsync()
         {

@@ -53,10 +53,13 @@ namespace ProbetaControl
             ShowStartup(null);
         }
 
-        /// <summary>Startup checks and login. <paramref name="signedOutServices"/> is set after "Cerrar sesión".</summary>
-        private void ShowStartup(AppServices signedOutServices)
+        /// <summary>
+        /// Startup checks and login. <paramref name="signedOutServices"/> is set after "Cerrar sesión";
+        /// <paramref name="changeConnection"/> opens the connection settings first (Configuración → Conexión).
+        /// </summary>
+        private void ShowStartup(AppServices signedOutServices, bool changeConnection = false)
         {
-            var viewModel = new StartupViewModel(new ConfigStore(), signedOutServices);
+            var viewModel = new StartupViewModel(new ConfigStore(), signedOutServices, changeConnection);
             var window = new StartupWindow { DataContext = viewModel };
             var completed = false;
 
@@ -84,13 +87,39 @@ namespace ProbetaControl
         {
             var loggingOut = false;
             var shell = new ShellWindow();
-            shell.DataContext = new ShellViewModel(services, new WpfDialogService(), logout: () =>
+            var viewModel = new ShellViewModel(services, new WpfDialogService(),
+                logout: () =>
+                {
+                    loggingOut = true;
+                    AppLog.Info("Logout " + services.Session.CurrentUser?.UserName);
+                    ShowStartup(services);
+                    shell.Close();
+                },
+                changeConnection: () =>
+                {
+                    loggingOut = true;
+                    AppLog.Info("Logout to change the connection " + services.Session.CurrentUser?.UserName);
+                    services.Session.SignOut();
+                    ShowStartup(null, changeConnection: true);
+                    shell.Close();
+                });
+            shell.DataContext = viewModel;
+
+            // The due-probetas warning opens once the main window is on screen.
+            EventHandler shown = null;
+            shown = async (_, __) =>
             {
-                loggingOut = true;
-                AppLog.Info("Logout " + services.Session.CurrentUser?.UserName);
-                ShowStartup(services);
-                shell.Close();
-            });
+                shell.ContentRendered -= shown;
+                try
+                {
+                    await viewModel.ShowDueWarningAsync();
+                }
+                catch (Exception ex)
+                {
+                    ReportError(ex);
+                }
+            };
+            shell.ContentRendered += shown;
             shell.Closed += (_, __) =>
             {
                 if (!loggingOut)

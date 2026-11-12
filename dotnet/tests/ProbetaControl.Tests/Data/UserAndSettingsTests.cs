@@ -86,8 +86,30 @@ namespace ProbetaControl.Tests.Data
 
             var admin = await Services.Users.GetAsync(Admin.Id);
             admin.Role = UserRoles.Operator;
-            var last = Assert.ThrowsAsync<AccessDeniedException>(() => Services.UserAdmin.UpdateAsync(admin));
-            Assert.That(last.Message, Does.Contain("al menos un administrador"));
+            var self = Assert.ThrowsAsync<AccessDeniedException>(() => Services.UserAdmin.UpdateAsync(admin));
+            Assert.That(self.Message, Is.EqualTo("No puede cambiar su propio rol."));
+
+            // The last active administrator can't be demoted, even from the stale session of an archived admin.
+            var second = new User { UserName = Unique("adm").Replace(" ", "_"), Role = UserRoles.Admin };
+            await Services.UserAdmin.CreateAsync(second, "segundo123");
+            Session.SignIn(second);
+            await Services.UserAdmin.SetArchivedAsync(await Services.Users.GetAsync(Admin.Id), true);
+            try
+            {
+                Session.SignIn(Admin);
+                var lastAdmin = await Services.Users.GetAsync(second.Id);
+                lastAdmin.Role = UserRoles.Operator;
+                var last = Assert.ThrowsAsync<AccessDeniedException>(() => Services.UserAdmin.UpdateAsync(lastAdmin));
+                Assert.That(last.Message, Does.Contain("al menos un administrador"));
+            }
+            finally
+            {
+                // Put "admin" back as the only active administrator for the other tests.
+                Session.SignIn(second);
+                await Services.UserAdmin.SetArchivedAsync(await Services.Users.GetAsync(Admin.Id), false);
+                Session.SignIn(Admin);
+                await Services.UserAdmin.SetArchivedAsync(await Services.Users.GetAsync(second.Id), true);
+            }
         }
 
         [Test]

@@ -19,14 +19,18 @@ namespace ProbetaControl.Services
 
             Auth = new AuthService(Users, session);
             UserAdmin = new UserService(Users, session);
-            Clients = new ClientService(new ClientRepository(db, session));
-            Providers = new ProviderService(new ProviderRepository(db, session));
-            Materials = new MaterialService(new MaterialRepository(db, session));
+            Clients = new ClientService(new ClientRepository(db, session), session);
+            Providers = new ProviderService(new ProviderRepository(db, session), session);
+            Materials = new MaterialService(new MaterialRepository(db, session), session);
             Designs = new ConcreteDesignService(new ConcreteDesignRepository(db, session), session);
-            Tests = new CompressionTestService(new CompressionTestRepository(db, session), Clock);
-            Specimens = new SpecimenService(new SpecimenRepository(db, session), Clock);
+            Tests = new CompressionTestService(new CompressionTestRepository(db, session), Clock, session);
+            Specimens = new SpecimenService(new SpecimenRepository(db, session), Clock, session);
             ReportImages = new ReportImageService(new AppSettingsRepository(db, session), session);
+            ServerInfo = new ServerInfoRepository(db, session);
         }
+
+        /// <summary>Server and schema version ("Acerca de").</summary>
+        public ServerInfoRepository ServerInfo { get; }
 
         public ConnectionSettings Settings { get; }
 

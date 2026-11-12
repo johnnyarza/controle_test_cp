@@ -14,10 +14,12 @@ namespace ProbetaControl.Services
         private static readonly Regex EmailPattern = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
 
         private readonly ContactRepository<T> _repository;
+        private readonly AppSession _session;
 
-        public ContactService(ContactRepository<T> repository)
+        public ContactService(ContactRepository<T> repository, AppSession session)
         {
             _repository = repository;
+            _session = session;
         }
 
         public Task<PagedResult<T>> SearchAsync(ListQuery query, CancellationToken cancellationToken = default) =>
@@ -43,9 +45,12 @@ namespace ProbetaControl.Services
             return record.Id == 0 ? _repository.InsertAsync(record, cancellationToken) : _repository.UpdateAsync(record, cancellationToken);
         }
 
-        /// <summary>Archiving is refused (<see cref="InUseException"/>) while active records use the record.</summary>
+        /// <summary>
+        /// Administrators only. Archiving is refused (<see cref="InUseException"/>) while active records use the record.
+        /// </summary>
         public async Task SetArchivedAsync(T record, bool archived, CancellationToken cancellationToken = default)
         {
+            _session.RequireAdmin(AppSession.ArchiveAdminOnly);
             var blocker = archived ? await GetArchiveBlockerAsync(record, cancellationToken).ConfigureAwait(false) : null;
             if (blocker != null)
             {
@@ -64,8 +69,8 @@ namespace ProbetaControl.Services
     {
         private readonly ClientRepository _repository;
 
-        public ClientService(ClientRepository repository)
-            : base(repository)
+        public ClientService(ClientRepository repository, AppSession session)
+            : base(repository, session)
         {
             _repository = repository;
         }
@@ -84,8 +89,8 @@ namespace ProbetaControl.Services
     {
         private readonly ProviderRepository _repository;
 
-        public ProviderService(ProviderRepository repository)
-            : base(repository)
+        public ProviderService(ProviderRepository repository, AppSession session)
+            : base(repository, session)
         {
             _repository = repository;
         }
@@ -103,10 +108,12 @@ namespace ProbetaControl.Services
     public sealed class MaterialService
     {
         private readonly MaterialRepository _repository;
+        private readonly AppSession _session;
 
-        public MaterialService(MaterialRepository repository)
+        public MaterialService(MaterialRepository repository, AppSession session)
         {
             _repository = repository;
+            _session = session;
         }
 
         public Task<PagedResult<Material>> SearchAsync(ListQuery query, CancellationToken cancellationToken = default) =>
@@ -128,9 +135,12 @@ namespace ProbetaControl.Services
             return material.Id == 0 ? _repository.InsertAsync(material, cancellationToken) : _repository.UpdateAsync(material, cancellationToken);
         }
 
-        /// <summary>Archiving is refused (<see cref="InUseException"/>) while an active design uses the material.</summary>
+        /// <summary>
+        /// Administrators only. Archiving is refused (<see cref="InUseException"/>) while an active design uses the material.
+        /// </summary>
         public async Task SetArchivedAsync(Material material, bool archived, CancellationToken cancellationToken = default)
         {
+            _session.RequireAdmin(AppSession.ArchiveAdminOnly);
             var blocker = archived ? await GetArchiveBlockerAsync(material, cancellationToken).ConfigureAwait(false) : null;
             if (blocker != null)
             {
@@ -262,9 +272,12 @@ namespace ProbetaControl.Services
             return errors;
         }
 
-        /// <summary>Archiving is refused (<see cref="InUseException"/>) while an active test uses the design.</summary>
+        /// <summary>
+        /// Administrators only. Archiving is refused (<see cref="InUseException"/>) while an active test uses the design.
+        /// </summary>
         public async Task SetArchivedAsync(ConcreteDesign design, bool archived, CancellationToken cancellationToken = default)
         {
+            _session.RequireAdmin(AppSession.ArchiveAdminOnly);
             var blocker = archived ? await GetArchiveBlockerAsync(design, cancellationToken).ConfigureAwait(false) : null;
             if (blocker != null)
             {

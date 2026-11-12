@@ -50,11 +50,14 @@ namespace ProbetaControl.Services
         /// <summary>"Bloquear": the operator gives the unlock back before leaving the PC.</summary>
         public void LockTest(int testId) => _unlockedTests.Remove(testId);
 
-        public void RequireAdmin()
+        /// <summary>Archiving and restoring any record is for administrators (checked in every service).</summary>
+        public const string ArchiveAdminOnly = "Solo un administrador puede archivar o restaurar.";
+
+        public void RequireAdmin(string message = null)
         {
             if (!IsAdmin)
             {
-                throw new AccessDeniedException("Esta acción requiere un usuario administrador.");
+                throw new AccessDeniedException(message ?? "Esta acción requiere un usuario administrador.");
             }
         }
     }

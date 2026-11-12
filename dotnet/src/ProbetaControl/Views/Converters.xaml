@@ -12,5 +12,7 @@
     <views:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility" />
     <views:NotEmptyToVisibilityConverter x:Key="NotEmptyToVisibility" />
     <views:MinWidthToVisibilityConverter x:Key="MinWidthToVisibility" />
+    <views:BytesToImageConverter x:Key="BytesToImage" />
+    <views:ResourceKeyConverter x:Key="ResourceKey" />
 
 </ResourceDictionary>

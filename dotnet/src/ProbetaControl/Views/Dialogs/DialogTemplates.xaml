@@ -4,6 +4,7 @@
                     xmlns:i="clr-namespace:ProbetaControl.ViewModels.Infrastructure"
                     xmlns:c="clr-namespace:ProbetaControl.ViewModels.Catalog"
                     xmlns:t="clr-namespace:ProbetaControl.ViewModels.CompressionTests"
+                    xmlns:st="clr-namespace:ProbetaControl.ViewModels.Settings"
                     xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors">
 
     <!-- Yes / no question -->
@@ -820,6 +821,170 @@
                 <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
                 <Button Style="{StaticResource PrimaryButton}" Content="Desbloquear" Command="{Binding SaveCommand}" IsDefault="True"
                         b:ButtonIcon.Icon="{StaticResource Icon.Unlock}" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Probetas para romper (after login), grouped by ensayo; layout D -->
+    <DataTemplate DataType="{x:Type t:DueSpecimensViewModel}">
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Warning}" Stroke="{StaticResource Brush.Warning}" Margin="0,0,8,0" />
+                <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Heading}" Margin="0" />
+            </StackPanel>
+
+            <WrapPanel Margin="0,0,0,12">
+                <Border Style="{StaticResource Chip}" Background="{StaticResource Brush.RowOverdue}" BorderThickness="0" Margin="0,0,8,0"
+                        Visibility="{Binding HasOverdue, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="{Binding OverdueText}" Foreground="{StaticResource Brush.Error}" FontWeight="SemiBold" />
+                </Border>
+                <Border Style="{StaticResource Chip}" Background="{StaticResource Brush.RowDueSoon}" BorderThickness="0" Margin="0,0,8,0"
+                        Visibility="{Binding HasToday, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="{Binding TodayText}" FontWeight="SemiBold" />
+                </Border>
+                <Border Style="{StaticResource Chip}" Margin="0,0,8,0"
+                        Visibility="{Binding HasTomorrow, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="{Binding TomorrowText}" FontWeight="SemiBold" />
+                </Border>
+            </WrapPanel>
+
+            <Border BorderBrush="{StaticResource Brush.Border}" BorderThickness="1" CornerRadius="{StaticResource Radius.Control}" Margin="0,0,0,14">
+                <ScrollViewer MaxHeight="380" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                    <ItemsControl ItemsSource="{Binding Groups}" Focusable="False" AutomationProperties.Name="Ensayos con probetas para romper">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <Border Background="{StaticResource Brush.SurfaceMuted}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="0,0,0,1"
+                                            Padding="12,8">
+                                        <DockPanel>
+                                            <Button DockPanel.Dock="Right" Content="Abrir ensayo" Command="{Binding OpenCommand}" VerticalAlignment="Center"
+                                                    AutomationProperties.Name="{Binding Heading, StringFormat=Abrir {0}}" />
+                                            <StackPanel Margin="0,0,12,0">
+                                                <TextBlock Text="{Binding Heading}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Style="{StaticResource MutedText}" Text="{Binding Details}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </Border>
+                                    <ItemsControl ItemsSource="{Binding Rows}" Focusable="False">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border x:Name="Row" Padding="12,6" BorderBrush="{StaticResource Brush.Divider}" BorderThickness="0,0,0,1">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="80" />
+                                                            <ColumnDefinition Width="110" />
+                                                            <ColumnDefinition Width="70" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="90" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{Binding Id, StringFormat=Nº {0}}" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding RuptureDate, StringFormat=Rotura {0:dd/MM}}" />
+                                                        <TextBlock Grid.Column="2" Text="{Binding AgeDays, StringFormat={}{0} días}" />
+                                                        <TextBlock Grid.Column="3" Foreground="{StaticResource Brush.TextSecondary}"
+                                                                   Text="{Binding MoldDate, StringFormat=Moldeo {0:dd/MM/yyyy}}" />
+                                                        <TextBlock x:Name="Status" Grid.Column="4" Text="{Binding StatusText}" FontWeight="SemiBold" TextAlignment="Right" />
+                                                    </Grid>
+                                                </Border>
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding RowStatus}" Value="Overdue">
+                                                        <Setter TargetName="Row" Property="Background" Value="{StaticResource Brush.RowOverdue}" />
+                                                        <Setter TargetName="Status" Property="Foreground" Value="{StaticResource Brush.Error}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding RowStatus}" Value="DueSoon">
+                                                        <Setter TargetName="Row" Property="Background" Value="{StaticResource Brush.RowDueSoon}" />
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Style="{StaticResource PrimaryButton}" Content="Cerrar" Command="{Binding CloseCommand}"
+                        IsDefault="True" IsCancel="True" b:FocusBehavior.FocusOnLoad="True" />
+                <CheckBox Content="No volver a mostrar hoy en este equipo" IsChecked="{Binding HideToday}" VerticalAlignment="Center" />
+            </DockPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- New / edit user (Configuración → Usuarios) -->
+    <DataTemplate DataType="{x:Type st:UserEditorViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" Margin="0,0,0,16" />
+            <Border Style="{StaticResource MessageBanner}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Usuario (para iniciar sesión, sin espacios)" />
+                <TextBox Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" MaxLength="50" AutomationProperties.Name="Usuario"
+                         b:FocusBehavior.FocusOnLoad="True" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[UserName]}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Nombre completo" />
+                <TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" AutomationProperties.Name="Nombre completo" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[FullName]}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Rol" />
+                <ComboBox ItemsSource="{Binding RoleOptions}" SelectedValuePath="Value" DisplayMemberPath="Label"
+                          SelectedValue="{Binding Role}" IsEnabled="{Binding CanChangeRole}" AutomationProperties.Name="Rol"
+                          ToolTip="Operador: crea y modifica datos. Administrador: además archiva, desbloquea ensayos y administra usuarios." />
+                <TextBlock Style="{StaticResource MutedText}" Text="No puede cambiar su propio rol." Margin="0,4,0,0"
+                           Visibility="{Binding IsSelf, Converter={StaticResource BoolToVisibility}}" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Role]}" />
+            </StackPanel>
+            <StackPanel Visibility="{Binding IsNew, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Contraseña inicial" />
+                    <PasswordBox b:PasswordBoxBinding.Password="{Binding Password}" AutomationProperties.Name="Contraseña inicial" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Password]}" />
+                </StackPanel>
+                <StackPanel Style="{StaticResource FormField}">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Repetir contraseña" />
+                    <PasswordBox b:PasswordBoxBinding.Password="{Binding ConfirmPassword}" AutomationProperties.Name="Repetir contraseña" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[ConfirmPassword]}" />
+                </StackPanel>
+                <TextBlock Style="{StaticResource MutedText}" Text="{Binding PasswordRule}" Margin="0,0,0,12" />
+            </StackPanel>
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,0,0,12"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Guardar" Command="{Binding SaveCommand}" IsDefault="True" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Temporary password for another user -->
+    <DataTemplate DataType="{x:Type st:ResetPasswordViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" />
+            <TextBlock Style="{StaticResource MutedText}" Text="{Binding Explanation}" Margin="0,0,0,16" />
+            <Border Style="{StaticResource MessageBanner}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Contraseña temporal" />
+                <PasswordBox b:PasswordBoxBinding.Password="{Binding Password}" AutomationProperties.Name="Contraseña temporal"
+                             b:FocusBehavior.FocusOnLoad="True" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Password]}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource FormField}">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Repetir contraseña" />
+                <PasswordBox b:PasswordBoxBinding.Password="{Binding ConfirmPassword}" AutomationProperties.Name="Repetir contraseña" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[ConfirmPassword]}" />
+            </StackPanel>
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,0,0,12"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Restablecer" Command="{Binding SaveCommand}" IsDefault="True" />
             </StackPanel>
         </StackPanel>
     </DataTemplate>

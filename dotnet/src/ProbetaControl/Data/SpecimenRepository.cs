@@ -86,9 +86,10 @@ namespace ProbetaControl.Data
         public async Task<IReadOnlyList<DueSpecimen>> ListDueAsync(DateTime through, CancellationToken cancellationToken = default)
         {
             var sql =
-                $"SELECT {Columns}, c.Name AS ClientName, t.ProjectName FROM Specimens s " +
+                $"SELECT {Columns}, c.Name AS ClientName, t.ProjectName, d.Description AS ConcreteDesignDescription FROM Specimens s " +
                 "JOIN CompressionTests t ON t.Id = s.CompressionTestId " +
                 "JOIN Clients c ON c.Id = t.ClientId " +
+                "JOIN ConcreteDesigns d ON d.Id = t.ConcreteDesignId " +
                 "WHERE s.IsArchived = 0 AND t.IsArchived = 0 AND s.RuptureLoadTon IS NULL AND s.RuptureDate <= @through " +
                 "ORDER BY s.RuptureDate, s.Id";
 

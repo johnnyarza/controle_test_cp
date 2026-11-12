@@ -93,6 +93,33 @@ namespace ProbetaControl.Tests.Data
         }
 
         [Test]
+        public async Task Only_administrators_archive_and_restore_catalog_records()
+        {
+            var client = await NewClientAsync();
+            var provider = new Provider { Name = Unique("Proveedor") };
+            await Services.Providers.SaveAsync(provider);
+            var material = new Material { Name = Unique("Arena") };
+            await Services.Materials.SaveAsync(material);
+            var design = await NewDesignAsync();
+
+            // The services refuse even when a screen would let the call through.
+            await SignInNewOperatorAsync();
+            var denied = Assert.ThrowsAsync<AccessDeniedException>(() => Services.Clients.SetArchivedAsync(client, true));
+            Assert.That(denied.Message, Is.EqualTo(AppSession.ArchiveAdminOnly));
+            Assert.ThrowsAsync<AccessDeniedException>(() => Services.Providers.SetArchivedAsync(provider, true));
+            Assert.ThrowsAsync<AccessDeniedException>(() => Services.Materials.SetArchivedAsync(material, true));
+            Assert.ThrowsAsync<AccessDeniedException>(() => Services.Designs.SetArchivedAsync(design, true));
+            Assert.That((await Services.Clients.GetAsync(client.Id)).IsArchived, Is.False, "nothing was archived");
+
+            SignInAsAdmin();
+            await Services.Materials.SetArchivedAsync(material, true);
+
+            await SignInNewOperatorAsync();
+            Assert.ThrowsAsync<AccessDeniedException>(() => Services.Materials.SetArchivedAsync(material, false), "restoring too");
+            Assert.That((await AuditRowsAsync("Materials", material.Id)).Select(a => a.Action), Is.EqualTo(new[] { "insert", "archive" }));
+        }
+
+        [Test]
         public async Task Search_pages_and_counts_and_treats_wildcards_literally()
         {
             var tag = Unique("Pag");

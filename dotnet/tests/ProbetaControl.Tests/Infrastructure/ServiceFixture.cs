@@ -50,6 +50,16 @@ namespace ProbetaControl.Tests.Infrastructure
         /// <summary>A unique name so tests in one fixture never collide on unique keys.</summary>
         protected static string Unique(string prefix) => prefix + " " + Guid.NewGuid().ToString("N").Substring(0, 8);
 
+        /// <summary>Creates an operator (as the administrator) and signs in as them. <see cref="SignInAsAdmin"/> switches back.</summary>
+        protected async Task<User> SignInNewOperatorAsync()
+        {
+            Session.SignIn(Admin);
+            var op = new User { UserName = Unique("op").Replace(" ", "_"), Role = UserRoles.Operator };
+            await Services.UserAdmin.CreateAsync(op, "operador123");
+            Session.SignIn(op);
+            return op;
+        }
+
         protected async Task<Client> NewClientAsync(string name = null)
         {
             var client = new Client { Name = name ?? Unique("Cliente") };

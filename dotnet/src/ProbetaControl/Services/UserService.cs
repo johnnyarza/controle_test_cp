@@ -43,6 +43,12 @@ namespace ProbetaControl.Services
             Validate(user);
 
             var stored = await _users.GetAsync(user.Id, cancellationToken).ConfigureAwait(false) ?? throw new NotFoundException("el usuario");
+            if (user.Id == _session.UserId && user.Role != stored.Role)
+            {
+                // The session keeps the role it signed in with; another administrator changes it.
+                throw new AccessDeniedException("No puede cambiar su propio rol.");
+            }
+
             if (stored.IsAdmin && !user.IsAdmin)
             {
                 await EnsureAnotherAdminRemainsAsync(stored, cancellationToken).ConfigureAwait(false);

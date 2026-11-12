@@ -15,6 +15,12 @@ namespace ProbetaControl.ViewModels.Infrastructure
 
         /// <summary>Spanish yes/no question; true when the user confirmed.</summary>
         bool Confirm(string title, string message, string confirmText, bool destructive = false);
+
+        /// <summary>
+        /// Windows "open file" dialog; the chosen path, or null when cancelled.
+        /// <paramref name="filter"/> uses the Windows format: "Imágenes (*.png;*.jpg)|*.png;*.jpg".
+        /// </summary>
+        string ChooseFile(string title, string filter);
     }
 
     /// <summary>Base for anything shown in a dialog window: a title and a way to close itself.</summary>

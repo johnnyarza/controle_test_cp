@@ -11,11 +11,13 @@ namespace ProbetaControl.Services
     {
         private readonly CompressionTestRepository _repository;
         private readonly IClock _clock;
+        private readonly AppSession _session;
 
-        public CompressionTestService(CompressionTestRepository repository, IClock clock)
+        public CompressionTestService(CompressionTestRepository repository, IClock clock, AppSession session)
         {
             _repository = repository;
             _clock = clock;
+            _session = session;
         }
 
         public Task<PagedResult<CompressionTestListItem>> SearchAsync(CompressionTestQuery query, CancellationToken cancellationToken = default) =>
@@ -73,9 +75,10 @@ namespace ProbetaControl.Services
             return errors;
         }
 
-        public Task SetArchivedAsync(CompressionTest test, bool archived, bool testUnlocked, CancellationToken cancellationToken = default)
+        /// <summary>Administrators only (an administrator may change any test, so no unlock check is needed).</summary>
+        public Task SetArchivedAsync(CompressionTest test, bool archived, CancellationToken cancellationToken = default)
         {
-            Require(SpecimenEditPolicy.CanChangeStructure(testUnlocked));
+            _session.RequireAdmin(AppSession.ArchiveAdminOnly);
             return _repository.SetArchivedAsync(test, archived, cancellationToken);
         }
 
@@ -92,11 +95,13 @@ namespace ProbetaControl.Services
     {
         private readonly SpecimenRepository _repository;
         private readonly IClock _clock;
+        private readonly AppSession _session;
 
-        public SpecimenService(SpecimenRepository repository, IClock clock)
+        public SpecimenService(SpecimenRepository repository, IClock clock, AppSession session)
         {
             _repository = repository;
             _clock = clock;
+            _session = session;
         }
 
         public DateTime Today => _clock.Today;
@@ -148,9 +153,10 @@ namespace ProbetaControl.Services
             await _repository.UpdateAsync(specimen, cancellationToken).ConfigureAwait(false);
         }
 
-        public Task SetArchivedAsync(Specimen specimen, bool archived, bool testUnlocked, CancellationToken cancellationToken = default)
+        /// <summary>Administrators only (an administrator may change any test, so no unlock check is needed).</summary>
+        public Task SetArchivedAsync(Specimen specimen, bool archived, CancellationToken cancellationToken = default)
         {
-            CompressionTestService.Require(SpecimenEditPolicy.CanChangeStructure(testUnlocked));
+            _session.RequireAdmin(AppSession.ArchiveAdminOnly);
             return _repository.SetArchivedAsync(specimen, archived, cancellationToken);
         }
 
@@ -248,6 +254,22 @@ namespace ProbetaControl.Services
         public Task SetStampAsync(byte[] bytes, string contentType, CancellationToken cancellationToken = default) =>
             SetAsync(AppSettingsRepository.ReportStamp, bytes, contentType, cancellationToken);
 
+        /// <summary>"image/png" or "image/jpeg" from the file's first bytes (not its name); null for anything else.</summary>
+        public static string DetectContentType(byte[] bytes)
+        {
+            if (bytes == null)
+            {
+                return null;
+            }
+
+            if (bytes.Length >= 4 && bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47)
+            {
+                return "image/png";
+            }
+
+            return bytes.Length >= 3 && bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF ? "image/jpeg" : null;
+        }
+
         private Task SetAsync(string key, byte[] bytes, string contentType, CancellationToken cancellationToken)
         {
             _session.RequireAdmin();
@@ -258,7 +280,8 @@ namespace ProbetaControl.Services
                     throw new ValidationException("Image", "La imagen es demasiado grande (máximo 2 MB).");
                 }
 
-                if (contentType != "image/png" && contentType != "image/jpeg")
+                // A renamed file (e.g. a .gif saved as .png) would break the printed reports later.
+                if ((contentType != "image/png" && contentType != "image/jpeg") || DetectContentType(bytes) != contentType)
                 {
                     throw new ValidationException("Image", "Use una imagen PNG o JPG.");
                 }

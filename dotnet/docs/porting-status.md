@@ -4,7 +4,7 @@ The legacy Java/JavaFX app (repo root, `src/`) is being rewritten as a WPF app o
 in `dotnet/`, on branch `csharp-port`. The Java code stays untouched until the C# version reaches parity
 and is signed off.
 
-_Last updated: 2026-11-11 (end of phase 4, group 5)._
+_Last updated: 2026-11-11 (end of phase 4)._
 
 ## Status
 
@@ -13,8 +13,8 @@ _Last updated: 2026-11-11 (end of phase 4, group 5)._
 | 1 | Solution, single-exe packing (Costura), theme (`Themes/`), shell window, async MVVM base | Done |
 | 2 | Numbered schema scripts 001–010 (011, material type, added in phase 4), `SchemaMigrator`, dev accounts, NUnit + throwaway databases | Done |
 | 3 | Models, Dapper repositories (paging, audit, RowVersion, archive), services, business rules, login, DPAPI config, startup checks | Done |
-| 4 | Screens, in six groups (review after each) | In progress |
-| 5 | PDF reports (PDFsharp), Excel export (ClosedXML), QR labels (QRCoder) | To do |
+| 4 | Screens, in six groups (review after each) | Done |
+| 5 | PDF reports (PDFsharp), Excel export (ClosedXML), QR labels (QRCoder) | **Next** |
 | 6 | Built-in help (`Help/ayuda.html`), opened by "?" / F1. Topics: [help-notes.md](help-notes.md) | To do |
 | 7 | One-off import of the legacy `cp_db` data | To do |
 | 8 | Inno Setup 7 installer (with .NET 4.8 offline installer) | To do |
@@ -45,8 +45,15 @@ _Last updated: 2026-11-11 (end of phase 4, group 5)._
    readings, live density / strength / % fck, pre-filled from the newest probeta); "Registrar rotura"
    quick dialog with "Guardar y siguiente" (also double-click / Ctrl+R on an unbroken probeta).
    Copiar, Archivar, filter by mold dates and numbers (`1-5, 8`), Desbloquear / Bloquear.
-6. **Next:** Due-specimens warning dialog; Configuración (report logo/stamp stored in the DB, user
-   administration, connection settings, change own password); Acerca de.
+6. Done: layouts chosen by the user from mockups (A for Configuración, D for the warning).
+   "Probetas para romper" warning after login (probetas due today or tomorrow plus overdue ones, grouped
+   by ensayo, "Abrir ensayo", "No volver a mostrar hoy en este equipo" kept in `local.ini`).
+   Configuración with a side menu: Administración (Usuarios: new / edit / reset password / archive;
+   Logo y sello: PNG or JPG up to 2 MB, checked by its first bytes, stored in the DB), Este equipo
+   (Conexión: shows the settings; "Cambiar conexión…" signs out and opens the startup connection form),
+   Mi cuenta (Mi contraseña, Acerca de: versions, machine, log folder). Operators see only Este equipo and
+   Mi cuenta. The placeholder page is gone. Admin-only rules (archive/restore everywhere, users, images)
+   are enforced in the services; an administrator can't change their own role.
 
 ## Decisions
 
@@ -60,7 +67,8 @@ _Last updated: 2026-11-11 (end of phase 4, group 5)._
 - Login required; users in the database with BCrypt passwords. A new database starts with
   `admin` / `admin`, which must be changed at first login. No hint about it on the login screen.
 - Roles: `admin`, `operator`. Archive/restore and user administration are admin-only; operators create
-  and edit. On a locked test an operator may only record a pending rupture load.
+  and edit. On a locked test an operator may only record a pending rupture load. The admin-only rules
+  are checked in the services (`AppSession.RequireAdmin`), not only by disabled buttons.
 - Large tables: all database access is async, lists are searched and paged on the server
   (100 rows at a time), long work shows a cancellable busy overlay.
 - A record can't be archived while active records use it (client → ensayos, provider → materials,
@@ -83,7 +91,8 @@ _Last updated: 2026-11-11 (end of phase 4, group 5)._
 
 - **Tools:** .NET SDK 10, VS Code with the C# extensions. F5 = "Probeta Control" (builds Debug, starts
   under the debugger); tasks for build, release build, clean and tests are in `.vscode/tasks.json`.
-- **MySQL:** the project's own instance is the `MySQL2` service on port **3308**. Port 3306 is not used.
+- **MySQL:** the project's own instance is the `MySQL2` service on port **3308** (on the second
+  development PC: `MySQL84` on 3306, set in that PC's `test.env`).
 - **Accounts:** run `dotnet/database/setup/create-dev-accounts.sql` once as root (replace the
   `CHANGE_ME_*` passwords first):
 
@@ -119,6 +128,10 @@ _Last updated: 2026-11-11 (end of phase 4, group 5)._
 - List rows: `RowStyle="{StaticResource ListPageDataGridRow}"` gives archived rows in grey and the
   right-click menu (Editar / Archivar or Restaurar), bound to the page's commands through the row's `Tag`.
 - Colours only through the `Brush.*` keys of `Themes/Colors.xaml`.
+- File dialogs go through `IDialogService.ChooseFile` (tests answer with `ScriptedDialogs.AnswerFile`).
+- Configuración sections derive from `SettingsSection` (an `EditorViewModel`: banner, field errors,
+  `LoadAsync` each time the section is shown); add one to `SettingsPageViewModel` and give it a
+  `DataTemplate` in `Views/Settings/SettingsView.xaml`.
 
 ### Pitfalls already hit
 
@@ -133,6 +146,10 @@ _Last updated: 2026-11-11 (end of phase 4, group 5)._
 - Error tooltips bind `(Validation.Errors)/ErrorContent`, not `[0]` (logs a binding error when errors clear).
 - MySQL: `MySqlErrorCode` has no value for 3819 (check constraint), so compare `ex.Number`; use
   `INSERT … AS alias ON DUPLICATE KEY UPDATE` instead of `VALUES()`.
+- Windows PowerShell 5.1 reads a `.ps1` without a BOM as ANSI: save UI-check scripts with Spanish text
+  ("Iniciar sesión") as UTF-8 with BOM.
+- A left-aligned panel with only `MaxWidth` shrinks to its widest label; give forms a `Width`.
+- Build fails with a locked `*_wpftmp.csproj.nuget.g.props`: delete `bin`/`obj` and build with `-m:1`.
 
 ## Checking screens
 

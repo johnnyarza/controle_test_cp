@@ -37,6 +37,48 @@ namespace ProbetaControl.Views
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
     }
 
+    /// <summary>Image file bytes (PNG / JPG) → an image for an Image control; null when missing or unreadable.</summary>
+    public sealed class BytesToImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (!(value is byte[] bytes) || bytes.Length == 0)
+            {
+                return null;
+            }
+
+            try
+            {
+                using (var stream = new System.IO.MemoryStream(bytes))
+                {
+                    var image = new System.Windows.Media.Imaging.BitmapImage();
+                    image.BeginInit();
+                    image.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+                    image.StreamSource = stream;
+                    image.EndInit();
+                    image.Freeze();
+                    return image;
+                }
+            }
+            catch (Exception ex) when (ex is NotSupportedException || ex is System.IO.IOException || ex is ArgumentException
+                                       || ex is InvalidOperationException || ex is System.Runtime.InteropServices.COMException)
+            {
+                return null;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
+    }
+
+    /// <summary>A resource key (e.g. "Icon.User") → that resource, for icons chosen by the view model.</summary>
+    public sealed class ResourceKeyConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+            value is string key ? Application.Current?.TryFindResource(key) : null;
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
+    }
+
     /// <summary>
     /// Visible when the value is a non-empty string or any non-null object;
     /// ConverterParameter=Invert gives the opposite (e.g. a hint shown while nothing is selected).

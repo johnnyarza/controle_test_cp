@@ -8,6 +8,8 @@
         xmlns:catalogViews="clr-namespace:ProbetaControl.Views.Catalog"
         xmlns:tests="clr-namespace:ProbetaControl.ViewModels.CompressionTests"
         xmlns:testViews="clr-namespace:ProbetaControl.Views.CompressionTests"
+        xmlns:settings="clr-namespace:ProbetaControl.ViewModels.Settings"
+        xmlns:settingsViews="clr-namespace:ProbetaControl.Views.Settings"
         Style="{StaticResource AppWindow}"
         Title="{Binding WindowTitle}"
         Width="1200" Height="760" MinWidth="760" MinHeight="480"
@@ -16,8 +18,8 @@
 
     <Window.Resources>
         <!-- Page view model → view. -->
-        <DataTemplate DataType="{x:Type vm:PlaceholderPageViewModel}">
-            <views:PlaceholderPageView />
+        <DataTemplate DataType="{x:Type settings:SettingsPageViewModel}">
+            <settingsViews:SettingsView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type tests:TestDetailPageViewModel}">
             <testViews:TestDetailView />
