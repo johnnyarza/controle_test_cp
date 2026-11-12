@@ -44,14 +44,18 @@ namespace ProbetaControl.Services
 
     /// <summary>
     /// Everything that must be true before the login window: .NET 4.8, a readable config file,
-    /// a reachable MySQL 8.0.16+ server and a database at exactly the schema version of this build.
+    /// a reachable MySQL 8.0.20+ server and a database at exactly the schema version of this build.
     /// </summary>
     public sealed class StartupChecker
     {
         /// <summary>Registry "Release" value of .NET Framework 4.8.</summary>
         public const int DotNet48Release = 528040;
 
-        private static readonly Version MinimumServerVersion = new Version(8, 0, 16);
+        /// <summary>
+        /// Oldest supported server. CHECK constraints need 8.0.16 and "INSERT … AS alias ON DUPLICATE KEY UPDATE"
+        /// (design materials) needs 8.0.19; 8.0.20 is the version the SQL is written against.
+        /// </summary>
+        internal static readonly Version MinimumServerVersion = new Version(8, 0, 20);
 
         private readonly ConfigStore _config;
 
@@ -104,7 +108,7 @@ namespace ProbetaControl.Services
                     if (serverVersion < MinimumServerVersion)
                     {
                         return new StartupResult(StartupStatus.UnsupportedServer,
-                            $"El servidor MySQL es la versión {connection.ServerVersion}; se necesita 8.0.16 o posterior.", settings);
+                            $"El servidor MySQL es la versión {connection.ServerVersion}; se necesita {MinimumServerVersion} o posterior.", settings);
                     }
 
                     var forbidden = await GetForbiddenPrivilegesAsync(connection, cancellationToken).ConfigureAwait(false);

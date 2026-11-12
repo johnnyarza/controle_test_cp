@@ -21,13 +21,15 @@ namespace ProbetaControl.Tests.Schema
         }
 
         [Test]
-        public async Task Server_is_MySQL_8_0_16_or_later()
+        public async Task Server_is_MySQL_8_0_20_or_later()
         {
             using (var connection = await OpenAsAdminAsync())
             {
                 var text = await connection.ExecuteScalarAsync<string>("SELECT VERSION()");
                 var version = new Version(text.Split('-')[0]);
-                Assert.That(version, Is.GreaterThanOrEqualTo(new Version(8, 0, 16)), "CHECK constraints need 8.0.16+");
+                Assert.That(version, Is.GreaterThanOrEqualTo(new Version(8, 0, 20)), "The SQL is written for MySQL 8.0.20+");
+                Assert.That(Services.StartupChecker.MinimumServerVersion, Is.EqualTo(new Version(8, 0, 20)),
+                    "The startup check must refuse servers older than 8.0.20");
             }
         }
 

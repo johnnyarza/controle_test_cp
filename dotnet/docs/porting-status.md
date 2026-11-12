@@ -53,6 +53,7 @@ _Last updated: 2026-11-11 (end of phase 4, group 5)._
 - One `ProbetaControl.exe` (WPF, net48, Costura.Fody); config `ProbetaControl.config` next to the exe,
   encrypted with DPAPI for the PC.
 - MySQL schema `probeta_control`, utf8mb4 / utf8mb4_0900_ai_ci, SQL limited to what MySQL 8.0.20 supports.
+  The startup check refuses servers older than 8.0.20 (`StartupChecker.MinimumServerVersion`).
 - The app's MySQL account has SELECT, INSERT, UPDATE only. Nothing is deleted: records are archived.
   The connection is refused if the account could DELETE/DROP/ALTER/CREATE (e.g. `root`).
 - Every data change writes an `AuditLog` row in the same transaction.
