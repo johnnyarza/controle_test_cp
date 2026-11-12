@@ -29,8 +29,9 @@ _Last updated: 2026-11-11 (end of phase 4, group 3)._
    reorder rows, up to 8, total kg/m³, water/cement ratio from the material types), and the percentage
    calculator (target quantity = origin quantity × % / 100, previewed before applying). Designs used by
    ensayos show a warning and only an administrator can change them; "Duplicar" makes an editable
-   copy. Also added in this group: material
-   type (Cemento / Agua / Agregado / Aditivo / Otro) and the "in use" rule for archiving.
+   copy. The list shows the selected design's materials in a resizable panel below it. Also added in
+   this group: material type (Cemento / Agua / Agregado / Aditivo / Otro) and the "in use" rule for
+   archiving.
 4. **Next:** Ensayos list: newest first, due-specimen count, filters. This becomes the default page.
 5. Test detail: header, specimen grid (red = overdue, yellow = due today/tomorrow), add/edit/copy/archive
    specimens, filter by mold dates and ID ranges (`1-5, 8`), admin unlock, "N probetas para romper",

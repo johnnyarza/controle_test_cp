@@ -12,28 +12,84 @@
             <Setter Property="TextAlignment" Value="Right" />
             <Setter Property="Padding" Value="0,0,4,0" />
         </Style>
-        <Style x:Key="SummaryCell" TargetType="TextBlock">
-            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Style x:Key="CountCell" TargetType="TextBlock" BasedOn="{StaticResource NumberCell}">
             <Setter Property="ToolTip" Value="{Binding MaterialsSummary}" />
         </Style>
     </UserControl.Resources>
 
+    <!--
+        List on top, materials of the selected design below (the user found one long "Materiales" column
+        cut off on small screens). The splitter resizes both.
+    -->
     <ContentControl Style="{StaticResource ListPageFrame}">
-        <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}"
-                  RowStyle="{StaticResource ListPageDataGridRow}"
-                  b:DataGridBehavior.OpenCommand="{Binding EditCommand}"
-                  AutomationProperties.Name="{Binding Title}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="2*" MinWidth="150" />
-                <DataGridTextColumn Header="fck (kg/cm²)" Binding="{Binding Fck, StringFormat=0.##}" Width="90" MinWidth="80"
-                                    ElementStyle="{StaticResource NumberCell}" />
-                <DataGridTextColumn Header="Slump (cm)" Binding="{Binding Slump, StringFormat=0.##}" Width="90" MinWidth="80"
-                                    ElementStyle="{StaticResource NumberCell}" />
-                <DataGridTextColumn Header="a/c" Binding="{Binding WaterCementRatio, StringFormat=0.00}" Width="60" MinWidth="55"
-                                    ElementStyle="{StaticResource NumberCell}" />
-                <DataGridTextColumn Header="Materiales (kg/m³)" Binding="{Binding MaterialsSummary}" Width="4*" MinWidth="220"
-                                    ElementStyle="{StaticResource SummaryCell}" />
-            </DataGrid.Columns>
-        </DataGrid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" MinHeight="100" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" MinHeight="110" />
+            </Grid.RowDefinitions>
+
+            <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}"
+                      RowStyle="{StaticResource ListPageDataGridRow}"
+                      b:DataGridBehavior.OpenCommand="{Binding EditCommand}"
+                      AutomationProperties.Name="{Binding Title}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="*" MinWidth="180" />
+                    <DataGridTextColumn Header="fck (kg/cm²)" Binding="{Binding Fck, StringFormat=0.##}" Width="100" MinWidth="80"
+                                        ElementStyle="{StaticResource NumberCell}" />
+                    <DataGridTextColumn Header="Slump (cm)" Binding="{Binding Slump, StringFormat=0.##}" Width="100" MinWidth="80"
+                                        ElementStyle="{StaticResource NumberCell}" />
+                    <DataGridTextColumn Header="a/c" Binding="{Binding WaterCementRatio, StringFormat=0.00}" Width="70" MinWidth="55"
+                                        ElementStyle="{StaticResource NumberCell}" />
+                    <DataGridTextColumn Header="Materiales" Binding="{Binding MaterialCount}" Width="100" MinWidth="80"
+                                        ElementStyle="{StaticResource CountCell}" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <GridSplitter Grid.Row="1" Style="{StaticResource HorizontalSplitter}"
+                          AutomationProperties.Name="Cambiar el tamaño del panel de materiales" />
+
+            <!-- Materials of the selected design. -->
+            <Border Grid.Row="2" Style="{StaticResource Card}" Padding="12">
+                <Grid>
+                    <TextBlock Style="{StaticResource MutedText}" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               TextAlignment="Center" Text="Seleccione una dosificación para ver sus materiales."
+                               Visibility="{Binding SelectedItem, Converter={StaticResource NotEmptyToVisibility}, ConverterParameter=Invert}" />
+
+                    <DockPanel Visibility="{Binding SelectedItem, Converter={StaticResource NotEmptyToVisibility}}">
+                        <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource SectionTitle}" Margin="0" Text="Materiales" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Foreground="{StaticResource Brush.TextMuted}" Margin="8,0,16,0"
+                                       VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                       Text="{Binding SelectedItem.Description}" ToolTip="{Binding SelectedItem.Description}" />
+                            <TextBlock Grid.Column="2" VerticalAlignment="Center">
+                                <Run Foreground="{StaticResource Brush.TextSecondary}" Text="Total" />
+                                <Run FontWeight="SemiBold" Text="{Binding SelectedItem.TotalKgPerM3, StringFormat=0.###, Mode=OneWay}" />
+                                <Run Foreground="{StaticResource Brush.TextSecondary}" Text="kg/m³    a/c" />
+                                <Run FontWeight="SemiBold" Text="{Binding SelectedItem.WaterCementRatio, StringFormat=0.00, TargetNullValue='—', Mode=OneWay}" />
+                            </TextBlock>
+                        </Grid>
+
+                        <DataGrid ItemsSource="{Binding SelectedItem.UsedMaterials}" BorderThickness="0"
+                                  AutomationProperties.Name="Materiales de la dosificación seleccionada">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="#" Binding="{Binding Position}" Width="40"
+                                                    ElementStyle="{StaticResource NumberCell}" />
+                                <DataGridTextColumn Header="Material" Binding="{Binding MaterialName}" Width="2*" MinWidth="140" />
+                                <DataGridTextColumn Header="Proveedor" Binding="{Binding ProviderName}" Width="2*" MinWidth="120" />
+                                <DataGridTextColumn Header="Tipo" Binding="{Binding TypeLabel}" Width="100" MinWidth="80" />
+                                <DataGridTextColumn Header="kg/m³" Binding="{Binding QuantityKgPerM3, StringFormat=0.###}" Width="100" MinWidth="80"
+                                                    ElementStyle="{StaticResource NumberCell}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </Grid>
+            </Border>
+        </Grid>
     </ContentControl>
 </UserControl>

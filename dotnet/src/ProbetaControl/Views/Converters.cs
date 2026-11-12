@@ -37,11 +37,22 @@ namespace ProbetaControl.Views
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
     }
 
-    /// <summary>Visible when the value is a non-empty string or any non-null object.</summary>
+    /// <summary>
+    /// Visible when the value is a non-empty string or any non-null object;
+    /// ConverterParameter=Invert gives the opposite (e.g. a hint shown while nothing is selected).
+    /// </summary>
     public sealed class NotEmptyToVisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
-            value == null || (value is string s && s.Length == 0) ? Visibility.Collapsed : Visibility.Visible;
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var hasValue = !(value == null || (value is string s && s.Length == 0));
+            if (string.Equals(parameter as string, "Invert", StringComparison.Ordinal))
+            {
+                hasValue = !hasValue;
+            }
+
+            return hasValue ? Visibility.Visible : Visibility.Collapsed;
+        }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
     }

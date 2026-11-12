@@ -340,4 +340,39 @@ namespace ProbetaControl.Tests.Domain
             Assert.That(many, Does.Contain("se usa en 8 p:").And.Contain("• e\n• … y 3 más\n\nC."));
         }
     }
+
+    /// <summary>What the Dosificaciones list and its materials panel show.</summary>
+    [TestFixture]
+    public class DesignListValuesTests
+    {
+        [Test]
+        public void Materials_panel_lists_used_slots_in_order_with_total_and_type()
+        {
+            var design = new ConcreteDesign
+            {
+                Materials =
+                {
+                    new ConcreteDesignMaterial { Position = 3, MaterialId = 7, MaterialName = "Grava", QuantityKgPerM3 = 1000, MaterialType = MaterialTypes.Aggregate },
+                    new ConcreteDesignMaterial { Position = 1, MaterialId = 5, MaterialName = "Cemento", QuantityKgPerM3 = 350.5m, MaterialType = MaterialTypes.Cement },
+                    new ConcreteDesignMaterial { Position = 2, MaterialId = null, QuantityKgPerM3 = 99 },
+                },
+            };
+
+            Assert.That(design.UsedMaterials.Select(m => m.MaterialName), Is.EqualTo(new[] { "Cemento", "Grava" }));
+            Assert.That(design.MaterialCount, Is.EqualTo(2));
+            Assert.That(design.TotalKgPerM3, Is.EqualTo(1350.5m), "empty slots don't count");
+            Assert.That(design.UsedMaterials[0].TypeLabel, Is.EqualTo("Cemento"));
+            Assert.That(design.MaterialsSummary, Is.EqualTo("Cemento 350.5 · Grava 1000"));
+        }
+
+        [Test]
+        public void NotEmpty_converter_can_be_inverted()
+        {
+            var converter = new ProbetaControl.Views.NotEmptyToVisibilityConverter();
+            Assert.That(converter.Convert(null, null, null, null).ToString(), Is.EqualTo("Collapsed"));
+            Assert.That(converter.Convert(new object(), null, null, null).ToString(), Is.EqualTo("Visible"));
+            Assert.That(converter.Convert(null, null, "Invert", null).ToString(), Is.EqualTo("Visible"));
+            Assert.That(converter.Convert("x", null, "Invert", null).ToString(), Is.EqualTo("Collapsed"));
+        }
+    }
 }

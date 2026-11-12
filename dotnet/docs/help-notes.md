@@ -33,6 +33,10 @@ Add an item whenever a question comes up that a user would also ask. The help it
 
 ## Dosificaciones
 
+- **Materials panel.** The list shows description, fck, slump, a/c and the number of materials (hover
+  for the full list). The panel below the list shows the selected design's materials (#, material,
+  provider, type, kg/m³) with the total and a/c. Drag the bar between them to give either more room.
+
 - **Decimal numbers.** Every numeric field accepts a comma or a point as the decimal separator
   ("12,5" = "12.5"). Thousands separators are not accepted ("1.234,5" gives "Número no válido."),
   so a value is never misread. Lists show a point.

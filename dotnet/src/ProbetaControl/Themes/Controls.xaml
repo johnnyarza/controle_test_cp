@@ -858,15 +858,46 @@
         <Setter Property="Margin" Value="0,0,0,4" />
     </Style>
 
-    <!-- Text shown in the middle of an empty list. -->
+    <!-- Text shown in an empty list, under the column headers (top, so a detail panel below never covers it). -->
     <Style x:Key="EmptyState" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource Brush.TextMuted}" />
         <Setter Property="HorizontalAlignment" Value="Center" />
-        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="TextAlignment" Value="Center" />
         <Setter Property="TextWrapping" Value="Wrap" />
-        <Setter Property="Margin" Value="24,48,24,24" />
+        <Setter Property="Margin" Value="24,72,24,24" />
         <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+
+    <!-- Bar between a list and its detail panel (Grid rows above and below): drag to resize. -->
+    <Style x:Key="HorizontalSplitter" TargetType="GridSplitter">
+        <Setter Property="Height" Value="12" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="ResizeDirection" Value="Rows" />
+        <Setter Property="ResizeBehavior" Value="PreviousAndNext" />
+        <Setter Property="Cursor" Value="SizeNS" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="ToolTip" Value="Arrastre para cambiar el tamaño" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GridSplitter">
+                    <Border Background="{TemplateBinding Background}">
+                        <Border x:Name="Grip" Width="40" Height="4" CornerRadius="2" Background="{StaticResource Brush.Border}"
+                                HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Grip" Property="Background" Value="{StaticResource Brush.BorderHover}" />
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="Grip" Property="Background" Value="{StaticResource Brush.Primary}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- Read-only, virtualized list grid. Large tables are paged by the view model, never loaded whole. -->

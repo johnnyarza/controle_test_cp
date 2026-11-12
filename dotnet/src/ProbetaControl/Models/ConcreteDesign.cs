@@ -26,10 +26,19 @@ namespace ProbetaControl.Models
         /// <summary>Filled slots only, ordered by position.</summary>
         public List<ConcreteDesignMaterial> Materials { get; set; } = new List<ConcreteDesignMaterial>();
 
-        /// <summary>One line for lists: "Cemento 350 · Arena 800 · Grava 1000" (kg/m³).</summary>
-        public string MaterialsSummary => string.Join(" · ", Materials
+        /// <summary>Slots with a material, in position order (the materials panel of the list).</summary>
+        public IReadOnlyList<ConcreteDesignMaterial> UsedMaterials => Materials
             .Where(m => m.MaterialId.HasValue)
             .OrderBy(m => m.Position)
+            .ToList();
+
+        public int MaterialCount => Materials.Count(m => m.MaterialId.HasValue);
+
+        /// <summary>Sum of the quantities, kg/m³.</summary>
+        public decimal TotalKgPerM3 => Materials.Where(m => m.MaterialId.HasValue).Sum(m => m.QuantityKgPerM3 ?? 0);
+
+        /// <summary>One line: "Cemento 350 · Arena 800 · Grava 1000" (kg/m³); tooltip of the list's count column.</summary>
+        public string MaterialsSummary => string.Join(" · ", UsedMaterials
             .Select(m => string.Format(CultureInfo.InvariantCulture, "{0} {1:0.###}", m.MaterialName, m.QuantityKgPerM3)));
 
         /// <summary>Water / cement by weight (materials typed Agua and Cemento); null when either is missing.</summary>
@@ -77,5 +86,8 @@ namespace ProbetaControl.Models
 
         /// <summary>Read-only, filled by queries (<see cref="MaterialTypes"/>).</summary>
         public string MaterialType { get; set; }
+
+        /// <summary>"Cemento", "Agua"… for lists.</summary>
+        public string TypeLabel => MaterialTypes.Label(MaterialType);
     }
 }
