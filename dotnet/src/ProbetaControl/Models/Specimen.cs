@@ -74,6 +74,22 @@ namespace ProbetaControl.Models
         public string ConcreteDesignDescription { get; set; }
     }
 
+    /// <summary>What the warning after login shows: recent due specimens and a count of the older overdue ones.</summary>
+    public sealed class DueWarning
+    {
+        public DueWarning(IReadOnlyList<DueSpecimen> specimens, int olderOverdueCount)
+        {
+            Specimens = specimens;
+            OlderOverdueCount = olderOverdueCount;
+        }
+
+        /// <summary>Due today or tomorrow, or overdue for at most 30 days.</summary>
+        public IReadOnlyList<DueSpecimen> Specimens { get; }
+
+        /// <summary>Overdue for longer; not listed one by one.</summary>
+        public int OlderOverdueCount { get; }
+    }
+
     /// <summary>Stored in English, shown in Spanish; also the grid row colour.</summary>
     public enum SpecimenStatus
     {

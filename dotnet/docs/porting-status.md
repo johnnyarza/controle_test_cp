@@ -46,8 +46,10 @@ _Last updated: 2026-11-11 (end of phase 4)._
    quick dialog with "Guardar y siguiente" (also double-click / Ctrl+R on an unbroken probeta).
    Copiar, Archivar, filter by mold dates and numbers (`1-5, 8`), Desbloquear / Bloquear.
 6. Done: layouts chosen by the user from mockups (A for Configuración, D for the warning).
-   "Probetas para romper" warning after login (probetas due today or tomorrow plus overdue ones, grouped
-   by ensayo, "Abrir ensayo", "No volver a mostrar hoy en este equipo" kept in `local.ini`).
+   "Probetas para romper" warning after login (probetas due today, tomorrow, then overdue for at most
+   30 days, grouped by ensayo; older overdue ones are one line with "Ver en Ensayos"; "Abrir ensayo";
+   "No volver a mostrar hoy en este equipo" kept in `local.ini`). Its list is one flat virtualized list
+   (headings + rows), so 2,000 probetas open in about 0.2 s.
    Configuración with a side menu: Administración (Usuarios: new / edit / reset password / archive;
    Logo y sello: PNG or JPG up to 2 MB, checked by its first bytes, stored in the DB), Este equipo
    (Conexión: shows the settings; "Cambiar conexión…" signs out and opens the startup connection form),
@@ -150,6 +152,22 @@ _Last updated: 2026-11-11 (end of phase 4)._
   ("Iniciar sesión") as UTF-8 with BOM.
 - A left-aligned panel with only `MaxWidth` shrinks to its widest label; give forms a `Width`.
 - Build fails with a locked `*_wpftmp.csproj.nuget.g.props`: delete `bin`/`obj` and build with `-m:1`.
+
+## Large data volumes
+
+Checked on 2026-11-11 with 25,000 ensayos, 150,000 probetas, 800 clients and 250 designs (MySQL 8.4,
+same PC): every list query stays under 150 ms on the server; in the app the Ensayos list shows in about
+0.6 s, "Mostrar más" takes about 0.2 s, a text search about 2 s including the 300 ms typing delay, and
+memory stays near 200 MB. The warning after login was the only slow screen (about 6.6 s for 400 rows
+built at once) until it got the 30-day window and a virtualized list.
+
+**For phase 7:** the legacy app stored 0 for "not broken". Old probetas that were never broken would be
+imported as overdue forever; decide whether to import them archived (or broken with no load) so they
+don't fill "Solo con probetas para romper".
+
+A list that can grow (more than a screenful of rows) must virtualize: a `DataGrid`, or an `ItemsControl`
+with a `VirtualizingStackPanel`, `CanContentScroll="True"` and a bounded height. Nested `ItemsControl`s
+inside a `ScrollViewer` build every row up front.
 
 ## Checking screens
 

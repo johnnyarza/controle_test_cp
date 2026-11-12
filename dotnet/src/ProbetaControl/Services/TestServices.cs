@@ -115,9 +115,21 @@ namespace ProbetaControl.Services
         public Task<int> CountDueAsync(int compressionTestId, CancellationToken cancellationToken = default) =>
             _repository.CountDueAsync(compressionTestId, _clock.Today, cancellationToken);
 
-        /// <summary>Warning list: untested specimens due today or tomorrow, plus all overdue ones.</summary>
-        public Task<IReadOnlyList<DueSpecimen>> ListDueAsync(CancellationToken cancellationToken = default) =>
-            _repository.ListDueAsync(_clock.Today.AddDays(1), cancellationToken);
+        /// <summary>How far back the warning after login lists overdue specimens; older ones are only counted.</summary>
+        public const int RecentOverdueDays = 30;
+
+        /// <summary>
+        /// The warning after login: untested specimens due today or tomorrow plus those overdue for at most
+        /// <see cref="RecentOverdueDays"/> days, and how many older overdue ones exist (listed in Ensayos instead).
+        /// </summary>
+        public async Task<DueWarning> GetDueWarningAsync(CancellationToken cancellationToken = default)
+        {
+            var today = _clock.Today;
+            var oldestListed = today.AddDays(-RecentOverdueDays);
+            var specimens = await _repository.ListDueAsync(oldestListed, today.AddDays(1), cancellationToken).ConfigureAwait(false);
+            var older = await _repository.CountDueBeforeAsync(oldestListed, cancellationToken).ConfigureAwait(false);
+            return new DueWarning(specimens, older);
+        }
 
         public EditDecision CanEdit(Specimen specimen, bool testUnlocked) =>
             SpecimenEditPolicy.CanEdit(specimen, testUnlocked, _clock.Today);

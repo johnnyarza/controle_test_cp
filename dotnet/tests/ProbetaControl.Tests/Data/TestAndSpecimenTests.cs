@@ -99,7 +99,7 @@ namespace ProbetaControl.Tests.Data
 
             Assert.That(await Services.Specimens.CountDueAsync(test.Id), Is.EqualTo(2), "overdue + due today");
 
-            var warnings = (await Services.Specimens.ListDueAsync()).Where(d => d.CompressionTestId == test.Id).ToList();
+            var warnings = (await Services.Specimens.GetDueWarningAsync()).Specimens.Where(d => d.CompressionTestId == test.Id).ToList();
             Assert.That(warnings.Select(w => w.Id), Is.EqualTo(new[] { overdue.Id, dueToday.Id, dueTomorrow.Id }));
             Assert.That(warnings[0].ClientName, Does.StartWith("Cliente"));
             Assert.That(warnings[0].GetStatus(Today), Is.EqualTo(SpecimenStatus.Overdue));

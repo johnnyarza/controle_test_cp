@@ -58,8 +58,14 @@ namespace ProbetaControl.Tests.ViewModels
             var group = shown.Groups.Single(g => g.TestId == test.Id);
             Assert.That(group.Heading, Is.EqualTo($"Ensayo Nº {test.Id} · Edificio Central"));
             Assert.That(group.Details, Does.StartWith("Cliente").And.Contain(" · H-21"));
-            Assert.That(group.Rows.Select(r => r.Id), Is.EqualTo(due.Select(s => s.Id)), "most urgent first, later and broken ones left out");
-            Assert.That(group.Rows.Select(r => r.StatusText), Is.EqualTo(new[] { "Retrasada", "Hoy", "Hoy", "Mañana" }));
+            Assert.That(group.Rows.Select(r => r.Id), Is.EqualTo(new[] { due[1].Id, due[2].Id, due[3].Id, due[0].Id }),
+                "today, tomorrow, then overdue; later and broken ones left out");
+            Assert.That(group.Rows.Select(r => r.StatusText), Is.EqualTo(new[] { "Hoy", "Hoy", "Mañana", "Retrasada" }));
+
+            // The flat list the view draws: each heading followed by its rows.
+            var at = shown.Items.ToList().IndexOf(group);
+            Assert.That(shown.Items.Skip(at + 1).Take(4), Is.EqualTo(group.Rows));
+            Assert.That(shown.Items, Has.Count.EqualTo(shown.Groups.Count + shown.Total));
 
             // Counts cover every ensayo in the database (other tests of this fixture may add some).
             Assert.That(shown.Total, Is.EqualTo(shown.Groups.Sum(g => g.Rows.Count)));
@@ -108,6 +114,47 @@ namespace ProbetaControl.Tests.ViewModels
             dialogs.Answer(_ => false);
             await NewShell(dialogs).ShowDueWarningAsync();
             Assert.That(dialogs.Shown, Has.Count.EqualTo(2), "shown again the next day");
+        }
+
+        [Test]
+        public async Task Probetas_overdue_for_more_than_30_days_are_only_counted_and_shown_in_ensayos()
+        {
+            var (test, _) = await NewTestWithDueSpecimensAsync();
+            var old = NewSpecimen(test.Id, Today.AddDays(-45), 7); // overdue for 38 days
+            await Services.Specimens.SaveAsync(old, testUnlocked: true);
+            var edge = NewSpecimen(test.Id, Today.AddDays(-37), 7); // overdue for exactly 30 days: still listed
+            await Services.Specimens.SaveAsync(edge, testUnlocked: true);
+
+            var dialogs = new ScriptedDialogs();
+            dialogs.Answer(dialog =>
+            {
+                var warning = (DueSpecimensViewModel)dialog;
+                var ids = warning.Groups.SelectMany(g => g.Rows).Select(r => r.Id).ToList();
+                Assert.That(ids, Does.Not.Contain(old.Id));
+                Assert.That(ids, Does.Contain(edge.Id));
+                Assert.That(warning.HasOlderOverdue, Is.True);
+                Assert.That(warning.OlderOverdueText, Does.StartWith("Además hay ").And.EndWith("hace más de 30 días."));
+                Assert.That(warning.OverdueText, Does.EndWith("(últimos 30 días)"));
+                warning.ShowOlderCommand.Execute(null);
+                return true;
+            });
+
+            var shell = NewShell(dialogs);
+            await shell.ShowDueWarningAsync();
+
+            Assert.That(shell.CurrentPage, Is.InstanceOf<TestsPageViewModel>());
+            Assert.That(((TestsPageViewModel)shell.CurrentPage).OnlyDue, Is.True, "Ver en Ensayos turns the filter on");
+        }
+
+        [Test]
+        public async Task Only_old_overdue_probetas_open_no_warning()
+        {
+            await NewTestWithDueSpecimensAsync();
+            Clock.Today = Today.AddDays(400); // every unbroken probeta is now overdue for months
+            var dialogs = new ScriptedDialogs();
+            await NewShell(dialogs).ShowDueWarningAsync();
+            Assert.That(dialogs.Shown, Is.Empty);
+            Assert.That((await Services.Specimens.GetDueWarningAsync()).OlderOverdueCount, Is.GreaterThan(0));
         }
 
         [Test]

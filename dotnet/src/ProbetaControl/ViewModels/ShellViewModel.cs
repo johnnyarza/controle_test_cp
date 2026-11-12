@@ -94,8 +94,10 @@ namespace ProbetaControl.ViewModels
         public ICommand LogoutCommand { get; }
 
         /// <summary>
-        /// Right after login: the probetas due today or tomorrow plus the overdue ones, unless there are none or the
-        /// user chose "No volver a mostrar hoy" on this PC. "Abrir ensayo" opens that ensayo over the Ensayos list.
+        /// Right after login: the probetas due today or tomorrow and those overdue for at most 30 days, unless there
+        /// are none or the user chose "No volver a mostrar hoy" on this PC. Older overdue probetas alone don't open it
+        /// (Ensayos → "Solo con probetas para romper" lists them). "Abrir ensayo" opens that ensayo over the list;
+        /// "Ver en Ensayos" turns that filter on.
         /// </summary>
         public async Task ShowDueWarningAsync()
         {
@@ -105,13 +107,13 @@ namespace ProbetaControl.ViewModels
                 return;
             }
 
-            var due = await Services.Specimens.ListDueAsync();
-            if (due.Count == 0)
+            var warning = await Services.Specimens.GetDueWarningAsync();
+            if (warning.Specimens.Count == 0)
             {
                 return;
             }
 
-            var dialog = new DueSpecimensViewModel(due, today);
+            var dialog = new DueSpecimensViewModel(warning, today);
             _dialogs.Show(dialog);
             if (dialog.HideToday)
             {
@@ -121,6 +123,15 @@ namespace ProbetaControl.ViewModels
             if (dialog.OpenTestId.HasValue)
             {
                 Open(new TestDetailPageViewModel(Services, _dialogs, this, dialog.OpenTestId.Value));
+            }
+            else if (dialog.ShowOlderRequested)
+            {
+                if (!(CurrentPage is TestsPageViewModel))
+                {
+                    SelectedNavigationItem = NavigationItems[0];
+                }
+
+                ((TestsPageViewModel)CurrentPage).OnlyDue = true;
             }
         }
 

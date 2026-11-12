@@ -82,21 +82,35 @@ namespace ProbetaControl.Data
             }
         }
 
-        /// <summary>Untested specimens of all tests due up to <paramref name="through"/> (overdue included), oldest first.</summary>
-        public async Task<IReadOnlyList<DueSpecimen>> ListDueAsync(DateTime through, CancellationToken cancellationToken = default)
+        /// <summary>Untested, active specimens of active tests whose rupture date is (inclusive) between the two dates, oldest first.</summary>
+        public async Task<IReadOnlyList<DueSpecimen>> ListDueAsync(DateTime from, DateTime through, CancellationToken cancellationToken = default)
         {
             var sql =
                 $"SELECT {Columns}, c.Name AS ClientName, t.ProjectName, d.Description AS ConcreteDesignDescription FROM Specimens s " +
                 "JOIN CompressionTests t ON t.Id = s.CompressionTestId " +
                 "JOIN Clients c ON c.Id = t.ClientId " +
                 "JOIN ConcreteDesigns d ON d.Id = t.ConcreteDesignId " +
-                "WHERE s.IsArchived = 0 AND t.IsArchived = 0 AND s.RuptureLoadTon IS NULL AND s.RuptureDate <= @through " +
+                "WHERE s.IsArchived = 0 AND t.IsArchived = 0 AND s.RuptureLoadTon IS NULL " +
+                "AND s.RuptureDate >= @from AND s.RuptureDate <= @through " +
                 "ORDER BY s.RuptureDate, s.Id";
 
             using (var connection = await Db.OpenAsync(cancellationToken).ConfigureAwait(false))
             {
-                var rows = await connection.QueryAsync<DueSpecimen>(Cmd(sql, new { through = through.Date }, null, cancellationToken)).ConfigureAwait(false);
+                var rows = await connection.QueryAsync<DueSpecimen>(Cmd(sql, new { from = from.Date, through = through.Date }, null, cancellationToken))
+                    .ConfigureAwait(false);
                 return rows.ToList();
+            }
+        }
+
+        /// <summary>Untested, active specimens of active tests whose rupture date is before <paramref name="before"/>.</summary>
+        public async Task<int> CountDueBeforeAsync(DateTime before, CancellationToken cancellationToken = default)
+        {
+            using (var connection = await Db.OpenAsync(cancellationToken).ConfigureAwait(false))
+            {
+                return await connection.ExecuteScalarAsync<int>(Cmd(
+                    "SELECT COUNT(*) FROM Specimens s JOIN CompressionTests t ON t.Id = s.CompressionTestId " +
+                    "WHERE s.IsArchived = 0 AND t.IsArchived = 0 AND s.RuptureLoadTon IS NULL AND s.RuptureDate < @before",
+                    new { before = before.Date }, null, cancellationToken)).ConfigureAwait(false);
             }
         }
 

@@ -834,10 +834,6 @@
             </StackPanel>
 
             <WrapPanel Margin="0,0,0,12">
-                <Border Style="{StaticResource Chip}" Background="{StaticResource Brush.RowOverdue}" BorderThickness="0" Margin="0,0,8,0"
-                        Visibility="{Binding HasOverdue, Converter={StaticResource BoolToVisibility}}">
-                    <TextBlock Text="{Binding OverdueText}" Foreground="{StaticResource Brush.Error}" FontWeight="SemiBold" />
-                </Border>
                 <Border Style="{StaticResource Chip}" Background="{StaticResource Brush.RowDueSoon}" BorderThickness="0" Margin="0,0,8,0"
                         Visibility="{Binding HasToday, Converter={StaticResource BoolToVisibility}}">
                     <TextBlock Text="{Binding TodayText}" FontWeight="SemiBold" />
@@ -846,63 +842,89 @@
                         Visibility="{Binding HasTomorrow, Converter={StaticResource BoolToVisibility}}">
                     <TextBlock Text="{Binding TomorrowText}" FontWeight="SemiBold" />
                 </Border>
+                <Border Style="{StaticResource Chip}" Background="{StaticResource Brush.RowOverdue}" BorderThickness="0" Margin="0,0,8,0"
+                        Visibility="{Binding HasOverdue, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="{Binding OverdueText}" Foreground="{StaticResource Brush.Error}" FontWeight="SemiBold" />
+                </Border>
             </WrapPanel>
 
-            <Border BorderBrush="{StaticResource Brush.Border}" BorderThickness="1" CornerRadius="{StaticResource Radius.Control}" Margin="0,0,0,14">
-                <ScrollViewer MaxHeight="380" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
-                    <ItemsControl ItemsSource="{Binding Groups}" Focusable="False" AutomationProperties.Name="Ensayos con probetas para romper">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <Border Background="{StaticResource Brush.SurfaceMuted}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="0,0,0,1"
-                                            Padding="12,8">
-                                        <DockPanel>
-                                            <Button DockPanel.Dock="Right" Content="Abrir ensayo" Command="{Binding OpenCommand}" VerticalAlignment="Center"
-                                                    AutomationProperties.Name="{Binding Heading, StringFormat=Abrir {0}}" />
-                                            <StackPanel Margin="0,0,12,0">
-                                                <TextBlock Text="{Binding Heading}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Style="{StaticResource MutedText}" Text="{Binding Details}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
-                                            </StackPanel>
-                                        </DockPanel>
-                                    </Border>
-                                    <ItemsControl ItemsSource="{Binding Rows}" Focusable="False">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border x:Name="Row" Padding="12,6" BorderBrush="{StaticResource Brush.Divider}" BorderThickness="0,0,0,1">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="80" />
-                                                            <ColumnDefinition Width="110" />
-                                                            <ColumnDefinition Width="70" />
-                                                            <ColumnDefinition Width="*" />
-                                                            <ColumnDefinition Width="90" />
-                                                        </Grid.ColumnDefinitions>
-                                                        <TextBlock Text="{Binding Id, StringFormat=Nº {0}}" />
-                                                        <TextBlock Grid.Column="1" Text="{Binding RuptureDate, StringFormat=Rotura {0:dd/MM}}" />
-                                                        <TextBlock Grid.Column="2" Text="{Binding AgeDays, StringFormat={}{0} días}" />
-                                                        <TextBlock Grid.Column="3" Foreground="{StaticResource Brush.TextSecondary}"
-                                                                   Text="{Binding MoldDate, StringFormat=Moldeo {0:dd/MM/yyyy}}" />
-                                                        <TextBlock x:Name="Status" Grid.Column="4" Text="{Binding StatusText}" FontWeight="SemiBold" TextAlignment="Right" />
-                                                    </Grid>
-                                                </Border>
-                                                <DataTemplate.Triggers>
-                                                    <DataTrigger Binding="{Binding RowStatus}" Value="Overdue">
-                                                        <Setter TargetName="Row" Property="Background" Value="{StaticResource Brush.RowOverdue}" />
-                                                        <Setter TargetName="Status" Property="Foreground" Value="{StaticResource Brush.Error}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding RowStatus}" Value="DueSoon">
-                                                        <Setter TargetName="Row" Property="Background" Value="{StaticResource Brush.RowDueSoon}" />
-                                                    </DataTrigger>
-                                                </DataTemplate.Triggers>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+            <!--
+                One flat list (ensayo heading, its probetas, next heading…) with a virtualizing panel: only the rows
+                on screen are built, so hundreds of probetas open at once. The fixed height bounds the list inside
+                the dialog's own scroll viewer, which virtualization needs.
+            -->
+            <Border BorderBrush="{StaticResource Brush.Border}" BorderThickness="1" CornerRadius="{StaticResource Radius.Control}" Margin="0,0,0,10">
+                <ItemsControl ItemsSource="{Binding Items}" MaxHeight="380" Focusable="False"
+                              VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                              VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.CanContentScroll="True"
+                              AutomationProperties.Name="Ensayos con probetas para romper">
+                    <ItemsControl.Template>
+                        <ControlTemplate TargetType="ItemsControl">
+                            <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                                <ItemsPresenter />
+                            </ScrollViewer>
+                        </ControlTemplate>
+                    </ItemsControl.Template>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.Resources>
+                        <!-- Ensayo heading -->
+                        <DataTemplate DataType="{x:Type t:DueTestGroup}">
+                            <Border Background="{StaticResource Brush.SurfaceMuted}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="0,0,0,1"
+                                    Padding="12,8">
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Right" Content="Abrir ensayo" Command="{Binding OpenCommand}" VerticalAlignment="Center"
+                                            AutomationProperties.Name="{Binding Heading, StringFormat=Abrir {0}}" />
+                                    <StackPanel Margin="0,0,12,0">
+                                        <TextBlock Text="{Binding Heading}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Style="{StaticResource MutedText}" Text="{Binding Details}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                        <!-- Probeta row -->
+                        <DataTemplate DataType="{x:Type t:SpecimenRow}">
+                            <Border x:Name="Row" Padding="12,6" BorderBrush="{StaticResource Brush.Divider}" BorderThickness="0,0,0,1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="90" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Id, StringFormat=Nº {0}}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding RuptureDate, StringFormat=Rotura {0:dd/MM}}" />
+                                    <TextBlock Grid.Column="2" Text="{Binding AgeDays, StringFormat={}{0} días}" />
+                                    <TextBlock Grid.Column="3" Foreground="{StaticResource Brush.TextSecondary}"
+                                               Text="{Binding MoldDate, StringFormat=Moldeo {0:dd/MM/yyyy}}" />
+                                    <TextBlock x:Name="Status" Grid.Column="4" Text="{Binding StatusText}" FontWeight="SemiBold" TextAlignment="Right" />
+                                </Grid>
+                            </Border>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding RowStatus}" Value="Overdue">
+                                    <Setter TargetName="Row" Property="Background" Value="{StaticResource Brush.RowOverdue}" />
+                                    <Setter TargetName="Status" Property="Foreground" Value="{StaticResource Brush.Error}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding RowStatus}" Value="DueSoon">
+                                    <Setter TargetName="Row" Property="Background" Value="{StaticResource Brush.RowDueSoon}" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.Resources>
+                </ItemsControl>
             </Border>
+
+            <!-- Older overdue probetas: one line, listed in Ensayos instead -->
+            <DockPanel Margin="0,0,0,14" Visibility="{Binding HasOlderOverdue, Converter={StaticResource BoolToVisibility}}">
+                <Button DockPanel.Dock="Right" Content="Ver en Ensayos" Command="{Binding ShowOlderCommand}" Margin="12,0,0,0"
+                        b:ButtonIcon.Icon="{StaticResource Icon.Filter}"
+                        ToolTip="Ensayos con &quot;Solo con probetas para romper&quot;" />
+                <TextBlock Text="{Binding OlderOverdueText}" Foreground="{StaticResource Brush.Error}" VerticalAlignment="Center" TextWrapping="Wrap" />
+            </DockPanel>
 
             <DockPanel>
                 <Button DockPanel.Dock="Right" Style="{StaticResource PrimaryButton}" Content="Cerrar" Command="{Binding CloseCommand}"

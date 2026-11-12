@@ -55,8 +55,11 @@ Add an item whenever a question comes up that a user would also ask. The help it
 ## Aviso de probetas para romper
 
 - **When it appears.** Right after logging in, if there are unbroken probetas whose rupture date is
-  today or tomorrow, or already passed. It lists them by ensayo, most urgent first, with the counts
-  (retrasadas / hoy / mañana) and the same colours as the ensayo page.
+  today or tomorrow, or passed at most 30 days ago. It lists them by ensayo — today first, then
+  tomorrow, then the overdue ones — with the counts and the same colours as the ensayo page.
+- **Older overdue probetas** (more than 30 days late) are not listed one by one: a line says how many
+  there are, and "Ver en Ensayos" shows the Ensayos list with "Solo con probetas para romper". If only
+  such old ones exist, the warning doesn't open.
 - **Abrir ensayo** closes the warning and opens that ensayo; "← Ensayos" goes back to the list.
 - **No volver a mostrar hoy en este equipo** hides it until tomorrow, on this PC and Windows user only.
   The Ensayos list still shows "Para romper" and "Solo con probetas para romper".
