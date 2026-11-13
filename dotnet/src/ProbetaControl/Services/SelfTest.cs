@@ -39,8 +39,25 @@ namespace ProbetaControl.Services
                     throw new InvalidOperationException("DPAPI round trip failed");
                 }
 
+                // Reports: MigraDoc lays out a page, GDI+ draws it, PDFsharp writes it.
+                var report = new MigraDoc.DocumentObjectModel.Document();
+                report.AddSection().AddParagraph("Probeta Control — prueba ñ ³ ±");
+                var renderer = new Reports.ReportRenderer(report);
+                using (renderer.RenderPage(1, 36))
+                {
+                }
+
+                var pdfPath = Path.Combine(Path.GetTempPath(), "ProbetaControl.selftest.pdf");
+                renderer.SavePdf(pdfPath);
+                var pdfOk = new FileInfo(pdfPath).Length > 0;
+                File.Delete(pdfPath);
+                if (!pdfOk)
+                {
+                    throw new InvalidOperationException("PDF output failed");
+                }
+
                 var scripts = Data.Schema.SchemaScript.LoadEmbedded().Count;
-                AppLog.Info($"Selftest OK: BCrypt, MySqlConnector, Dapper, DPAPI, {scripts} schema scripts");
+                AppLog.Info($"Selftest OK: BCrypt, MySqlConnector, Dapper, DPAPI, PDFsharp/MigraDoc, {scripts} schema scripts");
                 return 0;
             }
             catch (Exception ex)

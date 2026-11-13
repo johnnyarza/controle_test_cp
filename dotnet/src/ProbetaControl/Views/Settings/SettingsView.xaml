@@ -147,6 +147,61 @@
             </Border>
         </DataTemplate>
 
+        <!-- ===== Datos del informe ===== -->
+        <DataTemplate DataType="{x:Type s:ReportTextsSectionViewModel}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                <!-- Up to 560 wide, narrower when the window is: the tiny second column takes what is left over. -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" MaxWidth="560" />
+                        <ColumnDefinition Width="0.001*" />
+                    </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource SectionTitle}" Text="Datos del informe" />
+                    <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,14" TextWrapping="Wrap"
+                               Text="Se imprimen en todos los informes y son los mismos en todos los equipos. El logo y el sello se eligen en &quot;Logo y sello&quot;." />
+                    <Border Style="{StaticResource MessageBanner}">
+                        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+                    </Border>
+                    <StackPanel Style="{StaticResource FormField}">
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Nombre del laboratorio" />
+                        <TextBox Text="{Binding LabName, UpdateSourceTrigger=PropertyChanged}" MaxLength="{Binding MaxLabNameLength}"
+                                 AutomationProperties.Name="Nombre del laboratorio" />
+                        <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[LabName]}" />
+                        <TextBlock Style="{StaticResource MutedText}" Text="Debajo del título, en la cabecera de cada hoja." />
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource FormField}">
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Pie de página" />
+                        <TextBox Text="{Binding FooterText, UpdateSourceTrigger=PropertyChanged}" MaxLength="{Binding MaxTextLength}"
+                                 TextWrapping="Wrap" AcceptsReturn="False" MinHeight="48" VerticalContentAlignment="Top"
+                                 AutomationProperties.Name="Pie de página" />
+                        <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[FooterText]}" />
+                        <TextBlock Style="{StaticResource MutedText}" Text="Dirección, teléfonos y correo, al pie de cada hoja." />
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource FormField}">
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Nota" />
+                        <TextBox Text="{Binding NoteText, UpdateSourceTrigger=PropertyChanged}" MaxLength="{Binding MaxTextLength}"
+                                 TextWrapping="Wrap" AcceptsReturn="False" MinHeight="64" VerticalContentAlignment="Top"
+                                 AutomationProperties.Name="Nota" />
+                        <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[NoteText]}" />
+                        <TextBlock Style="{StaticResource MutedText}" Text="Al final del informe del ensayo, junto al sello." />
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource FormField}">
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Tamaño de papel" />
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Content="A4 (210 × 297 mm)" IsChecked="{Binding IsA4}" GroupName="Paper" Margin="0,0,24,0" />
+                            <RadioButton Content="Carta (216 × 279 mm)" IsChecked="{Binding IsLetter}" GroupName="Paper" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                   Text="El papel que tiene la impresora. Si una impresora no lo tiene, la hoja se reduce para que entre completa." />
+                    </StackPanel>
+                    <Button Style="{StaticResource PrimaryButton}" Content="Guardar" Command="{Binding SaveCommand}"
+                            b:ButtonIcon.Icon="{StaticResource Icon.Save}" HorizontalAlignment="Left" Margin="0,4,0,0" />
+                </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type s:ReportImagesSectionViewModel}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
                 <StackPanel>

@@ -66,7 +66,7 @@ Add an item whenever a question comes up that a user would also ask. The help it
 
 ## Configuración
 
-- **What each user sees.** Administrators: Usuarios, Logo y sello, Conexión, Mi contraseña, Acerca de.
+- **What each user sees.** Administrators: Usuarios, Datos del informe, Logo y sello, Conexión, Mi contraseña, Acerca de.
   Operators: Conexión, Mi contraseña, Acerca de.
 - **Usuarios.** "Nuevo usuario" asks for the user name (no spaces), full name, role and a first
   password (minimum 8 characters) that the user must change at the first login. "Restablecer
@@ -115,6 +115,27 @@ Add an item whenever a question comes up that a user would also ask. The help it
 - **Copiar.** A new probeta with the selected one's measurements and dates, without its rupture load.
 - **Filtrar.** By mold date range and/or probeta numbers ("1-5, 8, 10-12"); the active filter shows in
   a blue bar with "Quitar filtro". The due count always covers the whole ensayo.
+
+## Informes
+
+- **Imprimir.** The ensayo page's "Imprimir" (Ctrl+P) opens the report in a preview window. It prints the
+  probetas the page shows (with the filter, if one is set), never archived ones; the tooltip says which.
+  The data is read again from the database, so the report is always up to date.
+- **Preview window.** No PDF program is needed. "Imprimir…" (Ctrl+P) opens the Windows print dialog
+  (printer, copies, pages "Desde/Hasta"); "Guardar PDF…" (Ctrl+S) saves a PDF, e.g. to send by e-mail
+  (suggested name: date, ensayo Nº, client, project). − / + (Ctrl+− / Ctrl++) and "Ancho de página"
+  (Ctrl+0) change the zoom. "Cerrar" or Esc.
+- **No printer installed.** "Imprimir…" says so; save the PDF and print it on another PC.
+- **Paper.** Reports use the paper chosen in Configuración → Datos del informe (A4 or Carta). If the printer
+  doesn't have that paper, the page is shrunk to fit on what it has instead of being cut off.
+- **What the ensayo report shows.** Header (logo, title, lab name, ensayo Nº and date, printed date,
+  "Hoja X de Y"); client, concrete provider, project, location, design with fck, slump with its tolerance
+  (up to 9 cm ± 1, up to 15 cm ± 2, more ± 3) and a/c; the mix per m³; the probetas table ("—" = not broken
+  yet); a summary per age (number, minimum, average, % fck) with the strength-vs-age chart (points =
+  probetas, line = average per age, dashed red = fck); the note and the stamp; the lab's address at the
+  bottom of every page.
+- **Datos del informe** (administrators, Configuración): lab name (required), footer, note, paper. Saved
+  in the database, so every PC prints the same; the logo and stamp are in "Logo y sello".
 
 ## Dosificaciones
 

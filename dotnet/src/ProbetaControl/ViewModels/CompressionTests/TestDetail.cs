@@ -55,6 +55,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
             FilterCommand = new AsyncRelayCommand(ChooseFilterAsync);
             ClearFilterCommand = new AsyncRelayCommand(() => ApplyFilterAsync(new SpecimenFilter()), () => HasFilter);
             RecordRuptureCommand = new AsyncRelayCommand(() => RecordRuptureAsync(SelectedRow), () => CanRecordRupture(SelectedRow));
+            PrintCommand = new RelayCommand(Print, () => Test != null);
             OpenSpecimenCommand = new AsyncRelayCommand(
                 () => CanRecordRupture(SelectedRow)
                     ? RecordRuptureAsync(SelectedRow)
@@ -231,7 +232,23 @@ namespace ProbetaControl.ViewModels.CompressionTests
 
         public ICommand ClearFilterCommand { get; }
 
+        /// <summary>"Imprimir" (Ctrl+P): the ensayo report in the preview window.</summary>
+        public ICommand PrintCommand { get; }
+
+        public string PrintToolTip => HasFilter
+            ? "Informe del ensayo con las probetas del filtro (sin las archivadas) (Ctrl+P)"
+            : "Informe del ensayo con todas sus probetas (sin las archivadas) (Ctrl+P)";
+
         public override Task OnNavigatedToAsync() => LoadAsync();
+
+        /// <summary>The report prints what the grid shows (same filter), never archived probetas; data is read fresh.</summary>
+        private void Print()
+        {
+            var filter = _filter;
+            var title = $"Informe del ensayo Nº {TestId}";
+            _dialogs.Show(new Reports.ReportPreviewViewModel(title, Services.Reports.ReportService.TestFileName(Test),
+                ct => _services.Reports.BuildTestReportAsync(TestId, filter, ct), _dialogs));
+        }
 
         public override void OnNavigatedFrom()
         {
@@ -427,6 +444,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
             OnPropertyChanged(nameof(Filter));
             OnPropertyChanged(nameof(HasFilter));
             OnPropertyChanged(nameof(FilterText));
+            OnPropertyChanged(nameof(PrintToolTip));
             await LoadAsync();
         }
 

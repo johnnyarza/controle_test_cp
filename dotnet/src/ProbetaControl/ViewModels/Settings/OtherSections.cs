@@ -12,6 +12,93 @@ using ProbetaControl.ViewModels.Infrastructure;
 
 namespace ProbetaControl.ViewModels.Settings
 {
+    /// <summary>
+    /// Datos del informe (administrators): lab name, footer, note and paper size printed on every report,
+    /// stored in the database so every PC prints the same.
+    /// </summary>
+    public sealed class ReportTextsSectionViewModel : SettingsSection
+    {
+        private readonly ReportSettingsService _service;
+        private string _labName;
+        private string _footerText;
+        private string _noteText;
+        private bool _isLetter;
+
+        public ReportTextsSectionViewModel(ReportSettingsService service)
+            : base(SettingsPageViewModel.AdminGroup, "Datos del informe", "Icon.Print")
+        {
+            _service = service;
+            SaveCommand = new AsyncRelayCommand(SaveAsync, () => !IsBusy);
+        }
+
+        public string LabName
+        {
+            get => _labName;
+            set => SetProperty(ref _labName, value);
+        }
+
+        public string FooterText
+        {
+            get => _footerText;
+            set => SetProperty(ref _footerText, value);
+        }
+
+        public string NoteText
+        {
+            get => _noteText;
+            set => SetProperty(ref _noteText, value);
+        }
+
+        /// <summary>Carta (true) or A4 (false).</summary>
+        public bool IsLetter
+        {
+            get => _isLetter;
+            set
+            {
+                if (SetProperty(ref _isLetter, value))
+                {
+                    OnPropertyChanged(nameof(IsA4));
+                }
+            }
+        }
+
+        public bool IsA4
+        {
+            get => !_isLetter;
+            set => IsLetter = !value;
+        }
+
+        public int MaxLabNameLength => Models.ReportSettings.MaxLabNameLength;
+
+        public int MaxTextLength => Models.ReportSettings.MaxTextLength;
+
+        public ICommand SaveCommand { get; }
+
+        public override Task LoadAsync() => RunAsync(async () =>
+        {
+            var settings = await _service.GetAsync();
+            LabName = settings.LabName;
+            FooterText = settings.FooterText;
+            NoteText = settings.NoteText;
+            IsLetter = settings.PaperSize == Models.ReportPaperSize.Letter;
+        });
+
+        private async Task SaveAsync()
+        {
+            var ok = await RunAsync(() => _service.SaveAsync(new Models.ReportSettings
+            {
+                LabName = LabName,
+                FooterText = FooterText,
+                NoteText = NoteText,
+                PaperSize = IsLetter ? Models.ReportPaperSize.Letter : Models.ReportPaperSize.A4,
+            }));
+            if (ok)
+            {
+                ShowMessage(MessageKind.Success, "Datos guardados. Los próximos informes saldrán así en todos los equipos.");
+            }
+        }
+    }
+
     /// <summary>Logo y sello (administrators): the two report images, stored in the database for every PC.</summary>
     public sealed class ReportImagesSectionViewModel : SettingsSection
     {

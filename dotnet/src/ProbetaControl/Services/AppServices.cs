@@ -25,7 +25,10 @@ namespace ProbetaControl.Services
             Designs = new ConcreteDesignService(new ConcreteDesignRepository(db, session), session);
             Tests = new CompressionTestService(new CompressionTestRepository(db, session), Clock, session);
             Specimens = new SpecimenService(new SpecimenRepository(db, session), Clock, session);
-            ReportImages = new ReportImageService(new AppSettingsRepository(db, session), session);
+            var appSettings = new AppSettingsRepository(db, session);
+            ReportImages = new ReportImageService(appSettings, session);
+            ReportSettings = new ReportSettingsService(appSettings, ReportImages, session);
+            Reports = new Reports.ReportService(Tests, Designs, Specimens, ReportSettings, Clock);
             ServerInfo = new ServerInfoRepository(db, session);
         }
 
@@ -57,5 +60,11 @@ namespace ProbetaControl.Services
         public SpecimenService Specimens { get; }
 
         public ReportImageService ReportImages { get; }
+
+        /// <summary>Lab details printed on reports (Configuración → Datos del informe).</summary>
+        public ReportSettingsService ReportSettings { get; }
+
+        /// <summary>Builds the printed reports.</summary>
+        public Reports.ReportService Reports { get; }
     }
 }

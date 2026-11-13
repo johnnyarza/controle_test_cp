@@ -26,6 +26,7 @@ namespace ProbetaControl.ViewModels.Settings
             if (services.Session.IsAdmin)
             {
                 sections.Add(new UsersSectionViewModel(services.UserAdmin, services.Session, dialogs));
+                sections.Add(new ReportTextsSectionViewModel(services.ReportSettings));
                 sections.Add(new ReportImagesSectionViewModel(services.ReportImages, dialogs));
             }
 

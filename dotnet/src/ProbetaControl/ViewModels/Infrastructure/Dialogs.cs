@@ -21,6 +21,15 @@ namespace ProbetaControl.ViewModels.Infrastructure
         /// <paramref name="filter"/> uses the Windows format: "Imágenes (*.png;*.jpg)|*.png;*.jpg".
         /// </summary>
         string ChooseFile(string title, string filter);
+
+        /// <summary>Windows "save as" dialog (asks before overwriting); the chosen path, or null when cancelled.</summary>
+        string ChooseSaveFile(string title, string filter, string suggestedFileName);
+
+        /// <summary>
+        /// Windows print dialog (printer, copies, page range 1..<paramref name="pageCount"/>);
+        /// null when cancelled or there is no printer.
+        /// </summary>
+        System.Drawing.Printing.PrinterSettings ChoosePrinter(string documentName, int pageCount);
     }
 
     /// <summary>Base for anything shown in a dialog window: a title and a way to close itself.</summary>

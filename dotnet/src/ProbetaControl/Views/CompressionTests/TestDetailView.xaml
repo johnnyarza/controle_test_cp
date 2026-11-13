@@ -7,6 +7,7 @@
         <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewSpecimenCommand}" />
         <KeyBinding Key="R" Modifiers="Control" Command="{Binding RecordRuptureCommand}" />
         <KeyBinding Key="Left" Modifiers="Alt" Command="{Binding BackCommand}" />
+        <KeyBinding Key="P" Modifiers="Control" Command="{Binding PrintCommand}" />
     </UserControl.InputBindings>
 
     <UserControl.Resources>
@@ -73,6 +74,8 @@
                         b:ButtonIcon.Icon="{StaticResource Icon.Back}" Margin="0,0,8,0" VerticalAlignment="Center"
                         ToolTip="Volver a la lista de ensayos (Alt+←)" AutomationProperties.Name="Volver a Ensayos" />
                 <WrapPanel DockPanel.Dock="Right" VerticalAlignment="Center">
+                    <Button Content="Imprimir" Command="{Binding PrintCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Print}"
+                            Margin="8,0,0,0" ToolTip="{Binding PrintToolTip}" />
                     <Button Content="Editar datos" Command="{Binding EditHeaderCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Edit}"
                             Margin="8,0,0,0" ToolTip="Fecha, cliente, proveedor, dosificación, proyecto y ubicación" />
                     <Button Content="Desbloquear…" Command="{Binding UnlockCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Unlock}"

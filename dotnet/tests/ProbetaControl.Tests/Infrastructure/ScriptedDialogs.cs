@@ -50,6 +50,30 @@ namespace ProbetaControl.Tests.Infrastructure
             return _files.Dequeue();
         }
 
+        /// <summary>"Save as" dialogs take the next <see cref="AnswerFile"/> answer too.</summary>
+        public string ChooseSaveFile(string title, string filter, string suggestedFileName)
+        {
+            SuggestedFileNames.Add(suggestedFileName);
+            return ChooseFile(title, filter);
+        }
+
+        public List<string> SuggestedFileNames { get; } = new List<string>();
+
+        private readonly Queue<System.Drawing.Printing.PrinterSettings> _printers = new Queue<System.Drawing.Printing.PrinterSettings>();
+
+        /// <summary>The next print dialog returns <paramref name="settings"/> (null = cancelled).</summary>
+        public void AnswerPrinter(System.Drawing.Printing.PrinterSettings settings) => _printers.Enqueue(settings);
+
+        public System.Drawing.Printing.PrinterSettings ChoosePrinter(string documentName, int pageCount)
+        {
+            if (_printers.Count == 0)
+            {
+                throw new InvalidOperationException("Unexpected print dialog: " + documentName);
+            }
+
+            return _printers.Dequeue();
+        }
+
         /// <summary>Presses Guardar and reports whether the dialog closed (saved) or stayed open (errors).</summary>
         public static bool Save(EditorDialogViewModel editor)
         {

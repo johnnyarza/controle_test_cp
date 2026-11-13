@@ -40,7 +40,7 @@ namespace ProbetaControl.Tests.ViewModels
         {
             var admin = NewPage(new ScriptedDialogs());
             Assert.That(admin.Sections.Select(s => s.Title),
-                Is.EqualTo(new[] { "Usuarios", "Logo y sello", "Conexión", "Mi contraseña", "Acerca de" }));
+                Is.EqualTo(new[] { "Usuarios", "Datos del informe", "Logo y sello", "Conexión", "Mi contraseña", "Acerca de" }));
             Assert.That(admin.Sections.Select(s => s.Group).Distinct(),
                 Is.EqualTo(new[] { SettingsPageViewModel.AdminGroup, SettingsPageViewModel.ComputerGroup, SettingsPageViewModel.AccountGroup }));
             Assert.That(admin.SelectedSection, Is.InstanceOf<UsersSectionViewModel>());

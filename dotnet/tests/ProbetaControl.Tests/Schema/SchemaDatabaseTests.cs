@@ -219,7 +219,10 @@ namespace ProbetaControl.Tests.Schema
             using (var connection = await OpenAsAppAsync())
             {
                 var keys = await connection.QueryAsync<string>("SELECT SettingKey FROM AppSettings ORDER BY SettingKey");
-                Assert.That(keys, Is.EqualTo(new[] { "ReportLogo", "ReportStamp" }));
+                Assert.That(keys, Is.EqualTo(new[]
+                {
+                    "ReportFooter", "ReportLabName", "ReportLogo", "ReportNote", "ReportPaperSize", "ReportStamp",
+                }));
             }
         }
     }

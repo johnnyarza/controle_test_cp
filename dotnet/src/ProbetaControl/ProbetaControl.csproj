@@ -23,10 +23,15 @@
     <PackageReference Include="MySqlConnector" Version="2.6.2" />
     <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <!-- Stay on 6.2.x: 6.5.0 and later are AGPL / commercial (runtime license check); 6.2.4 is MIT. -->
+    <PackageReference Include="PDFsharp-MigraDoc-GDI" Version="6.2.4" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="System.Security" />
+    <!-- Reports: GDI+ drawing (preview pages, printing) and the Windows print dialog. -->
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
   <ItemGroup>
