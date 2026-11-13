@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Fills the probeta_demo database with sample data: dotnet run, project dotnet/tools/DemoSeed. Not shipped. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <RootNamespace>ProbetaControl.DemoSeed</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ProbetaControl\ProbetaControl.csproj" />
+  </ItemGroup>
+
+</Project>

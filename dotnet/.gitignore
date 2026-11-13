@@ -8,3 +8,6 @@ FodyWeavers.xsd
 
 # Local test credentials
 tests/test.env
+
+# Demo program copy made by tools/DemoSeed (connection file is encrypted per PC)
+demo-app/

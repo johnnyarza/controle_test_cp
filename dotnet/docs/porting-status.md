@@ -136,6 +136,10 @@ _Last updated: 2026-11-12 (phase 5, group 1)._
 - **Tests:** copy `dotnet/tests/test.env.example` to `test.env` (git-ignored) and fill in the test
   passwords; `dotnet test dotnet/ProbetaControl.sln`. Each fixture runs in its own `probeta_test_*`
   database, which is dropped afterwards; leftovers are removed after a day.
+- **Demo database:** `probeta_demo` with made-up sample data, for trying and showing the program. Set up with
+  `database/demo/create-demo.sql` (root, once) and `dotnet run --project dotnet/tools/DemoSeed` (`--reset` to
+  refill; dates are relative to that day). Accounts and passwords (public, demo only):
+  [DEMO-CREDENTIALS.md](../database/demo/DEMO-CREDENTIALS.md).
 - **Logs:** `%LOCALAPPDATA%\ProbetaControl\logs`. Debug builds also log WPF binding errors there.
 - **Self-test:** `ProbetaControl.exe --selftest` checks that the packed libraries load, including drawing and
   saving a PDF page (exit code 0 = OK).
