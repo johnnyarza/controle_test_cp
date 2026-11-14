@@ -56,6 +56,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
             ClearFilterCommand = new AsyncRelayCommand(() => ApplyFilterAsync(new SpecimenFilter()), () => HasFilter);
             RecordRuptureCommand = new AsyncRelayCommand(() => RecordRuptureAsync(SelectedRow), () => CanRecordRupture(SelectedRow));
             PrintCommand = new RelayCommand(Print, () => Test != null);
+            ExportExcelCommand = new AsyncRelayCommand(ExportExcelAsync, () => Test != null && !IsBusy);
             OpenSpecimenCommand = new AsyncRelayCommand(
                 () => CanRecordRupture(SelectedRow)
                     ? RecordRuptureAsync(SelectedRow)
@@ -235,6 +236,13 @@ namespace ProbetaControl.ViewModels.CompressionTests
         /// <summary>"Imprimir" (Ctrl+P): the ensayo report in the preview window.</summary>
         public ICommand PrintCommand { get; }
 
+        /// <summary>"Excel" (Ctrl+E): the probetas the page shows (never archived ones) as an .xlsx file.</summary>
+        public ICommand ExportExcelCommand { get; }
+
+        public string ExportExcelToolTip => HasFilter
+            ? "Guardar un archivo de Excel con las probetas del filtro (sin las archivadas) (Ctrl+E)"
+            : "Guardar un archivo de Excel con todas las probetas del ensayo (sin las archivadas) (Ctrl+E)";
+
         public string PrintToolTip => HasFilter
             ? "Informe del ensayo con las probetas del filtro (sin las archivadas) (Ctrl+P)"
             : "Informe del ensayo con todas sus probetas (sin las archivadas) (Ctrl+P)";
@@ -248,6 +256,37 @@ namespace ProbetaControl.ViewModels.CompressionTests
             var title = $"Informe del ensayo Nº {TestId}";
             _dialogs.Show(new Reports.ReportPreviewViewModel(title, Services.Reports.ReportService.TestFileName(Test),
                 ct => _services.Reports.BuildTestReportAsync(TestId, filter, ct), _dialogs));
+        }
+
+        /// <summary>
+        /// Asks where to save, then writes the workbook with what the grid shows (same filter, data read fresh).
+        /// A file that can't be written (open in Excel, read-only folder) is explained, not an error.
+        /// </summary>
+        private async Task ExportExcelAsync()
+        {
+            var name = Reports.ReportPreviewViewModel.SafeFileName(Services.Reports.ReportService.TestFileName(Test));
+            var path = _dialogs.ChooseSaveFile("Exportar a Excel", Services.Reports.TestExcelExport.FileFilter, name);
+            if (path == null)
+            {
+                return;
+            }
+
+            var filter = _filter;
+            try
+            {
+                await RunBusyAsync("Exportando a Excel…",
+                    ct => _services.Reports.ExportTestToExcelAsync(TestId, filter, path, ct), cancellable: false);
+            }
+            catch (Exception ex) when (ex is System.IO.IOException || ex is UnauthorizedAccessException)
+            {
+                AppLog.Error("Exportar a Excel", ex);
+                _dialogs.Warn("No se pudo guardar el archivo",
+                    "No se pudo guardar \"" + System.IO.Path.GetFileName(path) + "\". Si está abierto en Excel, ciérrelo y vuelva a exportar."
+                    + "\n\n" + ex.Message);
+                return;
+            }
+
+            _dialogs.Warn("Exportar a Excel", "Archivo guardado:\n" + path);
         }
 
         public override void OnNavigatedFrom()
@@ -445,6 +484,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
             OnPropertyChanged(nameof(HasFilter));
             OnPropertyChanged(nameof(FilterText));
             OnPropertyChanged(nameof(PrintToolTip));
+            OnPropertyChanged(nameof(ExportExcelToolTip));
             await LoadAsync();
         }
 

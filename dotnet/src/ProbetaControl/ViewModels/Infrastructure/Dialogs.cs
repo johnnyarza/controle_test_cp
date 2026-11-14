@@ -106,19 +106,26 @@ namespace ProbetaControl.ViewModels.Infrastructure
         public ICommand CancelCommand { get; }
     }
 
-    /// <summary>A warning with a single "Aceptar" button (e.g. why a record can't be archived).</summary>
+    /// <summary>
+    /// A message with a single "Aceptar" button: a warning (e.g. why a record can't be archived) or, without the
+    /// warning sign, plain information (e.g. where a file was saved).
+    /// </summary>
     public sealed class MessageDialogViewModel : DialogViewModel
     {
-        public MessageDialogViewModel(string title, string text)
+        public MessageDialogViewModel(string title, string text, bool isWarning = true)
         {
             Title = title;
             Text = text;
+            IsWarning = isWarning;
             CloseCommand = new RelayCommand(() => Close(true));
         }
 
         public override string Title { get; }
 
         public string Text { get; }
+
+        /// <summary>Shows the warning sign next to the title.</summary>
+        public bool IsWarning { get; }
 
         public ICommand CloseCommand { get; }
     }
@@ -128,5 +135,9 @@ namespace ProbetaControl.ViewModels.Infrastructure
         /// <summary>Shows a warning the user can only acknowledge.</summary>
         public static void Warn(this IDialogService dialogs, string title, string message) =>
             dialogs.Show(new MessageDialogViewModel(title, message));
+
+        /// <summary>Tells the user something went well (no warning sign).</summary>
+        public static void Inform(this IDialogService dialogs, string title, string message) =>
+            dialogs.Show(new MessageDialogViewModel(title, message, isWarning: false));
     }
 }

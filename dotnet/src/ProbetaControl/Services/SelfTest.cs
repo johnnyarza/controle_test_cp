@@ -56,8 +56,28 @@ namespace ProbetaControl.Services
                     throw new InvalidOperationException("PDF output failed");
                 }
 
+                // Excel export: ClosedXML and the libraries it brings write a workbook that opens again.
+                var excelPath = Path.Combine(Path.GetTempPath(), "ProbetaControl.selftest.xlsx");
+                using (var workbook = new ClosedXML.Excel.XLWorkbook())
+                {
+                    workbook.AddWorksheet("Prueba").Cell(1, 1).Value = "ñ ³ ±";
+                    workbook.SaveAs(excelPath);
+                }
+
+                bool excelOk;
+                using (var workbook = new ClosedXML.Excel.XLWorkbook(excelPath))
+                {
+                    excelOk = workbook.Worksheet("Prueba").Cell(1, 1).GetString() == "ñ ³ ±";
+                }
+
+                File.Delete(excelPath);
+                if (!excelOk)
+                {
+                    throw new InvalidOperationException("Excel output failed");
+                }
+
                 var scripts = Data.Schema.SchemaScript.LoadEmbedded().Count;
-                AppLog.Info($"Selftest OK: BCrypt, MySqlConnector, Dapper, DPAPI, PDFsharp/MigraDoc, {scripts} schema scripts");
+                AppLog.Info($"Selftest OK: BCrypt, MySqlConnector, Dapper, DPAPI, PDFsharp/MigraDoc, ClosedXML, {scripts} schema scripts");
                 return 0;
             }
             catch (Exception ex)

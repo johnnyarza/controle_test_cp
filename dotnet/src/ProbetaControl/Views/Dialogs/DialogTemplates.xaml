@@ -20,12 +20,13 @@
         </StackPanel>
     </DataTemplate>
 
-    <!-- Warning with a single button -->
+    <!-- Warning (or plain information, without the sign) with a single button -->
     <DataTemplate DataType="{x:Type i:MessageDialogViewModel}">
         <StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                 <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.Warning}" Stroke="{StaticResource Brush.Warning}"
-                      Margin="0,0,8,0" />
+                      Margin="0,0,8,0"
+                      Visibility="{Binding IsWarning, Converter={StaticResource BoolToVisibility}}" />
                 <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" Margin="0" />
             </StackPanel>
             <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Margin="0,4,0,20" />

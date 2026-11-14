@@ -19,6 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.1" />
     <PackageReference Include="Costura.Fody" Version="5.7.0" PrivateAssets="all" />
     <PackageReference Include="MySqlConnector" Version="2.6.2" />
     <PackageReference Include="Dapper" Version="2.1.35" />

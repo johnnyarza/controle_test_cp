@@ -50,6 +50,23 @@ namespace ProbetaControl.Services.Reports
         /// </summary>
         public async Task<Document> BuildTestReportAsync(int testId, SpecimenFilter filter, CancellationToken cancellationToken = default)
         {
+            var data = await GetTestReportDataAsync(testId, filter, cancellationToken);
+            return await Task.Run(() => TestReport.Build(data), cancellationToken);
+        }
+
+        /// <summary>
+        /// The ensayo as an Excel workbook at <paramref name="path"/> (replaced if it exists), with the same probetas
+        /// the report would print. The file being open in Excel throws <see cref="System.IO.IOException"/>.
+        /// </summary>
+        public async Task ExportTestToExcelAsync(int testId, SpecimenFilter filter, string path, CancellationToken cancellationToken = default)
+        {
+            var data = await GetTestReportDataAsync(testId, filter, cancellationToken);
+            await Task.Run(() => TestExcelExport.Save(data, path), cancellationToken);
+        }
+
+        /// <summary>The ensayo, its design and the probetas matching the filter (never archived ones), read fresh.</summary>
+        private async Task<TestReportData> GetTestReportDataAsync(int testId, SpecimenFilter filter, CancellationToken cancellationToken)
+        {
             var test = await _tests.GetAsync(testId, cancellationToken) ?? throw new NotFoundException("el ensayo");
             var printFilter = new SpecimenFilter
             {
@@ -62,7 +79,7 @@ namespace ProbetaControl.Services.Reports
             var design = await _designs.GetAsync(test.ConcreteDesignId, cancellationToken);
             var branding = await _settings.GetBrandingAsync(cancellationToken);
 
-            var data = new TestReportData
+            return new TestReportData
             {
                 Test = test,
                 Design = design,
@@ -70,7 +87,6 @@ namespace ProbetaControl.Services.Reports
                 Branding = branding,
                 PrintedOn = _clock.Today,
             };
-            return await Task.Run(() => TestReport.Build(data), cancellationToken);
         }
 
         /// <summary>
