@@ -149,6 +149,12 @@ Add an item whenever a question comes up that a user would also ask. The help it
   ensayos where the client is only the concrete provider don't count.
 - **Very long reports.** A list or a client report stops at 3,000 rows (about 100 pages) and says so at the
   end; narrow the search to print a part.
+- **Excel.** The ensayo page's "Excel" (Ctrl+E) saves an .xlsx file with the probetas the page shows (with
+  the filter, if one is set), never archived ones. Sheet "Probetas": one row per probeta, with numbers and
+  dates Excel can calculate with, the heading fixed at the top and filter arrows; a probeta not broken yet
+  has load, strength and % fck empty. Sheet "Ensayo": client, project, design, fck and the mix. If the file
+  is open in Excel it can't be replaced: close it and export again. Excel is not needed to export, only to
+  open the file.
 - **Datos del informe** (administrators, Configuración): lab name (required), footer, note, paper. Saved
   in the database, so every PC prints the same; the logo and stamp are in "Logo y sello".
 

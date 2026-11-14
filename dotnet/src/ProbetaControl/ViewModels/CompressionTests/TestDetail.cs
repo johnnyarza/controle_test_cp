@@ -286,7 +286,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
                 return;
             }
 
-            _dialogs.Warn("Exportar a Excel", "Archivo guardado:\n" + path);
+            _dialogs.Inform("Exportar a Excel", "Archivo guardado:\n" + path);
         }
 
         public override void OnNavigatedFrom()

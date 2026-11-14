@@ -150,6 +150,7 @@ namespace ProbetaControl.Tests.Reports
 
                 Assert.That(dialogs.SuggestedFileNames.Single(), Does.StartWith("2026-02-08 Ensayo " + test.Id + " - "));
                 Assert.That(saved.Text, Is.EqualTo("Archivo guardado:\n" + path));
+                Assert.That(saved.IsWarning, Is.False, "good news: no warning sign");
                 Assert.That(page.IsBusy, Is.False);
                 using (var workbook = new XLWorkbook(path))
                 {
@@ -213,6 +214,7 @@ namespace ProbetaControl.Tests.Reports
                     await ((AsyncRelayCommand)page.ExportExcelCommand).ExecuteAsync();
 
                     Assert.That(warning.Title, Is.EqualTo("No se pudo guardar el archivo"));
+                    Assert.That(warning.IsWarning, Is.True);
                     Assert.That(warning.Text, Does.Contain("Si está abierto en Excel, ciérrelo y vuelva a exportar."));
                     Assert.That(page.IsBusy, Is.False);
                 }

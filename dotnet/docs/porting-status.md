@@ -4,7 +4,7 @@ The legacy Java/JavaFX app (repo root, `src/`) is being rewritten as a WPF app o
 in `dotnet/`, on branch `csharp-port`. The Java code stays untouched until the C# version reaches parity
 and is signed off.
 
-_Last updated: 2026-11-13 (phase 5, group 2)._
+_Last updated: 2026-11-13 (phase 5, group 3)._
 
 ## Status
 
@@ -81,7 +81,13 @@ _Last updated: 2026-11-13 (phase 5, group 2)._
    fck) with the ensayo report's columns, then note and stamp. Both stop at `ReportService.MaxRows` (3,000
    rows, about 100 pages) and say so. The Dosificaciones list is a block per design (title line with fck, slump and a/c, then its
    materials table and total; layout A chosen by the user from two mockups), never split between pages.
-3. Excel export (ClosedXML).
+3. Done (awaiting review): Excel export of an ensayo (what the legacy app exported). "Excel" (Ctrl+E) on the
+   ensayo page asks where to save (same suggested name as the PDF) and writes an .xlsx with what the page's
+   filter shows, never archived probetas (`TestExcelExport`, same data as the ensayo report). Sheet "Probetas":
+   heading in row 1 (frozen, with filter arrows), one row per probeta with real numbers and dates
+   (dd/mm/yyyy), plus "% fck"; probetas not broken yet leave load, strength and % fck empty (the legacy file
+   had 0). Sheet "Ensayo": the test's data and its mix. A file that can't be written (open in Excel) is
+   explained in a warning; "Archivo guardado" is a plain information dialog (`IDialogService.Inform`).
 4. QR labels (QRCoder), one per probeta.
 
 ## Decisions
@@ -111,6 +117,9 @@ _Last updated: 2026-11-13 (phase 5, group 2)._
   printer); printing goes straight to a Windows printer, "Guardar PDF…" saves a file to e-mail.
 - **PDFsharp / MigraDoc stay on 6.2.x (MIT).** From 6.5.0 they are AGPL or commercial and check a license at
   runtime ("The loaded license is not valid"). Don't let an update move them to 6.5 or later.
+- **Excel files are written with ClosedXML 0.105.1 (MIT).** Everything it brings is MIT, except
+  SixLabors.Fonts 1.0.0 (Apache-2.0); check the licence of SixLabors.Fonts before letting an update move it
+  to a newer major version. It grows the exe from about 2.6 MB to 5.5 MB.
 - Lab name, footer, note and paper size are edited in Configuración and stored in the database (like the
   logo and stamp). The legacy reports were A4; "Carta" is a setting because printers here often default to it.
 - QR labels (group 4): the QR holds a link to a future read-only page on the lab's server, used by lab staff
@@ -151,7 +160,7 @@ _Last updated: 2026-11-13 (phase 5, group 2)._
   [DEMO-CREDENTIALS.md](../database/demo/DEMO-CREDENTIALS.md).
 - **Logs:** `%LOCALAPPDATA%\ProbetaControl\logs`. Debug builds also log WPF binding errors there.
 - **Self-test:** `ProbetaControl.exe --selftest` checks that the packed libraries load, including drawing and
-  saving a PDF page (exit code 0 = OK).
+  saving a PDF page and writing and reopening an Excel file (exit code 0 = OK).
 - **Eclipse files:** `.vscode/settings.json` stops the Java extension from rewriting `.project`,
   `.classpath` and `.settings/`. If they show up as modified, restore them; don't commit them.
 
