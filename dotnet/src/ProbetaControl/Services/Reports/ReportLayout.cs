@@ -135,6 +135,55 @@ namespace ProbetaControl.Services.Reports
             return row;
         }
 
+        /// <summary>Prepares a two-column "label: value" table (widths in mm) for <see cref="AddField"/>.</summary>
+        public static Table AddFieldTable(Table table, double labelMm, double valueMm)
+        {
+            table.Style = "Normal";
+            table.TopPadding = table.BottomPadding = Unit.FromPoint(1.2);
+            table.LeftPadding = 0;
+            table.AddColumn(Unit.FromMillimeter(labelMm));
+            table.AddColumn(Unit.FromMillimeter(valueMm));
+            return table;
+        }
+
+        /// <summary>A muted label and its value in bold ("—" when empty).</summary>
+        public static void AddField(Table table, string label, string value)
+        {
+            var row = table.AddRow();
+            var name = row.Cells[0].AddParagraph(label + ":");
+            name.Format.Font.Color = Muted;
+            var text = row.Cells[1].AddParagraph(string.IsNullOrWhiteSpace(value) ? "—" : value);
+            text.Format.Font.Bold = true;
+        }
+
+        /// <summary>The lab's note on the left and its stamp / signature on the right, at the end of a report.</summary>
+        public void AddNoteAndStamp(ReportBranding branding)
+        {
+            if (string.IsNullOrWhiteSpace(branding.Settings.NoteText) && branding.Stamp == null)
+            {
+                return;
+            }
+
+            const double StampMm = 60;
+            var table = Section.AddTable();
+            table.LeftPadding = table.RightPadding = 0;
+            table.AddColumn(Unit.FromMillimeter(ContentWidthMm - StampMm));
+            table.AddColumn(Unit.FromMillimeter(StampMm));
+            var row = table.AddRow();
+            row.VerticalAlignment = VerticalAlignment.Bottom;
+            row.TopPadding = Unit.FromMillimeter(5);
+            if (!string.IsNullOrWhiteSpace(branding.Settings.NoteText))
+            {
+                var note = row.Cells[0].AddParagraph(branding.Settings.NoteText);
+                note.Style = "Small";
+                note.Format.RightIndent = Unit.FromMillimeter(10);
+            }
+
+            var stamp = row.Cells[1].AddParagraph();
+            stamp.Format.Alignment = ParagraphAlignment.Center;
+            AddFittedImage(stamp, branding.Stamp, StampMm, 32);
+        }
+
         /// <summary>
         /// An image fitted inside a box, keeping its proportions. Null bytes (or an unreadable image) add nothing.
         /// </summary>

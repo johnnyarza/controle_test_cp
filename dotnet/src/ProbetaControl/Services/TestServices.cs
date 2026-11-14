@@ -112,6 +112,11 @@ namespace ProbetaControl.Services
             CancellationToken cancellationToken = default) =>
             _repository.ListByTestAsync(compressionTestId, filter, cancellationToken);
 
+        /// <summary>Active probetas of the client's active ensayos dated within the range (null = open), oldest ensayo first (report by client).</summary>
+        public Task<IReadOnlyList<ClientSpecimen>> ListByClientAsync(int clientId, DateTime? testDateFrom, DateTime? testDateTo, int limit,
+            CancellationToken cancellationToken = default) =>
+            _repository.ListByClientAsync(clientId, testDateFrom, testDateTo, limit, cancellationToken);
+
         public Task<int> CountDueAsync(int compressionTestId, CancellationToken cancellationToken = default) =>
             _repository.CountDueAsync(compressionTestId, _clock.Today, cancellationToken);
 

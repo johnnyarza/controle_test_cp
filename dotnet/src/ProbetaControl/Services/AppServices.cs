@@ -28,7 +28,7 @@ namespace ProbetaControl.Services
             var appSettings = new AppSettingsRepository(db, session);
             ReportImages = new ReportImageService(appSettings, session);
             ReportSettings = new ReportSettingsService(appSettings, ReportImages, session);
-            Reports = new Reports.ReportService(Tests, Designs, Specimens, ReportSettings, Clock);
+            Reports = new Reports.ReportService(Tests, Designs, Specimens, Clients, Providers, Materials, ReportSettings, Clock);
             ServerInfo = new ServerInfoRepository(db, session);
         }
 

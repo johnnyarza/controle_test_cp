@@ -171,7 +171,7 @@ namespace ProbetaControl.Tests.Reports
             Assert.That(ReportService.TestFileName(test), Is.EqualTo("2026-10-01 Ensayo 12 - Constructora - Torre"));
         }
 
-        private static string CellText(Cell cell) =>
+        internal static string CellText(Cell cell) =>
             string.Concat(cell.Elements.OfType<Paragraph>().SelectMany(p => p.Elements.OfType<MigraDoc.DocumentObjectModel.Text>()).Select(t => t.Content));
     }
 }

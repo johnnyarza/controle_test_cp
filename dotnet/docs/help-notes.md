@@ -134,6 +134,21 @@ Add an item whenever a question comes up that a user would also ask. The help it
   yet); a summary per age (number, minimum, average, % fck) with the strength-vs-age chart (points =
   probetas, line = average per age, dashed red = fck); the note and the stamp; the lab's address at the
   bottom of every page.
+- **Listados.** "Imprimir" (Ctrl+P) on Clientes, Proveedores, Materiales and Dosificaciones prints the list
+  (portrait). It prints everything the search finds, not only the 100 rows on screen, and archived records
+  only when "Mostrar archivados" is ticked (marked "(archivado)"). The line above the table says how many
+  records, the search text and whether archived ones are included. Dosificaciones print as one block each,
+  like the materials panel of the screen: a shaded line with the name, Nº, fck, slump and a/c, then a table
+  of its materials (#, material, provider, type, kg/m³) and the total. A block is never split between pages.
+- **Informe por cliente.** "Informe por cliente…" (Ctrl+P) on Ensayos: with a client filter it prints that
+  client, otherwise it asks for the client ("Buscar cliente"). Then it asks for the dates: "Ensayos desde" /
+  "Ensayos hasta" (the date of the ensayo, both included; leave them empty for all the ensayos; one alone
+  works too). The report shows the period under the client's data and lists the probetas of those ensayos,
+  oldest ensayo first, under a line per ensayo (Nº, date, project, fck), with the same
+  columns as the ensayo report, then the note and the stamp. Archived ensayos and probetas are left out, and
+  ensayos where the client is only the concrete provider don't count.
+- **Very long reports.** A list or a client report stops at 3,000 rows (about 100 pages) and says so at the
+  end; narrow the search to print a part.
 - **Datos del informe** (administrators, Configuración): lab name (required), footer, note, paper. Saved
   in the database, so every PC prints the same; the logo and stamp are in "Logo y sello".
 

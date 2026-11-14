@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ProbetaControl.Models;
 using ProbetaControl.Services;
+using ProbetaControl.Services.Reports;
 using ProbetaControl.ViewModels.Infrastructure;
 
 namespace ProbetaControl.ViewModels.Catalog
@@ -16,10 +17,12 @@ namespace ProbetaControl.ViewModels.Catalog
     {
         private readonly ConcreteDesignService _designs;
         private readonly MaterialService _materials;
+        private readonly ReportService _reports;
 
-        public DesignsPageViewModel(ConcreteDesignService designs, MaterialService materials, IDialogService dialogs, AppSession session)
+        public DesignsPageViewModel(ConcreteDesignService designs, MaterialService materials, ReportService reports, IDialogService dialogs, AppSession session)
             : base("Dosificaciones", dialogs, session)
         {
+            _reports = reports;
             _designs = designs;
             _materials = materials;
         }
@@ -49,6 +52,10 @@ namespace ProbetaControl.ViewModels.Catalog
         protected override bool IsArchived(ConcreteDesign item) => item.IsArchived;
 
         protected override string Describe(ConcreteDesign item) => $"la dosificación \"{item.Description}\"";
+
+        public override bool SupportsPrint => true;
+
+        protected override void Print() => ShowListReport(ListReports.DesignsTitle, _reports.Today, _reports.BuildDesignListAsync);
     }
 
     /// <summary>

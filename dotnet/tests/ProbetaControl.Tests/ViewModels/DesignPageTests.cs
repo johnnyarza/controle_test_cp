@@ -18,7 +18,7 @@ namespace ProbetaControl.Tests.ViewModels
         }
 
         private DesignsPageViewModel NewPage(ScriptedDialogs dialogs) =>
-            new DesignsPageViewModel(Services.Designs, Services.Materials, dialogs, Session);
+            new DesignsPageViewModel(Services.Designs, Services.Materials, Services.Reports, dialogs, Session);
 
         private DesignEditorViewModel NewEditor(ScriptedDialogs dialogs, int? id = null) =>
             new DesignEditorViewModel(Services.Designs, Services.Materials, dialogs, id);
@@ -364,7 +364,7 @@ namespace ProbetaControl.Tests.ViewModels
         [Test]
         public void Other_list_pages_do_not_offer_duplicar()
         {
-            var page = new MaterialsPageViewModel(Services.Materials, Services.Providers, new ScriptedDialogs(), Session);
+            var page = new MaterialsPageViewModel(Services.Materials, Services.Providers, Services.Reports, new ScriptedDialogs(), Session);
             Assert.That(page.SupportsDuplicate, Is.False);
         }
     }

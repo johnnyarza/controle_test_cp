@@ -74,6 +74,17 @@ namespace ProbetaControl.Models
         public string ConcreteDesignDescription { get; set; }
     }
 
+    /// <summary>A specimen with the ensayo it belongs to (report by client).</summary>
+    public sealed class ClientSpecimen : Specimen
+    {
+        public DateTime TestDate { get; set; }
+
+        public string ProjectName { get; set; }
+
+        /// <summary>Design strength of the ensayo (kg/cm²), for "% fck".</summary>
+        public decimal ConcreteDesignFck { get; set; }
+    }
+
     /// <summary>What the warning after login shows: recent due specimens and a count of the older overdue ones.</summary>
     public sealed class DueWarning
     {

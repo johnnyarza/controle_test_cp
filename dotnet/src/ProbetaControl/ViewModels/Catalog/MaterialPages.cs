@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ProbetaControl.Models;
 using ProbetaControl.Services;
+using ProbetaControl.Services.Reports;
 using ProbetaControl.ViewModels.Infrastructure;
 
 namespace ProbetaControl.ViewModels.Catalog
@@ -13,10 +14,12 @@ namespace ProbetaControl.ViewModels.Catalog
     {
         private readonly MaterialService _materials;
         private readonly ProviderService _providers;
+        private readonly ReportService _reports;
 
-        public MaterialsPageViewModel(MaterialService materials, ProviderService providers, IDialogService dialogs, AppSession session)
+        public MaterialsPageViewModel(MaterialService materials, ProviderService providers, ReportService reports, IDialogService dialogs, AppSession session)
             : base("Materiales", dialogs, session)
         {
+            _reports = reports;
             _materials = materials;
             _providers = providers;
         }
@@ -37,6 +40,10 @@ namespace ProbetaControl.ViewModels.Catalog
         protected override bool IsArchived(Material item) => item.IsArchived;
 
         protected override string Describe(Material item) => $"el material \"{item.Name}\"";
+
+        public override bool SupportsPrint => true;
+
+        protected override void Print() => ShowListReport(ListReports.MaterialsTitle, _reports.Today, _reports.BuildMaterialListAsync);
     }
 
     public sealed class MaterialEditorViewModel : EditorDialogViewModel

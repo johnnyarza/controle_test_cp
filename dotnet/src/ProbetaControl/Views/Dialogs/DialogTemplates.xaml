@@ -797,6 +797,35 @@
         </StackPanel>
     </DataTemplate>
 
+    <!-- Report by client: the dates of the ensayos to print -->
+    <DataTemplate DataType="{x:Type t:ClientReportOptionsViewModel}">
+        <StackPanel>
+            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" />
+            <TextBlock Style="{StaticResource MutedText}" Text="{Binding ClientName}" TextWrapping="Wrap" Margin="0,0,0,16" />
+            <WrapPanel>
+                <StackPanel Style="{StaticResource FormField}" Width="170" Margin="0,0,16,0">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Ensayos desde" />
+                    <TextBox Style="{StaticResource DateBox}" Text="{Binding DateFrom, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.Name="Ensayos desde" b:FocusBehavior.FocusOnLoad="True" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[DateFrom]}" />
+                </StackPanel>
+                <StackPanel Style="{StaticResource FormField}" Width="170">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Ensayos hasta" />
+                    <TextBox Style="{StaticResource DateBox}" Text="{Binding DateTo, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.Name="Ensayos hasta" />
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[DateTo]}" />
+                </StackPanel>
+            </WrapPanel>
+            <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap"
+                       Text="Fecha del ensayo. Deje las fechas vacías para imprimir todos los ensayos del cliente." />
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Ver informe" Command="{Binding AcceptCommand}" IsDefault="True"
+                        b:ButtonIcon.Icon="{StaticResource Icon.Print}" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
     <!-- Administrator unlocks a test for the signed-in user -->
     <DataTemplate DataType="{x:Type t:AdminUnlockViewModel}">
         <StackPanel>

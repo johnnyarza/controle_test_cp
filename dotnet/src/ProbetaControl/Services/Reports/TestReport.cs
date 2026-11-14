@@ -44,7 +44,7 @@ namespace ProbetaControl.Services.Reports
             AddTestData(layout, data);
             AddResults(layout, data);
             AddSummary(layout, data);
-            AddNoteAndStamp(layout, data.Branding);
+            layout.AddNoteAndStamp(data.Branding);
             return layout.Document;
         }
 
@@ -64,24 +64,19 @@ namespace ProbetaControl.Services.Reports
             outer.LeftPadding = outer.RightPadding = 0;
             var row = outer.AddRow();
 
-            var fields = row.Cells[0].Elements.AddTable();
-            fields.Style = "Normal";
-            fields.TopPadding = fields.BottomPadding = Unit.FromPoint(1.2);
-            fields.LeftPadding = 0;
-            fields.AddColumn(Unit.FromMillimeter(40));
-            fields.AddColumn(Unit.FromMillimeter(dataWidth - 40));
-            AddField(fields, "Cliente", test.ClientName);
-            AddField(fields, "Proveedor del hormigón", test.ConcreteProviderName);
-            AddField(fields, "Proyecto / obra", test.ProjectName);
-            AddField(fields, "Ubicación", test.Address);
-            AddField(fields, "Dosificación", test.ConcreteDesignDescription);
-            AddField(fields, "Resistencia de diseño (fck)",
+            var fields = ReportLayout.AddFieldTable(row.Cells[0].Elements.AddTable(), 40, dataWidth - 40);
+            ReportLayout.AddField(fields,"Cliente", test.ClientName);
+            ReportLayout.AddField(fields,"Proveedor del hormigón", test.ConcreteProviderName);
+            ReportLayout.AddField(fields,"Proyecto / obra", test.ProjectName);
+            ReportLayout.AddField(fields,"Ubicación", test.Address);
+            ReportLayout.AddField(fields,"Dosificación", test.ConcreteDesignDescription);
+            ReportLayout.AddField(fields,"Resistencia de diseño (fck)",
                 string.Format(CultureInfo.InvariantCulture, "{0:0.##} kg/cm²", test.ConcreteDesignFck));
-            AddField(fields, "Slump de diseño", SlumpText(design?.Slump));
+            ReportLayout.AddField(fields,"Slump de diseño", SlumpText(design?.Slump));
             var ratio = design?.WaterCementRatio;
             if (ratio.HasValue)
             {
-                AddField(fields, "Relación agua/cemento", ratio.Value.ToString("0.00", CultureInfo.InvariantCulture));
+                ReportLayout.AddField(fields,"Relación agua/cemento", ratio.Value.ToString("0.00", CultureInfo.InvariantCulture));
             }
 
             var mixCell = row.Cells[2];
@@ -245,43 +240,6 @@ namespace ProbetaControl.Services.Reports
             image.LockAspectRatio = false;
             image.Width = Unit.FromMillimeter(chartMm);
             image.Height = Unit.FromMillimeter(62);
-        }
-
-        /// <summary>The lab's note on the left and its stamp / signature on the right, at the end of the report.</summary>
-        private static void AddNoteAndStamp(ReportLayout layout, ReportBranding branding)
-        {
-            if (string.IsNullOrWhiteSpace(branding.Settings.NoteText) && branding.Stamp == null)
-            {
-                return;
-            }
-
-            const double StampMm = 60;
-            var table = layout.Section.AddTable();
-            table.LeftPadding = table.RightPadding = 0;
-            table.AddColumn(Unit.FromMillimeter(layout.ContentWidthMm - StampMm));
-            table.AddColumn(Unit.FromMillimeter(StampMm));
-            var row = table.AddRow();
-            row.VerticalAlignment = VerticalAlignment.Bottom;
-            row.TopPadding = Unit.FromMillimeter(5);
-            if (!string.IsNullOrWhiteSpace(branding.Settings.NoteText))
-            {
-                var note = row.Cells[0].AddParagraph(branding.Settings.NoteText);
-                note.Style = "Small";
-                note.Format.RightIndent = Unit.FromMillimeter(10);
-            }
-
-            var stamp = row.Cells[1].AddParagraph();
-            stamp.Format.Alignment = ParagraphAlignment.Center;
-            ReportLayout.AddFittedImage(stamp, branding.Stamp, StampMm, 32);
-        }
-
-        private static void AddField(Table table, string label, string value)
-        {
-            var row = table.AddRow();
-            var name = row.Cells[0].AddParagraph(label + ":");
-            name.Format.Font.Color = ReportLayout.Muted;
-            var text = row.Cells[1].AddParagraph(string.IsNullOrWhiteSpace(value) ? "—" : value);
-            text.Format.Font.Bold = true;
         }
 
         /// <summary>"8 ± 1 cm" (legacy tolerance rule), "—" without a slump.</summary>

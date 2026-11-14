@@ -4,7 +4,7 @@ The legacy Java/JavaFX app (repo root, `src/`) is being rewritten as a WPF app o
 in `dotnet/`, on branch `csharp-port`. The Java code stays untouched until the C# version reaches parity
 and is signed off.
 
-_Last updated: 2026-11-12 (phase 5, group 1)._
+_Last updated: 2026-11-13 (phase 5, group 2)._
 
 ## Status
 
@@ -71,7 +71,16 @@ _Last updated: 2026-11-12 (phase 5, group 1)._
    stamp at the end; lab address in the footer. It prints what the page's filter shows, never archived
    probetas. Configuración → "Datos del informe" (administrators): lab name, footer, note, paper A4 / Carta,
    stored in `AppSettings` (script 012, starting with the legacy text).
-2. Report by client and the list reports (Clientes, Proveedores, Materiales, Dosificaciones).
+2. Done (awaiting review): report by client and the list reports. Every list page has a print button
+   (`ListPageViewModel.SupportsPrint` / `Print`, Ctrl+P). Clientes, Proveedores, Materiales and Dosificaciones:
+   "Imprimir" → "Listado de …" (portrait, `ListReports`) with everything the search and "Mostrar archivados"
+   find, read again page by page, not only the rows on screen. Ensayos: "Informe por cliente…" → the client of
+   the filter, or one chosen in "Buscar cliente" → dates of the ensayos to print (`ClientReportOptionsViewModel`,
+   both optional and inclusive) → `ClientReport` (landscape): client data and period, then the active
+   probetas of the client's active ensayos, oldest ensayo first, under a line per ensayo (Nº, date, project,
+   fck) with the ensayo report's columns, then note and stamp. Both stop at `ReportService.MaxRows` (3,000
+   rows, about 100 pages) and say so. The Dosificaciones list is a block per design (title line with fck, slump and a/c, then its
+   materials table and total; layout A chosen by the user from two mockups), never split between pages.
 3. Excel export (ClosedXML).
 4. QR labels (QRCoder), one per probeta.
 

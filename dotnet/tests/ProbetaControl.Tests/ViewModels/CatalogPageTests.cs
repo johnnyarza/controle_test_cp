@@ -17,7 +17,7 @@ namespace ProbetaControl.Tests.ViewModels
         }
 
         private ClientsPageViewModel NewClientsPage(ScriptedDialogs dialogs) =>
-            new ClientsPageViewModel(Services.Clients, dialogs, Session);
+            new ClientsPageViewModel(Services.Clients, Services.Reports, dialogs, Session);
 
         private static async Task SearchAsync<T>(ListPageViewModel<T> page, string text)
             where T : class
@@ -179,7 +179,7 @@ namespace ProbetaControl.Tests.ViewModels
                 return ScriptedDialogs.Save(editor);
             });
 
-            var page = new MaterialsPageViewModel(Services.Materials, Services.Providers, dialogs, Session);
+            var page = new MaterialsPageViewModel(Services.Materials, Services.Providers, Services.Reports, dialogs, Session);
             page.SearchText = name;
             await ((AsyncRelayCommand)page.NewCommand).ExecuteAsync();
 

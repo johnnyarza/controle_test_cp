@@ -70,6 +70,29 @@ namespace ProbetaControl.Data
             }
         }
 
+        /// <summary>
+        /// Active specimens of a client's active tests (the client of the test, not its concrete provider),
+        /// oldest test first, at most <paramref name="limit"/> rows. The dates (inclusive, null = open) filter the test date.
+        /// </summary>
+        public async Task<IReadOnlyList<ClientSpecimen>> ListByClientAsync(int clientId, DateTime? testDateFrom, DateTime? testDateTo, int limit,
+            CancellationToken cancellationToken = default)
+        {
+            var sql =
+                $"SELECT {Columns}, t.TestDate, t.ProjectName, d.Fck AS ConcreteDesignFck FROM Specimens s " +
+                "JOIN CompressionTests t ON t.Id = s.CompressionTestId " +
+                "JOIN ConcreteDesigns d ON d.Id = t.ConcreteDesignId " +
+                "WHERE t.ClientId = @clientId AND s.IsArchived = 0 AND t.IsArchived = 0 " +
+                "AND (@dateFrom IS NULL OR t.TestDate >= @dateFrom) " +
+                "AND (@dateTo IS NULL OR t.TestDate <= @dateTo) " +
+                "ORDER BY t.TestDate, t.Id, s.Id LIMIT @limit";
+
+            using (var connection = await Db.OpenAsync(cancellationToken).ConfigureAwait(false))
+            {
+                var rows = await connection.QueryAsync<ClientSpecimen>(Cmd(sql, new { clientId, dateFrom = testDateFrom?.Date, dateTo = testDateTo?.Date, limit }, null, cancellationToken)).ConfigureAwait(false);
+                return rows.ToList();
+            }
+        }
+
         /// <summary>Untested specimens of a test whose rupture date is today or earlier ("probetas para romper").</summary>
         public async Task<int> CountDueAsync(int compressionTestId, DateTime today, CancellationToken cancellationToken = default)
         {

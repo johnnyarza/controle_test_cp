@@ -75,6 +75,10 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
+                            <Button Content="{Binding PrintText}" Command="{Binding PrintCommand}"
+                                    b:ButtonIcon.Icon="{StaticResource Icon.Print}" Margin="0,0,8,8"
+                                    ToolTip="{Binding PrintToolTip}"
+                                    Visibility="{Binding SupportsPrint, Converter={StaticResource BoolToVisibility}}" />
                             <Button Style="{StaticResource SubtleButton}" Command="{Binding RefreshCommand}"
                                     b:ButtonIcon.Icon="{StaticResource Icon.Refresh}" Margin="0,0,8,8"
                                     ToolTip="Actualizar (F5)" AutomationProperties.Name="Actualizar" />

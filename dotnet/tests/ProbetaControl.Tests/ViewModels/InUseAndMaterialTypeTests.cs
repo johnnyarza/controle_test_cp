@@ -75,7 +75,7 @@ namespace ProbetaControl.Tests.ViewModels
                 return true;
             });
 
-            var page = new MaterialsPageViewModel(Services.Materials, Services.Providers, dialogs, Session) { SearchText = cement.Name };
+            var page = new MaterialsPageViewModel(Services.Materials, Services.Providers, Services.Reports, dialogs, Session) { SearchText = cement.Name };
             await Wait.UntilAsync(() => !page.IsLoading && page.Items.Count == 1);
             page.SelectedItem = page.Items.Single();
             await ((AsyncRelayCommand)page.ToggleArchiveCommand).ExecuteAsync();
@@ -198,7 +198,7 @@ namespace ProbetaControl.Tests.ViewModels
                 return ScriptedDialogs.Save(editor);
             });
 
-            var page = new MaterialsPageViewModel(Services.Materials, Services.Providers, dialogs, Session) { SearchText = name };
+            var page = new MaterialsPageViewModel(Services.Materials, Services.Providers, Services.Reports, dialogs, Session) { SearchText = name };
             await ((AsyncRelayCommand)page.NewCommand).ExecuteAsync();
 
             Assert.That(page.SelectedItem?.MaterialType, Is.EqualTo(MaterialTypes.Water));

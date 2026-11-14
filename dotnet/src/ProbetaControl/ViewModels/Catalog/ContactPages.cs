@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ProbetaControl.Models;
 using ProbetaControl.Services;
+using ProbetaControl.Services.Reports;
 using ProbetaControl.ViewModels.Infrastructure;
 
 namespace ProbetaControl.ViewModels.Catalog
@@ -12,13 +13,18 @@ namespace ProbetaControl.ViewModels.Catalog
     {
         private readonly ContactService<T> _service;
 
-        protected ContactListPageViewModel(string title, ContactService<T> service, IDialogService dialogs, AppSession session)
+        protected ContactListPageViewModel(string title, ContactService<T> service, ReportService reports, IDialogService dialogs, AppSession session)
             : base(title, dialogs, session)
         {
             _service = service;
+            Reports = reports;
         }
 
         protected ContactService<T> Service => _service;
+
+        protected ReportService Reports { get; }
+
+        public override bool SupportsPrint => true;
 
         protected override Task<PagedResult<T>> QueryAsync(ListQuery query, CancellationToken cancellationToken) =>
             _service.SearchAsync(query, cancellationToken);
@@ -34,8 +40,8 @@ namespace ProbetaControl.ViewModels.Catalog
 
     public sealed class ClientsPageViewModel : ContactListPageViewModel<Client>
     {
-        public ClientsPageViewModel(ClientService service, IDialogService dialogs, AppSession session)
-            : base("Clientes", service, dialogs, session)
+        public ClientsPageViewModel(ClientService service, ReportService reports, IDialogService dialogs, AppSession session)
+            : base("Clientes", service, reports, dialogs, session)
         {
         }
 
@@ -44,12 +50,14 @@ namespace ProbetaControl.ViewModels.Catalog
         protected override EditorDialogViewModel CreateEditor(Client item) => new ClientEditorViewModel(Service, item?.Id);
 
         protected override string Describe(Client item) => $"el cliente \"{item.Name}\"";
+
+        protected override void Print() => ShowListReport(ListReports.ClientsTitle, Reports.Today, Reports.BuildClientListAsync);
     }
 
     public sealed class ProvidersPageViewModel : ContactListPageViewModel<Provider>
     {
-        public ProvidersPageViewModel(ProviderService service, IDialogService dialogs, AppSession session)
-            : base("Proveedores", service, dialogs, session)
+        public ProvidersPageViewModel(ProviderService service, ReportService reports, IDialogService dialogs, AppSession session)
+            : base("Proveedores", service, reports, dialogs, session)
         {
         }
 
@@ -58,6 +66,8 @@ namespace ProbetaControl.ViewModels.Catalog
         protected override EditorDialogViewModel CreateEditor(Provider item) => new ProviderEditorViewModel(Service, item?.Id);
 
         protected override string Describe(Provider item) => $"el proveedor \"{item.Name}\"";
+
+        protected override void Print() => ShowListReport(ListReports.ProvidersTitle, Reports.Today, Reports.BuildProviderListAsync);
     }
 
     /// <summary>Edit form for a client or provider. Loads a fresh copy when it opens.</summary>

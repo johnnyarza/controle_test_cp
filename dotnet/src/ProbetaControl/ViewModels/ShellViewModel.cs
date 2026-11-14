@@ -41,10 +41,10 @@ namespace ProbetaControl.ViewModels
             NavigationItems = new ObservableCollection<NavigationItem>
             {
                 new NavigationItem("Ensayos", () => new TestsPageViewModel(services, dialogs, this)),
-                new NavigationItem("Clientes", () => new ClientsPageViewModel(services.Clients, dialogs, session)),
-                new NavigationItem("Proveedores", () => new ProvidersPageViewModel(services.Providers, dialogs, session)),
-                new NavigationItem("Materiales", () => new MaterialsPageViewModel(services.Materials, services.Providers, dialogs, session)),
-                new NavigationItem("Dosificaciones", () => new DesignsPageViewModel(services.Designs, services.Materials, dialogs, session)),
+                new NavigationItem("Clientes", () => new ClientsPageViewModel(services.Clients, services.Reports, dialogs, session)),
+                new NavigationItem("Proveedores", () => new ProvidersPageViewModel(services.Providers, services.Reports, dialogs, session)),
+                new NavigationItem("Materiales", () => new MaterialsPageViewModel(services.Materials, services.Providers, services.Reports, dialogs, session)),
+                new NavigationItem("Dosificaciones", () => new DesignsPageViewModel(services.Designs, services.Materials, services.Reports, dialogs, session)),
                 new NavigationItem("Configuración", () => new SettingsPageViewModel(services, dialogs, () =>
                 {
                     CurrentPage?.OnNavigatedFrom();

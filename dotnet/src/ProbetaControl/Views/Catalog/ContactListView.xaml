@@ -6,6 +6,7 @@
     <UserControl.InputBindings>
         <KeyBinding Key="F5" Command="{Binding RefreshCommand}" />
         <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewCommand}" />
+        <KeyBinding Key="P" Modifiers="Control" Command="{Binding PrintCommand}" />
     </UserControl.InputBindings>
 
     <ContentControl Style="{StaticResource ListPageFrame}">

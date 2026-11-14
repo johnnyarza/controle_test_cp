@@ -52,6 +52,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
                 {
                     OnPropertyChanged(nameof(ClientFilterText));
                     OnPropertyChanged(nameof(HasClientFilter));
+                    OnPropertyChanged(nameof(PrintToolTip));
                     CommandManager.InvalidateRequerySuggested();
                     _ = ReloadReportingErrorsAsync();
                 }
@@ -151,6 +152,45 @@ namespace ProbetaControl.ViewModels.CompressionTests
         protected override bool IsArchived(CompressionTestListItem item) => item.IsArchived;
 
         protected override string Describe(CompressionTestListItem item) => $"el ensayo Nº {item.Id} ({item.ProjectName})";
+
+        public override bool SupportsPrint => true;
+
+        public override string PrintText => "Informe por cliente…";
+
+        public override string PrintToolTip => ClientFilter != null
+            ? $"Informe con las probetas de todos los ensayos de {ClientFilter.Name} (Ctrl+P)"
+            : "Informe con las probetas de todos los ensayos de un cliente (Ctrl+P)";
+
+        /// <summary>
+        /// The report by client, for the client of the filter or, without a filter, one chosen in "Buscar cliente";
+        /// then the dates of the ensayos to print. Archived ensayos and probetas are never printed.
+        /// </summary>
+        protected override void Print()
+        {
+            var client = ClientFilter;
+            if (client == null)
+            {
+                var picker = new ClientPickerViewModel(_clients, Dialogs, "Informe por cliente");
+                if (!Dialogs.Show(picker) || picker.Chosen == null)
+                {
+                    return;
+                }
+
+                client = picker.Chosen;
+            }
+
+            var options = new ClientReportOptionsViewModel(client.Name);
+            if (!Dialogs.Show(options))
+            {
+                return;
+            }
+
+            var reports = _services.Reports;
+            var clientId = client.Id;
+            Dialogs.Show(new Reports.ReportPreviewViewModel("Informe de " + client.Name,
+                Services.Reports.ClientReport.FileName(client, reports.Today),
+                ct => reports.BuildClientReportAsync(clientId, options.From, options.To, ct), Dialogs));
+        }
 
         private void ChooseClientFilter()
         {

@@ -42,6 +42,7 @@ namespace ProbetaControl.ViewModels.Infrastructure
             DuplicateCommand = new AsyncRelayCommand(
                 () => OpenEditorAsync(CreateDuplicate(SelectedItem)), () => SelectedItem != null && SupportsDuplicate);
             ToggleArchiveCommand = new AsyncRelayCommand(ToggleArchiveAsync, () => SelectedItem != null && CanArchive);
+            PrintCommand = new RelayCommand(Print, () => SupportsPrint);
         }
 
         protected IDialogService Dialogs { get; }
@@ -144,6 +145,16 @@ namespace ProbetaControl.ViewModels.Infrastructure
         public virtual string EditText => "Editar";
 
         public ICommand ToggleArchiveCommand { get; }
+
+        /// <summary>"Imprimir" (Ctrl+P): the page's report in the preview window (pages with <see cref="SupportsPrint"/>).</summary>
+        public ICommand PrintCommand { get; }
+
+        /// <summary>The page offers a report (toolbar button and Ctrl+P); it then overrides <see cref="Print"/>.</summary>
+        public virtual bool SupportsPrint => false;
+
+        public virtual string PrintText => "Imprimir";
+
+        public virtual string PrintToolTip => "Listado con todos los registros que encuentra la búsqueda, no solo los que están a la vista (Ctrl+P)";
 
         protected abstract string EmptyListText { get; }
 
@@ -259,6 +270,19 @@ namespace ProbetaControl.ViewModels.Infrastructure
             {
                 ErrorSink.Report(ex);
             }
+        }
+
+        /// <summary>Opens the page's report; only called when <see cref="SupportsPrint"/>.</summary>
+        protected virtual void Print() => throw new NotSupportedException();
+
+        /// <summary>
+        /// Opens a "Listado de …" in the preview window. It prints what the search and "Mostrar archivados" find
+        /// (read again from the database), not only the rows loaded so far.
+        /// </summary>
+        protected void ShowListReport(string title, DateTime today, Func<ListQuery, CancellationToken, Task<MigraDoc.DocumentObjectModel.Document>> build)
+        {
+            var query = new ListQuery { Text = SearchText, IncludeArchived = IncludeArchived };
+            Dialogs.Show(new Reports.ReportPreviewViewModel(title, Services.Reports.ListReports.FileName(title, today), ct => build(query, ct), Dialogs));
         }
 
         /// <summary>Editor for a new record copied from <paramref name="item"/>; only called when <see cref="SupportsDuplicate"/>.</summary>
