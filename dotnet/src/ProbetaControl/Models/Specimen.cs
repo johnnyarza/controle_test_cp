@@ -11,6 +11,12 @@ namespace ProbetaControl.Models
 
         public int CompressionTestId { get; set; }
 
+        /// <summary>
+        /// Random code in the link of the probeta's QR label (16 hex digits), not guessable from its number.
+        /// Made by the repository when the probeta is first saved; never changes.
+        /// </summary>
+        public string PublicCode { get; set; }
+
         /// <summary>Free description (Descripción).</summary>
         public string Code { get; set; }
 
@@ -50,6 +56,7 @@ namespace ProbetaControl.Models
         public IReadOnlyDictionary<string, object> GetAuditValues() => new Dictionary<string, object>
         {
             ["CompressionTestId"] = CompressionTestId,
+            ["PublicCode"] = PublicCode,
             ["Code"] = Code,
             ["Slump"] = Slump,
             ["MoldDate"] = MoldDate.Date,

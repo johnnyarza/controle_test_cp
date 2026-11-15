@@ -28,7 +28,8 @@ namespace ProbetaControl.Services
             var appSettings = new AppSettingsRepository(db, session);
             ReportImages = new ReportImageService(appSettings, session);
             ReportSettings = new ReportSettingsService(appSettings, ReportImages, session);
-            Reports = new Reports.ReportService(Tests, Designs, Specimens, Clients, Providers, Materials, ReportSettings, Clock);
+            LabelSettings = new LabelSettingsService(appSettings, session);
+            Reports = new Reports.ReportService(Tests, Designs, Specimens, Clients, Providers, Materials, ReportSettings, LabelSettings, Clock);
             ServerInfo = new ServerInfoRepository(db, session);
         }
 
@@ -64,7 +65,10 @@ namespace ProbetaControl.Services
         /// <summary>Lab details printed on reports (Configuración → Datos del informe).</summary>
         public ReportSettingsService ReportSettings { get; }
 
-        /// <summary>Builds the printed reports.</summary>
+        /// <summary>QR label server name and sheet (Configuración → Etiquetas).</summary>
+        public LabelSettingsService LabelSettings { get; }
+
+        /// <summary>Builds the printed reports and the QR labels.</summary>
         public Reports.ReportService Reports { get; }
     }
 }

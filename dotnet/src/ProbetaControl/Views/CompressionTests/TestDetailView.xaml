@@ -9,6 +9,7 @@
         <KeyBinding Key="Left" Modifiers="Alt" Command="{Binding BackCommand}" />
         <KeyBinding Key="P" Modifiers="Control" Command="{Binding PrintCommand}" />
         <KeyBinding Key="E" Modifiers="Control" Command="{Binding ExportExcelCommand}" />
+        <KeyBinding Key="L" Modifiers="Control" Command="{Binding LabelsCommand}" />
     </UserControl.InputBindings>
 
     <UserControl.Resources>
@@ -44,6 +45,8 @@
                       InputGestureText="Ctrl+R" b:ButtonIcon.Icon="{StaticResource Icon.Specimen}" />
             <MenuItem Header="Editar" Command="{Binding EditSpecimenCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Edit}" />
             <MenuItem Header="Copiar" Command="{Binding CopySpecimenCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Copy}" />
+            <MenuItem Header="Imprimir etiqueta…" Command="{Binding SpecimenLabelCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Qr}"
+                      ToolTip="La etiqueta QR de esta probeta, por ejemplo para reponer una dañada" />
             <MenuItem Header="{Binding ArchiveText}" Command="{Binding ToggleArchiveSpecimenCommand}"
                       ToolTip="{Binding ArchiveToolTip}" ToolTipService.ShowOnDisabled="True"
                       b:ButtonIcon.Icon="{StaticResource Icon.Archive}" />
@@ -79,6 +82,8 @@
                             Margin="8,0,0,0" ToolTip="{Binding PrintToolTip}" />
                     <Button Content="Excel" Command="{Binding ExportExcelCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Sheet}"
                             Margin="8,0,0,0" ToolTip="{Binding ExportExcelToolTip}" AutomationProperties.Name="Exportar a Excel" />
+                    <Button Content="Etiquetas" Command="{Binding LabelsCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Qr}"
+                            Margin="8,0,0,0" ToolTip="{Binding LabelsToolTip}" AutomationProperties.Name="Etiquetas QR" />
                     <Button Content="Editar datos" Command="{Binding EditHeaderCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Edit}"
                             Margin="8,0,0,0" ToolTip="Fecha, cliente, proveedor, dosificación, proyecto y ubicación" />
                     <Button Content="Desbloquear…" Command="{Binding UnlockCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Unlock}"

@@ -827,6 +827,128 @@
         </StackPanel>
     </DataTemplate>
 
+    <!-- Etiquetas QR: which probetas, and where on the sheet the first label goes (click a label of the picture) -->
+    <DataTemplate DataType="{x:Type t:LabelOptionsViewModel}">
+        <StackPanel>
+            <StackPanel.Resources>
+                <Style x:Key="SheetLabel" TargetType="Button">
+                    <Setter Property="Margin" Value="1.5" />
+                    <Setter Property="Cursor" Value="Hand" />
+                    <Setter Property="Focusable" Value="True" />
+                    <Setter Property="ToolTip" Value="{Binding Description}" />
+                    <Setter Property="AutomationProperties.Name" Value="{Binding Description}" />
+                    <Setter Property="Background" Value="{StaticResource Brush.Surface}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource Brush.Border}" />
+                    <Setter Property="Foreground" Value="{StaticResource Brush.TextMuted}" />
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2">
+                                    <TextBlock Text="{Binding Number}" FontSize="9" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               Foreground="{TemplateBinding Foreground}" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="BorderBrush" Value="{StaticResource Brush.Primary}" />
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                        <Setter Property="BorderBrush" Value="{StaticResource Brush.Primary}" />
+                                        <Setter Property="BorderThickness" Value="2" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding State}" Value="Used">
+                            <Setter Property="Background" Value="{StaticResource Brush.SurfaceMuted}" />
+                            <Setter Property="Foreground" Value="{StaticResource Brush.TextDisabled}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="Printed">
+                            <Setter Property="Background" Value="{StaticResource Brush.PrimarySoft}" />
+                            <Setter Property="BorderBrush" Value="{StaticResource Brush.Primary}" />
+                            <Setter Property="Foreground" Value="{StaticResource Brush.Primary}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsStart}" Value="True">
+                            <Setter Property="BorderThickness" Value="2" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+                <!-- A small label like those of the sheet picture (a square would read as a checkbox). -->
+                <Style x:Key="LegendSwatch" TargetType="Border">
+                    <Setter Property="Width" Value="24" />
+                    <Setter Property="Height" Value="13" />
+                    <Setter Property="CornerRadius" Value="2" />
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="Margin" Value="0,0,6,0" />
+                </Style>
+            </StackPanel.Resources>
+
+            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" />
+            <TextBlock Style="{StaticResource MutedText}" Text="{Binding ScopeText}" TextWrapping="Wrap" Margin="0,0,0,12" />
+            <Border Style="{StaticResource MessageBanner}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- The first sheet, drawn to the A4 proportions -->
+                <Border Width="{Binding SheetPictureWidth}" Height="{Binding SheetPictureHeight}" Margin="0,0,20,0" VerticalAlignment="Top"
+                        Background="{StaticResource Brush.Surface}" BorderBrush="{StaticResource Brush.BorderHover}" BorderThickness="1"
+                        Padding="3" AutomationProperties.Name="Primera hoja de etiquetas">
+                    <ItemsControl ItemsSource="{Binding Positions}" Focusable="False" KeyboardNavigation.TabNavigation="Once"
+                                  KeyboardNavigation.DirectionalNavigation="Contained">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="{Binding Columns}" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource SheetLabel}" CommandParameter="{Binding}"
+                                        Command="{Binding DataContext.ChooseStartCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="{Binding SheetText}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,0,0,10" />
+                    <CheckBox Content="Solo probetas sin romper" IsChecked="{Binding OnlyUntested}" Margin="0,0,0,10"
+                              Visibility="{Binding ShowOnlyUntested, Converter={StaticResource BoolToVisibility}}"
+                              ToolTip="Las etiquetas se pegan al llegar las probetas, antes de romperlas" />
+                    <TextBlock Text="{Binding SummaryText}" TextWrapping="Wrap" Margin="0,0,0,10" AutomationProperties.Name="Resumen" />
+                    <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,12"
+                               Text="Si ya usó parte de la hoja, haga clic en la primera etiqueta libre para empezar allí." />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <Border Style="{StaticResource LegendSwatch}" Background="{StaticResource Brush.PrimarySoft}" BorderBrush="{StaticResource Brush.Primary}" />
+                        <TextBlock Style="{StaticResource MutedText}" Text="Se imprime" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <Border Style="{StaticResource LegendSwatch}" Background="{StaticResource Brush.SurfaceMuted}" BorderBrush="{StaticResource Brush.Border}" />
+                        <TextBlock Style="{StaticResource MutedText}" Text="Ya usada" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Border Style="{StaticResource LegendSwatch}" Background="{StaticResource Brush.Surface}" BorderBrush="{StaticResource Brush.Border}" />
+                        <TextBlock Style="{StaticResource MutedText}" Text="Queda libre" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Style="{StaticResource DialogButtons}">
+                <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Ver etiquetas" Command="{Binding AcceptCommand}" IsDefault="True"
+                        b:ButtonIcon.Icon="{StaticResource Icon.Print}" b:FocusBehavior.FocusOnLoad="True" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
     <!-- Administrator unlocks a test for the signed-in user -->
     <DataTemplate DataType="{x:Type t:AdminUnlockViewModel}">
         <StackPanel>

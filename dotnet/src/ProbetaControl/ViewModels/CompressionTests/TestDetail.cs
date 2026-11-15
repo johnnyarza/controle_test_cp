@@ -57,6 +57,8 @@ namespace ProbetaControl.ViewModels.CompressionTests
             RecordRuptureCommand = new AsyncRelayCommand(() => RecordRuptureAsync(SelectedRow), () => CanRecordRupture(SelectedRow));
             PrintCommand = new RelayCommand(Print, () => Test != null);
             ExportExcelCommand = new AsyncRelayCommand(ExportExcelAsync, () => Test != null && !IsBusy);
+            LabelsCommand = new RelayCommand(() => PrintLabels(null), () => Test != null);
+            SpecimenLabelCommand = new RelayCommand(() => PrintLabels(SelectedRow), () => Test != null && SelectedRow != null && !SelectedRow.Specimen.IsArchived);
             OpenSpecimenCommand = new AsyncRelayCommand(
                 () => CanRecordRupture(SelectedRow)
                     ? RecordRuptureAsync(SelectedRow)
@@ -247,7 +249,43 @@ namespace ProbetaControl.ViewModels.CompressionTests
             ? "Informe del ensayo con las probetas del filtro (sin las archivadas) (Ctrl+P)"
             : "Informe del ensayo con todas sus probetas (sin las archivadas) (Ctrl+P)";
 
+        /// <summary>"Etiquetas" (Ctrl+L): QR labels for the probetas the page shows (not archived; by default only unbroken ones).</summary>
+        public ICommand LabelsCommand { get; }
+
+        /// <summary>Right-click "Imprimir etiqueta": the label of one probeta, e.g. to replace a damaged one.</summary>
+        public ICommand SpecimenLabelCommand { get; }
+
+        public string LabelsToolTip => HasFilter
+            ? "Etiquetas QR para pegar en las probetas del filtro (Ctrl+L)"
+            : "Etiquetas QR para pegar en las probetas del ensayo (Ctrl+L)";
+
         public override Task OnNavigatedToAsync() => LoadAsync();
+
+        /// <summary>
+        /// Asks which probetas and where on the sheet to start, then opens the labels in the preview. The labels are
+        /// laid out from fresh data with the same filter as the grid (or for the one probeta chosen).
+        /// </summary>
+        private void PrintLabels(SpecimenRow single)
+        {
+            var candidates = single != null
+                ? new[] { single.Specimen }
+                : Rows.Select(r => r.Specimen).Where(s => !s.IsArchived).ToArray();
+            var scope = single != null
+                ? $"Probeta Nº {single.Id} del ensayo Nº {TestId}"
+                : HasFilter ? $"Ensayo Nº {TestId} · probetas del filtro" : $"Ensayo Nº {TestId} · todas sus probetas";
+            var options = new LabelOptionsViewModel(_services.LabelSettings, candidates, scope, single != null);
+            if (!_dialogs.Show(options))
+            {
+                return;
+            }
+
+            var filter = single != null ? new SpecimenFilter { IdRanges = new[] { new IdRange(single.Id, single.Id) } } : _filter;
+            var onlyUntested = options.OnlyUntested;
+            var start = options.StartPosition;
+            var title = single != null ? $"Etiqueta de la probeta Nº {single.Id}" : $"Etiquetas del ensayo Nº {TestId}";
+            _dialogs.Show(new Reports.ReportPreviewViewModel(title, Services.Reports.ReportService.TestFileName(Test) + " - etiquetas",
+                ct => _services.Reports.BuildLabelsAsync(TestId, filter, onlyUntested, start, ct), _dialogs));
+        }
 
         /// <summary>The report prints what the grid shows (same filter), never archived probetas; data is read fresh.</summary>
         private void Print()
@@ -485,6 +523,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
             OnPropertyChanged(nameof(FilterText));
             OnPropertyChanged(nameof(PrintToolTip));
             OnPropertyChanged(nameof(ExportExcelToolTip));
+            OnPropertyChanged(nameof(LabelsToolTip));
             await LoadAsync();
         }
 

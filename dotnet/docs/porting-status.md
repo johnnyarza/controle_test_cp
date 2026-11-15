@@ -4,7 +4,7 @@ The legacy Java/JavaFX app (repo root, `src/`) is being rewritten as a WPF app o
 in `dotnet/`, on branch `csharp-port`. The Java code stays untouched until the C# version reaches parity
 and is signed off.
 
-_Last updated: 2026-11-13 (phase 5, group 3)._
+_Last updated: 2026-11-14 (phase 5, group 4)._
 
 ## Status
 
@@ -14,7 +14,7 @@ _Last updated: 2026-11-13 (phase 5, group 3)._
 | 2 | Numbered schema scripts 001–010 (011, material type, added in phase 4), `SchemaMigrator`, dev accounts, NUnit + throwaway databases | Done |
 | 3 | Models, Dapper repositories (paging, audit, RowVersion, archive), services, business rules, login, DPAPI config, startup checks | Done |
 | 4 | Screens, in six groups (review after each) | Done |
-| 5 | PDF reports (PDFsharp), Excel export (ClosedXML), QR labels (QRCoder), in four groups | **In progress** |
+| 5 | PDF reports (PDFsharp), Excel export (ClosedXML), QR labels (QRCoder), in four groups | Done (awaiting review) |
 | 6 | Built-in help (`Help/ayuda.html`), opened by "?" / F1. Topics: [help-notes.md](help-notes.md) | To do |
 | 7 | One-off import of the legacy `cp_db` data | To do |
 | 8 | Inno Setup 7 installer (with .NET 4.8 offline installer) | To do |
@@ -88,7 +88,16 @@ _Last updated: 2026-11-13 (phase 5, group 3)._
    (dd/mm/yyyy), plus "% fck"; probetas not broken yet leave load, strength and % fck empty (the legacy file
    had 0). Sheet "Ensayo": the test's data and its mix. A file that can't be written (open in Excel) is
    explained in a warning; "Archivo guardado" is a plain information dialog (`IDialogService.Inform`).
-4. QR labels (QRCoder), one per probeta.
+4. Done (awaiting review): QR labels, one per probeta; layout B chosen by the user from three mockups (QR on
+   the left; big "Nº 345", a rule, "Ensayo 12", "Rotura 12/11/2026 · 7 d", the client cut to one line).
+   "Etiquetas" (Ctrl+L) on the ensayo page labels the probetas the page shows (never archived ones; "Solo
+   probetas sin romper" ticked by default); right-click "Imprimir etiqueta…" labels one probeta, broken or not.
+   The dialog (`LabelOptionsViewModel`) draws the first sheet: click a label to start there on a used sheet.
+   `SpecimenLabels` lays out one MigraDoc table per sheet with the labels' exact row and column sizes (gaps are
+   empty rows / columns, no borders, so nothing drifts); fonts are fitted to the longest number and date line.
+   Configuración → Etiquetas (administrators): server name and the sheet (six A4 presets or custom), with
+   "Hoja de prueba" (label outlines as page-positioned frames, for plain paper) to check the measurements
+   before saving. Script 013 adds `Specimens.PublicCode` (filled for existing probetas) and the two settings.
 
 ## Decisions
 
@@ -122,10 +131,19 @@ _Last updated: 2026-11-13 (phase 5, group 3)._
   to a newer major version. It grows the exe from about 2.6 MB to 5.5 MB.
 - Lab name, footer, note and paper size are edited in Configuración and stored in the database (like the
   logo and stamp). The legacy reports were A4; "Carta" is a setting because printers here often default to it.
-- QR labels (group 4): the QR holds a link to a future read-only page on the lab's server, used by lab staff
-  on the lab Wi-Fi, so the address uses the server's name, not its IP. Each probeta gets a random code for
-  the link (not its number), so other results can't be guessed. Paper not decided yet: A4 adhesive sheets
-  first, label size as a setting.
+- QR labels: the QR holds a link to a future read-only page on the lab's server (phase 9), used by lab staff
+  on the lab Wi-Fi, so the address uses the server's name, not its IP (an IP is refused, and so is
+  `localhost`). The link is `http://SERVER/p/CODE`, written all in capitals in the QR (alphanumeric mode keeps
+  it at 29 × 29 modules with 25 % error correction); **the phase 9 page must answer `/p/{code}` ignoring case.**
+  Each probeta gets a random code (`Specimens.PublicCode`, 16 hex digits = 64 bits, unique key), never its
+  number, so other results can't be guessed. The repository makes it on every insert (a copy gets its own);
+  it never changes. Until an administrator sets the server name, labels can't be printed (a wrong address on
+  a stuck label can't be fixed).
+- Label paper is always A4 adhesive sheets, whatever the report paper is; the sheet (presets or custom grid,
+  margins and gaps in mm) is a setting shared by every PC. Labels print at real size through the same
+  preview / printer / PDF path as the reports.
+- **QR codes are made with QRCoder 1.6.0 (MIT, no dependencies).** The tests read them back with ZXing.Net
+  0.16.9 (Apache-2.0), which is only in the test project, never in the exe.
 - Screen text in Spanish; code, tables and stored values in English. Dates `dd/MM/yyyy`, invariant culture.
   Number fields accept a comma or a point as decimal separator (`NumberInput`); lists show a point.
   Dates are typed day first (`DateInput`: `05/11/2026`, `5-11-26`, `5.11.2026`) in the `DateBox` field,
@@ -160,7 +178,7 @@ _Last updated: 2026-11-13 (phase 5, group 3)._
   [DEMO-CREDENTIALS.md](../database/demo/DEMO-CREDENTIALS.md).
 - **Logs:** `%LOCALAPPDATA%\ProbetaControl\logs`. Debug builds also log WPF binding errors there.
 - **Self-test:** `ProbetaControl.exe --selftest` checks that the packed libraries load, including drawing and
-  saving a PDF page and writing and reopening an Excel file (exit code 0 = OK).
+  saving a PDF page, writing and reopening an Excel file and making a QR code (exit code 0 = OK).
 - **Eclipse files:** `.vscode/settings.json` stops the Java extension from rewriting `.project`,
   `.classpath` and `.settings/`. If they show up as modified, restore them; don't commit them.
 
@@ -208,6 +226,8 @@ _Last updated: 2026-11-13 (phase 5, group 3)._
 - MigraDoc stores layout data on the document: never run two renderers on one `Document` (the PDF is made
   from a `Clone()`).
 - GDI+: read `Graphics.DpiX` before `GetHdc()`, not while the device context is held.
+- MigraDoc table borders add their width to each row, even with `RowHeightRule.Exactly`: a grid that must land
+  on exact positions (labels) has no borders; outlines are `TextFrame`s placed relative to the page.
 - Report pages drawn at screen resolution squeeze word spacing; the preview draws at about twice the pixels.
 
 ## Large data volumes
@@ -220,7 +240,8 @@ built at once) until it got the 30-day window and a virtualized list.
 
 **For phase 7:** the legacy app stored 0 for "not broken". Old probetas that were never broken would be
 imported as overdue forever; decide whether to import them archived (or broken with no load) so they
-don't fill "Solo con probetas para romper".
+don't fill "Solo con probetas para romper". Imported probetas also need a `PublicCode` (`SpecimenCodes.NewCode()`,
+or `UPPER(HEX(RANDOM_BYTES(8)))` in SQL as script 013 does).
 
 A list that can grow (more than a screenful of rows) must virtualize: a `DataGrid`, or an `ItemsControl`
 with a `VirtualizingStackPanel`, `CanContentScroll="True"` and a bounded height. Nested `ItemsControl`s

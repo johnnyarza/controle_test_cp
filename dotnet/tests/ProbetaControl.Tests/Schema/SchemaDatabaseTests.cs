@@ -214,13 +214,14 @@ namespace ProbetaControl.Tests.Schema
         }
 
         [Test]
-        public async Task Report_image_settings_exist_so_the_app_only_needs_update()
+        public async Task Settings_rows_exist_so_the_app_only_needs_update()
         {
             using (var connection = await OpenAsAppAsync())
             {
                 var keys = await connection.QueryAsync<string>("SELECT SettingKey FROM AppSettings ORDER BY SettingKey");
                 Assert.That(keys, Is.EqualTo(new[]
                 {
+                    "LabelServerName", "LabelSheet",
                     "ReportFooter", "ReportLabName", "ReportLogo", "ReportNote", "ReportPaperSize", "ReportStamp",
                 }));
             }

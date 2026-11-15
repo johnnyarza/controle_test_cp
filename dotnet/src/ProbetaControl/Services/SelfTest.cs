@@ -76,8 +76,19 @@ namespace ProbetaControl.Services
                     throw new InvalidOperationException("Excel output failed");
                 }
 
+                // QR labels: QRCoder writes a PNG that GDI+ can read.
+                var qr = Reports.SpecimenLabels.QrPng(LabelLink.For("selftest", Models.SpecimenCodes.NewCode()));
+                using (var stream = new MemoryStream(qr))
+                using (var image = System.Drawing.Image.FromStream(stream))
+                {
+                    if (image.Width < 100 || image.Width != image.Height)
+                    {
+                        throw new InvalidOperationException("QR output failed");
+                    }
+                }
+
                 var scripts = Data.Schema.SchemaScript.LoadEmbedded().Count;
-                AppLog.Info($"Selftest OK: BCrypt, MySqlConnector, Dapper, DPAPI, PDFsharp/MigraDoc, ClosedXML, {scripts} schema scripts");
+                AppLog.Info($"Selftest OK: BCrypt, MySqlConnector, Dapper, DPAPI, PDFsharp/MigraDoc, ClosedXML, QRCoder, {scripts} schema scripts");
                 return 0;
             }
             catch (Exception ex)

@@ -216,6 +216,104 @@
             </ScrollViewer>
         </DataTemplate>
 
+        <!-- ===== Etiquetas: server name in the QR links and the label sheet ===== -->
+        <DataTemplate DataType="{x:Type s:LabelsSectionViewModel}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" MaxWidth="600" />
+                        <ColumnDefinition Width="0.001*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.Resources>
+                        <Style x:Key="SheetField" TargetType="StackPanel" BasedOn="{StaticResource FormField}">
+                            <Setter Property="Width" Value="132" />
+                            <Setter Property="Margin" Value="0,0,12,0" />
+                        </Style>
+                    </Grid.Resources>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource SectionTitle}" Text="Etiquetas" />
+                    <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,14" TextWrapping="Wrap"
+                               Text="Etiquetas QR para pegar en las probetas, una por probeta. Son las mismas en todos los equipos." />
+                    <Border Style="{StaticResource MessageBanner}">
+                        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+                    </Border>
+
+                    <StackPanel Style="{StaticResource FormField}">
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Nombre del servidor" />
+                        <TextBox Text="{Binding ServerName, UpdateSourceTrigger=PropertyChanged}" MaxLength="{Binding MaxServerNameLength}"
+                                 AutomationProperties.Name="Nombre del servidor" />
+                        <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[ServerName]}" />
+                        <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Text="{Binding LinkExample}" />
+                        <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                   Text="El nombre del equipo servidor en la red del laboratorio (no su IP), para abrir los resultados desde un teléfono en el Wi-Fi del laboratorio. Si lo cambia, las etiquetas ya pegadas siguen con el nombre anterior." />
+                    </StackPanel>
+
+                    <StackPanel Style="{StaticResource FormField}">
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Hoja de etiquetas (A4)" />
+                        <ComboBox ItemsSource="{Binding Presets}" SelectedItem="{Binding SelectedPreset}" DisplayMemberPath="Name"
+                                  AutomationProperties.Name="Hoja de etiquetas" />
+                        <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                   Text="Elija la hoja que compra, o escriba las medidas impresas en su paquete." />
+                    </StackPanel>
+
+                    <WrapPanel>
+                        <StackPanel Style="{StaticResource SheetField}">
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Columnas" />
+                            <TextBox Text="{Binding Columns, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Columnas" />
+                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Columns]}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource SheetField}">
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Filas" />
+                            <TextBox Text="{Binding Rows, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Filas" />
+                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Rows]}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource SheetField}">
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Ancho (mm)" />
+                            <TextBox Text="{Binding WidthMm, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Ancho de la etiqueta" />
+                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[WidthMm]}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource SheetField}">
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Alto (mm)" />
+                            <TextBox Text="{Binding HeightMm, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Alto de la etiqueta" />
+                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[HeightMm]}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource SheetField}">
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Margen superior (mm)" />
+                            <TextBox Text="{Binding TopMm, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Margen superior" />
+                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[TopMm]}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource SheetField}">
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Margen izquierdo (mm)" />
+                            <TextBox Text="{Binding LeftMm, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Margen izquierdo" />
+                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[LeftMm]}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource SheetField}">
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Separación horiz. (mm)" ToolTip="Espacio entre dos columnas de etiquetas" />
+                            <TextBox Text="{Binding GapXMm, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Separación horizontal" />
+                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[GapXMm]}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource SheetField}">
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Separación vert. (mm)" ToolTip="Espacio entre dos filas de etiquetas" />
+                            <TextBox Text="{Binding GapYMm, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Separación vertical" />
+                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[GapYMm]}" />
+                        </StackPanel>
+                    </WrapPanel>
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Sheet]}" TextWrapping="Wrap" />
+                    <TextBlock Style="{StaticResource MutedText}" Text="{Binding SheetSummary}" Margin="0,0,0,12" />
+
+                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                        <Button Style="{StaticResource PrimaryButton}" Content="Guardar" Command="{Binding SaveCommand}"
+                                b:ButtonIcon.Icon="{StaticResource Icon.Save}" Margin="0,0,8,0" />
+                        <Button Content="Hoja de prueba" Command="{Binding TestSheetCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Print}"
+                                ToolTip="Imprime el contorno de cada etiqueta con estas medidas, sin guardarlas" />
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,8,0,0"
+                               Text="Imprima la hoja de prueba en papel común y póngala sobre una hoja de etiquetas a contraluz: los recuadros deben coincidir con las etiquetas. Si se corren, ajuste los márgenes." />
+                </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </DataTemplate>
+
         <!-- ===== Conexión ===== -->
         <DataTemplate DataType="{x:Type s:ConnectionSectionViewModel}">
             <StackPanel MaxWidth="620" HorizontalAlignment="Left">

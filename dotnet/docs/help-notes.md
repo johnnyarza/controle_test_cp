@@ -66,7 +66,7 @@ Add an item whenever a question comes up that a user would also ask. The help it
 
 ## Configuración
 
-- **What each user sees.** Administrators: Usuarios, Datos del informe, Logo y sello, Conexión, Mi contraseña, Acerca de.
+- **What each user sees.** Administrators: Usuarios, Datos del informe, Logo y sello, Etiquetas, Conexión, Mi contraseña, Acerca de.
   Operators: Conexión, Mi contraseña, Acerca de.
 - **Usuarios.** "Nuevo usuario" asks for the user name (no spaces), full name, role and a first
   password (minimum 8 characters) that the user must change at the first login. "Restablecer
@@ -157,6 +157,34 @@ Add an item whenever a question comes up that a user would also ask. The help it
   open the file.
 - **Datos del informe** (administrators, Configuración): lab name (required), footer, note, paper. Saved
   in the database, so every PC prints the same; the logo and stamp are in "Logo y sello".
+
+## Etiquetas QR
+
+- **Printing labels.** The ensayo page's "Etiquetas" (Ctrl+L) prints one adhesive label per probeta of the
+  page (with the filter, if one is set; never archived ones). "Solo probetas sin romper" (shown when some are
+  broken, ticked by default) leaves out the broken ones. Right-click a probeta → "Imprimir etiqueta…" prints
+  that one alone, broken or not, e.g. to replace a damaged label.
+- **Starting on a used sheet.** The dialog draws the first sheet: grey = already used, blue = this print,
+  white = left free. Click the first free label to start there; the summary says how many labels and sheets.
+- **What a label shows.** The QR code on the left; the probeta Nº in large type, "Ensayo N", the rupture
+  date with the age in days, and the client (shortened to one line).
+- **What the QR holds.** An address on the lab's server: http://server-name/p/code. The code is random
+  (not the probeta number), so nobody can reach other results by changing a number. The page it opens comes
+  with a later version; until then the code already identifies the probeta. A probeta's code never changes,
+  also when it is edited; a copied probeta gets its own.
+- **Server name not set.** Labels can't be printed until an administrator enters the server name
+  (Configuración → Etiquetas); the dialog says so. It must be the server's name on the lab network, not its IP
+  (an IP can change, and labels already stuck on probetas could not be fixed). "localhost" is refused too.
+  Changing the name later doesn't change labels already printed.
+- **Configuración → Etiquetas** (administrators): server name; the label sheet (common A4 sheets in a list, or
+  "Personalizada" with columns, rows, label width and height, top and left margins and the gaps between labels,
+  in mm, as printed on the package). "Hoja de prueba" prints every label's outline and number with the
+  measurements as typed (not saved yet): on plain paper, held against a label sheet against the light, the
+  boxes must match the labels; if they are off, adjust the margins. Labels are always A4, whatever paper the
+  reports use, and print at real size.
+- **Labels near the paper edge.** On sheets without margins most printers can't print the last 3-4 mm of the
+  paper; the label content keeps away from the edges, but a printer with wider margins may cut the QR of the
+  outer labels. Then use sheets with margins (e.g. 63.5 × 38.1 mm).
 
 ## Dosificaciones
 

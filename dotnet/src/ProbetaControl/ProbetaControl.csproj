@@ -26,6 +26,8 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <!-- Stay on 6.2.x: 6.5.0 and later are AGPL / commercial (runtime license check); 6.2.4 is MIT. -->
     <PackageReference Include="PDFsharp-MigraDoc-GDI" Version="6.2.4" />
+    <!-- QR labels (MIT, no dependencies); PngByteQRCode writes the PNG itself. -->
+    <PackageReference Include="QRCoder" Version="1.6.0" />
   </ItemGroup>
 
   <ItemGroup>

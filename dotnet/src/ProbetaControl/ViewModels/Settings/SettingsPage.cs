@@ -7,7 +7,7 @@ using ProbetaControl.ViewModels.Infrastructure;
 namespace ProbetaControl.ViewModels.Settings
 {
     /// <summary>
-    /// Configuración: a side menu of sections grouped as Administración (Usuarios, Logo y sello; administrators only),
+    /// Configuración: a side menu of sections grouped as Administración (Usuarios, Datos del informe, Logo y sello, Etiquetas; administrators only),
     /// Este equipo (Conexión) and Mi cuenta (Mi contraseña, Acerca de). A section loads its data when it is shown.
     /// </summary>
     public sealed class SettingsPageViewModel : PageViewModel
@@ -28,6 +28,7 @@ namespace ProbetaControl.ViewModels.Settings
                 sections.Add(new UsersSectionViewModel(services.UserAdmin, services.Session, dialogs));
                 sections.Add(new ReportTextsSectionViewModel(services.ReportSettings));
                 sections.Add(new ReportImagesSectionViewModel(services.ReportImages, dialogs));
+                sections.Add(new LabelsSectionViewModel(services.LabelSettings, services.Reports, dialogs));
             }
 
             sections.Add(new ConnectionSectionViewModel(services.Settings, dialogs, changeConnection));

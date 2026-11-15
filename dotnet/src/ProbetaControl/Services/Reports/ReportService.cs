@@ -25,12 +25,14 @@ namespace ProbetaControl.Services.Reports
         private readonly ProviderService _providers;
         private readonly MaterialService _materials;
         private readonly ReportSettingsService _settings;
+        private readonly LabelSettingsService _labels;
         private readonly IClock _clock;
 
         public ReportService(CompressionTestService tests, ConcreteDesignService designs, SpecimenService specimens,
             ClientService clients, ProviderService providers, MaterialService materials,
-            ReportSettingsService settings, IClock clock)
+            ReportSettingsService settings, LabelSettingsService labels, IClock clock)
         {
+            _labels = labels;
             _tests = tests;
             _designs = designs;
             _specimens = specimens;
@@ -64,18 +66,61 @@ namespace ProbetaControl.Services.Reports
             await Task.Run(() => TestExcelExport.Save(data, path), cancellationToken);
         }
 
+        /// <summary>
+        /// QR labels for the ensayo's probetas that match <paramref name="filter"/> (never archived ones; with
+        /// <paramref name="onlyUntested"/>, only those not broken yet), oldest first, starting at label
+        /// <paramref name="startPosition"/> of the first sheet. Settings and probetas are read fresh. Without a server
+        /// name (Configuración → Etiquetas) or without probetas it throws <see cref="ValidationException"/>.
+        /// </summary>
+        public async Task<Document> BuildLabelsAsync(int testId, SpecimenFilter filter, bool onlyUntested, int startPosition,
+            CancellationToken cancellationToken = default)
+        {
+            var settings = await _labels.GetAsync(cancellationToken);
+            if (settings.ServerName == null)
+            {
+                throw new ValidationException("ServerName", NoServerNameMessage);
+            }
+
+            var test = await _tests.GetAsync(testId, cancellationToken) ?? throw new NotFoundException("el ensayo");
+            var specimens = await _specimens.ListByTestAsync(testId, ActiveOnly(filter), cancellationToken);
+            var labels = specimens
+                .Where(s => !s.IsArchived && (!onlyUntested || !s.IsTested))
+                .OrderBy(s => s.Id)
+                .Select(s => new SpecimenLabel
+                {
+                    SpecimenId = s.Id, PublicCode = s.PublicCode, TestId = s.CompressionTestId,
+                    RuptureDate = s.RuptureDate, AgeDays = s.AgeDays, ClientName = test.ClientName,
+                })
+                .ToList();
+            if (labels.Count == 0)
+            {
+                throw new ValidationException("Specimens", "No hay probetas para etiquetar.");
+            }
+
+            var start = Math.Max(1, Math.Min(settings.Sheet.PerSheet, startPosition));
+            return await Task.Run(() => SpecimenLabels.Build(new LabelData
+            {
+                Title = $"Etiquetas del ensayo Nº {testId}",
+                ServerName = settings.ServerName,
+                Sheet = settings.Sheet,
+                Labels = labels,
+                StartPosition = start,
+            }), cancellationToken);
+        }
+
+        /// <summary>Shown where labels can't be printed yet.</summary>
+        public const string NoServerNameMessage =
+            "Falta el nombre del servidor para el enlace de los QR. Un administrador debe indicarlo en Configuración → Etiquetas.";
+
+        /// <summary>Outlines of the labels of <paramref name="sheet"/> (not saved yet, so they can be checked first).</summary>
+        public Task<Document> BuildLabelTestSheetAsync(LabelSheet sheet, CancellationToken cancellationToken = default) =>
+            Task.Run(() => SpecimenLabels.BuildTestSheet(sheet), cancellationToken);
+
         /// <summary>The ensayo, its design and the probetas matching the filter (never archived ones), read fresh.</summary>
         private async Task<TestReportData> GetTestReportDataAsync(int testId, SpecimenFilter filter, CancellationToken cancellationToken)
         {
             var test = await _tests.GetAsync(testId, cancellationToken) ?? throw new NotFoundException("el ensayo");
-            var printFilter = new SpecimenFilter
-            {
-                MoldDateFrom = filter?.MoldDateFrom,
-                MoldDateTo = filter?.MoldDateTo,
-                IdRanges = filter?.IdRanges ?? new SpecimenFilter().IdRanges,
-                IncludeArchived = false,
-            };
-            var specimens = await _specimens.ListByTestAsync(testId, printFilter, cancellationToken);
+            var specimens = await _specimens.ListByTestAsync(testId, ActiveOnly(filter), cancellationToken);
             var design = await _designs.GetAsync(test.ConcreteDesignId, cancellationToken);
             var branding = await _settings.GetBrandingAsync(cancellationToken);
 
@@ -88,6 +133,15 @@ namespace ProbetaControl.Services.Reports
                 PrintedOn = _clock.Today,
             };
         }
+
+        /// <summary>The page's filter (null = none) without archived probetas: printouts never include them.</summary>
+        private static SpecimenFilter ActiveOnly(SpecimenFilter filter) => new SpecimenFilter
+        {
+            MoldDateFrom = filter?.MoldDateFrom,
+            MoldDateTo = filter?.MoldDateTo,
+            IdRanges = filter?.IdRanges ?? SpecimenFilter.None.IdRanges,
+            IncludeArchived = false,
+        };
 
         /// <summary>
         /// The report by client: every active probeta of the client's active ensayos (as their client, not as

@@ -15,6 +15,8 @@ namespace ProbetaControl.Data
         public const string ReportFooter = "ReportFooter";
         public const string ReportNote = "ReportNote";
         public const string ReportPaperSize = "ReportPaperSize";
+        public const string LabelServerName = "LabelServerName";
+        public const string LabelSheet = "LabelSheet";
 
         /// <summary>Text settings by key (missing keys are absent; a null value means empty).</summary>
         public async Task<IReadOnlyDictionary<string, string>> GetTextsAsync(IEnumerable<string> keys, CancellationToken cancellationToken = default)

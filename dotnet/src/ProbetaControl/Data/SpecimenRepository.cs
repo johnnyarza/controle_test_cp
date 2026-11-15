@@ -14,7 +14,7 @@ namespace ProbetaControl.Data
         private const string Table = "Specimens";
 
         private const string Columns =
-            "s.Id, s.CompressionTestId, s.Code, s.Slump, s.MoldDate, s.RuptureDate, s.DiameterCm, s.HeightCm, s.WeightKg, " +
+            "s.Id, s.CompressionTestId, s.PublicCode, s.Code, s.Slump, s.MoldDate, s.RuptureDate, s.DiameterCm, s.HeightCm, s.WeightKg, " +
             "s.RuptureLoadTon, s.IsLocked, s.IsArchived, s.RowVersion";
 
         public SpecimenRepository(DbConnectionFactory db, IAuditContext audit)
@@ -137,13 +137,15 @@ namespace ProbetaControl.Data
             }
         }
 
+        /// <summary>Saves a new specimen with a new random <see cref="Specimen.PublicCode"/> (a copied one never keeps the original's).</summary>
         public Task InsertAsync(Specimen specimen, CancellationToken cancellationToken = default)
         {
             return InTransactionAsync(async (connection, transaction) =>
             {
+                specimen.PublicCode = SpecimenCodes.NewCode();
                 var id = await connection.ExecuteScalarAsync<int>(Cmd(
-                    "INSERT INTO Specimens (CompressionTestId, Code, Slump, MoldDate, RuptureDate, DiameterCm, HeightCm, WeightKg, RuptureLoadTon, IsLocked) " +
-                    "VALUES (@CompressionTestId, @Code, @Slump, @MoldDate, @RuptureDate, @DiameterCm, @HeightCm, @WeightKg, @RuptureLoadTon, @IsLocked); " +
+                    "INSERT INTO Specimens (CompressionTestId, PublicCode, Code, Slump, MoldDate, RuptureDate, DiameterCm, HeightCm, WeightKg, RuptureLoadTon, IsLocked) " +
+                    "VALUES (@CompressionTestId, @PublicCode, @Code, @Slump, @MoldDate, @RuptureDate, @DiameterCm, @HeightCm, @WeightKg, @RuptureLoadTon, @IsLocked); " +
                     "SELECT LAST_INSERT_ID();",
                     Parameters(specimen), transaction, cancellationToken)).ConfigureAwait(false);
 
@@ -168,6 +170,8 @@ namespace ProbetaControl.Data
                     Parameters(specimen), transaction, cancellationToken)).ConfigureAwait(false);
                 await EnsureUpdatedAsync(connection, transaction, Table, specimen.Id, rows, cancellationToken).ConfigureAwait(false);
 
+                // The code never changes (the UPDATE leaves it alone); an edited copy may not carry it.
+                specimen.PublicCode = before.PublicCode;
                 await AuditWriter.UpdatedAsync(connection, transaction, Audit, Table, specimen.Id, before, specimen, cancellationToken).ConfigureAwait(false);
                 specimen.RowVersion++;
             }, cancellationToken);
@@ -183,6 +187,7 @@ namespace ProbetaControl.Data
         {
             specimen.Id,
             specimen.CompressionTestId,
+            specimen.PublicCode,
             Code = Clean(specimen.Code),
             specimen.Slump,
             MoldDate = specimen.MoldDate.Date,

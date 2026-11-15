@@ -84,6 +84,9 @@ namespace ProbetaControl.DemoSeed
             await CreateUsersAsync();
             Console.WriteLine("  usuarios");
 
+            // So the QR labels can be tried at once (the links lead nowhere until the phone page exists).
+            await _services.LabelSettings.SaveAsync(new LabelSettings { ServerName = "probeta-demo" });
+
             var providers = await CreateProvidersAsync();
             var materials = await CreateMaterialsAsync(providers);
             var designs = await CreateDesignsAsync(materials);

@@ -74,9 +74,12 @@ namespace ProbetaControl.Services
         {
             if (HasErrors)
             {
-                throw new ValidationException(_errors.ToDictionary(e => e.Key, e => e.Value));
+                throw new ValidationException(ToDictionary());
             }
         }
+
+        /// <summary>A copy, e.g. for a form's <c>Errors.Set</c> without throwing.</summary>
+        public IReadOnlyDictionary<string, string> ToDictionary() => _errors.ToDictionary(e => e.Key, e => e.Value);
     }
 
     /// <summary>Someone else saved the record after it was opened (RowVersion changed).</summary>
