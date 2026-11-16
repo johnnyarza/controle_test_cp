@@ -32,6 +32,20 @@ namespace ProbetaControl.Services
             set => Write("DueWarningHiddenOn", value?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture));
         }
 
+        /// <summary>The day the note above "Mostrar más" was last shown (once a day).</summary>
+        public static DateTime? MoreRowsHintShownOn
+        {
+            get => ReadDate("MoreRowsHintShownOn");
+            set => Write("MoreRowsHintShownOn", value?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture));
+        }
+
+        private static DateTime? ReadDate(string key) =>
+            Read().TryGetValue(key, out var value)
+            && DateTime.TryParseExact(value, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None, out var day)
+                ? day
+                : (DateTime?)null;
+
         private static Dictionary<string, string> Read()
         {
             try

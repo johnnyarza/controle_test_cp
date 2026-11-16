@@ -100,6 +100,20 @@
                                          Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
                             <TextBlock Style="{StaticResource EmptyState}" Text="{Binding EmptyText}"
                                        Visibility="{Binding EmptyText, Converter={StaticResource NotEmptyToVisibility}}" />
+
+                            <!-- Once a day: the list loads 100 rows at a time (the legacy program didn't). Points at "Mostrar más". -->
+                            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,-2" MaxWidth="340"
+                                        Visibility="{Binding IsMoreHintVisible, Converter={StaticResource BoolToVisibility}}">
+                                <Border Background="{StaticResource Brush.Header}" CornerRadius="6" Padding="14,10">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding MoreHintText}" TextWrapping="Wrap" Foreground="{StaticResource Brush.HeaderText}"
+                                                   AutomationProperties.Name="Aviso: hay más registros" />
+                                        <Button Content="Entendido" Command="{Binding DismissMoreHintCommand}" HorizontalAlignment="Right"
+                                                Margin="0,8,0,0" Padding="12,3" />
+                                    </StackPanel>
+                                </Border>
+                                <Path Data="M 0,0 L 16,0 L 8,9 Z" Fill="{StaticResource Brush.Header}" HorizontalAlignment="Right" Margin="0,0,40,0" />
+                            </StackPanel>
                         </Grid>
                     </DockPanel>
                 </ControlTemplate>

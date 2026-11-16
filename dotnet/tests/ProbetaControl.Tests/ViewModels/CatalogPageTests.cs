@@ -16,6 +16,51 @@ namespace ProbetaControl.Tests.ViewModels
         {
         }
 
+        [Test]
+        public async Task A_note_above_Mostrar_mas_says_once_a_day_that_more_rows_exist()
+        {
+            var tag = Unique("Pagina");
+            for (var i = 0; i < 105; i++)
+            {
+                await Services.Clients.SaveAsync(new Client { Name = $"{tag} {i:000}" });
+            }
+
+            var day = new System.DateTime(2026, 11, 16);
+            MoreRowsHint.Today = () => day;
+            ProbetaControl.Services.LocalSettings.MoreRowsHintShownOn = null;
+            try
+            {
+                ClientsPageViewModel Open()
+                {
+                    return new ClientsPageViewModel(Services.Clients, Services.Reports, new ScriptedDialogs(), Session) { SearchText = tag };
+                }
+
+                var page = Open();
+                await Wait.UntilAsync(() => !page.IsLoading && page.Items.Count == 100);
+                Assert.That(page.IsMoreHintVisible, Is.True, "first list with more rows today");
+                Assert.That(page.MoreHintText, Does.Contain("se muestran 100 de 105"));
+
+                var again = Open();
+                await Wait.UntilAsync(() => !again.IsLoading && again.Items.Count == 100);
+                Assert.That(again.IsMoreHintVisible, Is.False, "once a day, on any list");
+
+                await ((AsyncRelayCommand)page.LoadMoreCommand).ExecuteAsync();
+                Assert.That(page.Items, Has.Count.EqualTo(105));
+                Assert.That(page.IsMoreHintVisible, Is.False, "\"Mostrar más\" closes it");
+
+                day = day.AddDays(1);
+                var tomorrow = Open();
+                await Wait.UntilAsync(() => !tomorrow.IsLoading && tomorrow.Items.Count == 100);
+                Assert.That(tomorrow.IsMoreHintVisible, Is.True, "again the next day");
+                tomorrow.DismissMoreHintCommand.Execute(null);
+                Assert.That(tomorrow.IsMoreHintVisible, Is.False, "\"Entendido\" closes it");
+            }
+            finally
+            {
+                MoreRowsHint.Today = () => System.DateTime.Today;
+            }
+        }
+
         private ClientsPageViewModel NewClientsPage(ScriptedDialogs dialogs) =>
             new ClientsPageViewModel(Services.Clients, Services.Reports, dialogs, Session);
 

@@ -28,6 +28,29 @@ namespace ProbetaControl.ViewModels.Infrastructure
         private int _totalCount;
         private bool _isLoading;
         private bool _hasLoaded;
+        private bool _isMoreHintVisible;
+
+        /// <summary>The note above "Mostrar más" (<see cref="MoreRowsHint"/>).</summary>
+        public bool IsMoreHintVisible
+        {
+            get => _isMoreHintVisible;
+            private set
+            {
+                if (SetProperty(ref _isMoreHintVisible, value))
+                {
+                    OnPropertyChanged(nameof(MoreHintText));
+                }
+            }
+        }
+
+        public string MoreHintText => string.Format(CultureInfo.InvariantCulture,
+            "La lista se carga de a {0} registros: se muestran {1} de {2}. Pulse \"Mostrar más\" para ver los siguientes, o use Buscar para encontrar uno.",
+            PageRequest.DefaultSize, Items.Count, TotalCount);
+
+        /// <summary>"Entendido" on the note.</summary>
+        public ICommand DismissMoreHintCommand => _dismissMoreHint ?? (_dismissMoreHint = new RelayCommand(() => IsMoreHintVisible = false));
+
+        private ICommand _dismissMoreHint;
 
         protected ListPageViewModel(string title, IDialogService dialogs, AppSession session)
             : base(title)
@@ -218,6 +241,16 @@ namespace ProbetaControl.ViewModels.Infrastructure
 
                 TotalCount = result.TotalCount;
                 _hasLoaded = true;
+
+                // The legacy program had no paging: say once a day that more rows exist. "Mostrar más" closes it.
+                if (append)
+                {
+                    IsMoreHintVisible = false;
+                }
+                else if (HasMore && !IsMoreHintVisible && MoreRowsHint.TryShowToday())
+                {
+                    IsMoreHintVisible = true;
+                }
 
                 var wanted = selectId ?? keepSelected;
                 if (!append || selectId.HasValue)

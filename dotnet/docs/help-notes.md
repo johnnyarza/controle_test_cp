@@ -10,6 +10,7 @@ Changes not yet in `Help/ayuda.html`. Add a line per change (date, what changed,
 updated in batches when asked, and the lines are removed then.
 
 - 2026-11-15: weight may be left empty when a probeta is created and entered on rupture day ("Registrar rotura" asks for it; on a locked ensayo an operator may still enter an empty weight). Topics: Probetas, Registrar rotura, Ensayos bloqueados (ayuda.html still says saving locks every measurement).
+- 2026-11-15: lists load 100 rows at a time; a note above "Mostrar más" says so once a day (new for users of the legacy program). Topics: Lista de ensayos, Clientes y proveedores.
 
 ## Primer inicio / instalación
 
