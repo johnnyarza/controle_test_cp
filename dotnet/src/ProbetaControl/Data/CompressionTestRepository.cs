@@ -42,7 +42,7 @@ namespace ProbetaControl.Data
         }
 
         /// <summary>
-        /// One page, newest first. Text matches the test number, client, project or address.
+        /// One page, highest number (newest) first. Text matches the test number, client, project or address.
         /// Counts are per row of the page only, so a page stays fast however big the table is.
         /// </summary>
         public async Task<PagedResult<CompressionTestListItem>> SearchAsync(CompressionTestQuery query, DateTime today,
@@ -62,7 +62,7 @@ namespace ProbetaControl.Data
                 "SELECT t.Id, t.ClientId, c.Name AS ClientName, t.ProjectName, t.Address, t.TestDate, t.IsArchived, " +
                 "  (SELECT COUNT(*) FROM Specimens s WHERE s.CompressionTestId = t.Id AND s.IsArchived = 0) AS SpecimenCount, " +
                 "  (" + DueSpecimen.Replace("SELECT 1", "SELECT COUNT(*)") + ") AS DueCount " +
-                from + where + "ORDER BY t.TestDate DESC, t.Id DESC LIMIT @limit OFFSET @offset";
+                from + where + "ORDER BY t.Id DESC LIMIT @limit OFFSET @offset";
 
             int.TryParse(query.Text?.Trim(), out var number);
 

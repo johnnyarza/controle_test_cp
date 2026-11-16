@@ -12,7 +12,7 @@ using ProbetaControl.ViewModels.Infrastructure;
 namespace ProbetaControl.ViewModels.CompressionTests
 {
     /// <summary>
-    /// Ensayos, the start page: newest first, with the number of specimens to break today or earlier.
+    /// Ensayos, the start page: highest number (newest) first, with the number of specimens to break today or earlier.
     /// Filters: free text (number, client, project, address), one client, and "only with specimens to break".
     /// </summary>
     public sealed class TestsPageViewModel : ListPageViewModel<CompressionTestListItem>

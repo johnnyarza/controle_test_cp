@@ -214,7 +214,9 @@
                     </WrapPanel>
 
                     <Grid>
+                        <!-- Focused when the page opens, so the shortcuts (Ctrl+N, Ctrl+P…) work before a probeta is selected. -->
                         <DataGrid ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" BorderThickness="0,1"
+                                  b:FocusBehavior.FocusOnLoad="True"
                                   RowStyle="{StaticResource SpecimenRow}"
                                   b:DataGridBehavior.OpenCommand="{Binding OpenSpecimenCommand}"
                                   AutomationProperties.Name="Probetas">

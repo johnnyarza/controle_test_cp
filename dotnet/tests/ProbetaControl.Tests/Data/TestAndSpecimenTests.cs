@@ -16,6 +16,19 @@ namespace ProbetaControl.Tests.Data
         }
 
         [Test]
+        public async Task Ensayos_list_is_ordered_by_number_highest_first_whatever_their_dates()
+        {
+            var first = await NewTestAsync();
+            var second = await NewTestAsync();
+            second.ClientId = first.ClientId;
+            second.TestDate = first.TestDate.AddDays(-20); // entered later, dated earlier (e.g. typed in late)
+            await Services.Tests.SaveAsync(second, testUnlocked: true);
+
+            var page = await Services.Tests.SearchAsync(new CompressionTestQuery { ClientId = first.ClientId });
+            Assert.That(page.Items.Select(t => t.Id), Is.EqualTo(new[] { second.Id, first.Id }));
+        }
+
+        [Test]
         public async Task Test_loads_with_client_provider_and_design_names()
         {
             var test = await NewTestAsync();

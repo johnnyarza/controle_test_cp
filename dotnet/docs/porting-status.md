@@ -7,7 +7,7 @@ and is signed off.
 See also: [decisions](decisions.md) · [conventions, glossary and pitfalls](conventions.md) ·
 [development setup](../README.md) · [help topics](help-notes.md).
 
-_Last updated: 2026-11-15 (phase 6)._
+_Last updated: 2026-11-15 (phase 7: import tool tested with the office dump)._
 
 ## Status
 
@@ -116,7 +116,7 @@ with every word typed and marks them. Tests check the ids and links, that every 
 page's script in the real web control (IE11 mode, topics, search, layout).
 
 
-### Phase 7: legacy data import (tool built, waiting for the cp_db dump)
+### Phase 7: legacy data import (tool built and tested with the office dump of 28/02/2026)
 
 Decided with the user on 2026-11-15:
 
@@ -150,3 +150,8 @@ Tests: `tests/ProbetaControl.Tests/Import` build a small legacy database with th
 
 **For phase 8:** the office server needs the new database's MySQL accounts (`specimen_app`, `specimen_admin`) created with
 real passwords: a setup script for production (today only `database/setup/create-dev-accounts.sql` exists).
+
+Test run with the office dump of 28/02/2026 (2026-11-15): everything imports (139 clients, 28 providers, 46 materials,
+90 dosificaciones, 396 ensayos, 2,190 probetas), next numbers 402 (ensayos) and 2297 (probetas), in about 8 s. Left
+for the switch day: 2 materials typed "Otro" (Paver, "0") and 14 dosificaciones without materials (all at 0 kg/m³ in
+the legacy data) to fix by hand afterwards. The real import runs on the office server with the latest data.
