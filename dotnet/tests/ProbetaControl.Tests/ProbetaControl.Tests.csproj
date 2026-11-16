@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ProbetaControl\ProbetaControl.csproj" />
+    <ProjectReference Include="..\..\tools\LegacyImport\LegacyImport.csproj" />
   </ItemGroup>
 
 </Project>

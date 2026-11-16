@@ -116,7 +116,7 @@ with every word typed and marks them. Tests check the ids and links, that every 
 page's script in the real web control (IE11 mode, topics, search, layout).
 
 
-### Phase 7: legacy data import (next)
+### Phase 7: legacy data import (tool built, waiting for the cp_db dump)
 
 Decided with the user on 2026-11-15:
 
@@ -129,3 +129,24 @@ Decided with the user on 2026-11-15:
 - Probetas the legacy app stored with load 0 ("not broken") are imported as not broken (`RuptureLoadTon` NULL),
   old ones included: they show as overdue until someone deals with them (option B; archiving them was declined).
 - Users are not imported: the new database starts with `admin` only.
+- Source: root is fine (the tool opens `cp_db` in a read-only session, so MySQL refuses any write); target:
+  `specimen_admin` (needed for `ALTER TABLE … AUTO_INCREMENT`). Passwords are asked for, never saved.
+- The next number of every table is set from `cp_db`'s own counter (`information_schema.TABLES.AUTO_INCREMENT`), so
+  numbers of deleted legacy rows are never handed out again. Done before the data goes in (ALTER commits by itself);
+  the data is one transaction, checked before the commit.
+- More gaps found in the schema and handled the same way (all listed in the report): ensayo without provider → the
+  client; without date → first mold date of its probetas (left out if none); probeta with neither rupture date nor
+  age → left out; dosificación without fck → 0; repeated or missing material in a slot → row dropped.
+
+How to run (switch day, on the office server; to test, point `--source-db` at a local copy of the dump):
+
+```
+dotnet run --project dotnet/tools/LegacyImport -- --check --source-db cp_db     (report only, nothing saved)
+dotnet run --project dotnet/tools/LegacyImport -- --source-db cp_db             (the import)
+```
+
+Options: `--source-host/-port/-db/-user`, `--target-host/-port/-db/-user`, `--report file` (default `import-report.txt`).
+Tests: `tests/ProbetaControl.Tests/Import` build a small legacy database with the awkward rows and import it end to end.
+
+**For phase 8:** the office server needs the new database's MySQL accounts (`specimen_app`, `specimen_admin`) created with
+real passwords: a setup script for production (today only `database/setup/create-dev-accounts.sql` exists).

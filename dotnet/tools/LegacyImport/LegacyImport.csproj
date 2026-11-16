@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- One-off import of the legacy cp_db data into an empty new database: dotnet run, project dotnet/tools/LegacyImport.
+       Not shipped. See dotnet/docs/porting-status.md (phase 7). -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <RootNamespace>ProbetaControl.LegacyImport</RootNamespace>
+    <AssemblyName>LegacyImport</AssemblyName>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ProbetaControl\ProbetaControl.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="ProbetaControl.Tests" />
+  </ItemGroup>
+
+</Project>

@@ -14,7 +14,7 @@ The new Probeta Control: a WPF app on .NET Framework 4.8, delivered as one `Prob
 | `src/ProbetaControl` | The program (Data, Models, Services, ViewModels, Views, Themes, Help, Database/Scripts) |
 | `tests/ProbetaControl.Tests` | NUnit tests; database tests run in throwaway `probeta_test_*` databases |
 | `database` | `setup` (development MySQL accounts), `demo` (demo database and its public credentials) |
-| `tools` | `DemoSeed` (fills the demo database), UI-automation and icon scripts |
+| `tools` | `DemoSeed` (fills the demo database), `LegacyImport` (one-off cp_db import), UI-automation and icon scripts |
 | `demo-app` | Git-ignored copy of the program connected to the demo database |
 
 ## Development setup
