@@ -28,7 +28,10 @@ namespace ProbetaControl.Services
                 return EditDecision.Deny("Probeta retrasada. El administrador debe desbloquear el ensayo.");
             }
 
-            return specimen.IsLocked ? EditDecision.RuptureLoadOnly : EditDecision.Full;
+            // Weighing may happen on rupture day: while the weight is empty an operator may enter it with the load.
+            return !specimen.IsLocked ? EditDecision.Full
+                : specimen.WeightKg <= 0 ? EditDecision.RuptureLoadAndWeight
+                : EditDecision.RuptureLoadOnly;
         }
 
         /// <summary>Adding, copying or archiving specimens and editing the test header.</summary>
@@ -40,16 +43,23 @@ namespace ProbetaControl.Services
 
     public sealed class EditDecision
     {
-        private EditDecision(bool allowed, bool ruptureLoadOnly, string reason)
+        private EditDecision(bool allowed, bool ruptureLoadOnly, string reason, bool weightOpen = false)
         {
             IsAllowed = allowed;
             IsRuptureLoadOnly = ruptureLoadOnly;
             Reason = reason;
+            IsWeightOpen = weightOpen;
         }
 
         public static EditDecision Full { get; } = new EditDecision(true, false, null);
 
         public static EditDecision RuptureLoadOnly { get; } = new EditDecision(true, true, null);
+
+        /// <summary>Rupture load only, plus the weight while it is still empty (not weighed yet).</summary>
+        public static EditDecision RuptureLoadAndWeight { get; } = new EditDecision(true, true, null, weightOpen: true);
+
+        /// <summary>With <see cref="IsRuptureLoadOnly"/>: the empty weight may be entered too.</summary>
+        public bool IsWeightOpen { get; }
 
         public bool IsAllowed { get; }
 

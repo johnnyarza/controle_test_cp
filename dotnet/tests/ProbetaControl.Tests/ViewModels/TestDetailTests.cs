@@ -95,7 +95,7 @@ namespace ProbetaControl.Tests.ViewModels
                 Assert.That(form.Errors["RuptureDate"], Is.EqualTo("Campo obligatorio."));
                 Assert.That(form.Errors["DiameterCm"], Is.EqualTo("Campo obligatorio."));
                 Assert.That(form.Errors["HeightCm"], Is.EqualTo("Campo obligatorio."));
-                Assert.That(form.Errors["WeightKg"], Is.EqualTo("Campo obligatorio."));
+                Assert.That(form.Errors["WeightKg"], Is.Null, "the weight may wait until rupture day");
 
                 form.MoldDate = "01/03/2026";
                 form.AgeCommand.Execute("7");
@@ -507,6 +507,53 @@ namespace ProbetaControl.Tests.ViewModels
             Assert.That(late.CanSave, Is.False);
             Assert.That(late.CloseText, Is.EqualTo("Cerrar"));
             Assert.That(late.Notice, Does.StartWith("Probeta retrasada"));
+        }
+
+        [Test]
+        public async Task A_probeta_can_be_weighed_on_rupture_day_even_on_a_locked_test()
+        {
+            var test = await NewTestAsync();
+            var specimen = NewSpecimen(test.Id, Today.AddDays(-7), 7);
+            specimen.WeightKg = 0;
+            await Services.Specimens.SaveAsync(specimen, testUnlocked: true);
+            Assert.That((await Services.Specimens.GetAsync(specimen.Id)).DensityKgPerM3, Is.Null, "no weight, no density");
+            await SignInAsOperatorAsync();
+
+            var form = SpecimenEditorViewModel.Edit(Services, new ScriptedDialogs(), test.Id, specimen.Id, 210);
+            await form.InitializeAsync();
+            Assert.That(form.IsMeasurementsReadOnly, Is.True);
+            Assert.That(form.IsWeightReadOnly, Is.False, "the empty weight stays open");
+            Assert.That(form.Notice, Is.EqualTo(SpecimenEditorViewModel.RuptureLoadAndWeightNotice));
+
+            var entry = new RuptureEntryViewModel(Services, test.Id, specimen.Id, 210, null);
+            await entry.InitializeAsync();
+            Assert.That(entry.NeedsWeight, Is.True);
+            entry.RuptureLoadTon = "38";
+            Assert.That(ScriptedDialogs.Save(entry), Is.False);
+            Assert.That(entry.Errors["WeightKg"], Does.StartWith("Ingrese el peso"));
+            entry.WeightKg = "12,55";
+            Assert.That(ScriptedDialogs.Save(entry), Is.True);
+
+            var saved = await Services.Specimens.GetAsync(specimen.Id);
+            Assert.That(saved.WeightKg, Is.EqualTo(12.55m));
+            Assert.That(saved.RuptureLoadTon, Is.EqualTo(38m));
+
+            // Once weighed, changing the weight needs an administrator again.
+            Session.SignIn(Admin);
+            var pending = NewSpecimen(test.Id, Today.AddDays(-7), 7);
+            await Services.Specimens.SaveAsync(pending, testUnlocked: true);
+            await SignInAsOperatorAsync();
+            var weighed = await Services.Specimens.GetAsync(pending.Id);
+            Assert.That(Services.Specimens.CanEdit(weighed, testUnlocked: false).IsWeightOpen, Is.False);
+            weighed.WeightKg = 13;
+            Assert.ThrowsAsync<AccessDeniedException>(() => Services.Specimens.SaveAsync(weighed, testUnlocked: false));
+
+            // A load without a weight is refused by the service too.
+            Session.SignIn(Admin);
+            var noWeight = NewSpecimen(test.Id, Today, 7, load: 30);
+            noWeight.WeightKg = 0;
+            var ex = Assert.ThrowsAsync<ValidationException>(() => Services.Specimens.SaveAsync(noWeight, testUnlocked: true));
+            Assert.That(ex.Errors.Keys, Is.EqualTo(new[] { "WeightKg" }));
         }
 
         [Test]

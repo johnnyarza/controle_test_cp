@@ -161,9 +161,11 @@ namespace ProbetaControl.Services
             var decision = SpecimenEditPolicy.CanEdit(stored, testUnlocked, _clock.Today);
             CompressionTestService.Require(decision);
 
-            if (decision.IsRuptureLoadOnly && !OnlyRuptureLoadChanged(stored, specimen))
+            if (decision.IsRuptureLoadOnly && !OnlyRuptureLoadChanged(stored, specimen, decision.IsWeightOpen))
             {
-                throw new AccessDeniedException("Solo se puede registrar la rotura. El administrador debe desbloquear el ensayo para cambiar las medidas.");
+                throw new AccessDeniedException(decision.IsWeightOpen
+                    ? "Solo se puede registrar la rotura y el peso. El administrador debe desbloquear el ensayo para cambiar las otras medidas."
+                    : "Solo se puede registrar la rotura. El administrador debe desbloquear el ensayo para cambiar las medidas.");
             }
 
             specimen.IsLocked = true;
@@ -177,7 +179,8 @@ namespace ProbetaControl.Services
             return _repository.SetArchivedAsync(specimen, archived, cancellationToken);
         }
 
-        private static bool OnlyRuptureLoadChanged(Specimen stored, Specimen edited) =>
+        /// <param name="weightOpen">The stored weight is empty, so entering it is allowed too.</param>
+        private static bool OnlyRuptureLoadChanged(Specimen stored, Specimen edited, bool weightOpen) =>
             stored.CompressionTestId == edited.CompressionTestId
             && (stored.Code ?? string.Empty) == (edited.Code?.Trim() ?? string.Empty)
             && stored.Slump == edited.Slump
@@ -185,7 +188,7 @@ namespace ProbetaControl.Services
             && stored.RuptureDate.Date == edited.RuptureDate.Date
             && stored.DiameterCm == edited.DiameterCm
             && stored.HeightCm == edited.HeightCm
-            && stored.WeightKg == edited.WeightKg;
+            && (weightOpen || stored.WeightKg == edited.WeightKg);
 
         private static void Validate(Specimen specimen)
         {
@@ -220,9 +223,14 @@ namespace ProbetaControl.Services
                 errors.Add("HeightCm", "Ingrese la altura.");
             }
 
-            if (specimen.WeightKg <= 0)
+            // The weight may be entered at molding or on rupture day: empty is fine until the load is recorded.
+            if (specimen.WeightKg < 0)
             {
-                errors.Add("WeightKg", "Ingrese el peso.");
+                errors.Add("WeightKg", "El peso no puede ser negativo.");
+            }
+            else if (specimen.WeightKg == 0 && specimen.RuptureLoadTon > 0)
+            {
+                errors.Add("WeightKg", "Ingrese el peso para registrar la rotura.");
             }
 
             if (specimen.Slump < 0)

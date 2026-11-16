@@ -15,7 +15,8 @@ namespace ProbetaControl.Services
         /// </summary>
         public static double? DensityKgPerM3(decimal diameterCm, decimal heightCm, decimal weightKg)
         {
-            if (diameterCm <= 0 || heightCm <= 0)
+            // No weight yet (it may be entered on rupture day): no density.
+            if (diameterCm <= 0 || heightCm <= 0 || weightKg <= 0)
             {
                 return null;
             }

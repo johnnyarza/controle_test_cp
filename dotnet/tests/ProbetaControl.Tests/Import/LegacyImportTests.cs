@@ -22,6 +22,10 @@ namespace ProbetaControl.Tests.Import
             Assert.That(ImportPlanner.GuessType(" Agua potable"), Is.EqualTo(MaterialTypes.Water));
             Assert.That(ImportPlanner.GuessType("Árido grueso"), Is.EqualTo(MaterialTypes.Aggregate));
             Assert.That(ImportPlanner.GuessType("Retardador X"), Is.EqualTo(MaterialTypes.Admixture));
+            Assert.That(ImportPlanner.GuessType("Sika Viscocrete"), Is.EqualTo(MaterialTypes.Admixture), "brands in the office data");
+            Assert.That(ImportPlanner.GuessType("Plastimen TM-30"), Is.EqualTo(MaterialTypes.Admixture));
+            Assert.That(ImportPlanner.GuessType("Retarde"), Is.EqualTo(MaterialTypes.Admixture));
+            Assert.That(ImportPlanner.GuessType("Polvillo"), Is.EqualTo(MaterialTypes.Aggregate));
             Assert.That(ImportPlanner.GuessType("Fibra"), Is.EqualTo(MaterialTypes.Other));
         }
 
@@ -145,7 +149,9 @@ namespace ProbetaControl.Tests.Import
             Assert.That(report, Does.Contain("Sin dosificación: no se importó (ni sus probetas) (1): Nº 13"));
             Assert.That(report, Does.Contain("Sin fecha de moldeo: no se importó (2): Nº 103, 106"));
             Assert.That(report, Does.Contain("Su ensayo no existe o no se importó: no se importó (1): Nº 104"));
-            Assert.That(report, Does.Contain("Material repetido en dos filas"));
+            Assert.That(report, Does.Contain("Material repetido en dos filas: se dejó solo la primera (1): Nº 1" + Environment.NewLine), "a material at 0 kg/m³ (unused legacy slot) is dropped silently");
+            Assert.That(report, Does.Contain("Diámetro, altura o peso vacío o 0 (se importó así): revisar (1): Nº 105" + Environment.NewLine), "unbroken without weight (101) is normal");
+            Assert.That(report, Does.Contain("Material inexistente en una fila: se quitó la fila (1): Nº 1" + Environment.NewLine), "empty slots (no material, quantity 0) are not reported");
             Assert.That(report, Does.Contain("Specimens: 150"));
 
             // 3. New records continue after every legacy number, deleted ones (6-7, 14-19, 106-149) included.
@@ -187,8 +193,8 @@ INSERT INTO clients (id, name, phone) VALUES (1, 'Constructora Andina', ' 3-978 
   (5, 'Hormigones del Oriente', NULL);
 INSERT INTO providers (id, name) VALUES (1, 'Itacamba');
 INSERT INTO materials (id, name, providerId) VALUES (1, 'Cemento IP-30', 1), (2, 'Árido fino', 1), (3, 'Fibra', 99);
-INSERT INTO concretedesign (id, description, fck, mat1_id, mat1_qtt, mat2_id, mat2_qtt, mat3_id, mat3_qtt, mat4_id, mat4_qtt, slump)
-  VALUES (1, 'H-21', 210, 1, 350, 2, 800, 1, 10, 9, 5, 10);
+INSERT INTO concretedesign (id, description, fck, mat1_id, mat1_qtt, mat2_id, mat2_qtt, mat3_id, mat3_qtt, mat4_id, mat4_qtt, mat5_id, mat5_qtt, mat6_qtt, mat7_id, mat7_qtt, slump)
+  VALUES (1, 'H-21', 210, 1, 350, 2, 800, 1, 10, 9, 5, NULL, 0, 0, 2, 0, 10);
 INSERT INTO concretedesign (id, description, fck) VALUES (2, 'H-25', NULL);
 INSERT INTO compresion_test (id, client_id, concreteProviderId, ConcreteDesign_id, obra, address, creacionDate) VALUES
   (10, 1, 5, 1, 'Torre Norte', 'Av. Bolivia', '2025-01-10'),
@@ -197,7 +203,7 @@ INSERT INTO compresion_test (id, client_id, concreteProviderId, ConcreteDesign_i
   (13, 1, 5, 7, 'Dosificación borrada', 'x', '2025-01-10');
 INSERT INTO corpo_de_provas (id, code, compresionTest_Id, slump, dateMolde, ruptureDate, age, diameter, height, weight, tonRupture, is_locked) VALUES
   (100, 'Losa A', 10, 8.5, '2025-01-10', '2025-01-17', 7, 15, 30, 12.5, 25.5, 1),
-  (101, 'Losa A', 10, 8.5, '2025-01-10', '2025-02-07', 28, 15, 30, 12.6, 0, 0),
+  (101, 'Losa A', 10, 8.5, '2025-01-10', '2025-02-07', 28, 15, 30, 0, 0, 0),
   (102, 'Columna', 11, NULL, '2025-02-01', NULL, 28, 15, 30, 12.4, NULL, 0),
   (103, 'Sin moldeo', 11, NULL, NULL, '2025-02-08', 7, 15, 30, 12.4, NULL, 0),
   (104, 'Del ensayo sin cliente', 12, NULL, '2025-01-10', '2025-01-17', 7, 15, 30, 12.4, NULL, 0),

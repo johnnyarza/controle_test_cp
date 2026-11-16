@@ -12,7 +12,7 @@ Decisions taken while porting Probeta Control to C# / WPF, and why. Status: [por
 - Login required; users in the database with BCrypt passwords. A new database starts with
   `admin` / `admin`, which must be changed at first login. No hint about it on the login screen.
 - Roles: `admin`, `operator`. Archive/restore and user administration are admin-only; operators create
-  and edit. On a locked test an operator may only record a pending rupture load. The admin-only rules
+  and edit. On a locked test an operator may only record a pending rupture load, and the weight while it is still empty (the lab weighs at molding or on rupture day; the weight is optional until the load is recorded). The admin-only rules
   are checked in the services (`AppSession.RequireAdmin`), not only by disabled buttons.
 - Large tables: all database access is async, lists are searched and paged on the server
   (100 rows at a time), long work shows a cancellable busy overlay.

@@ -20,6 +20,9 @@ namespace ProbetaControl.ViewModels.CompressionTests
         public const string RuptureLoadOnlyNotice =
             "Ensayo bloqueado: solo puede registrar la rotura. Para cambiar las medidas, un administrador debe desbloquear el ensayo.";
 
+        public const string RuptureLoadAndWeightNotice =
+            "Ensayo bloqueado: solo puede registrar la rotura y el peso (todavía sin pesar). Para cambiar las otras medidas, un administrador debe desbloquear el ensayo.";
+
         private const int MaxAgeDays = 3650;
 
         private readonly AppServices _services;
@@ -41,6 +44,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
         private string _notice;
         private bool _isMeasurementsReadOnly;
         private bool _isLoadReadOnly;
+        private bool _isWeightOpen;
 
         private readonly decimal _designFck;
         private readonly Specimen _startFrom;
@@ -272,6 +276,9 @@ namespace ProbetaControl.ViewModels.CompressionTests
 
         public bool CanEditMeasurements => !IsMeasurementsReadOnly && !IsBusy;
 
+        /// <summary>The weight stays editable on a locked ensayo while it is empty (weighed on rupture day).</summary>
+        public bool IsWeightReadOnly => IsMeasurementsReadOnly && !_isWeightOpen;
+
         public bool CanSave => !(IsMeasurementsReadOnly && IsLoadReadOnly);
 
         public string CloseText => CanSave ? "Cancelar" : "Cerrar";
@@ -301,8 +308,10 @@ namespace ProbetaControl.ViewModels.CompressionTests
                 }
                 else if (decision.IsRuptureLoadOnly)
                 {
+                    _isWeightOpen = decision.IsWeightOpen;
                     IsMeasurementsReadOnly = true;
-                    Notice = RuptureLoadOnlyNotice;
+                    OnPropertyChanged(nameof(IsWeightReadOnly));
+                    Notice = decision.IsWeightOpen ? RuptureLoadAndWeightNotice : RuptureLoadOnlyNotice;
                 }
 
                 return;
@@ -346,7 +355,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
                 RuptureDate = DateInput.Parse(nameof(RuptureDate), RuptureDate, errors, required: true) ?? default,
                 DiameterCm = NumberInput.Parse(nameof(DiameterCm), DiameterCm, errors, required: true) ?? 0,
                 HeightCm = NumberInput.Parse(nameof(HeightCm), HeightCm, errors, required: true) ?? 0,
-                WeightKg = NumberInput.Parse(nameof(WeightKg), WeightKg, errors, required: true) ?? 0,
+                WeightKg = NumberInput.Parse(nameof(WeightKg), WeightKg, errors) ?? 0,
                 RuptureLoadTon = NumberInput.Parse(nameof(RuptureLoadTon), RuptureLoadTon, errors),
             };
 
@@ -424,6 +433,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
         private void RaiseEditState()
         {
             OnPropertyChanged(nameof(CanEditMeasurements));
+            OnPropertyChanged(nameof(IsWeightReadOnly));
             OnPropertyChanged(nameof(CanSave));
             OnPropertyChanged(nameof(CloseText));
             CommandManager.InvalidateRequerySuggested();
@@ -446,6 +456,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
         private readonly int? _nextId;
         private Specimen _record;
         private string _ruptureLoadTon = string.Empty;
+        private string _weightKg = string.Empty;
         private string _notice;
         private string _lockNote;
         private bool _canSave = true;
@@ -490,6 +501,16 @@ namespace ProbetaControl.ViewModels.CompressionTests
                     OnPropertyChanged(nameof(PercentText));
                 }
             }
+        }
+
+        /// <summary>Not weighed yet (weighed on rupture day): the weight is asked for together with the load.</summary>
+        public bool NeedsWeight => _record != null && _record.WeightKg <= 0;
+
+        /// <summary>kg, typed when <see cref="NeedsWeight"/>.</summary>
+        public string WeightKg
+        {
+            get => _weightKg;
+            set => SetProperty(ref _weightKg, value);
         }
 
         public string StrengthText => Strength.HasValue ? Strength.Value.ToString("0.00", CultureInfo.InvariantCulture) : "—";
@@ -587,6 +608,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
             OnPropertyChanged(nameof(AgeText));
             OnPropertyChanged(nameof(StatusText));
             OnPropertyChanged(nameof(Status));
+            OnPropertyChanged(nameof(NeedsWeight));
         });
 
         protected override async Task SaveCoreAsync()
@@ -608,6 +630,21 @@ namespace ProbetaControl.ViewModels.CompressionTests
 
             var specimen = _record.Clone();
             specimen.RuptureLoadTon = load;
+            if (NeedsWeight)
+            {
+                if (!NumberInput.TryParse(WeightKg, out var weight))
+                {
+                    throw new ValidationException(nameof(WeightKg), NumberInput.InvalidMessage);
+                }
+
+                if (weight == null || weight <= 0)
+                {
+                    throw new ValidationException(nameof(WeightKg), "Ingrese el peso (todavía no se pesó).");
+                }
+
+                specimen.WeightKg = weight.Value;
+            }
+
             await _services.Specimens.SaveAsync(specimen, _services.Session.IsTestUnlocked(_testId));
             SavedId = specimen.Id;
         }

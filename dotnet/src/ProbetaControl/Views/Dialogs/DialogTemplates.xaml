@@ -585,7 +585,8 @@
                 <StackPanel Style="{StaticResource FormField}" Margin="0,0,0,16">
                     <TextBlock Style="{StaticResource FieldLabel}" Text="Peso (kg)" />
                     <TextBox Text="{Binding WeightKg, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right"
-                             IsReadOnly="{Binding IsMeasurementsReadOnly}" AutomationProperties.Name="Peso" />
+                             IsReadOnly="{Binding IsWeightReadOnly}" AutomationProperties.Name="Peso"
+                             ToolTip="Puede quedar vacío hasta el día de la rotura" />
                     <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[WeightKg]}" />
                 </StackPanel>
             </UniformGrid>
@@ -676,6 +677,15 @@
                     <StackPanel><TextBlock Style="{StaticResource TileLabel}" Text="Peso" /><TextBlock Text="{Binding Specimen.WeightKg, StringFormat={}{0:0.000} kg}" /></StackPanel>
                 </UniformGrid>
             </Border>
+
+            <!-- Not weighed yet: the weight is typed together with the load -->
+            <StackPanel Visibility="{Binding NeedsWeight, Converter={StaticResource BoolToVisibility}}" Margin="0,0,0,12">
+                <TextBlock Text="Peso (kg) — todavía no se pesó" FontWeight="SemiBold" Margin="0,0,0,6" />
+                <TextBox Text="{Binding WeightKg, UpdateSourceTrigger=PropertyChanged}" Width="200" HorizontalAlignment="Left"
+                         TextAlignment="Right" IsReadOnly="{Binding CanSave, Converter={StaticResource InverseBool}}"
+                         AutomationProperties.Name="Peso en kilogramos" />
+                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[WeightKg]}" />
+            </StackPanel>
 
             <!-- The one thing to type -->
             <TextBlock Text="Rotura (toneladas)" FontWeight="SemiBold" Margin="0,0,0,6" />

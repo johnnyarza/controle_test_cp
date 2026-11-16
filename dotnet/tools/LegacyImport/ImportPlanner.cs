@@ -133,7 +133,9 @@ namespace ProbetaControl.LegacyImport
                 {
                     var id = legacy.MaterialIds[slot];
                     var quantity = legacy.Quantities[slot];
-                    if (!id.HasValue && !quantity.HasValue)
+                    // The legacy app always had 8 slots: unused ones hold no material, or a material at 0 kg/m³ (or nothing).
+                    // They are dropped without a note, as the user decided.
+                    if ((quantity ?? 0) == 0)
                     {
                         continue;
                     }
@@ -143,9 +145,9 @@ namespace ProbetaControl.LegacyImport
                     {
                         problem = "Material inexistente en una fila: se quitó la fila";
                     }
-                    else if (!quantity.HasValue || quantity.Value < 0)
+                    else if (quantity.Value < 0)
                     {
-                        problem = "Material sin cantidad (o negativa): se quitó la fila";
+                        problem = "Cantidad negativa: se quitó la fila";
                     }
                     else if (!used.Add(id.Value))
                     {
@@ -278,7 +280,8 @@ namespace ProbetaControl.LegacyImport
                     RuptureLoadTon = legacy.Load.HasValue && legacy.Load.Value > 0 ? legacy.Load : null,
                     IsLocked = legacy.IsLocked,
                 };
-                if (specimen.DiameterCm == 0 || specimen.HeightCm == 0 || specimen.WeightKg == 0)
+                // An unbroken probeta without weight is normal: the lab may weigh it on rupture day.
+                if (specimen.DiameterCm == 0 || specimen.HeightCm == 0 || (specimen.WeightKg == 0 && specimen.RuptureLoadTon.HasValue))
                 {
                     report.Note("Probetas", "Diámetro, altura o peso vacío o 0 (se importó así): revisar", legacy.Id);
                 }
@@ -298,7 +301,10 @@ namespace ProbetaControl.LegacyImport
             }
         }
 
-        /// <summary>Same rule as schema script 011 (name starts with…), ignoring case and accents.</summary>
+        /// <summary>
+        /// Same rule as schema script 011 (name starts with…), ignoring case and accents, plus the admixture brands
+        /// and "polvillo" found in the office data (2026-11-15).
+        /// </summary>
         public static string GuessType(string name)
         {
             var folded = Fold(name);
@@ -313,12 +319,13 @@ namespace ProbetaControl.LegacyImport
                 return MaterialTypes.Water;
             }
 
-            if (Starts("arena", "grava", "gravilla", "piedra", "agregado", "arido"))
+            if (Starts("arena", "grava", "gravilla", "piedra", "agregado", "arido", "polvillo"))
             {
                 return MaterialTypes.Aggregate;
             }
 
-            return Starts("aditivo", "plastificante", "superplastificante", "acelerante", "retardante", "retardador")
+            return Starts("aditivo", "plastificante", "superplastificante", "aceler", "retard",
+                "sika", "viscoflow", "viscocrete", "plastimen", "ferrogard")
                 ? MaterialTypes.Admixture
                 : MaterialTypes.Other;
         }

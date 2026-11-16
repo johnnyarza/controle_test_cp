@@ -9,7 +9,7 @@ Everything below is in the help page as of 2026-11-15.
 Changes not yet in `Help/ayuda.html`. Add a line per change (date, what changed, which topic); the page is
 updated in batches when asked, and the lines are removed then.
 
-- (none)
+- 2026-11-15: weight may be left empty when a probeta is created and entered on rupture day ("Registrar rotura" asks for it; on a locked ensayo an operator may still enter an empty weight). Topics: Probetas, Registrar rotura, Ensayos bloqueados (ayuda.html still says saving locks every measurement).
 
 ## Primer inicio / instalación
 
