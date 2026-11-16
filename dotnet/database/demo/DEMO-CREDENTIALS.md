@@ -34,5 +34,11 @@ It is not the development database (`probeta_control`) and not the test database
 The dates are relative to the day it was filled (probetas due today, tomorrow, overdue…). To refresh them,
 or to start over after trying things: `dotnet run --project dotnet/tools/DemoSeed -- --reset`.
 
+After a program update with new schema scripts, `DemoSeed` without `--reset` applies them to the existing demo
+(keeping its data) and then stops with "ya tiene datos"; copy the new `ProbetaControl.exe` into `dotnet/demo-app/`.
+
+The demo's label server name (Configuración → Etiquetas) is `probeta-demo`, so QR labels can be tried at once;
+their links lead nowhere until the phone page exists.
+
 Options: `--host`, `--port` (default: the first server in `dotnet/tests/test.env`, else `localhost:3306`),
 `--app-folder <folder>`.

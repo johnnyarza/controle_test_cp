@@ -41,10 +41,46 @@ namespace ProbetaControl.Tests.Reports
                 new Rectangle(0, 0, page.Width, page.Height));
             using (var label = page.Clone(area, PixelFormat.Format24bppRgb))
             {
-                var reader = new BarcodeReader { AutoRotate = false };
-                reader.Options.PossibleFormats = new[] { BarcodeFormat.QR_CODE };
-                reader.Options.TryHarder = true;
-                return reader.Decode(label)?.Text;
+                return Decode(label);
+            }
+        }
+
+        /// <summary>
+        /// The QR code in an image, or null. ZXing misses about 1 in 120 perfectly sharp codes at one exact size (codes it
+        /// made itself too, so the codes are fine); the same code reads at another size, as a phone camera sees it.
+        /// So a few sizes are tried before giving up.
+        /// </summary>
+        internal static string Decode(Bitmap image)
+        {
+            var reader = new BarcodeReader { AutoRotate = false };
+            reader.Options.PossibleFormats = new[] { BarcodeFormat.QR_CODE };
+            reader.Options.TryHarder = true;
+            foreach (var scale in new[] { 1.0, 1.25, 0.8, 1.5 })
+            {
+                using (var sized = new Bitmap(image, (int)(image.Width * scale), (int)(image.Height * scale)))
+                {
+                    var text = reader.Decode(sized)?.Text;
+                    if (text != null)
+                    {
+                        return text;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        [Test]
+        public void Every_code_reads_back()
+        {
+            for (var i = 0; i < 300; i++)
+            {
+                var link = LabelLink.For("servidor-lab", SpecimenCodes.NewCode());
+                using (var png = (Bitmap)Image.FromStream(new System.IO.MemoryStream(SpecimenLabels.QrPng(link))))
+                using (var small = new Bitmap(png, 200, 200))
+                {
+                    Assert.That(Decode(small), Is.EqualTo(link));
+                }
             }
         }
 

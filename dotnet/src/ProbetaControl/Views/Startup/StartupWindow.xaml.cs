@@ -7,6 +7,7 @@ namespace ProbetaControl.Views.Startup
         public StartupWindow()
         {
             InitializeComponent();
+            Help.HelpKey.Attach(this, () => ViewModels.HelpTopics.For(DataContext));
         }
     }
 }

@@ -4,7 +4,7 @@ The legacy Java/JavaFX app (repo root, `src/`) is being rewritten as a WPF app o
 in `dotnet/`, on branch `csharp-port`. The Java code stays untouched until the C# version reaches parity
 and is signed off.
 
-_Last updated: 2026-11-14 (phase 5, group 4)._
+_Last updated: 2026-11-15 (phase 6)._
 
 ## Status
 
@@ -15,7 +15,7 @@ _Last updated: 2026-11-14 (phase 5, group 4)._
 | 3 | Models, Dapper repositories (paging, audit, RowVersion, archive), services, business rules, login, DPAPI config, startup checks | Done |
 | 4 | Screens, in six groups (review after each) | Done |
 | 5 | PDF reports (PDFsharp), Excel export (ClosedXML), QR labels (QRCoder), in four groups | Done (awaiting review) |
-| 6 | Built-in help (`Help/ayuda.html`), opened by "?" / F1. Topics: [help-notes.md](help-notes.md) | To do |
+| 6 | Built-in help (`Help/ayuda.html`), opened by "?" / F1. Topics: [help-notes.md](help-notes.md) | Done (awaiting review) |
 | 7 | One-off import of the legacy `cp_db` data | To do |
 | 8 | Inno Setup 7 installer (with .NET 4.8 offline installer) | To do |
 | 9 | Read-only phone page (ASP.NET Core) | Not in v1 |
@@ -98,6 +98,19 @@ _Last updated: 2026-11-14 (phase 5, group 4)._
    Configuración → Etiquetas (administrators): server name and the sheet (six A4 presets or custom), with
    "Hoja de prueba" (label outlines as page-positioned frames, for plain paper) to check the measurements
    before saving. Script 013 adds `Specimens.PublicCode` (filled for existing probetas) and the two settings.
+
+### Phase 6: built-in help
+
+Done (awaiting review). Layout A chosen by the user: the program's own help window (contents on the left with a
+search box, the topic on the right), not the PC's browser. `Help/ayuda.html` (Spanish, inside the exe) has 20
+topics from help-notes.md plus the startup screens, keyboard shortcuts and common problems. "?" and F1 open it
+at the topic of the screen: the page on screen (Configuración: its section), any dialog (a message box falls back
+to the screen behind it), the report preview and every startup step (`ViewModels/HelpTopics.cs`).
+`Views/Help/HelpViewer` shows it in the Windows web control (IE11, on every Windows, offline) on a UI thread of
+its own, so it stays usable while a dialog is open; one window, moved to the new topic on each F1; zoomed to the
+screen's scaling (also when moved to another screen). The search ignores accents and case, shows only the topics
+with every word typed and marks them. Tests check the ids and links, that every screen has a topic, and run the
+page's script in the real web control (IE11 mode, topics, search, layout).
 
 ## Decisions
 
@@ -203,6 +216,10 @@ _Last updated: 2026-11-14 (phase 5, group 4)._
 - Configuración sections derive from `SettingsSection` (an `EditorViewModel`: banner, field errors,
   `LoadAsync` each time the section is shown); add one to `SettingsPageViewModel` and give it a
   `DataTemplate` in `Views/Settings/SettingsView.xaml`.
+- Help: every new page, dialog, Configuración section or startup step gets a topic in `ViewModels/HelpTopics.cs`
+  (a test fails otherwise; point it at the closest existing topic). Don't edit `Help/ayuda.html` with each change:
+  add a line to "Pending help updates" in [help-notes.md](help-notes.md) and remind the user; the page is
+  updated in batches when the user asks.
 
 ### Pitfalls already hit
 
@@ -229,6 +246,14 @@ _Last updated: 2026-11-14 (phase 5, group 4)._
 - MigraDoc table borders add their width to each row, even with `RowHeightRule.Exactly`: a grid that must land
   on exact positions (labels) has no borders; outlines are `TextFrame`s placed relative to the page.
 - Report pages drawn at screen resolution squeeze word spacing; the preview draws at about twice the pixels.
+- The help page runs in the Windows web control (Internet Explorer 11): ES5 script only (a test rejects
+  `=>`, `let`, `const`, template strings), `<meta http-equiv="X-UA-Compatible" content="IE=edge">` or it acts
+  like IE7, and `main, nav, section { display: block; }` because IE11 treats `<main>` as inline. Links inside the
+  page are handled by its script (the page is loaded from a string, so it has no address to navigate to).
+- ZXing (tests) misses about 0.8 % of perfectly sharp QR codes at one exact size, its own codes too: tests read a
+  code at several sizes (`LabelLayoutTests.Decode`); a single failed read made the label tests flaky.
+- A window shown while a modal dialog is open is disabled with the rest of its thread: the help window has its
+  own UI thread and can't use the app's styles (they belong to the main thread), so it is built in code.
 
 ## Large data volumes
 

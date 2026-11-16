@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Ayuda de Probeta Control</title>
+<!--
+  Built-in help of Probeta Control (phase 6). Shown inside the program (Views/Help/HelpWindow) with the
+  Windows web control, which is Internet Explorer 11: keep the script ES5 (no let/const, arrow functions,
+  template strings) and the CSS simple. Every topic is a section with an id (or an h3 with an id inside one);
+  the program opens them by id (ViewModels/HelpTopics.cs) and a test checks that every id it uses exists.
+  Topics to write come from dotnet/docs/help-notes.md.
+-->
+<style>
+  html, body { margin: 0; padding: 0; }
+  /* IE11 doesn't know <main> and treats it as inline (its margin would be ignored). */
+  main, nav, section { display: block; }
+  body { font-family: "Segoe UI", Arial, sans-serif; font-size: 15px; line-height: 1.55; color: #1F2937; background: #FFFFFF; }
+  #toc { position: fixed; top: 0; bottom: 0; left: 0; width: 250px; overflow-y: auto; overflow-x: hidden; background: #F3F5F8;
+         border-right: 1px solid #D3D9E1; padding: 18px 0 24px 0; box-sizing: border-box; }
+  #toc h1 { font-size: 17px; margin: 0 18px 12px 18px; color: #111A2C; }
+  #search { display: block; box-sizing: border-box; width: 210px; margin: 0 18px 6px 18px; padding: 6px 8px; font: inherit; font-size: 14px;
+            border: 1px solid #A8B2C0; border-radius: 4px; background: #FFFFFF; color: #1F2937; }
+  #search:focus { outline: none; border-color: #1D4CB8; }
+  #search-info { margin: 0 18px 10px 18px; font-size: 13px; color: #6B7280; min-height: 18px; }
+  #toc ul { list-style: none; margin: 0; padding: 0; }
+  #toc li a { display: block; padding: 5px 18px; color: #1F2937; text-decoration: none; font-size: 14px; border-left: 3px solid transparent; }
+  #toc li a:hover { background: #E5E8ED; }
+  #toc li a.active { background: #E7EDFA; color: #1D4CB8; border-left-color: #1D4CB8; font-weight: 600; }
+  #toc li a.hidden { display: none; }
+  #toc .group { margin: 14px 18px 4px 18px; font-size: 12px; font-weight: 600; color: #6B7280; letter-spacing: 0.04em; }
+  #content { margin-left: 251px; padding: 8px 40px 120px 40px; max-width: 820px; }
+  section { padding-top: 14px; border-bottom: 1px solid #ECEFF3; padding-bottom: 18px; }
+  section.hidden { display: none; }
+  h2 { font-size: 22px; margin: 10px 0 10px 0; color: #111A2C; }
+  h3 { font-size: 17px; margin: 22px 0 6px 0; color: #111A2C; }
+  p { margin: 6px 0 10px 0; }
+  ul.list, ol.list { margin: 6px 0 12px 0; padding-left: 22px; }
+  ul.list li, ol.list li { margin: 3px 0; }
+  kbd { font-family: "Segoe UI", Arial, sans-serif; font-size: 13px; padding: 1px 6px; border: 1px solid #A8B2C0;
+        border-bottom-width: 2px; border-radius: 4px; background: #F7F8FA; white-space: nowrap; }
+  .btn { font-weight: 600; white-space: nowrap; }
+  .note { background: #E7EDFA; border-left: 4px solid #1D4CB8; padding: 8px 12px; margin: 10px 0; }
+  .warn { background: #FFF7E6; border-left: 4px solid #D97706; padding: 8px 12px; margin: 10px 0; }
+  table.keys { border-collapse: collapse; margin: 8px 0 14px 0; }
+  table.keys td, table.keys th { border-bottom: 1px solid #ECEFF3; padding: 5px 14px 5px 0; text-align: left; vertical-align: top; }
+  table.keys th { font-size: 13px; color: #6B7280; font-weight: 600; }
+  .swatch { display: inline-block; width: 14px; height: 14px; border: 1px solid #D3D9E1; border-radius: 3px; vertical-align: -2px; margin-right: 4px; }
+  mark { background: #FDF0C4; color: inherit; padding: 0; }
+  .flash { background: #FDF0C4; }
+  .empty { color: #6B7280; margin: 30px 0; display: none; }
+</style>
+</head>
+<body>
+
+<nav id="toc" aria-label="Contenido">
+  <h1>Ayuda</h1>
+  <input id="search" type="text" placeholder="Buscar en la ayuda…" aria-label="Buscar en la ayuda">
+  <div id="search-info"></div>
+  <ul>
+    <li class="group">EMPEZAR</li>
+    <li><a href="#inicio">Primeros pasos</a></li>
+    <li><a href="#conexion">Conexión y base de datos</a></li>
+    <li><a href="#sesion">Iniciar sesión</a></li>
+    <li class="group">TRABAJO DIARIO</li>
+    <li><a href="#ensayos">Lista de ensayos</a></li>
+    <li><a href="#ensayo">Página del ensayo</a></li>
+    <li><a href="#probeta">Probetas</a></li>
+    <li><a href="#rotura">Registrar rotura</a></li>
+    <li><a href="#aviso">Aviso de probetas para romper</a></li>
+    <li><a href="#informes">Informes e impresión</a></li>
+    <li><a href="#excel">Exportar a Excel</a></li>
+    <li><a href="#etiquetas">Etiquetas QR</a></li>
+    <li class="group">DATOS</li>
+    <li><a href="#clientes">Clientes y proveedores</a></li>
+    <li><a href="#materiales">Materiales</a></li>
+    <li><a href="#dosificaciones">Dosificaciones</a></li>
+    <li><a href="#archivar">Archivar y restaurar</a></li>
+    <li><a href="#numeros">Números y fechas</a></li>
+    <li class="group">PROGRAMA</li>
+    <li><a href="#configuracion">Configuración</a></li>
+    <li><a href="#atajos">Atajos de teclado</a></li>
+    <li><a href="#problemas">Problemas frecuentes</a></li>
+  </ul>
+</nav>
+
+<main id="content">
+
+<section id="inicio">
+  <h2>Primeros pasos</h2>
+  <p>Probeta Control registra los ensayos de compresión de hormigón: cada <b>ensayo</b> es un pedido de un cliente
+    (obra, dosificación, proveedor del hormigón) y tiene sus <b>probetas</b>, que se moldean, se rompen a una edad
+    (7, 14, 28 días…) y dan la resistencia. El programa calcula la densidad, la resistencia y el porcentaje del fck,
+    avisa qué probetas hay que romper e imprime los informes y las etiquetas.</p>
+  <p>La ventana tiene arriba las páginas: <span class="btn">Ensayos</span> (la página de inicio),
+    <span class="btn">Clientes</span>, <span class="btn">Proveedores</span>, <span class="btn">Materiales</span>,
+    <span class="btn">Dosificaciones</span> y <span class="btn">Configuración</span>. A la derecha están su usuario,
+    <span class="btn">Cerrar sesión</span> y el botón <span class="btn">?</span> que abre esta ayuda.</p>
+  <div class="note">Pulse <kbd>F1</kbd> en cualquier pantalla o ventana para abrir la ayuda en el tema de esa pantalla.
+    Esta ventana de ayuda puede quedar abierta al lado mientras trabaja.</div>
+
+  <h3 id="inicio-primera-vez">La primera vez</h3>
+  <ol class="list">
+    <li>Al abrir el programa en un equipo nuevo se pide la <a href="#conexion">conexión a la base de datos</a>.</li>
+    <li>Si la base de datos es nueva o de una versión anterior, un administrador la <a href="#conexion-actualizar">actualiza</a>.</li>
+    <li>Una base de datos recién creada tiene un solo usuario del programa: <b>admin</b> con la contraseña <b>admin</b>.
+      Al entrar por primera vez el programa obliga a elegir una contraseña nueva (mínimo 8 caracteres).</li>
+    <li>Luego el administrador crea los usuarios de cada persona en <a href="#config-usuarios">Configuración → Usuarios</a>.</li>
+  </ol>
+
+  <h3 id="inicio-cuentas">Dos clases de "usuario"</h3>
+  <p>No hay que confundirlas:</p>
+  <ul class="list">
+    <li><b>Usuarios del programa</b> (admin y los operadores): se escriben en la pantalla <span class="btn">Iniciar sesión</span>.
+      Cada persona tiene el suyo.</li>
+    <li><b>Cuentas de MySQL</b>: las usa el programa para hablar con la base de datos. La conexión de cada equipo usa la
+      cuenta del programa (por ejemplo <i>specimen_app</i>); para actualizar la base de datos se pide otra cuenta con más
+      permisos (por ejemplo <i>specimen_admin</i>), que nunca se guarda.</li>
+  </ul>
+
+  <h3 id="inicio-roles">Administradores y operadores</h3>
+  <ul class="list">
+    <li><b>Operador</b>: crea y modifica clientes, proveedores, materiales, dosificaciones, ensayos y probetas.</li>
+    <li><b>Administrador</b>: además archiva y restaura registros, administra los usuarios, los datos del informe,
+      el logo, el sello y las etiquetas, cambia dosificaciones que ya se usan y puede modificar cualquier ensayo.</li>
+  </ul>
+  <p>Los botones que un operador no puede usar aparecen desactivados y su descripción (al pasar el ratón) dice por qué.</p>
+</section>
+
+<section id="conexion">
+  <h2>Conexión y base de datos</h2>
+  <p>Cada equipo guarda su conexión en el archivo <i>ProbetaControl.config</i>, junto al programa, con la contraseña
+    cifrada para ese equipo (no sirve copiarlo a otro equipo).</p>
+  <h3 id="conexion-datos">Conexión a la base de datos</h3>
+  <ul class="list">
+    <li><b>Servidor</b> y <b>Puerto</b>: el equipo donde está MySQL (nombre o IP) y su puerto (normalmente 3306).</li>
+    <li><b>Base de datos</b>: el nombre de la base de datos del programa.</li>
+    <li><b>Usuario y contraseña de MySQL</b>: la cuenta de MySQL <i>del programa</i> (por ejemplo specimen_app),
+      no el usuario con el que usted inicia sesión.</li>
+  </ul>
+  <p><span class="btn">Probar conexión</span> comprueba los datos sin guardarlos; <span class="btn">Guardar</span> los guarda y continúa.</p>
+  <div class="warn">El programa rechaza una cuenta de MySQL que pueda borrar o cambiar la estructura de la base de datos
+    (por ejemplo <i>root</i>): los registros nunca se borran, se archivan, y el programa no debe poder modificar las tablas.
+    Use la cuenta del programa.</div>
+
+  <h3 id="conexion-actualizar">Actualizar la base de datos</h3>
+  <p>Cuando la base de datos está vacía o es de una versión anterior del programa, aparece
+    <span class="btn">La base de datos necesita actualizarse</span>. Con <span class="btn">Actualizar base de datos</span>
+    se ingresa una cuenta de MySQL con permiso para cambiar la estructura (por ejemplo specimen_admin); su contraseña no
+    se guarda. La actualización conserva todos los datos.</p>
+  <p>Si la base de datos es <i>más nueva</i> que el programa, hay que instalar la versión más reciente del programa en ese equipo.</p>
+
+  <h3 id="conexion-problemas">Si no se puede conectar</h3>
+  <ul class="list">
+    <li><b>No se pudo conectar al servidor</b>: revise que el servidor esté encendido y que la red funcione; luego <span class="btn">Reintentar</span>.</li>
+    <li><b>El servidor rechazó el usuario o la contraseña</b>: revise la cuenta de MySQL en <span class="btn">Configurar conexión</span>.</li>
+    <li><b>La base de datos indicada no existe</b>: revise el nombre de la base de datos.</li>
+    <li><b>El servidor MySQL es muy antiguo</b>: se necesita MySQL 8.0.20 o posterior.</li>
+  </ul>
+</section>
+
+<section id="sesion">
+  <h2>Iniciar sesión</h2>
+  <p>Escriba su <b>Usuario</b> y <b>Contraseña</b> del programa y pulse <span class="btn">Entrar</span>.
+    El botón <span class="btn">Conexión</span> abre los datos de la conexión a la base de datos.</p>
+  <p>Un usuario archivado no puede entrar. Si olvidó su contraseña, un administrador puede
+    <a href="#config-usuarios">restablecerla</a>.</p>
+  <h3 id="sesion-contrasena">Cambiar la contraseña al entrar</h3>
+  <p>Un usuario nuevo, o uno cuya contraseña restableció un administrador, debe elegir una contraseña nueva al entrar:
+    la actual, la nueva (mínimo 8 caracteres, distinta de la actual) y la nueva otra vez.</p>
+  <p><span class="btn">Cerrar sesión</span> (arriba a la derecha) vuelve a esta pantalla, por ejemplo antes de dejar el equipo.</p>
+</section>
+
+<section id="ensayos">
+  <h2>Lista de ensayos</h2>
+  <p>Es la página de inicio. Muestra los ensayos del más nuevo al más antiguo, de a 100;
+    <span class="btn">Mostrar más</span> agrega los siguientes.</p>
+  <ul class="list">
+    <li><b>Para romper</b> (número en rojo): probetas sin rotura cuya fecha de rotura es hoy o ya pasó.</li>
+    <li><b>Buscar</b>: encuentra el número de ensayo, el cliente, el proyecto o la ubicación.</li>
+    <li><b>Cliente: Todos los clientes</b>: abre la búsqueda de clientes para ver solo los ensayos de uno; la × quita el filtro.</li>
+    <li><b>Solo con probetas para romper (N)</b>: muestra solo esos ensayos; N los cuenta en todos los clientes.</li>
+    <li><span class="btn">Abrir</span>, doble clic o <kbd>Enter</kbd> abre la <a href="#ensayo">página del ensayo</a>.</li>
+    <li><span class="btn">Informe por cliente…</span> imprime los ensayos de un cliente (ver <a href="#informe-cliente">Informes</a>).</li>
+  </ul>
+
+  <h3 id="ensayos-nuevo">Nuevo ensayo y datos del ensayo</h3>
+  <p><span class="btn">Nuevo</span> (<kbd>Ctrl</kbd>+<kbd>N</kbd>) pide los datos y luego abre el ensayo nuevo para agregar sus probetas:</p>
+  <ul class="list">
+    <li><b>Fecha</b> (hoy de forma predeterminada).</li>
+    <li><b>Cliente</b> y <b>Proveedor del hormigón</b>, elegidos con <span class="btn">Buscar…</span>;
+      <span class="btn">Igual que el cliente</span> copia el cliente como proveedor.</li>
+    <li><b>Dosificación</b>, <b>Proyecto / obra</b> y <b>Ubicación</b>.</li>
+  </ul>
+  <p>Los mismos datos se cambian después con <span class="btn">Editar datos</span> en la página del ensayo.</p>
+
+  <h3 id="clientes-buscar">Buscar cliente</h3>
+  <p>Escriba parte del nombre, teléfono o correo. Doble clic, <kbd>Enter</kbd> o <span class="btn">Elegir</span> elige el
+    cliente; si hay una sola coincidencia ya está seleccionada. Solo aparecen los clientes activos.
+    Al elegir el cliente o el proveedor de un ensayo, <span class="btn">Nuevo cliente</span> crea uno (con el nombre buscado)
+    y lo elige de inmediato.</p>
+</section>
+
+<section id="ensayo">
+  <h2>Página del ensayo</h2>
+  <p>Arriba: el número y el proyecto, el estado del bloqueo y los botones <span class="btn">Imprimir</span>,
+    <span class="btn">Excel</span>, <span class="btn">Etiquetas</span> y <span class="btn">Editar datos</span>.
+    Debajo, los datos del ensayo en una línea y cuatro recuadros: probetas, para romper, rotas y resistencia media
+    (con el % del fck). Los recuadros cuentan siempre todo el ensayo, con filtro o sin él.
+    <span class="btn">← Ensayos</span> (<kbd>Alt</kbd>+<kbd>←</kbd>) vuelve a la lista como estaba.</p>
+
+  <h3 id="ensayo-colores">Colores y estado</h3>
+  <ul class="list">
+    <li><span class="swatch" style="background:#FBE1DE"></span><b>Rojo</b>: retrasada (la fecha de rotura pasó y no se rompió).</li>
+    <li><span class="swatch" style="background:#FDF0C4"></span><b>Amarillo</b>: romper hoy o mañana.</li>
+    <li><b>Gris</b>: archivada (solo con <span class="btn">Mostrar archivadas</span>).</li>
+  </ul>
+  <p>La columna <b>Estado</b> dice lo mismo con palabras (Retrasada, Hoy, Mañana, Pendiente, Rota).
+    <b>% fck</b> es la resistencia de cada probeta rota como porcentaje del fck de la dosificación; a edades tempranas es normal que sea menor.</p>
+
+  <h3 id="ensayo-bloqueo">Ensayos bloqueados</h3>
+  <p>Un operador puede cambiar los ensayos que creó desde que inició sesión. Los demás están <b>bloqueados</b>:
+    se pueden ver, y solo se puede registrar la rotura de una probeta que vence hoy o después.
+    Las probetas retrasadas o ya rotas, y los cambios de medidas, necesitan un administrador.</p>
+  <p><span class="btn">Desbloquear…</span> pide el usuario y la contraseña de un administrador y desbloquea ese ensayo para
+    el operador hasta que pulse <span class="btn">Bloquear</span> o cierre la sesión. Los administradores siempre pueden cambiar todo.</p>
+
+  <h3 id="ensayo-filtro">Filtrar probetas</h3>
+  <p><span class="btn">Filtrar…</span> muestra solo las probetas moldeadas entre dos fechas y/o con ciertos números,
+    por ejemplo <b>1-5, 8, 10-12</b>. El filtro activo aparece en una barra azul con <span class="btn">Quitar filtro</span>.
+    Imprimir, Excel y Etiquetas usan las probetas del filtro.</p>
+  <p>Con clic derecho sobre una probeta: <span class="btn">Registrar rotura</span>, <span class="btn">Editar</span>,
+    <span class="btn">Copiar</span>, <span class="btn">Imprimir etiqueta…</span> y <span class="btn">Archivar</span>.</p>
+</section>
+
+<section id="probeta">
+  <h2>Probetas</h2>
+  <p><span class="btn">Nueva probeta</span> (<kbd>Ctrl</kbd>+<kbd>N</kbd>) abre el formulario, en secciones:</p>
+  <ul class="list">
+    <li><b>Identificación</b>: descripción (por ejemplo "Losa eje A") y slump.</li>
+    <li><b>Fechas</b>: Moldeo + Edad = Rotura. <span class="btn">Hoy</span> pone la fecha de moldeo; la edad en días o los
+      botones <span class="btn">7</span>, <span class="btn">14</span>, <span class="btn">28</span> calculan la fecha de rotura.
+      Cambiar la fecha de rotura cambia la edad; cambiar la fecha de moldeo conserva la edad.</li>
+    <li><b>Medidas</b>: diámetro, altura y peso. La densidad se ve mientras escribe.</li>
+    <li><b>Rotura</b>: la carga en toneladas; se ven la resistencia y el % del fck.</li>
+  </ul>
+  <p>Una probeta nueva empieza con el slump, el diámetro y la altura de la probeta más nueva del ensayo (una nota lo indica);
+    el peso y las fechas se escriben cada vez. Al guardar, las medidas quedan bloqueadas (como en el programa anterior).</p>
+  <h3 id="probeta-promedio">Promedio de dos lecturas</h3>
+  <p>El botón de calculadora junto a <b>Diámetro</b> y <b>Altura</b> promedia dos lecturas y pone el resultado en el campo.</p>
+  <h3 id="probeta-copiar">Copiar</h3>
+  <p><span class="btn">Copiar</span> crea una probeta nueva con las medidas y fechas de la seleccionada, sin su carga de rotura.</p>
+</section>
+
+<section id="rotura">
+  <h2>Registrar rotura</h2>
+  <p><span class="btn">Registrar rotura</span> (botón, <kbd>Ctrl</kbd>+<kbd>R</kbd>, clic derecho, o doble clic / <kbd>Enter</kbd>
+    sobre una probeta sin rotura) abre una ventana pequeña: los datos de la probeta, un campo grande para la carga (t) y la
+    resistencia y el % del fck que resultan.</p>
+  <p><span class="btn">Guardar y siguiente (Nº X)</span> guarda y abre la siguiente probeta que vence hoy o antes, para romper
+    las probetas del día una tras otra. Doble clic en una probeta ya rota abre el formulario completo.</p>
+</section>
+
+<section id="aviso">
+  <h2>Aviso de probetas para romper</h2>
+  <p>Aparece al iniciar sesión si hay probetas sin romper con fecha de rotura hoy, mañana o retrasadas hasta 30 días.
+    Las agrupa por ensayo: primero las de hoy, luego las de mañana y después las retrasadas, con los mismos colores que la página del ensayo.</p>
+  <ul class="list">
+    <li><span class="btn">Abrir ensayo</span> cierra el aviso y abre ese ensayo.</li>
+    <li>Las retrasadas hace más de 30 días no se listan una por una: una línea dice cuántas son y
+      <span class="btn">Ver en Ensayos</span> muestra la lista con "Solo con probetas para romper".</li>
+    <li><b>No volver a mostrar hoy en este equipo</b> lo oculta hasta mañana, solo en este equipo y usuario de Windows.
+      La lista de ensayos sigue mostrando "Para romper".</li>
+  </ul>
+</section>
+
+<section id="informes">
+  <h2>Informes e impresión</h2>
+  <p>Todos los informes se abren en una <b>vista previa</b> del propio programa; no hace falta un programa de PDF.
+    Los datos se leen de nuevo de la base de datos, así que el informe siempre está al día.</p>
+
+  <h3 id="informes-ensayo">Informe del ensayo</h3>
+  <p><span class="btn">Imprimir</span> (<kbd>Ctrl</kbd>+<kbd>P</kbd>) en la página del ensayo. Imprime las probetas que muestra la
+    página (con el filtro, si hay), nunca las archivadas. Contiene: logo, título, nombre del laboratorio, número y fecha del ensayo,
+    fecha de impresión y "Hoja X de Y"; cliente, proveedor, proyecto, ubicación, dosificación con fck, slump con su tolerancia y a/c;
+    la mezcla por m³; la tabla de probetas ("—" = todavía sin romper); un resumen por edad (cantidad, mínimo, promedio, % fck) con
+    el gráfico de resistencia según la edad; la nota y el sello; la dirección del laboratorio al pie de cada hoja.</p>
+
+  <h3 id="informes-vista-previa">Vista previa</h3>
+  <ul class="list">
+    <li><span class="btn">Imprimir…</span> (<kbd>Ctrl</kbd>+<kbd>P</kbd>): elige impresora, copias y hojas "Desde/Hasta".</li>
+    <li><span class="btn">Guardar PDF…</span> (<kbd>Ctrl</kbd>+<kbd>S</kbd>): guarda un PDF, por ejemplo para enviarlo por correo.</li>
+    <li><kbd>Ctrl</kbd>+<kbd>−</kbd> / <kbd>Ctrl</kbd>+<kbd>+</kbd> cambian el tamaño; <span class="btn">Ancho de página</span> (<kbd>Ctrl</kbd>+<kbd>0</kbd>) lo ajusta a la ventana.</li>
+    <li><span class="btn">Cerrar</span> o <kbd>Esc</kbd>.</li>
+  </ul>
+  <p>El papel (A4 o Carta) se elige en <a href="#config-informe">Datos del informe</a>. Si la impresora no tiene ese papel,
+    la hoja se reduce para que entre completa en vez de cortarse.</p>
+
+  <h3 id="informes-listados">Listados</h3>
+  <p><span class="btn">Imprimir</span> (<kbd>Ctrl</kbd>+<kbd>P</kbd>) en Clientes, Proveedores, Materiales y Dosificaciones imprime
+    el listado con todo lo que encuentra la búsqueda (no solo las 100 filas de la pantalla). Los archivados se incluyen solo con
+    "Mostrar archivados" y se marcan "(archivado)". Las dosificaciones se imprimen una por bloque, con sus materiales y el total,
+    sin cortarse entre hojas.</p>
+
+  <h3 id="informe-cliente">Informe por cliente</h3>
+  <p><span class="btn">Informe por cliente…</span> en Ensayos. Con el filtro de cliente usa ese cliente; si no, lo pide.
+    Luego pide <b>Ensayos desde</b> / <b>Ensayos hasta</b> (fecha del ensayo, ambas incluidas; vacías = todos).
+    El informe lista las probetas de esos ensayos, del más antiguo al más nuevo, con una línea por ensayo. No incluye ensayos
+    ni probetas archivados, ni ensayos donde el cliente es solo el proveedor del hormigón.</p>
+  <p>Un listado o informe por cliente se detiene en 3.000 filas (unas 100 hojas) y lo dice al final: acote la búsqueda o las fechas.</p>
+</section>
+
+<section id="excel">
+  <h2>Exportar a Excel</h2>
+  <p><span class="btn">Excel</span> (<kbd>Ctrl</kbd>+<kbd>E</kbd>) en la página del ensayo guarda un archivo .xlsx con las probetas
+    que muestra la página (con el filtro, si hay), nunca las archivadas. No hace falta tener Excel para exportar, solo para abrir el archivo.</p>
+  <ul class="list">
+    <li>Hoja <b>Probetas</b>: una fila por probeta, con números y fechas con los que Excel puede calcular, el encabezado fijo arriba
+      y flechas de filtro. Una probeta sin romper deja vacíos la carga, la resistencia y el % fck.</li>
+    <li>Hoja <b>Ensayo</b>: cliente, proyecto, dosificación, fck y la mezcla.</li>
+  </ul>
+  <p>Si el archivo está abierto en Excel no se puede reemplazar: ciérrelo y vuelva a exportar.</p>
+</section>
+
+<section id="etiquetas">
+  <h2>Etiquetas QR</h2>
+  <p><span class="btn">Etiquetas</span> (<kbd>Ctrl</kbd>+<kbd>L</kbd>) en la página del ensayo imprime una etiqueta adhesiva por
+    probeta de la página (con el filtro, si hay; nunca las archivadas). <b>Solo probetas sin romper</b> (marcado de forma
+    predeterminada) deja fuera las rotas. Con clic derecho sobre una probeta, <span class="btn">Imprimir etiqueta…</span>
+    imprime solo esa, rota o no, por ejemplo para reponer una etiqueta dañada.</p>
+  <h3 id="etiquetas-hoja-usada">Empezar en una hoja ya usada</h3>
+  <p>La ventana dibuja la primera hoja: gris = ya usada, azul = se imprime, blanco = queda libre. Haga clic en la primera
+    etiqueta libre para empezar allí. El resumen dice cuántas etiquetas y hojas se usan.
+    <span class="btn">Ver etiquetas</span> abre la vista previa para imprimir.</p>
+  <h3 id="etiquetas-contenido">Qué lleva cada etiqueta</h3>
+  <p>El código QR a la izquierda; a la derecha el número de probeta en letra grande, "Ensayo N", la fecha de rotura con la
+    edad en días y el cliente (acortado a una línea).</p>
+  <p>El QR lleva una dirección en el servidor del laboratorio: <i>http://nombre-del-servidor/p/código</i>. El código es al azar
+    (no es el número de la probeta), así nadie puede ver otros resultados cambiando un número. La página que se abre con el QR
+    llegará en una versión posterior; el código de cada probeta ya queda guardado y nunca cambia.</p>
+  <div class="warn">No se pueden imprimir etiquetas hasta que un administrador indique el nombre del servidor en
+    <a href="#config-etiquetas">Configuración → Etiquetas</a>.</div>
+  <p>En hojas sin márgenes, la mayoría de las impresoras no imprime los últimos 3 o 4 mm del papel. El contenido de la etiqueta
+    se aleja de los bordes, pero si la impresora corta el QR de las etiquetas de afuera, use hojas con márgenes.</p>
+</section>
+
+<section id="clientes">
+  <h2>Clientes y proveedores</h2>
+  <p>Las listas de <span class="btn">Clientes</span> y <span class="btn">Proveedores</span> se buscan por nombre, teléfono o correo.
+    <span class="btn">Nuevo</span> (<kbd>Ctrl</kbd>+<kbd>N</kbd>) y <span class="btn">Editar</span> (o doble clic, o <kbd>Enter</kbd>)
+    abren el formulario; el nombre es obligatorio y no se puede repetir.</p>
+  <h3 id="listas-menu">Menú de clic derecho</h3>
+  <p>Clic derecho sobre una fila (o la tecla de menú, o <kbd>Shift</kbd>+<kbd>F10</kbd>) la selecciona y ofrece
+    <span class="btn">Editar</span> y <span class="btn">Archivar</span> (<span class="btn">Restaurar</span> si está archivada),
+    igual que los botones de arriba. Dosificaciones también tiene <span class="btn">Duplicar</span>.</p>
+  <p>Un cliente es también "proveedor del hormigón" en los ensayos; los <b>proveedores</b> son los de los materiales
+    (cemento, áridos, aditivos…).</p>
+</section>
+
+<section id="materiales">
+  <h2>Materiales</h2>
+  <p>Cada material tiene nombre, proveedor y <b>Tipo</b>: Cemento, Agua, Agregado, Aditivo u Otro. El tipo sirve para calcular
+    la relación agua/cemento de las dosificaciones (a/c = kg de Agua / kg de Cemento).</p>
+  <p>Al actualizar la base de datos desde una versión anterior, los materiales reciben un tipo adivinado por su nombre
+    (cemento…, agua…, arena/grava/piedra/árido…, aditivo…); los demás quedan como "Otro" y conviene revisarlos una vez.</p>
+</section>
+
+<section id="dosificaciones">
+  <h2>Dosificaciones</h2>
+  <p>La lista muestra descripción, fck, slump, a/c y la cantidad de materiales. El panel de abajo muestra los materiales de la
+    dosificación seleccionada (#, material, proveedor, tipo, kg/m³) con el total; arrastre la barra entre ambos para dar más lugar a uno.</p>
+  <h3 id="dosificaciones-materiales">Tabla de materiales</h3>
+  <ul class="list">
+    <li>Una fila por material con sus kg/m³, hasta 8 filas; se necesita al menos un material.</li>
+    <li><span class="btn">Agregar material</span> agrega una fila; el tacho la quita; las flechas cambian el orden, que es el
+      orden en que se guarda e imprime.</li>
+    <li>Cada fila solo ofrece materiales que no están en otra fila. Las filas vacías se ignoran al guardar.</li>
+    <li>Debajo se ven el total de kg/m³ y la relación a/c ("—" hasta que haya Cemento y Agua con cantidades).</li>
+  </ul>
+  <h3 id="dosificaciones-calculadora">Calculadora de porcentaje</h3>
+  <p>Calcula la cantidad de un material como porcentaje de otro (destino = origen × % / 100), por ejemplo un aditivo al 0,8 %
+    del cemento. Necesita al menos dos materiales y la cantidad del origen; muestra el resultado antes de
+    <span class="btn">Aplicar</span>. No guarda: la dosificación se guarda con <span class="btn">Guardar</span>.</p>
+  <h3 id="dosificaciones-en-uso">Dosificaciones usadas por ensayos</h3>
+  <p>Al abrir una dosificación que usan ensayos (también archivados) aparece un aviso con la cantidad: cambiarla cambia también
+    los datos e informes de esos ensayos. Solo un administrador puede cambiarla; un operador la ve sin poder modificarla.
+    Para cambiar una mezcla en uso sin tocar los informes anteriores, cree una nueva con <span class="btn">Duplicar</span>.</p>
+  <h3 id="dosificaciones-duplicar">Duplicar</h3>
+  <p>Abre una dosificación nueva con el mismo fck, slump, materiales y cantidades, llamada "… (copia)". La descripción no se
+    puede repetir: cámbiela antes de guardar. Los materiales archivados no se copian (una nota amarilla los nombra).</p>
+</section>
+
+<section id="archivar">
+  <h2>Archivar y restaurar</h2>
+  <p>En Probeta Control nada se borra: los registros se <b>archivan</b>. Un registro archivado deja de aparecer en las listas y
+    en las búsquedas; <span class="btn">Mostrar archivados</span> lo muestra en gris y <span class="btn">Restaurar</span> lo devuelve.
+    Archivar y restaurar es solo para administradores.</p>
+  <h3 id="archivar-en-uso">Registros en uso</h3>
+  <p>No se puede archivar un registro que usan otros registros activos. El aviso nombra hasta 5 de ellos y cuántos más hay:</p>
+  <ul class="list">
+    <li>un cliente: ensayos activos donde es el cliente o el proveedor del hormigón;</li>
+    <li>un proveedor: materiales activos;</li>
+    <li>un material: dosificaciones activas;</li>
+    <li>una dosificación: ensayos activos.</li>
+  </ul>
+  <p>Los archivados no cuentan: archive primero esos registros (o cambie el material o proveedor en ellos). Restaurar nunca se bloquea.
+    Una dosificación sigue mostrando un material que se archivó después, marcado "(archivado)".</p>
+</section>
+
+<section id="numeros">
+  <h2>Números y fechas</h2>
+  <h3 id="numeros-decimales">Decimales</h3>
+  <p>Todos los campos numéricos aceptan coma o punto como separador decimal ("12,5" = "12.5"). No se aceptan separadores de miles
+    ("1.234,5" da "Número no válido."), así un valor nunca se lee mal. Las listas muestran punto.</p>
+  <h3 id="numeros-fechas">Fechas</h3>
+  <p>Se escriben con el día primero: "05/11/2026", "5/11/26", "5-11-2026" y "5.11.2026" son el 5 de noviembre de 2026
+    (la configuración regional del equipo no importa). El botón de calendario (o <kbd>Alt</kbd>+<kbd>↓</kbd> / <kbd>F4</kbd>)
+    abre un calendario; al salir del campo la fecha queda como dd/mm/aaaa.</p>
+</section>
+
+<section id="configuracion">
+  <h2>Configuración</h2>
+  <p>Un menú a la izquierda con las secciones. Los administradores ven Usuarios, Datos del informe, Logo y sello, Etiquetas,
+    Conexión, Mi contraseña y Acerca de; los operadores, Conexión, Mi contraseña y Acerca de.</p>
+
+  <h3 id="config-usuarios">Usuarios</h3>
+  <p><span class="btn">Nuevo usuario</span> pide el nombre de usuario (sin espacios), el nombre completo, el rol y una primera contraseña
+    (mínimo 8 caracteres) que el usuario debe cambiar al entrar. <span class="btn">Restablecer contraseña…</span> pone una contraseña
+    temporal con la misma regla. <span class="btn">Archivar</span> impide que el usuario entre (nunca se borra).
+    Su propio usuario no se puede archivar ni restablecer aquí (use Mi contraseña), no puede cambiar su propio rol, y siempre debe
+    quedar un administrador activo.</p>
+
+  <h3 id="config-informe">Datos del informe</h3>
+  <p>Nombre del laboratorio (obligatorio), pie de página (dirección, teléfonos, correo), nota (junto al sello en el informe del ensayo)
+    y tamaño de papel (A4 o Carta). Se guardan en la base de datos: todos los equipos imprimen igual.</p>
+
+  <h3 id="config-logo">Logo y sello</h3>
+  <p>Las imágenes de los informes, guardadas en la base de datos. PNG o JPG, hasta 2 MB; un archivo que solo tiene nombre .png o .jpg
+    pero es de otro formato se rechaza. La imagen se guarda al elegirla; <span class="btn">Quitar</span> la quita.</p>
+
+  <h3 id="config-etiquetas">Etiquetas</h3>
+  <ul class="list">
+    <li><b>Nombre del servidor</b>: el nombre del equipo servidor en la red del laboratorio, no su IP (la IP puede cambiar y las
+      etiquetas ya pegadas no se podrían corregir); "localhost" tampoco sirve. Cambiarlo después no cambia las etiquetas ya impresas.</li>
+    <li><b>Hoja de etiquetas (A4)</b>: elija una hoja común de la lista, o escriba las medidas impresas en el paquete
+      ("Personalizada"): columnas, filas, ancho y alto de la etiqueta, márgenes superior e izquierdo y separaciones, en mm.</li>
+    <li><span class="btn">Hoja de prueba</span> imprime el contorno y el número de cada etiqueta con las medidas escritas (sin guardarlas).
+      Imprímala en papel común y póngala sobre una hoja de etiquetas a contraluz: los recuadros deben coincidir; si se corren, ajuste los márgenes.</li>
+  </ul>
+  <p>Las etiquetas son siempre A4, aunque los informes usen Carta, y se imprimen a tamaño real.</p>
+
+  <h3 id="config-conexion">Conexión</h3>
+  <p>Muestra el servidor, la base de datos y la cuenta de MySQL de este equipo. <span class="btn">Cambiar conexión…</span> cierra la
+    sesión y abre el formulario de <a href="#conexion">conexión</a>; después de guardar, inicie sesión otra vez.</p>
+
+  <h3 id="config-contrasena">Mi contraseña</h3>
+  <p>La contraseña actual y la nueva dos veces (mínimo 8 caracteres, distinta de la actual).</p>
+
+  <h3 id="config-acerca">Acerca de</h3>
+  <p>Versión del programa y de la base de datos, versión del servidor MySQL, nombre del equipo y la carpeta de registros
+    (<span class="btn">Abrir carpeta de registros</span>). Útil al pedir soporte.</p>
+</section>
+
+<section id="atajos">
+  <h2>Atajos de teclado</h2>
+  <table class="keys">
+    <tr><th>Teclas</th><th>Dónde</th><th>Qué hace</th></tr>
+    <tr><td><kbd>F1</kbd></td><td>En todas partes</td><td>Esta ayuda, en el tema de la pantalla</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>N</kbd></td><td>Listas, página del ensayo</td><td>Nuevo / Nueva probeta</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>P</kbd></td><td>Listas, ensayo, vista previa</td><td>Imprimir</td></tr>
+    <tr><td><kbd>F5</kbd></td><td>Listas, página del ensayo</td><td>Actualizar</td></tr>
+    <tr><td><kbd>Enter</kbd> / doble clic</td><td>Listas</td><td>Abrir o editar la fila seleccionada</td></tr>
+    <tr><td><kbd>Shift</kbd>+<kbd>F10</kbd></td><td>Listas</td><td>Menú de la fila (como el clic derecho)</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>R</kbd></td><td>Página del ensayo</td><td>Registrar rotura</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>E</kbd></td><td>Página del ensayo</td><td>Exportar a Excel</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>L</kbd></td><td>Página del ensayo</td><td>Etiquetas QR</td></tr>
+    <tr><td><kbd>Alt</kbd>+<kbd>←</kbd></td><td>Página del ensayo</td><td>Volver a Ensayos</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Vista previa</td><td>Guardar PDF</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>Ctrl</kbd>+<kbd>−</kbd> / <kbd>Ctrl</kbd>+<kbd>0</kbd></td><td>Vista previa</td><td>Acercar / alejar / ancho de página</td></tr>
+    <tr><td><kbd>Alt</kbd>+<kbd>↓</kbd> o <kbd>F4</kbd></td><td>Campos de fecha</td><td>Abrir el calendario</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>Ventanas</td><td>Cancelar / cerrar</td></tr>
+  </table>
+</section>
+
+<section id="problemas">
+  <h2>Problemas frecuentes</h2>
+  <h3 id="problemas-impresora">No hay impresora</h3>
+  <p><span class="btn">Imprimir…</span> lo dice. Guarde el PDF con <span class="btn">Guardar PDF…</span> e imprímalo en otro equipo.</p>
+  <h3 id="problemas-excel">No se pudo guardar el archivo de Excel</h3>
+  <p>Probablemente está abierto en Excel. Ciérrelo y vuelva a exportar, o guárdelo con otro nombre.</p>
+  <h3 id="problemas-guardado">"Otro usuario modificó este registro"</h3>
+  <p>Alguien guardó el mismo registro mientras usted lo tenía abierto. Cierre la ventana, vuelva a abrirlo (verá los datos nuevos) y repita su cambio.</p>
+  <h3 id="problemas-bloqueado">No puedo cambiar una probeta</h3>
+  <p>El ensayo está bloqueado para usted (ver <a href="#ensayo-bloqueo">Ensayos bloqueados</a>): pida a un administrador que lo desbloquee.</p>
+  <h3 id="problemas-etiquetas">No puedo imprimir etiquetas</h3>
+  <p>Falta el nombre del servidor: un administrador debe indicarlo en <a href="#config-etiquetas">Configuración → Etiquetas</a>.</p>
+  <h3 id="problemas-conexion">El programa no se conecta</h3>
+  <p>Ver <a href="#conexion-problemas">Si no se puede conectar</a>. Si el problema sigue, abra Configuración → Acerca de (o la carpeta
+    de registros) y envíe al soporte la versión del programa y el registro del día.</p>
+</section>
+
+<p class="empty" id="no-results">No se encontró nada. Pruebe con otra palabra.</p>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var search = document.getElementById("search");
+  var info = document.getElementById("search-info");
+  var empty = document.getElementById("no-results");
+  var sections = document.getElementsByTagName("section");
+  var links = document.querySelectorAll("#toc li a");
+  var flashTimer = null;
+
+  // Accents and case don't matter in searches ("dosificacion" finds "Dosificación"). IE has no String.normalize.
+  var plain = { "á": "a", "é": "e", "í": "i", "ó": "o", "ú": "u", "ü": "u", "ñ": "n" };
+  function fold(text) {
+    return text.toLowerCase().replace(/[áéíóúüñ]/g, function (c) { return plain[c]; });
+  }
+
+  function sectionOf(element) {
+    while (element && element.tagName !== "SECTION") { element = element.parentNode; }
+    return element;
+  }
+
+  function setActive(section) {
+    for (var i = 0; i < links.length; i++) {
+      var on = section && links[i].getAttribute("href") === "#" + section.id;
+      links[i].className = on ? "active" : (links[i].className === "hidden" ? "hidden" : "");
+    }
+  }
+
+  // Called by the program (F1) and by the links: shows a topic and its heading.
+  window.showTopic = function (id) {
+    var target = document.getElementById(id) || document.getElementById("inicio");
+    if (search.value) { search.value = ""; runSearch(); }
+    target.scrollIntoView(true);
+    var heading = target.tagName === "SECTION" ? target.getElementsByTagName("h2")[0] : target;
+    if (flashTimer) { clearTimeout(flashTimer); }
+    var flashed = document.querySelectorAll(".flash");
+    for (var i = 0; i < flashed.length; i++) { flashed[i].className = ""; }
+    heading.className = "flash";
+    flashTimer = setTimeout(function () { heading.className = ""; }, 1500);
+    setActive(sectionOf(target));
+    return true;
+  };
+
+  function clearMarks() {
+    var marks = document.querySelectorAll("#content mark");
+    for (var i = 0; i < marks.length; i++) {
+      var parent = marks[i].parentNode;
+      parent.replaceChild(document.createTextNode(marks[i].textContent), marks[i]);
+      parent.normalize();
+    }
+  }
+
+  function markWords(node, words) {
+    if (node.nodeType === 3) {
+      var folded = fold(node.nodeValue);
+      for (var w = 0; w < words.length; w++) {
+        var at = folded.indexOf(words[w]);
+        if (at >= 0) {
+          var hit = node.splitText(at);
+          hit.splitText(words[w].length);
+          var mark = document.createElement("mark");
+          mark.appendChild(hit.cloneNode(true));
+          hit.parentNode.replaceChild(mark, hit);
+          return;
+        }
+      }
+      return;
+    }
+    if (node.nodeType === 1 && node.tagName !== "MARK" && node.tagName !== "SCRIPT") {
+      var children = [];
+      for (var c = 0; c < node.childNodes.length; c++) { children.push(node.childNodes[c]); }
+      for (var k = 0; k < children.length; k++) { markWords(children[k], words); }
+    }
+  }
+
+  // Shows only the topics that contain every word typed, with the words marked.
+  function runSearch() {
+    clearMarks();
+    var words = fold(search.value).split(/\s+/).filter(function (w) { return w.length > 1; });
+    var shown = 0;
+    for (var i = 0; i < sections.length; i++) {
+      var text = fold(sections[i].textContent);
+      var match = true;
+      for (var w = 0; w < words.length; w++) { if (text.indexOf(words[w]) < 0) { match = false; break; } }
+      sections[i].className = match ? "" : "hidden";
+      if (match) {
+        shown++;
+        if (words.length) { markWords(sections[i], words); }
+      }
+      for (var l = 0; l < links.length; l++) {
+        if (links[l].getAttribute("href") === "#" + sections[i].id) { links[l].className = match ? "" : "hidden"; }
+      }
+    }
+    empty.style.display = shown === 0 ? "block" : "none";
+    info.innerHTML = words.length ? (shown === 1 ? "1 tema" : shown + " temas") + " · Esc para borrar" : "";
+    if (words.length) { window.scrollTo(0, 0); }
+  }
+
+  search.addEventListener("input", runSearch);
+  search.addEventListener("keydown", function (e) {
+    if (e.keyCode === 27 && search.value) { search.value = ""; runSearch(); e.preventDefault(); e.stopPropagation(); }
+  });
+
+  // In-page links are handled here: the page has no address to navigate to.
+  document.addEventListener("click", function (e) {
+    var a = e.target;
+    while (a && a.tagName !== "A") { a = a.parentNode; }
+    if (!a) { return; }
+    var href = a.getAttribute("href") || "";
+    e.preventDefault();
+    if (href.charAt(0) === "#") { window.showTopic(href.substring(1)); }
+  });
+
+  // The contents list follows the topic being read.
+  window.addEventListener("scroll", function () {
+    var current = null;
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].className !== "hidden" && sections[i].getBoundingClientRect().top <= 80) { current = sections[i]; }
+    }
+    setActive(current || sections[0]);
+  });
+
+  setActive(sections[0]);
+})();
+</script>
+</body>
+</html>

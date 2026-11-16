@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using ProbetaControl.ViewModels;
 using ProbetaControl.ViewModels.Infrastructure;
 
 namespace ProbetaControl.Views.Dialogs
@@ -21,6 +22,7 @@ namespace ProbetaControl.Views.Dialogs
             Loaded += OnLoaded;
             Closing += (_, __) => _closing = true;
             Closed += (_, __) => viewModel.CloseRequested -= OnCloseRequested;
+            Help.HelpKey.Attach(this, () => HelpTopics.For(_viewModel) ?? HelpTopics.For(Owner?.DataContext));
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)

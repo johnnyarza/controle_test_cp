@@ -23,7 +23,9 @@ namespace ProbetaControl.ViewModels
 
         /// <param name="logout">"Cerrar sesión": back to the login window.</param>
         /// <param name="changeConnection">Configuración → Conexión: sign out and open the connection settings.</param>
-        public ShellViewModel(AppServices services, IDialogService dialogs, Action logout, Action changeConnection = null)
+        /// <param name="showHelp">"?" / F1: opens the help at a topic (<see cref="HelpTopics"/>); null = no help.</param>
+        public ShellViewModel(AppServices services, IDialogService dialogs, Action logout, Action changeConnection = null,
+            Action<string> showHelp = null)
         {
             Services = services ?? throw new ArgumentNullException(nameof(services));
             _dialogs = dialogs;
@@ -52,8 +54,8 @@ namespace ProbetaControl.ViewModels
                 })),
             };
 
-            // Enabled in phase 6, when the embedded help exists.
-            HelpCommand = new RelayCommand(() => { }, () => false);
+            // The topic of the page on screen (Configuración: of its section).
+            HelpCommand = new RelayCommand(() => showHelp(HelpTopics.For(this) ?? HelpTopics.Start), () => showHelp != null);
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             WindowTitle = $"Probeta Control {version.Major}.{version.Minor}.{version.Build}";

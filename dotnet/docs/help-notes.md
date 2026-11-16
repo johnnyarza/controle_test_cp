@@ -2,6 +2,14 @@
 
 Running list of things the built-in help (`Help/ayuda.html`, phase 6) must explain.
 Add an item whenever a question comes up that a user would also ask. The help itself is written in Spanish.
+Everything below is in the help page as of 2026-11-15.
+
+## Pending help updates
+
+Changes not yet in `Help/ayuda.html`. Add a line per change (date, what changed, which topic); the page is
+updated in batches when asked, and the lines are removed then.
+
+- (none)
 
 ## Primer inicio / instalación
 

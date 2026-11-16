@@ -46,6 +46,8 @@
   <ItemGroup>
     <!-- Numbered schema scripts travel inside the exe; resource name = DbScripts.<file name>. -->
     <EmbeddedResource Include="Database\Scripts\*.sql" LogicalName="DbScripts.%(Filename)%(Extension)" />
+    <!-- The built-in help page (F1), shown by Views/Help/HelpViewer. -->
+    <EmbeddedResource Include="Help\ayuda.html" LogicalName="Help.ayuda.html" />
   </ItemGroup>
 
   <ItemGroup>

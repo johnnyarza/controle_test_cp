@@ -16,6 +16,7 @@ namespace ProbetaControl.Views.Reports
             DataContext = viewModel;
             viewModel.CloseRequested += OnCloseRequested;
             Loaded += OnLoaded;
+            Help.HelpKey.Attach(this, () => ViewModels.HelpTopics.For(viewModel));
             Closed += (_, __) =>
             {
                 viewModel.CloseRequested -= OnCloseRequested;

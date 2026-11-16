@@ -102,7 +102,8 @@ namespace ProbetaControl
                     services.Session.SignOut();
                     ShowStartup(null, changeConnection: true);
                     shell.Close();
-                });
+                },
+                showHelp: Views.Help.HelpViewer.Show);
             shell.DataContext = viewModel;
 
             // The due-probetas warning opens once the main window is on screen.
