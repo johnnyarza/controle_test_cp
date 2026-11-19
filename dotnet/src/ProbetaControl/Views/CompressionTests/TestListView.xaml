@@ -1,7 +1,8 @@
 <UserControl x:Class="ProbetaControl.Views.CompressionTests.TestListView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors">
+             xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors"
+             xmlns:v="clr-namespace:ProbetaControl.Views">
     <UserControl.InputBindings>
         <KeyBinding Key="F5" Command="{Binding RefreshCommand}" />
         <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewCommand}" />
@@ -46,7 +47,7 @@
                 <DataGridTextColumn Header="Cliente" Binding="{Binding ClientName}" Width="*" MinWidth="150" />
                 <DataGridTextColumn Header="Proyecto" Binding="{Binding ProjectName}" Width="*" MinWidth="150" />
                 <DataGridTextColumn Header="Ubicación" Binding="{Binding Address}" Width="*" MinWidth="120" />
-                <DataGridTextColumn Header="Probetas" Binding="{Binding SpecimenCount}" Width="80" MinWidth="75"
+                <DataGridTextColumn Header="Probetas" Binding="{v:NumberBinding SpecimenCount, Digits=0}" Width="80" MinWidth="75"
                                     ElementStyle="{StaticResource NumberCell}" />
                 <DataGridTemplateColumn Header="Para romper" Width="100" MinWidth="95" SortMemberPath="DueCount">
                     <DataGridTemplateColumn.CellTemplate>
@@ -55,7 +56,7 @@
                             <Border x:Name="Badge" HorizontalAlignment="Right" Margin="0,0,4,0" Padding="8,0"
                                     Background="{StaticResource Brush.ErrorSoft}" CornerRadius="9"
                                     ToolTip="Probetas sin romper con fecha de rotura hoy o anterior">
-                                <TextBlock Text="{Binding DueCount}" Foreground="{StaticResource Brush.Error}" FontWeight="SemiBold" />
+                                <TextBlock Text="{v:NumberBinding DueCount, Digits=0}" Foreground="{StaticResource Brush.Error}" FontWeight="SemiBold" />
                             </Border>
                             <DataTemplate.Triggers>
                                 <DataTrigger Binding="{Binding DueCount}" Value="0">

@@ -112,8 +112,8 @@ namespace ProbetaControl.ViewModels.CompressionTests
                 }
 
                 var sheets = Services.Reports.SpecimenLabels.SheetCount(count, StartPosition, _sheet.PerSheet);
-                var labels = count == 1 ? "1 etiqueta" : count.ToString(CultureInfo.InvariantCulture) + " etiquetas";
-                var pages = sheets == 1 ? "1 hoja" : sheets.ToString(CultureInfo.InvariantCulture) + " hojas";
+                var labels = count == 1 ? "1 etiqueta" : AppCulture.Count(count) + " etiquetas";
+                var pages = sheets == 1 ? "1 hoja" : AppCulture.Count(sheets) + " hojas";
                 var last = StartPosition + count - 1;
                 return sheets == 1
                     ? count == 1

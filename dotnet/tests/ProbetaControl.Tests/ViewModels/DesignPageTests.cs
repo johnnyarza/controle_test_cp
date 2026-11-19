@@ -93,7 +93,7 @@ namespace ProbetaControl.Tests.ViewModels
                 editor.Fck = "250";
                 editor.Slump = "10,5";
                 second.QuantityText = "812,5";
-                Assert.That(editor.TotalText, Is.EqualTo("1162.5"));
+                Assert.That(editor.TotalText, Is.EqualTo("1,162.5"));
 
                 // Arena first: the order on screen is the saved order.
                 second.MoveUpCommand.Execute(null);
@@ -152,7 +152,7 @@ namespace ProbetaControl.Tests.ViewModels
             Assert.That(editor.Rows[2].QuantityText, Is.EqualTo("2.4"));
             Assert.That(editor.Rows[0].Options.Select(m => m.Id), Does.Not.Contain(materials[2].Id),
                 "archived material is not offered on other rows");
-            Assert.That(editor.TotalText, Is.EqualTo("1372.4"));
+            Assert.That(editor.TotalText, Is.EqualTo("1,372.4"));
 
             editor.Rows[1].RemoveCommand.Execute(null);
             Assert.That(editor.Rows.Select(r => r.Number), Is.EqualTo(new[] { 1, 2 }));

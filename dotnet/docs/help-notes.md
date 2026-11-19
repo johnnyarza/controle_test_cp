@@ -11,6 +11,8 @@ updated in batches when asked, and the lines are removed then.
 
 - 2026-11-15: weight may be left empty when a probeta is created and entered on rupture day ("Registrar rotura" asks for it; on a locked ensayo an operator may still enter an empty weight). Topics: Probetas, Registrar rotura, Ensayos bloqueados (ayuda.html still says saving locks every measurement).
 - 2026-11-15: lists load 100 rows at a time; a note above "Mostrar más" says so once a day (new for users of the legacy program). Topics: Lista de ensayos, Clientes y proveedores.
+- 2026-11-18: numbers shown (lists, tiles, reports) use the PC's regional separators with thousands grouped (`2.357,85` or `2,357.85`); ensayo / probeta numbers (Nº) are never grouped; fields being typed show no thousands separator and accept a comma or a point. Topics: Probetas, Dosificaciones, Problemas comunes (if it says lists show a point).
+- 2026-11-18: the Excel export is now one sheet laid out like the ensayo report (logo, title, data and mix, the probetas as a table with filter arrows, summary by age with the chart, note and stamp; prints landscape on the report's paper). Topic: Exportar a Excel.
 
 ## Primer inicio / instalación
 

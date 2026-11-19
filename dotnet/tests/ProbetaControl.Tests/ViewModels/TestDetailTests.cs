@@ -114,7 +114,7 @@ namespace ProbetaControl.Tests.ViewModels
                 form.DiameterCm = "15";
                 form.HeightCm = "30";
                 form.WeightKg = "12,5";
-                Assert.That(form.DensityText, Is.EqualTo("2357.85 kg/m³"), "12.5 kg / (π·0.075²·0.30 m³)");
+                Assert.That(form.DensityText, Is.EqualTo("2,357.85 kg/m³"), "12.5 kg / (π·0.075²·0.30 m³)");
                 Assert.That(form.StrengthText, Is.EqualTo("—"), "not broken yet");
                 form.RuptureLoadTon = "40";
                 Assert.That(form.StrengthText, Is.EqualTo("226.35 kg/cm² (108 % fck)"));

@@ -213,7 +213,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
                 var strength = SpecimenMath.StrengthKgPerCm2(Number(DiameterCm), load);
                 var percent = SpecimenMath.PercentOfFck(strength, _designFck);
                 return FormatPreview(strength, "kg/cm²")
-                       + (percent.HasValue ? string.Format(CultureInfo.InvariantCulture, " ({0:0} % fck)", percent.Value) : string.Empty);
+                       + (percent.HasValue ? string.Format(AppCulture.Display, " ({0:#,##0} % fck)", percent.Value) : string.Empty);
             }
         }
 
@@ -234,13 +234,13 @@ namespace ProbetaControl.ViewModels.CompressionTests
             {
                 NumberInput.TryParse(RuptureLoadTon, out var load);
                 var percent = SpecimenMath.PercentOfFck(SpecimenMath.StrengthKgPerCm2(Number(DiameterCm), load), _designFck);
-                return percent.HasValue ? string.Format(CultureInfo.InvariantCulture, "{0:0} %", percent.Value) : "—";
+                return percent.HasValue ? string.Format(AppCulture.Display, "{0:#,##0} %", percent.Value) : "—";
             }
         }
 
         /// <summary>"% del fck (210)".</summary>
         public string PercentLabel => _designFck > 0
-            ? string.Format(CultureInfo.InvariantCulture, "% del fck ({0:0.##})", _designFck)
+            ? string.Format(AppCulture.Display, "% del fck ({0:#,##0.##})", _designFck)
             : "% del fck";
 
         /// <summary>Why fields are read-only (locked test, probeta already broken…); null when all can change.</summary>
@@ -420,7 +420,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
         private static decimal Number(string text) => NumberInput.TryParse(text, out var value) ? value ?? 0 : 0;
 
         private static string FormatPreview(double? value, string unit) =>
-            value.HasValue ? value.Value.ToString("0.00", CultureInfo.InvariantCulture) + " " + unit : "—";
+            value.HasValue ? value.Value.ToString("#,##0.00", AppCulture.Display) + " " + unit : "—";
 
         private void RaisePreview()
         {
@@ -513,19 +513,19 @@ namespace ProbetaControl.ViewModels.CompressionTests
             set => SetProperty(ref _weightKg, value);
         }
 
-        public string StrengthText => Strength.HasValue ? Strength.Value.ToString("0.00", CultureInfo.InvariantCulture) : "—";
+        public string StrengthText => Strength.HasValue ? Strength.Value.ToString("#,##0.00", AppCulture.Display) : "—";
 
         public string PercentText
         {
             get
             {
                 var percent = SpecimenMath.PercentOfFck(Strength, _designFck);
-                return percent.HasValue ? string.Format(CultureInfo.InvariantCulture, "{0:0} %", percent.Value) : "—";
+                return percent.HasValue ? string.Format(AppCulture.Display, "{0:#,##0} %", percent.Value) : "—";
             }
         }
 
         public string PercentLabel => _designFck > 0
-            ? string.Format(CultureInfo.InvariantCulture, "% del fck ({0:0.##})", _designFck)
+            ? string.Format(AppCulture.Display, "% del fck ({0:#,##0.##})", _designFck)
             : "% del fck";
 
         /// <summary>Why it can't be recorded (overdue on a locked test…); null when it can.</summary>
@@ -712,7 +712,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
                 ? Math.Round((a.Value + b.Value) / 2, _decimals, MidpointRounding.AwayFromZero)
                 : (decimal?)null;
 
-        public string ResultText => Result.HasValue ? NumberInput.Format(Result) : "—";
+        public string ResultText => Result.HasValue ? AppCulture.Number(Result.Value, 0, 3) : "—";
 
         public ICommand ApplyCommand { get; }
 

@@ -166,7 +166,7 @@ namespace ProbetaControl.ViewModels.Settings
         /// <summary>"PNG · 84 KB" or "Sin imagen".</summary>
         public string InfoText => Bytes == null
             ? "Sin imagen"
-            : string.Format(CultureInfo.InvariantCulture, "{0} · {1} KB",
+            : string.Format(AppCulture.Display, "{0} · {1:#,##0} KB",
                 _contentType == "image/jpeg" ? "JPG" : "PNG", Math.Max(1, (Bytes.Length + 512) / 1024));
 
         public string ChooseText => HasImage ? "Cambiar imagen…" : "Elegir imagen…";

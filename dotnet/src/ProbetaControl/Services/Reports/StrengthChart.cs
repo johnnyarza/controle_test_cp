@@ -83,7 +83,7 @@ namespace ProbetaControl.Services.Reports
                 {
                     var value = yStep * i;
                     g.DrawLine(gridPen, plot.Left, Y(value), plot.Right, Y(value));
-                    g.DrawString(value.ToString("0", CultureInfo.InvariantCulture), font, inkBrush, plot.Left - 3, Y(value), right);
+                    g.DrawString(value.ToString("#,##0", AppCulture.Display), font, inkBrush, plot.Left - 3, Y(value), right);
                 }
 
                 var xStep = xMax <= 35 ? 7 : xMax <= 70 ? 14 : 28;
@@ -99,7 +99,7 @@ namespace ProbetaControl.Services.Reports
                 if (fck > 0)
                 {
                     g.DrawLine(referencePen, plot.Left, Y(fck), plot.Right, Y(fck));
-                    var label = "fck " + fck.ToString("0.##", CultureInfo.InvariantCulture);
+                    var label = "fck " + fck.ToString("#,##0.##", AppCulture.Display);
                     var size = g.MeasureString(label, font);
                     g.DrawString(label, font, referenceBrush, plot.Left + 2, Y(fck) - size.Height);
                 }

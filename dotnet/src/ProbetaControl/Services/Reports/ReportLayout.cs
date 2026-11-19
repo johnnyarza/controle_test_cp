@@ -216,11 +216,12 @@ namespace ProbetaControl.Services.Reports
             added.Height = Unit.FromMillimeter(heightPx * scale);
         }
 
+        /// <summary>A figure for a report, grouped with the PC's separators: format "0.00" prints "1,050.50" (or "1.050,50").</summary>
         public static string Number(double? value, string format) =>
-            value.HasValue ? value.Value.ToString(format, CultureInfo.InvariantCulture) : string.Empty;
+            value.HasValue ? value.Value.ToString("#,##" + format, AppCulture.Display) : string.Empty;
 
         public static string Number(decimal? value, string format) =>
-            value.HasValue ? value.Value.ToString(format, CultureInfo.InvariantCulture) : string.Empty;
+            value.HasValue ? value.Value.ToString("#,##" + format, AppCulture.Display) : string.Empty;
 
         private static void DefineStyles(Document document)
         {

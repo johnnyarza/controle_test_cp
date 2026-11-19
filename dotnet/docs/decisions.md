@@ -32,7 +32,7 @@ Decisions taken while porting Probeta Control to C# / WPF, and why. Status: [por
   to a newer major version. It grows the exe from about 2.6 MB to 5.5 MB.
 - Lab name, footer, note and paper size are edited in Configuración and stored in the database (like the
   logo and stamp). The legacy reports were A4; "Carta" is a setting because printers here often default to it.
-- QR labels: the QR holds a link to a future read-only page on the lab's server (phase 9), used by lab staff
+- QR labels: the QR holds a link to a future page on the lab's server (phase 9), used by lab staff
   on the lab Wi-Fi, so the address uses the server's name, not its IP (an IP is refused, and so is
   `localhost`). The link is `http://SERVER/p/CODE`, written all in capitals in the QR (alphanumeric mode keeps
   it at 29 × 29 modules with 25 % error correction); **the phase 9 page must answer `/p/{code}` ignoring case.**
@@ -45,12 +45,31 @@ Decisions taken while porting Probeta Control to C# / WPF, and why. Status: [por
   preview / printer / PDF path as the reports.
 - **QR codes are made with QRCoder 1.6.0 (MIT, no dependencies).** The tests read them back with ZXing.Net
   0.16.9 (Apache-2.0), which is only in the test project, never in the exe.
-- Screen text in Spanish; code, tables and stored values in English. Dates `dd/MM/yyyy`, invariant culture.
-  Number fields accept a comma or a point as decimal separator (`NumberInput`); lists show a point.
+- Screen text in Spanish; code, tables and stored values in English. Dates `dd/MM/yyyy`, never the PC's format.
+  Numbers shown read-only (lists, tiles, totals, reports, labels) follow the PC's regional settings for both
+  the decimal and the thousands separator (`1.050,5` or `1,050.5`); IDs (ensayo / probeta Nº, label Nº) are
+  never grouped. Number fields being edited show no thousands separator and accept a comma or a point as
+  decimal separator (`NumberInput`), so a typed `1.050` is never ambiguous. (Changed 2026-11-18; until then
+  every number used the invariant culture.)
   Dates are typed day first (`DateInput`: `05/11/2026`, `5-11-26`, `5.11.2026`) in the `DateBox` field,
   never with the PC's regional settings; the stock DatePicker is not used for that reason.
 - Tests are locked: an operator changes only the tests they created in this session (or that an
   administrator unlocks with "Desbloquear"); administrators change any test (`AppSession.IsTestUnlocked`).
   Archiving probetas is for administrators, like every other archive.
 - Every window must handle resizing (minimums fit about 900 × 500).
+- **Phase 9 phone page: photos of probetas** (decided 2026-11-18, not built yet). Opened from the label's QR, the
+  page shows the probeta and lets lab staff add, replace and remove photos taken with the phone; nothing else can
+  be changed there. Staff sign in with the same program users as the desktop app (remembered on the phone), so the
+  audit says who did it; the link is plain HTTP, for the lab Wi-Fi only. The page has its own MySQL account,
+  `web_app_user`, so MySQL itself enforces the limit: SELECT on what the page shows (ideally one view) and on the
+  users' login columns, INSERT / UPDATE / DELETE only on a new `SpecimenPhotos` table, INSERT on `AuditLog`.
+  Photos are stored in the database (own table, MEDIUMBLOB, outside `Specimens` so lists stay fast), resized to
+  about 1600 px JPEG (~300 KB) before saving, a few per probeta at most. **Deleting a photo really deletes the row**
+  (an exception to "nothing is deleted", to save server space), with an `AuditLog` row of who, when, which probeta
+  and the size; replacing is delete + add. MySQL reuses the freed space; the file only shrinks after
+  `OPTIMIZE TABLE`, and older backups still hold deleted photos.
+  The desktop app can add, replace and remove the same photos too, in the probeta edit dialog (a photo section),
+  with the same rules: same table, same resizing, real delete with an `AuditLog` row. The app's own MySQL account
+  (`specimen_app`, no DELETE today) will need DELETE on `SpecimenPhotos` only, and the startup check that refuses
+  an account able to DELETE must allow that one table.
 

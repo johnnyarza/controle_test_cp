@@ -86,8 +86,8 @@ namespace ProbetaControl.ViewModels.CompressionTests
         public bool HasOlderOverdue => OlderOverdueCount > 0;
 
         /// <summary>"Además hay 263 probetas retrasadas hace más de 30 días."</summary>
-        public string OlderOverdueText => string.Format(CultureInfo.InvariantCulture,
-            "Además hay {0} {1} hace más de {2} días.", OlderOverdueCount,
+        public string OlderOverdueText => string.Format(AppCulture.Display,
+            "Además hay {0:#,##0} {1} hace más de {2} días.", OlderOverdueCount,
             OlderOverdueCount == 1 ? "probeta retrasada" : "probetas retrasadas", SpecimenService.RecentOverdueDays);
 
         public IReadOnlyList<DueTestGroup> Groups { get; }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using ProbetaControl.Services;
 
 namespace ProbetaControl.Models
 {
@@ -39,7 +40,7 @@ namespace ProbetaControl.Models
 
         /// <summary>One line: "Cemento 350 · Arena 800 · Grava 1000" (kg/m³); tooltip of the list's count column.</summary>
         public string MaterialsSummary => string.Join(" · ", UsedMaterials
-            .Select(m => string.Format(CultureInfo.InvariantCulture, "{0} {1:0.###}", m.MaterialName, m.QuantityKgPerM3)));
+            .Select(m => string.Format(AppCulture.Display, "{0} {1:#,##0.###}", m.MaterialName, m.QuantityKgPerM3)));
 
         /// <summary>Water / cement by weight (materials typed Agua and Cemento); null when either is missing.</summary>
         public decimal? WaterCementRatio => Services.Calculators.WaterCementRatio(

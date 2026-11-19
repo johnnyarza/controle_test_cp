@@ -162,12 +162,12 @@ namespace ProbetaControl.ViewModels.Catalog
             .Sum();
 
         /// <summary>Number only: it sits under the kg/m³ column.</summary>
-        public string TotalText => NumberInput.Format(Total);
+        public string TotalText => AppCulture.Number(Total, 0, 3);
 
         /// <summary>Water / cement of the rows typed Agua and Cemento; null until both have a quantity.</summary>
         public decimal? WaterCementRatio => Calculators.WaterCementRatio(SumOf(MaterialTypes.Water), SumOf(MaterialTypes.Cement));
 
-        public string WaterCementRatioText => "a/c " + (WaterCementRatio.HasValue ? NumberInput.Format(WaterCementRatio) : "—");
+        public string WaterCementRatioText => "a/c " + (WaterCementRatio.HasValue ? AppCulture.Number(WaterCementRatio.Value, 2) : "—");
 
         public string WaterCementRatioToolTip => WaterCementRatio.HasValue
             ? "Relación agua/cemento: kg de agua / kg de cemento"
@@ -617,7 +617,7 @@ namespace ProbetaControl.ViewModels.Catalog
             }
         }
 
-        public string ResultText => Result.HasValue ? NumberInput.Format(Result) + " kg/m³" : "—";
+        public string ResultText => Result.HasValue ? AppCulture.Number(Result.Value, 0, 3) + " kg/m³" : "—";
 
         public ICommand ApplyCommand { get; }
 

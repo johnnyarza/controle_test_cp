@@ -90,7 +90,7 @@ namespace ProbetaControl.ViewModels.Catalog
 
         public string StatusText => _totalCount == 0
             ? string.Empty
-            : string.Format(CultureInfo.InvariantCulture, "Mostrando {0} de {1}", Items.Count, _totalCount);
+            : string.Format(AppCulture.Display, "Mostrando {0:#,##0} de {1:#,##0}", Items.Count, _totalCount);
 
         public string EmptyText => !_hasLoaded || IsLoading || Items.Count > 0
             ? null

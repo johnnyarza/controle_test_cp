@@ -5,7 +5,8 @@
                     xmlns:c="clr-namespace:ProbetaControl.ViewModels.Catalog"
                     xmlns:t="clr-namespace:ProbetaControl.ViewModels.CompressionTests"
                     xmlns:st="clr-namespace:ProbetaControl.ViewModels.Settings"
-                    xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors">
+                    xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors"
+                    xmlns:v="clr-namespace:ProbetaControl.Views">
 
     <!-- Yes / no question -->
     <DataTemplate DataType="{x:Type i:ConfirmDialogViewModel}">
@@ -672,9 +673,9 @@
                     <StackPanel Margin="0,0,8,8"><TextBlock Style="{StaticResource TileLabel}" Text="Descripción" /><TextBlock Text="{Binding Specimen.Code}" TextTrimming="CharacterEllipsis" /></StackPanel>
                     <StackPanel Margin="0,0,8,8"><TextBlock Style="{StaticResource TileLabel}" Text="Moldeo" /><TextBlock Text="{Binding MoldDateText}" /></StackPanel>
                     <StackPanel Margin="0,0,0,8"><TextBlock Style="{StaticResource TileLabel}" Text="Edad" /><TextBlock Text="{Binding AgeText}" /></StackPanel>
-                    <StackPanel Margin="0,0,8,0"><TextBlock Style="{StaticResource TileLabel}" Text="Diámetro" /><TextBlock Text="{Binding Specimen.DiameterCm, StringFormat={}{0:0.00} cm}" /></StackPanel>
-                    <StackPanel Margin="0,0,8,0"><TextBlock Style="{StaticResource TileLabel}" Text="Altura" /><TextBlock Text="{Binding Specimen.HeightCm, StringFormat={}{0:0.00} cm}" /></StackPanel>
-                    <StackPanel><TextBlock Style="{StaticResource TileLabel}" Text="Peso" /><TextBlock Text="{Binding Specimen.WeightKg, StringFormat={}{0:0.000} kg}" /></StackPanel>
+                    <StackPanel Margin="0,0,8,0"><TextBlock Style="{StaticResource TileLabel}" Text="Diámetro" /><TextBlock Text="{v:NumberBinding Specimen.DiameterCm, Digits=2, Unit=cm}" /></StackPanel>
+                    <StackPanel Margin="0,0,8,0"><TextBlock Style="{StaticResource TileLabel}" Text="Altura" /><TextBlock Text="{v:NumberBinding Specimen.HeightCm, Digits=2, Unit=cm}" /></StackPanel>
+                    <StackPanel><TextBlock Style="{StaticResource TileLabel}" Text="Peso" /><TextBlock Text="{v:NumberBinding Specimen.WeightKg, Digits=3, Unit=kg}" /></StackPanel>
                 </UniformGrid>
             </Border>
 

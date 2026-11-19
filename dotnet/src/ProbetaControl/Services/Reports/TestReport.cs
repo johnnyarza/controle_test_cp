@@ -71,12 +71,12 @@ namespace ProbetaControl.Services.Reports
             ReportLayout.AddField(fields,"Ubicación", test.Address);
             ReportLayout.AddField(fields,"Dosificación", test.ConcreteDesignDescription);
             ReportLayout.AddField(fields,"Resistencia de diseño (fck)",
-                string.Format(CultureInfo.InvariantCulture, "{0:0.##} kg/cm²", test.ConcreteDesignFck));
+                string.Format(AppCulture.Display, "{0:#,##0.##} kg/cm²", test.ConcreteDesignFck));
             ReportLayout.AddField(fields,"Slump de diseño", SlumpText(design?.Slump));
             var ratio = design?.WaterCementRatio;
             if (ratio.HasValue)
             {
-                ReportLayout.AddField(fields,"Relación agua/cemento", ratio.Value.ToString("0.00", CultureInfo.InvariantCulture));
+                ReportLayout.AddField(fields,"Relación agua/cemento", AppCulture.Number(ratio.Value, 2));
             }
 
             var mixCell = row.Cells[2];
@@ -123,7 +123,7 @@ namespace ProbetaControl.Services.Reports
             total.Format.Font.Bold = true;
             total.Cells[0].MergeRight = 2;
             total.Cells[0].AddParagraph("Total");
-            total.Cells[3].AddParagraph(design.TotalKgPerM3.ToString("0.###", CultureInfo.InvariantCulture));
+            total.Cells[3].AddParagraph(AppCulture.Number(design.TotalKgPerM3, 0, 3));
         }
 
         private static void AddResults(ReportLayout layout, TestReportData data)
@@ -224,14 +224,14 @@ namespace ProbetaControl.Services.Reports
                 var average = strengths.Average();
                 ReportLayout.AddDataRow(byAge,
                     age.Key.ToString(CultureInfo.InvariantCulture),
-                    strengths.Count.ToString(CultureInfo.InvariantCulture),
-                    strengths.Min().ToString("0.00", CultureInfo.InvariantCulture),
-                    average.ToString("0.00", CultureInfo.InvariantCulture),
+                    AppCulture.Count(strengths.Count),
+                    AppCulture.Number(strengths.Min(), 2),
+                    AppCulture.Number(average, 2),
                     ReportLayout.Number(SpecimenMath.PercentOfFck(average, fck), "0"));
             }
 
-            var counts = row.Cells[0].AddParagraph(string.Format(CultureInfo.InvariantCulture,
-                "Probetas rotas: {0} de {1}.", tested.Count, data.Specimens.Count));
+            var counts = row.Cells[0].AddParagraph(string.Format(AppCulture.Display,
+                "Probetas rotas: {0:#,##0} de {1:#,##0}.", tested.Count, data.Specimens.Count));
             counts.Style = "Small";
             counts.Format.SpaceBefore = Unit.FromPoint(4);
 
@@ -252,8 +252,8 @@ namespace ProbetaControl.Services.Reports
 
             var tolerance = Calculators.SlumpToleranceCm(slump.Value);
             return tolerance.HasValue
-                ? string.Format(CultureInfo.InvariantCulture, "{0:0.#} ± {1} cm", slump.Value, tolerance.Value)
-                : string.Format(CultureInfo.InvariantCulture, "{0:0.#} cm", slump.Value);
+                ? string.Format(AppCulture.Display, "{0:#,##0.#} ± {1} cm", slump.Value, tolerance.Value)
+                : string.Format(AppCulture.Display, "{0:#,##0.#} cm", slump.Value);
         }
     }
 }

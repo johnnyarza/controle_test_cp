@@ -45,8 +45,15 @@ namespace ProbetaControl.Services
             return value;
         }
 
-        /// <summary>For editing: no trailing zeros ("350", "12.5", "1.225").</summary>
+        /// <summary>
+        /// For editing: the PC's decimal separator, no thousands separator, no trailing zeros
+        /// ("350", "12.5" or "12,5", "1225"). Read-only figures use <see cref="AppCulture.Number(decimal, int, int)"/>.
+        /// </summary>
         public static string Format(decimal? value) =>
+            value?.ToString("0.###", AppCulture.Display) ?? string.Empty;
+
+        /// <summary>For stored text: always a point, no trailing zeros.</summary>
+        public static string Invariant(decimal? value) =>
             value?.ToString("0.###", CultureInfo.InvariantCulture) ?? string.Empty;
     }
 }

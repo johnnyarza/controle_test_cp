@@ -19,9 +19,9 @@ _Last updated: 2026-11-15 (phase 7: import tool tested with the office dump)._
 | 4 | Screens, in six groups (review after each) | Done |
 | 5 | PDF reports (PDFsharp), Excel export (ClosedXML), QR labels (QRCoder), in four groups | Done (awaiting review) |
 | 6 | Built-in help (`Help/ayuda.html`), opened by "?" / F1. Topics: [help-notes.md](help-notes.md) | Done (awaiting review) |
-| 7 | One-off import of the legacy `cp_db` data | To do |
+| 7 | One-off import of the legacy `cp_db` data | Done (tool tested; the real import runs on switch day) |
 | 8 | Inno Setup 7 installer (with .NET 4.8 offline installer) | To do |
-| 9 | Read-only phone page (ASP.NET Core) | Not in v1 |
+| 9 | Phone page from the label's QR (ASP.NET Core): probeta data + photos, same users; photos also from the desktop probeta edit dialog ([decisions](decisions.md)) | Not in v1 |
 | 10 | Release check (tests, 100–150 % scaling), retire the Java code | To do |
 
 ### Phase 4 groups
@@ -86,10 +86,13 @@ _Last updated: 2026-11-15 (phase 7: import tool tested with the office dump)._
    materials table and total; layout A chosen by the user from two mockups), never split between pages.
 3. Done (awaiting review): Excel export of an ensayo (what the legacy app exported). "Excel" (Ctrl+E) on the
    ensayo page asks where to save (same suggested name as the PDF) and writes an .xlsx with what the page's
-   filter shows, never archived probetas (`TestExcelExport`, same data as the ensayo report). Sheet "Probetas":
-   heading in row 1 (frozen, with filter arrows), one row per probeta with real numbers and dates
-   (dd/mm/yyyy), plus "% fck"; probetas not broken yet leave load, strength and % fck empty (the legacy file
-   had 0). Sheet "Ensayo": the test's data and its mix. A file that can't be written (open in Excel) is
+   filter shows, never archived probetas (`TestExcelExport`, same data as the ensayo report). Since 2026-11-18
+   one sheet "Ensayo" laid out like the report (asked by the user): logo, title, lab name, Nº and dates; the
+   test's data beside the mix; the probetas as an Excel table "Probetas" (filter arrows, headings shown in place
+   of the column letters when scrolling) with real numbers and dates (dd/mm/yyyy), plus "% fck"; probetas not
+   broken yet leave load, strength and % fck empty (the legacy file had 0); summary by age with the chart as a
+   picture (ClosedXML can't write Excel charts); note and stamp. Prints landscape on the report's paper, one
+   page wide, table heading repeated, footer and "Hoja X de Y". A file that can't be written (open in Excel) is
    explained in a warning; "Archivo guardado" is a plain information dialog (`IDialogService.Inform`).
 4. Done (awaiting review): QR labels, one per probeta; layout B chosen by the user from three mockups (QR on
    the left; big "Nº 345", a rule, "Ensayo 12", "Rotura 12/11/2026 · 7 d", the client cut to one line).

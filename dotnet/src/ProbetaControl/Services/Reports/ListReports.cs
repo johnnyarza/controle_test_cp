@@ -128,8 +128,8 @@ namespace ProbetaControl.Services.Reports
 
             if (data.TotalCount > data.Items.Count)
             {
-                var cut = layout.Section.AddParagraph(string.Format(CultureInfo.InvariantCulture,
-                    "El listado se cortó en {0} de {1} {2}. Use la búsqueda de la página para imprimir una parte.",
+                var cut = layout.Section.AddParagraph(string.Format(AppCulture.Display,
+                    "El listado se cortó en {0:#,##0} de {1:#,##0} {2}. Use la búsqueda de la página para imprimir una parte.",
                     data.Items.Count, data.TotalCount, noun.Plural));
                 cut.Style = "Small";
                 cut.Format.SpaceBefore = Unit.FromMillimeter(2);
@@ -222,7 +222,7 @@ namespace ProbetaControl.Services.Reports
             var count = Math.Max(data.TotalCount, data.Items.Count);
             var parts = new List<string>
             {
-                count == 0 ? noun.None : count == 1 ? noun.One : string.Format(CultureInfo.InvariantCulture, "{0} {1}", count, noun.Plural),
+                count == 0 ? noun.None : count == 1 ? noun.One : string.Format(AppCulture.Display, "{0:#,##0} {1}", count, noun.Plural),
             };
 
             if (!string.IsNullOrWhiteSpace(data.SearchText))

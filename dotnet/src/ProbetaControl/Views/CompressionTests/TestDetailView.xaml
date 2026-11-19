@@ -1,7 +1,8 @@
 <UserControl x:Class="ProbetaControl.Views.CompressionTests.TestDetailView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors">
+             xmlns:b="clr-namespace:ProbetaControl.Views.Behaviors"
+             xmlns:v="clr-namespace:ProbetaControl.Views">
     <UserControl.InputBindings>
         <KeyBinding Key="F5" Command="{Binding RefreshCommand}" />
         <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewSpecimenCommand}" />
@@ -130,13 +131,13 @@
                     <Border Style="{StaticResource Tile}" Margin="0,0,12,0" Padding="14,8">
                         <StackPanel>
                             <TextBlock Style="{StaticResource TileLabel}" Text="Probetas" />
-                            <TextBlock Style="{StaticResource TileValueLarge}" Text="{Binding ActiveCount}" AutomationProperties.Name="Probetas" />
+                            <TextBlock Style="{StaticResource TileValueLarge}" Text="{v:NumberBinding ActiveCount, Digits=0}" AutomationProperties.Name="Probetas" />
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource Tile}" Margin="0,0,12,0" Padding="14,8" Background="{StaticResource Brush.ErrorSoft}">
                         <StackPanel>
                             <TextBlock Style="{StaticResource TileLabel}" Text="Para romper (hoy o antes)" Foreground="{StaticResource Brush.Error}" />
-                            <TextBlock Style="{StaticResource TileValueLarge}" Text="{Binding DueCount}" Foreground="{StaticResource Brush.Error}"
+                            <TextBlock Style="{StaticResource TileValueLarge}" Text="{v:NumberBinding DueCount, Digits=0}" Foreground="{StaticResource Brush.Error}"
                                        AutomationProperties.Name="Probetas para romper" ToolTip="{Binding DueText}" />
                         </StackPanel>
                     </Border>
@@ -144,7 +145,7 @@
                         <StackPanel>
                             <TextBlock Style="{StaticResource TileLabel}" Text="Rotas" />
                             <TextBlock Style="{StaticResource TileValueLarge}" AutomationProperties.Name="Rotas">
-                                <Run Text="{Binding TestedCount, Mode=OneWay}" />
+                                <Run Text="{v:NumberBinding TestedCount, Digits=0}" />
                                 <Run Text="{Binding TestedText, Mode=OneWay}" FontSize="13" FontWeight="Normal" Foreground="{StaticResource Brush.TextMuted}" />
                             </TextBlock>
                         </StackPanel>
@@ -223,17 +224,17 @@
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Nº" Binding="{Binding Id}" Width="50" MinWidth="50" ElementStyle="{StaticResource NumberCell}" />
                                 <DataGridTextColumn Header="Descripción" Binding="{Binding Code}" Width="*" MinWidth="110" />
-                                <DataGridTextColumn Header="Slump (cm)" Binding="{Binding Slump, StringFormat=0.00}" Width="88" MinWidth="88" ElementStyle="{StaticResource NumberCell}" />
+                                <DataGridTextColumn Header="Slump (cm)" Binding="{v:NumberBinding Slump, Digits=2}" Width="88" MinWidth="88" ElementStyle="{StaticResource NumberCell}" />
                                 <DataGridTextColumn Header="Moldeo" Binding="{Binding MoldDate, StringFormat=dd/MM/yyyy}" Width="90" MinWidth="90" />
                                 <DataGridTextColumn Header="Rotura" Binding="{Binding RuptureDate, StringFormat=dd/MM/yyyy}" Width="90" MinWidth="90" />
                                 <DataGridTextColumn Header="Edad" Binding="{Binding AgeDays}" Width="52" MinWidth="52" ElementStyle="{StaticResource NumberCell}" />
-                                <DataGridTextColumn Header="Ø (cm)" Binding="{Binding DiameterCm, StringFormat=0.00}" Width="68" MinWidth="68" ElementStyle="{StaticResource NumberCell}" />
-                                <DataGridTextColumn Header="Altura (cm)" Binding="{Binding HeightCm, StringFormat=0.00}" Width="88" MinWidth="88" ElementStyle="{StaticResource NumberCell}" />
-                                <DataGridTextColumn Header="Peso (kg)" Binding="{Binding WeightKg, StringFormat=0.000}" Width="80" MinWidth="80" ElementStyle="{StaticResource NumberCell}" />
-                                <DataGridTextColumn Header="Densidad (kg/m³)" Binding="{Binding DensityKgPerM3, StringFormat=0.00}" Width="124" MinWidth="124" ElementStyle="{StaticResource NumberCell}" />
-                                <DataGridTextColumn Header="Rotura (t)" Binding="{Binding RuptureLoadTon, StringFormat=0.00}" Width="80" MinWidth="80" ElementStyle="{StaticResource NumberCell}" />
-                                <DataGridTextColumn Header="Resist. (kg/cm²)" Binding="{Binding StrengthKgPerCm2, StringFormat=0.00}" Width="118" MinWidth="118" ElementStyle="{StaticResource NumberCell}" />
-                                <DataGridTextColumn Header="% fck" Binding="{Binding PercentOfFck, StringFormat={}{0:0} %, TargetNullValue=''}" Width="60" MinWidth="60" ElementStyle="{StaticResource NumberCell}" />
+                                <DataGridTextColumn Header="Ø (cm)" Binding="{v:NumberBinding DiameterCm, Digits=2}" Width="68" MinWidth="68" ElementStyle="{StaticResource NumberCell}" />
+                                <DataGridTextColumn Header="Altura (cm)" Binding="{v:NumberBinding HeightCm, Digits=2}" Width="88" MinWidth="88" ElementStyle="{StaticResource NumberCell}" />
+                                <DataGridTextColumn Header="Peso (kg)" Binding="{v:NumberBinding WeightKg, Digits=3}" Width="80" MinWidth="80" ElementStyle="{StaticResource NumberCell}" />
+                                <DataGridTextColumn Header="Densidad (kg/m³)" Binding="{v:NumberBinding DensityKgPerM3, Digits=2}" Width="124" MinWidth="124" ElementStyle="{StaticResource NumberCell}" />
+                                <DataGridTextColumn Header="Rotura (t)" Binding="{v:NumberBinding RuptureLoadTon, Digits=2}" Width="80" MinWidth="80" ElementStyle="{StaticResource NumberCell}" />
+                                <DataGridTextColumn Header="Resist. (kg/cm²)" Binding="{v:NumberBinding StrengthKgPerCm2, Digits=2}" Width="118" MinWidth="118" ElementStyle="{StaticResource NumberCell}" />
+                                <DataGridTextColumn Header="% fck" Binding="{v:NumberBinding PercentOfFck, Digits=0, Unit=%, TargetNullValue=''}" Width="60" MinWidth="60" ElementStyle="{StaticResource NumberCell}" />
                                 <DataGridTextColumn Header="Estado" Binding="{Binding StatusText}" Width="82" MinWidth="82" />
                             </DataGrid.Columns>
                         </DataGrid>

@@ -288,10 +288,38 @@ namespace ProbetaControl.Tests.Domain
         [Test]
         public void Formats_without_trailing_zeros()
         {
+            // The PC's decimal separator, never a thousands separator (editing).
+            var point = AppCulture.Display.NumberFormat.NumberDecimalSeparator;
             Assert.That(NumberInput.Format(350.000m), Is.EqualTo("350"));
-            Assert.That(NumberInput.Format(12.50m), Is.EqualTo("12.5"));
-            Assert.That(NumberInput.Format(1.2254m), Is.EqualTo("1.225"));
+            Assert.That(NumberInput.Format(12.50m), Is.EqualTo("12" + point + "5"));
+            Assert.That(NumberInput.Format(1.2254m), Is.EqualTo("1" + point + "225"));
+            Assert.That(NumberInput.Format(2367.8m), Is.EqualTo("2367" + point + "8"));
             Assert.That(NumberInput.Format(null), Is.Empty);
+            Assert.That(NumberInput.Invariant(2367.8m), Is.EqualTo("2367.8"), "stored text");
+        }
+
+        [Test]
+        public void Shown_numbers_use_the_PCs_separators_and_ids_are_never_grouped()
+        {
+            var spanish = AppCulture.CreateDisplay(new System.Globalization.CultureInfo("es-ES", false).NumberFormat);
+            Assert.That(2367.8m.ToString(AppCulture.Pattern(2), spanish), Is.EqualTo("2.367,80"));
+            Assert.That(1050m.ToString(AppCulture.Pattern(0, 3), spanish), Is.EqualTo("1.050"));
+            Assert.That(12.5m.ToString(AppCulture.Pattern(0, 2), spanish), Is.EqualTo("12,5"));
+            Assert.That(string.Format(spanish, "Nº {0}", 12345), Is.EqualTo("Nº 12345"), "an ID has no pattern, so no grouping");
+            Assert.That(spanish.DateTimeFormat.ShortDatePattern, Is.EqualTo("dd/MM/yyyy"));
+
+            var english = AppCulture.CreateDisplay(new System.Globalization.CultureInfo("en-US", false).NumberFormat);
+            Assert.That(2367.8m.ToString(AppCulture.Pattern(2), english), Is.EqualTo("2,367.80"));
+
+            // A PC set to the same character for both would make "1.050" unreadable: the group separator gives way.
+            var odd = (System.Globalization.NumberFormatInfo)System.Globalization.CultureInfo.InvariantCulture.NumberFormat.Clone();
+            odd.NumberDecimalSeparator = ",";
+            odd.NumberGroupSeparator = ",";
+            Assert.That(1050.5m.ToString(AppCulture.Pattern(1), AppCulture.CreateDisplay(odd)), Is.EqualTo("1.050,5"));
+
+            Assert.That(AppCulture.Pattern(0), Is.EqualTo("#,##0"));
+            Assert.That(AppCulture.Pattern(0, 2), Is.EqualTo("#,##0.##"));
+            Assert.That(AppCulture.Pattern(3), Is.EqualTo("#,##0.000"));
         }
 
         [Test]
@@ -362,7 +390,7 @@ namespace ProbetaControl.Tests.Domain
             Assert.That(design.MaterialCount, Is.EqualTo(2));
             Assert.That(design.TotalKgPerM3, Is.EqualTo(1350.5m), "empty slots don't count");
             Assert.That(design.UsedMaterials[0].TypeLabel, Is.EqualTo("Cemento"));
-            Assert.That(design.MaterialsSummary, Is.EqualTo("Cemento 350.5 · Grava 1000"));
+            Assert.That(design.MaterialsSummary, Is.EqualTo("Cemento 350.5 · Grava 1,000"));
         }
 
         [Test]

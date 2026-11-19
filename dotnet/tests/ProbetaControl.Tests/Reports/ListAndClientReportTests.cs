@@ -117,7 +117,7 @@ namespace ProbetaControl.Tests.Reports
             Assert.That(Enumerable.Range(0, 5).Select(i => Cell(block, 2, i)), Is.EqualTo(new[] { "1", "Cemento IP-30", "Itacamba", "Cemento", "350" }));
             Assert.That(Enumerable.Range(0, 5).Select(i => Cell(block, 6, i)), Is.EqualTo(new[] { "5", "Plastificante PX-200", "Sika Bolivia", "Aditivo", "2.8" }));
             Assert.That(Cell(block, 7, 0), Is.EqualTo("Total"));
-            Assert.That(Cell(block, 7, 4), Is.EqualTo("2367.8"));
+            Assert.That(Cell(block, 7, 4), Is.EqualTo("2,367.8"));
 
             Assert.That(DeepText(blocks[1].Rows[0].Cells[0]), Is.EqualTo("H-13 pobre (archivado)   Nº 9"));
             Assert.That(Cell(blocks[1], 0, 3), Is.EqualTo("fck 130 kg/cm²  ·  Slump —  ·  a/c —"));

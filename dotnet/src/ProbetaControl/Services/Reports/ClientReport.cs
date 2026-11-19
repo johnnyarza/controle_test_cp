@@ -69,9 +69,9 @@ namespace ProbetaControl.Services.Reports
 
             var tests = data.Specimens.Select(s => s.CompressionTestId).Distinct().Count();
             var tested = data.Specimens.Count(s => s.IsTested);
-            ReportLayout.AddField(fields, "Ensayos", tests.ToString(CultureInfo.InvariantCulture));
-            ReportLayout.AddField(fields, "Probetas", string.Format(CultureInfo.InvariantCulture,
-                "{0} ({1} rotas)", data.Specimens.Count, tested));
+            ReportLayout.AddField(fields, "Ensayos", AppCulture.Count(tests));
+            ReportLayout.AddField(fields, "Probetas", string.Format(AppCulture.Display,
+                "{0:#,##0} ({1:#,##0} rotas)", data.Specimens.Count, tested));
         }
 
         /// <summary>
@@ -85,8 +85,8 @@ namespace ProbetaControl.Services.Reports
             row.Shading.Color = ReportLayout.HeadingFill;
             row.Cells[0].MergeRight = table.Columns.Count - 1;
             row.Cells[0].Format.Alignment = ParagraphAlignment.Left;
-            var text = row.Cells[0].AddParagraph(string.Format(CultureInfo.InvariantCulture,
-                "Ensayo Nº {0} · {1} · {2} · fck {3:0.##} kg/cm²",
+            var text = row.Cells[0].AddParagraph(string.Format(AppCulture.Display,
+                "Ensayo Nº {0} · {1} · {2} · fck {3:#,##0.##} kg/cm²",
                 first.CompressionTestId, AppCulture.FormatDate(first.TestDate), first.ProjectName, first.ConcreteDesignFck));
             text.Format.Font.Bold = true;
         }
@@ -148,8 +148,8 @@ namespace ProbetaControl.Services.Reports
             if (data.IsCutShort)
             {
                 // The last ensayo may be incomplete, so the note names what was printed.
-                var cut = layout.Section.AddParagraph(string.Format(CultureInfo.InvariantCulture,
-                    "El informe se cortó en las primeras {0} probetas (las de los ensayos más antiguos).", data.Specimens.Count));
+                var cut = layout.Section.AddParagraph(string.Format(AppCulture.Display,
+                    "El informe se cortó en las primeras {0:#,##0} probetas (las de los ensayos más antiguos).", data.Specimens.Count));
                 cut.Style = "Small";
                 cut.Format.SpaceBefore = Unit.FromMillimeter(2);
             }

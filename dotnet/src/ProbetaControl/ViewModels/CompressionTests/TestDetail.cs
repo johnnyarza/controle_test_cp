@@ -82,7 +82,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
 
         public int TestedCount { get; private set; }
 
-        public string TestedText => string.Format(CultureInfo.InvariantCulture, "de {0}", ActiveCount);
+        public string TestedText => string.Format(AppCulture.Display, "de {0:#,##0}", ActiveCount);
 
         /// <summary>Average strength of the broken probetas (kg/cm²), "—" when none.</summary>
         public string AverageStrengthText { get; private set; } = "—";
@@ -115,7 +115,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
 
         /// <summary>"H-21 bombeable · fck 210 kg/cm²".</summary>
         public string DesignText => Test == null ? null
-            : string.Format(CultureInfo.InvariantCulture, "{0} · fck {1:0.##} kg/cm²", Test.ConcreteDesignDescription, Test.ConcreteDesignFck);
+            : string.Format(AppCulture.Display, "{0} · fck {1:#,##0.##} kg/cm²", Test.ConcreteDesignDescription, Test.ConcreteDesignFck);
 
         public ObservableCollection<SpecimenRow> Rows { get; } = new ObservableCollection<SpecimenRow>();
 
@@ -396,9 +396,9 @@ namespace ProbetaControl.ViewModels.CompressionTests
             ActiveCount = active.Count;
             TestedCount = strengths.Count;
             double? average = strengths.Count > 0 ? strengths.Average() : (double?)null;
-            AverageStrengthText = average.HasValue ? average.Value.ToString("0.00", CultureInfo.InvariantCulture) : "—";
+            AverageStrengthText = average.HasValue ? average.Value.ToString("#,##0.00", AppCulture.Display) : "—";
             var percent = SpecimenMath.PercentOfFck(average, fck);
-            AveragePercentText = percent.HasValue ? string.Format(CultureInfo.InvariantCulture, "{0:0} % fck", percent.Value) : null;
+            AveragePercentText = percent.HasValue ? string.Format(AppCulture.Display, "{0:#,##0} % fck", percent.Value) : null;
             OnPropertyChanged(nameof(ActiveCount));
             OnPropertyChanged(nameof(TestedCount));
             OnPropertyChanged(nameof(TestedText));

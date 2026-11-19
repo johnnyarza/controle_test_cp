@@ -88,7 +88,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
             }
         }
 
-        public string OnlyDueText => string.Format(CultureInfo.InvariantCulture, "Solo con probetas para romper ({0})", DueTestCount);
+        public string OnlyDueText => string.Format(AppCulture.Display, "Solo con probetas para romper ({0:#,##0})", DueTestCount);
 
         public ICommand ChooseClientFilterCommand { get; }
 

@@ -43,8 +43,8 @@ namespace ProbetaControl.ViewModels.Infrastructure
             }
         }
 
-        public string MoreHintText => string.Format(CultureInfo.InvariantCulture,
-            "La lista se carga de a {0} registros: se muestran {1} de {2}. Pulse \"Mostrar más\" para ver los siguientes, o use Buscar para encontrar uno.",
+        public string MoreHintText => string.Format(AppCulture.Display,
+            "La lista se carga de a {0} registros: se muestran {1:#,##0} de {2:#,##0}. Pulse \"Mostrar más\" para ver los siguientes, o use Buscar para encontrar uno.",
             PageRequest.DefaultSize, Items.Count, TotalCount);
 
         /// <summary>"Entendido" on the note.</summary>
@@ -128,7 +128,7 @@ namespace ProbetaControl.ViewModels.Infrastructure
 
         public string StatusText => TotalCount == 0
             ? string.Empty
-            : string.Format(CultureInfo.InvariantCulture, "Mostrando {0} de {1}", Items.Count, TotalCount);
+            : string.Format(AppCulture.Display, "Mostrando {0:#,##0} de {1:#,##0}", Items.Count, TotalCount);
 
         /// <summary>Shown over the empty grid.</summary>
         public string EmptyText => !_hasLoaded || IsLoading || Items.Count > 0

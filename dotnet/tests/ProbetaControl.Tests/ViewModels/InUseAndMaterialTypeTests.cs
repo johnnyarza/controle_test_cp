@@ -225,7 +225,7 @@ namespace ProbetaControl.Tests.ViewModels
             Assert.That(editor.WaterCementRatioText, Is.EqualTo("a/c 0.56"));
 
             editor.Rows[2].QuantityText = "170";
-            Assert.That(editor.WaterCementRatioText, Is.EqualTo("a/c 0.5"), "updates while typing");
+            Assert.That(editor.WaterCementRatioText, Is.EqualTo("a/c 0.50"), "updates while typing");
 
             editor.Rows[0].RemoveCommand.Execute(null);
             Assert.That(editor.WaterCementRatio, Is.Null);

@@ -142,8 +142,8 @@ namespace ProbetaControl.Models
         public string ToStored() => string.Join(";", new[]
         {
             Columns.ToString(CultureInfo.InvariantCulture), Rows.ToString(CultureInfo.InvariantCulture),
-            NumberInput.Format(WidthMm), NumberInput.Format(HeightMm), NumberInput.Format(TopMm),
-            NumberInput.Format(LeftMm), NumberInput.Format(GapXMm), NumberInput.Format(GapYMm),
+            NumberInput.Invariant(WidthMm), NumberInput.Invariant(HeightMm), NumberInput.Invariant(TopMm),
+            NumberInput.Invariant(LeftMm), NumberInput.Invariant(GapXMm), NumberInput.Invariant(GapYMm),
         });
 
         /// <summary>The stored text, or <see cref="Default"/> when it is missing or unreadable.</summary>
