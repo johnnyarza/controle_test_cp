@@ -21,7 +21,7 @@ _Last updated: 2026-11-15 (phase 7: import tool tested with the office dump)._
 | 6 | Built-in help (`Help/ayuda.html`), opened by "?" / F1. Topics: [help-notes.md](help-notes.md) | Done (awaiting review) |
 | 7 | One-off import of the legacy `cp_db` data | Done (tool tested; the real import runs on switch day) |
 | 8 | Inno Setup 7 installer (with .NET 4.8 offline installer) | To do |
-| 9 | Phone page from the label's QR (ASP.NET Core): probeta data + photos, same users; photos also from the desktop probeta edit dialog ([decisions](decisions.md)) | Not in v1 |
+| 9 | Phone page from the label's QR (ASP.NET Core): probeta data + photos, same users; photos also from the desktop probeta edit dialog ([decisions](decisions.md)) | Not in v1; its database part is done (script 014: `SpecimenPhotos`, `DeleteSpecimenPhoto`, EXECUTE grants) |
 | 10 | Release check (tests, 100–150 % scaling), retire the Java code | To do |
 
 ### Phase 4 groups

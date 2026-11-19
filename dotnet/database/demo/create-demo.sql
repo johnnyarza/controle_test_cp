@@ -14,7 +14,7 @@ CREATE DATABASE IF NOT EXISTS probeta_demo
 
 -- What the program connects with: read, insert, update (same rights as specimen_app).
 CREATE USER IF NOT EXISTS 'demo_app'@'localhost' IDENTIFIED BY 'Demo-App-2026';
-GRANT SELECT, INSERT, UPDATE ON probeta_demo.* TO 'demo_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, EXECUTE ON probeta_demo.* TO 'demo_app'@'localhost';
 
 -- Builds the schema and lets DemoSeed --reset drop and recreate probeta_demo.
 CREATE USER IF NOT EXISTS 'demo_admin'@'localhost' IDENTIFIED BY 'Demo-Admin-2026';

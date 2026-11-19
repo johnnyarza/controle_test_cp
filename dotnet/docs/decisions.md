@@ -6,7 +6,8 @@ Decisions taken while porting Probeta Control to C# / WPF, and why. Status: [por
   encrypted with DPAPI for the PC.
 - MySQL schema `probeta_control`, utf8mb4 / utf8mb4_0900_ai_ci, SQL limited to what MySQL 8.0.20 supports.
   The startup check refuses servers older than 8.0.20 (`StartupChecker.MinimumServerVersion`).
-- The app's MySQL account has SELECT, INSERT, UPDATE only. Nothing is deleted: records are archived.
+- The app's MySQL account has SELECT, INSERT, UPDATE and EXECUTE only. Nothing is deleted: records are archived
+  (the one exception, photos, goes through a stored procedure; see phase 9 below).
   The connection is refused if the account could DELETE/DROP/ALTER/CREATE (e.g. `root`).
 - Every data change writes an `AuditLog` row in the same transaction.
 - Login required; users in the database with BCrypt passwords. A new database starts with
@@ -62,14 +63,20 @@ Decisions taken while porting Probeta Control to C# / WPF, and why. Status: [por
   be changed there. Staff sign in with the same program users as the desktop app (remembered on the phone), so the
   audit says who did it; the link is plain HTTP, for the lab Wi-Fi only. The page has its own MySQL account,
   `web_app_user`, so MySQL itself enforces the limit: SELECT on what the page shows (ideally one view) and on the
-  users' login columns, INSERT / UPDATE / DELETE only on a new `SpecimenPhotos` table, INSERT on `AuditLog`.
-  Photos are stored in the database (own table, MEDIUMBLOB, outside `Specimens` so lists stay fast), resized to
-  about 1600 px JPEG (~300 KB) before saving, a few per probeta at most. **Deleting a photo really deletes the row**
-  (an exception to "nothing is deleted", to save server space), with an `AuditLog` row of who, when, which probeta
-  and the size; replacing is delete + add. MySQL reuses the freed space; the file only shrinks after
-  `OPTIMIZE TABLE`, and older backups still hold deleted photos.
+  users' login columns, INSERT on `SpecimenPhotos` and `AuditLog`, EXECUTE (to delete). Table-level grants need
+  the tables to exist, so its setup script runs after the schema update.
+  Photos are stored in the database (`SpecimenPhotos`, script 014: MEDIUMBLOB, outside `Specimens` so lists stay
+  fast; JPEG or PNG, at most 2 MB, size worked out by MySQL), resized to about 1600 px JPEG (~300 KB) before saving,
+  a few per probeta at most (an app rule). **Deleting a photo really deletes the row** (an exception to "nothing is
+  deleted", to save server space), with an `AuditLog` row (action `delete`) of who, when, which PC / phone, which
+  probeta and the size, not the image; replacing is delete + add. MySQL reuses the freed space; the file only
+  shrinks after `OPTIMIZE TABLE`, and older backups still hold deleted photos.
+  **No app account gets DELETE.** A photo is deleted only with `CALL DeleteSpecimenPhoto(photoId, userId, machine)`,
+  a stored procedure that runs as its definer (the schema owner that applied script 014), writes the audit row and
+  deletes, inside the caller's transaction. The app accounts get EXECUTE on the database instead (database-level,
+  so it works before the tables exist and on the `probeta_test_*` wildcard), and the startup check that refuses an
+  account able to DELETE stays as it is. If the account that applied the scripts is ever dropped, the procedure
+  stops working (MySQL: definer missing) until it is recreated.
   The desktop app can add, replace and remove the same photos too, in the probeta edit dialog (a photo section),
-  with the same rules: same table, same resizing, real delete with an `AuditLog` row. The app's own MySQL account
-  (`specimen_app`, no DELETE today) will need DELETE on `SpecimenPhotos` only, and the startup check that refuses
-  an account able to DELETE must allow that one table.
+  with the same rules: same table, same resizing, same procedure.
 

@@ -12,9 +12,10 @@
 CREATE DATABASE IF NOT EXISTS probeta_control
     CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
--- The app itself: read, insert, update. No DELETE, no DDL.
+-- The app itself: read, insert, update. No DELETE, no DDL. EXECUTE runs the stored procedures, which are
+-- the only way to delete anything (DeleteSpecimenPhoto, script 014: deletes a photo and writes its audit row).
 CREATE USER IF NOT EXISTS 'specimen_app'@'localhost' IDENTIFIED BY 'CHANGE_ME_APP';
-GRANT SELECT, INSERT, UPDATE ON probeta_control.* TO 'specimen_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, EXECUTE ON probeta_control.* TO 'specimen_app'@'localhost';
 
 -- Schema owner: applies the numbered scripts (001_...sql) to probeta_control.
 CREATE USER IF NOT EXISTS 'specimen_admin'@'localhost' IDENTIFIED BY 'CHANGE_ME_ADMIN';
@@ -27,4 +28,8 @@ GRANT ALL PRIVILEGES ON `probeta\_test\_%`.* TO 'specimen_test'@'localhost';
 -- Restricted account the tests run the app's queries as: the same rights the app has,
 -- but only on the throwaway probeta_test_* databases.
 CREATE USER IF NOT EXISTS 'specimen_app_test'@'localhost' IDENTIFIED BY 'CHANGE_ME_APP_TEST';
-GRANT SELECT, INSERT, UPDATE ON `probeta\_test\_%`.* TO 'specimen_app_test'@'localhost';
+GRANT SELECT, INSERT, UPDATE, EXECUTE ON `probeta\_test\_%`.* TO 'specimen_app_test'@'localhost';
+
+-- Added 2026-11-18 (script 014): on a server set up before then, run only these two lines as root.
+-- GRANT EXECUTE ON probeta_control.* TO 'specimen_app'@'localhost';
+-- GRANT EXECUTE ON `probeta\_test\_%`.* TO 'specimen_app_test'@'localhost';
