@@ -65,6 +65,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
                 (object days) => AgeDays = Convert.ToString(days, CultureInfo.InvariantCulture), (object _) => CanEditMeasurements);
             AverageDiameterCommand = new RelayCommand(() => Average("Promedio del diámetro", "Diámetro (cm)", 2, v => DiameterCm = v),
                 () => CanEditMeasurements);
+            Photos = new SpecimenPhotosViewModel(services, dialogs);
             AverageHeightCommand = new RelayCommand(() => Average("Promedio de la altura", "Altura (cm)", 2, v => HeightCm = v),
                 () => CanEditMeasurements);
         }
@@ -91,7 +92,11 @@ namespace ProbetaControl.ViewModels.CompressionTests
             ? $"Probeta Nº {_id}"
             : _copyFrom != null ? $"Copiar probeta Nº {_copyFrom.Id}" : "Nueva probeta";
 
-        public override double PreferredWidth => 700;
+        /// <summary>Form on the left, photo panel on the right (layout B).</summary>
+        public override double PreferredWidth => 1000;
+
+        /// <summary>The photo panel; saved at once, whatever the ensayo lock says.</summary>
+        public SpecimenPhotosViewModel Photos { get; }
 
         /// <summary>Descripción.</summary>
         public string Code
@@ -314,6 +319,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
                     Notice = decision.IsWeightOpen ? RuptureLoadAndWeightNotice : RuptureLoadOnlyNotice;
                 }
 
+                await Photos.LoadAsync(_record.Id);
                 return;
             }
 

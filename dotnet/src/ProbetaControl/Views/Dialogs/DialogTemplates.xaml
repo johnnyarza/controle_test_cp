@@ -497,6 +497,15 @@
                 </DockPanel>
             </Border>
 
+            <!-- Layout B: the form on the left, the photo panel on the right -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="560" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="300" />
+                </Grid.ColumnDefinitions>
+            <StackPanel>
+
             <!-- Identificación -->
             <TextBlock Style="{StaticResource SectionLabel}" Text="IDENTIFICACIÓN" />
             <Grid Margin="0,0,0,4">
@@ -629,6 +638,103 @@
                         <TextBlock Style="{StaticResource TileValue}" Text="{Binding PercentText}" AutomationProperties.Name="Porcentaje del fck" />
                     </StackPanel>
                 </Border>
+            </Grid>
+            </StackPanel>
+
+            <!-- Fotos: saved at once (Agregar / Cambiar / Quitar), also on a locked ensayo -->
+            <Border x:Name="PhotoPanel" Grid.Column="2" DataContext="{Binding Photos}" BorderBrush="{StaticResource Brush.Divider}" BorderThickness="1,0,0,0"
+                    Padding="18,0,0,12" Background="Transparent" b:PhotoDropBehavior.IsEnabled="True"
+                    AutomationProperties.Name="Fotos de la probeta">
+                <Grid>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource SectionLabel}">
+                        <Run Text="FOTOS" /> <Run Text="{Binding CountText, Mode=OneWay}" />
+                    </TextBlock>
+
+                    <!-- Large preview of the chosen photo -->
+                    <Border Height="250" Background="{StaticResource Brush.SurfaceMuted}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1"
+                            CornerRadius="{StaticResource Radius.Control}" Margin="0,0,0,4">
+                        <Grid>
+                            <Image Source="{Binding Selected.Bytes, Converter={StaticResource BytesToImage}}" Stretch="Uniform" Margin="2"
+                                   RenderOptions.BitmapScalingMode="HighQuality" AutomationProperties.Name="{Binding Selected.Description}" />
+                            <TextBlock Style="{StaticResource MutedText}" Text="Sin fotos" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Visibility="{Binding HasPhotos, Converter={StaticResource InverseBoolToVisibility}}" />
+                        </Grid>
+                    </Border>
+                    <TextBlock Style="{StaticResource MutedText}" FontSize="11.5" Text="{Binding Selected.CaptionText}" Margin="0,0,0,8"
+                               Visibility="{Binding HasSelection, Converter={StaticResource BoolToVisibility}}" />
+
+                    <!-- Thumbnails: click one to see it large -->
+                    <ItemsControl ItemsSource="{Binding Items}" Margin="0,0,0,8" Focusable="False">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type t:SpecimenPhotoItem}">
+                                <Button Command="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}" Padding="0" Margin="0,0,6,0" Width="58" Height="58"
+                                        ToolTip="{Binding Description}" AutomationProperties.Name="{Binding Description}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Frame" BorderThickness="2" BorderBrush="Transparent" CornerRadius="4" Padding="1"
+                                                    Background="{StaticResource Brush.SurfaceMuted}">
+                                                <Image Source="{Binding Bytes, Converter={StaticResource BytesToImage}}" Stretch="UniformToFill" />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="Frame" Property="BorderBrush" Value="{StaticResource Brush.Primary}" />
+                                                </DataTrigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Frame" Property="Background" Value="{StaticResource Brush.SurfaceHover}" />
+                                                </Trigger>
+                                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                                    <Setter TargetName="Frame" Property="BorderBrush" Value="{StaticResource Brush.BorderHover}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- 2 × 2, filling the panel's width -->
+                    <UniformGrid Columns="2" Margin="0,0,-6,6" Visibility="{Binding HasSpecimen, Converter={StaticResource BoolToVisibility}}">
+                        <Button Content="Agregar…" Command="{Binding AddCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Plus}" Margin="0,0,6,6"
+                                ToolTip="Agregar una foto JPG o PNG (se achica a 1600 px)" />
+                        <Button Content="Cambiar…" Command="{Binding ReplaceCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Edit}" Margin="0,0,6,6"
+                                ToolTip="Cambiar la foto que se ve por otra" />
+                        <Button Content="Quitar" Command="{Binding RemoveCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Trash}" Margin="0,0,6,6"
+                                ToolTip="Quitar la foto que se ve (se borra del servidor)" />
+                        <Button Content="Descargar…" Command="{Binding DownloadCommand}" b:ButtonIcon.Icon="{StaticResource Icon.ArrowDown}" Margin="0,0,6,6"
+                                ToolTip="Guardar la foto que se ve en un archivo JPG" />
+                    </UniformGrid>
+
+                    <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,0,0,8"
+                                 Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+                    <Border Style="{StaticResource MessageBanner}">
+                        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+                    </Border>
+                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[Photo]}" TextWrapping="Wrap" />
+                    <TextBlock Style="{StaticResource MutedText}" FontSize="11.5" Text="{Binding HintText}" TextWrapping="Wrap" />
+                </StackPanel>
+
+                <!-- Shown while a photo that would be accepted is dragged over the panel -->
+                <Grid Margin="-10,-4,0,-6" IsHitTestVisible="False"
+                      Visibility="{Binding IsDragOver, Converter={StaticResource BoolToVisibility}}">
+                    <Rectangle Fill="{StaticResource Brush.PrimarySoft}" Opacity="0.92" RadiusX="6" RadiusY="6"
+                               Stroke="{StaticResource Brush.Primary}" StrokeThickness="2" StrokeDashArray="4 3" />
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Path Style="{StaticResource IconPath}" Data="{StaticResource Icon.ArrowDown}" Stroke="{StaticResource Brush.Primary}"
+                              Width="28" Height="28" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,0,0,8" />
+                        <TextBlock Text="Suelte la foto aquí" FontWeight="SemiBold" FontSize="14" Foreground="{StaticResource Brush.Primary}"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+                </Grid>
+            </Border>
             </Grid>
 
             <ProgressBar IsIndeterminate="{Binding IsBusy}" Margin="0,0,0,12"

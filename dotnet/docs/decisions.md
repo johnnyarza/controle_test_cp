@@ -78,5 +78,10 @@ Decisions taken while porting Probeta Control to C# / WPF, and why. Status: [por
   account able to DELETE stays as it is. If the account that applied the scripts is ever dropped, the procedure
   stops working (MySQL: definer missing) until it is recreated.
   The desktop app can add, replace and remove the same photos too, in the probeta edit dialog (a photo section),
-  with the same rules: same table, same resizing, same procedure.
+  with the same rules: same table, same resizing, same procedure. **Built 2026-11-18** (layout B chosen by the user from
+  three mockups): a photo panel on the right of the probeta dialog (1000 px wide) with a large preview, thumbnails,
+  Agregar… / Cambiar… / Quitar / Descargar…, drag and drop and Ctrl+V (`SpecimenPhotosViewModel`, `SpecimenPhotoService`).
+  Changes are saved at once, not with "Guardar", so they work on a locked ensayo (any user) and on a fully read-only
+  probeta; a new probeta gets photos once saved. The phone's EXIF orientation is applied before resizing; PNG and
+  pasted images are stored as JPEG; "Descargar" saves the photo shown as "Probeta 2297 - foto 1.jpg".
 

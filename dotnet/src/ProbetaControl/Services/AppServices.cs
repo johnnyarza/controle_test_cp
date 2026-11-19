@@ -25,6 +25,7 @@ namespace ProbetaControl.Services
             Designs = new ConcreteDesignService(new ConcreteDesignRepository(db, session), session);
             Tests = new CompressionTestService(new CompressionTestRepository(db, session), Clock, session);
             Specimens = new SpecimenService(new SpecimenRepository(db, session), Clock, session);
+            SpecimenPhotos = new SpecimenPhotoService(new SpecimenPhotoRepository(db, session), session);
             var appSettings = new AppSettingsRepository(db, session);
             ReportImages = new ReportImageService(appSettings, session);
             ReportSettings = new ReportSettingsService(appSettings, ReportImages, session);
@@ -59,6 +60,9 @@ namespace ProbetaControl.Services
         public CompressionTestService Tests { get; }
 
         public SpecimenService Specimens { get; }
+
+        /// <summary>Photos of probetas (probeta dialog; later the phone page).</summary>
+        public SpecimenPhotoService SpecimenPhotos { get; }
 
         public ReportImageService ReportImages { get; }
 

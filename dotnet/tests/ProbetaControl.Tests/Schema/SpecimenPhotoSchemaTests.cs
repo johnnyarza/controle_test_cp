@@ -20,7 +20,7 @@ namespace ProbetaControl.Tests.Schema
         /// <summary>ER_SIGNAL_EXCEPTION (SIGNAL SQLSTATE '45000').</summary>
         private const int SignalException = 1644;
 
-        private sealed class AuditRow
+        private sealed class PhotoAuditRow
         {
             public int UserId { get; set; }
 
@@ -76,7 +76,7 @@ namespace ProbetaControl.Tests.Schema
 
                 Assert.That(await connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM SpecimenPhotos WHERE Id = @id", new { id }),
                     Is.Zero, "really deleted");
-                var audit = await connection.QuerySingleAsync<AuditRow>(
+                var audit = await connection.QuerySingleAsync<PhotoAuditRow>(
                     "SELECT UserId, MachineName, Action, Changes FROM AuditLog WHERE TableName = 'SpecimenPhotos' AND RecordId = @id",
                     new { id });
                 Assert.That(audit.UserId, Is.EqualTo(Admin.Id));
