@@ -11,3 +11,6 @@ tests/test.env
 
 # Demo program copy made by tools/DemoSeed (connection file is encrypted per PC)
 demo-app/
+
+# WPF temporary projects left by interrupted builds
+*_wpftmp.csproj
