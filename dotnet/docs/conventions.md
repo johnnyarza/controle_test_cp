@@ -73,10 +73,15 @@ Screens are in Spanish; code, tables and stored values in English.
   `=>`, `let`, `const`, template strings), `<meta http-equiv="X-UA-Compatible" content="IE=edge">` or it acts
   like IE7, and `main, nav, section { display: block; }` because IE11 treats `<main>` as inline. Links inside the
   page are handled by its script (the page is loaded from a string, so it has no address to navigate to).
-- ZXing (tests) misses about 0.8 % of perfectly sharp QR codes at one exact size, its own codes too: tests read a
-  code at several sizes (`LabelLayoutTests.Decode`); a single failed read made the label tests flaky.
+- ZXing (tests) misses some perfectly sharp QR codes at one exact size, so tests read a code at several sizes
+  (`LabelLayoutTests.Decode`). About 1 code in 450 it misses at most sizes (a mask pattern its detector dislikes;
+  the QR is valid): tests that read labels back use the fixed `ReadableCodes`, never random codes (see decisions.md).
 - A window shown while a modal dialog is open is disabled with the rest of its thread: the help window has its
   own UI thread and can't use the app's styles (they belong to the main thread), so it is built in code.
+- A drop-down panel with a date field inside (the probetas filter) can't be a `StaysOpen="False"` Popup: the
+  field's calendar is a popup of its own, which captures the mouse, and picking a day closed the panel. Use
+  `b:PopupPanel.Opener` on a `StaysOpen="True"` Popup: it closes on Esc, on a click in the window itself (not in
+  any popup) and when the window moves or loses focus. Check such panels with real mouse clicks, not UIA Invoke.
 
 ## Performance
 

@@ -882,39 +882,6 @@
             </StackPanel>
         </StackPanel>
     </DataTemplate>
-
-    <!-- Specimen filter: mold dates and/or probeta numbers -->
-    <DataTemplate DataType="{x:Type t:SpecimenFilterViewModel}">
-        <StackPanel>
-            <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding Title}" Margin="0,0,0,16" />
-            <WrapPanel>
-                <StackPanel Style="{StaticResource FormField}" Width="170" Margin="0,0,16,0">
-                    <TextBlock Style="{StaticResource FieldLabel}" Text="Moldeo desde" />
-                    <TextBox Style="{StaticResource DateBox}" Text="{Binding MoldDateFrom, UpdateSourceTrigger=PropertyChanged}"
-                             AutomationProperties.Name="Moldeo desde" b:FocusBehavior.FocusOnLoad="True" />
-                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[MoldDateFrom]}" />
-                </StackPanel>
-                <StackPanel Style="{StaticResource FormField}" Width="170">
-                    <TextBlock Style="{StaticResource FieldLabel}" Text="Moldeo hasta" />
-                    <TextBox Style="{StaticResource DateBox}" Text="{Binding MoldDateTo, UpdateSourceTrigger=PropertyChanged}"
-                             AutomationProperties.Name="Moldeo hasta" />
-                    <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[MoldDateTo]}" />
-                </StackPanel>
-            </WrapPanel>
-            <StackPanel Style="{StaticResource FormField}">
-                <TextBlock Style="{StaticResource FieldLabel}" Text="Probetas (Nº)" />
-                <TextBox Text="{Binding IdRanges, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Números de probeta" />
-                <TextBlock Style="{StaticResource MutedText}" Text="Ejemplo: 1-5, 8, 10-12. Vacío = todas." Margin="0,4,0,0" />
-                <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[IdRanges]}" />
-            </StackPanel>
-            <StackPanel Style="{StaticResource DialogButtons}">
-                <Button Content="Cancelar" Command="{Binding CancelCommand}" IsCancel="True" Margin="0,0,8,0" />
-                <Button Style="{StaticResource PrimaryButton}" Content="Filtrar" Command="{Binding ApplyCommand}" IsDefault="True"
-                        b:ButtonIcon.Icon="{StaticResource Icon.Filter}" />
-            </StackPanel>
-        </StackPanel>
-    </DataTemplate>
-
     <!-- Report by client: the dates of the ensayos to print -->
     <DataTemplate DataType="{x:Type t:ClientReportOptionsViewModel}">
         <StackPanel>

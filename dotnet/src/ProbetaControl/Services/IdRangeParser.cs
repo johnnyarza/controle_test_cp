@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using ProbetaControl.Models;
 
 namespace ProbetaControl.Services
@@ -44,6 +45,12 @@ namespace ProbetaControl.Services
 
             return true;
         }
+
+        /// <summary>"1-5, 8".</summary>
+        public static string Format(IReadOnlyList<IdRange> ranges) => string.Join(", ", (ranges ?? new IdRange[0])
+            .Select(r => r.From == r.To
+                ? r.From.ToString(CultureInfo.InvariantCulture)
+                : string.Format(CultureInfo.InvariantCulture, "{0}-{1}", r.From, r.To)));
 
         private static bool TryParseId(string text, out int value) =>
             int.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out value) && value > 0;

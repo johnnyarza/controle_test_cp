@@ -201,14 +201,9 @@ namespace ProbetaControl.Tests.Reports
                 }
 
                 // With a filter, only its probetas; the existing file is replaced.
-                dialogs.Answer(d =>
-                {
-                    var filter = (SpecimenFilterViewModel)d;
-                    filter.IdRanges = $"{ids[0]}-{ids[2]}";
-                    filter.ApplyCommand.Execute(null);
-                    return true;
-                });
-                await ((AsyncRelayCommand)page.FilterCommand).ExecuteAsync();
+                page.FilterCommand.Execute(null);
+                page.FilterPanel.NumbersOrText = $"{ids[0]}-{ids[2]}";
+                await ((AsyncRelayCommand)page.FilterPanel.ApplyCommand).ExecuteAsync();
                 Assert.That(page.ExportExcelToolTip, Does.Contain("filtro"));
                 dialogs.AnswerFile(path);
                 dialogs.Answer(_ => true);

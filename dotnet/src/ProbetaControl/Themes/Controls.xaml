@@ -889,6 +889,65 @@
         </Setter>
     </Style>
 
+    <!-- Pill-shaped toggle (filter choices: Edad "7 d", "Esta semana"); lit when checked. -->
+    <Style x:Key="FilterPill" TargetType="ToggleButton">
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text}" />
+        <Setter Property="Background" Value="{StaticResource Brush.Surface}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Brush.Border}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="12,3" />
+        <Setter Property="MinHeight" Value="26" />
+        <Setter Property="Margin" Value="0,0,6,6" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="13" SnapsToDevicePixels="True">
+                        <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource Brush.SurfaceHover}" />
+                <Setter Property="BorderBrush" Value="{StaticResource Brush.BorderHover}" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{StaticResource Brush.PrimarySoft}" />
+                <Setter Property="BorderBrush" Value="{StaticResource Brush.Primary}" />
+                <Setter Property="Foreground" Value="{StaticResource Brush.Primary}" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource Brush.Primary}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- The same pill for one-of choices (RadioButton: "Moldeo" / "Rotura"). -->
+    <Style x:Key="FilterPillRadio" TargetType="RadioButton" BasedOn="{StaticResource FilterPill}" />
+
+    <!--
+        Removable chip of an active filter ("Sin romper ×"): bind its DataContext to an item with Text and
+        RemoveCommand (ViewModels/CompressionTests/FilterChip).
+    -->
+    <DataTemplate x:Key="FilterTagTemplate">
+        <Border Background="{StaticResource Brush.PrimarySoft}" BorderBrush="{StaticResource Brush.Primary}" BorderThickness="1"
+                CornerRadius="12" Padding="10,1,2,1" Margin="0,0,6,4" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Text}" Foreground="{StaticResource Brush.Primary}" VerticalAlignment="Center" />
+                <Button Style="{StaticResource SubtleButton}" Command="{Binding RemoveCommand}" Margin="4,0,0,0" Padding="4,0"
+                        MinHeight="20" MinWidth="20" Foreground="{StaticResource Brush.Primary}"
+                        b:ButtonIcon.Icon="{StaticResource Icon.Close}"
+                        ToolTip="Quitar esta parte del filtro" AutomationProperties.Name="{Binding Text, StringFormat=Quitar filtro {0}}" />
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+
     <!-- ===================== DataGrid ===================== -->
 
     <Style x:Key="ColumnHeaderGripper" TargetType="Thumb">

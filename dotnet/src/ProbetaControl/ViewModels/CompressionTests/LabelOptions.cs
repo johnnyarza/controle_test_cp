@@ -28,13 +28,19 @@ namespace ProbetaControl.ViewModels.CompressionTests
         /// <param name="specimens">Candidates (the page's active probetas, or the one chosen).</param>
         /// <param name="scopeText">Under the title, e.g. "Ensayo Nº 12 · probetas del filtro".</param>
         /// <param name="single">One chosen probeta: printed even if it is already broken (a label to replace).</param>
-        public LabelOptionsViewModel(LabelSettingsService settings, IReadOnlyList<Specimen> specimens, string scopeText, bool single)
+        /// <param name="brokenChosen">
+        /// The page's filter asks for broken probetas (Estado = Rotas): that choice wins, so "Solo probetas sin romper"
+        /// is hidden and off instead of leaving nothing to print.
+        /// </param>
+        public LabelOptionsViewModel(LabelSettingsService settings, IReadOnlyList<Specimen> specimens, string scopeText, bool single,
+            bool brokenChosen = false)
         {
             _settings = settings;
             _specimens = specimens.Where(s => !s.IsArchived).ToList();
             ScopeText = scopeText;
             IsSingle = single;
-            _onlyUntested = !single;
+            BrokenChosen = brokenChosen;
+            _onlyUntested = !single && !brokenChosen;
             AcceptCommand = new RelayCommand(Accept, () => CanPrint);
             CancelCommand = new RelayCommand(() => Close(false));
             ChooseStartCommand = new RelayCommand(
@@ -49,8 +55,11 @@ namespace ProbetaControl.ViewModels.CompressionTests
 
         public bool IsSingle { get; }
 
-        /// <summary>The checkbox only matters when some candidates are broken already.</summary>
-        public bool ShowOnlyUntested => !IsSingle && _specimens.Any(s => s.IsTested);
+        /// <summary>Estado = Rotas in the page's filter (see the constructor).</summary>
+        public bool BrokenChosen { get; }
+
+        /// <summary>The checkbox only matters when some candidates are broken already and nobody asked for broken ones.</summary>
+        public bool ShowOnlyUntested => !IsSingle && !BrokenChosen && _specimens.Any(s => s.IsTested);
 
         /// <summary>"Solo probetas sin romper" (default): labels are stuck on before the probetas are broken.</summary>
         public bool OnlyUntested

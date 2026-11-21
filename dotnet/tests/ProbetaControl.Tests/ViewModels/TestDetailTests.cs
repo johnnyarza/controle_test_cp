@@ -5,6 +5,7 @@ using NUnit.Framework;
 using ProbetaControl.Models;
 using ProbetaControl.Services;
 using ProbetaControl.Tests.Infrastructure;
+using ProbetaControl.ViewModels;
 using ProbetaControl.ViewModels.CompressionTests;
 using ProbetaControl.ViewModels.Infrastructure;
 
@@ -327,46 +328,152 @@ namespace ProbetaControl.Tests.ViewModels
             Assert.That(Session.IsTestUnlocked(test.Id), Is.False);
         }
 
+        /// <summary>
+        /// Today is 10/03/2026 (Tuesday): a is overdue (rotura 08/03), b pending (29/03), c broken (10/03),
+        /// d "Columna C-3" pending (12/03).
+        /// </summary>
+        private async Task<(Specimen A, Specimen B, Specimen C, Specimen D)> FilterSampleAsync(CompressionTest test)
+        {
+            var a = await AddAsync(test, new DateTime(2026, 3, 1), 7);
+            var b = await AddAsync(test, new DateTime(2026, 3, 1), 28);
+            var c = await AddAsync(test, new DateTime(2026, 3, 3), 7, load: 40);
+            var d = NewSpecimen(test.Id, new DateTime(2026, 3, 5), 7);
+            d.Code = "Columna C-3";
+            await Services.Specimens.SaveAsync(d, testUnlocked: true);
+            return (a, b, c, d);
+        }
+
+        private static async Task ApplyAsync(TestDetailPageViewModel page) =>
+            await ((AsyncRelayCommand)page.FilterPanel.ApplyCommand).ExecuteAsync();
+
         [Test]
-        public async Task Filter_by_mold_dates_and_numbers_then_clear()
+        public async Task Filter_panel_counts_each_choice_and_shows_the_filter_as_removable_chips()
         {
             var test = await NewTestAsync();
-            var a = await AddAsync(test, new DateTime(2026, 3, 1), 28);
-            var b = await AddAsync(test, new DateTime(2026, 3, 2), 28);
-            var c = await AddAsync(test, new DateTime(2026, 3, 5), 28);
-
-            var dialogs = new ScriptedDialogs();
-            dialogs.Answer(dialog =>
-            {
-                var filter = (SpecimenFilterViewModel)dialog;
-                filter.MoldDateFrom = "05/03/2026";
-                filter.MoldDateTo = "01/03/2026";
-                filter.IdRanges = "1-";
-                filter.ApplyCommand.Execute(null);
-                Assert.That(filter.Errors["MoldDateTo"], Is.EqualTo("La fecha final es anterior a la inicial."));
-                Assert.That(filter.Errors["IdRanges"], Is.EqualTo(IdRangeParser.InvalidMessage));
-
-                filter.MoldDateFrom = "01/03/2026";
-                filter.MoldDateTo = "2/3/26";
-                filter.IdRanges = $"{a.Id}, {c.Id}";
-                filter.ApplyCommand.Execute(null);
-                Assert.That(filter.Result, Is.Not.Null);
-                return true;
-            });
-
-            var page = NewPage(test, dialogs);
+            var (a, b, c, d) = await FilterSampleAsync(test);
+            var page = NewPage(test, new ScriptedDialogs());
             await page.OnNavigatedToAsync();
-            Assert.That(page.Rows, Has.Count.EqualTo(3));
-            await ((AsyncRelayCommand)page.FilterCommand).ExecuteAsync();
+            Assert.That(page.FilterButtonText, Is.EqualTo("Filtrar"));
+            Assert.That(page.ShowFilterChips, Is.False);
 
-            Assert.That(page.Rows.Select(r => r.Id), Is.EqualTo(new[] { a.Id }), "dates and numbers both apply");
+            page.FilterCommand.Execute(null);
+            var panel = page.FilterPanel;
+            Assert.That(page.IsFilterOpen, Is.True);
+            Assert.That(HelpTopics.For(page), Is.EqualTo("ensayo-filtro"), "F1 while the panel is open");
+            Assert.That(panel.States.Select(s => s.Count), Is.EqualTo(new[] { 4, 3, 1, 1 }), "todas, sin romper, para romper, rotas");
+            Assert.That(panel.States[0].IsChecked, Is.True);
+            Assert.That(panel.MoldDays.Select(o => $"{o.Text} {o.Detail} {o.Count}"),
+                Is.EqualTo(new[] { "01/03/2026 P 2", "03/03/2026 P 1", "05/03/2026 Columna C-3 1" }));
+            Assert.That(panel.Ages.Select(o => $"{o.Text} {o.Count}"), Is.EqualTo(new[] { "7 d 3", "28 d 1" }));
+            Assert.That(panel.ApplyText, Is.EqualTo("Mostrar 4 probetas"));
+
+            // Sin romper + rotura this week (09/03–15/03): only d.
+            panel.States[1].IsChecked = true;
+            Assert.That(panel.States[0].IsChecked, Is.False, "one estado at a time");
+            Assert.That(panel.MatchCount, Is.EqualTo(3));
+            panel.RangeOnRupture = true;
+            panel.ThisWeekCommand.Execute(null);
+            Assert.That((panel.DateFrom, panel.DateTo), Is.EqualTo(("09/03/2026", "15/03/2026")));
+            Assert.That(panel.ApplyText, Is.EqualTo("Mostrar 1 probeta"));
+
+            panel.DateTo = "31/02/2026";
+            await ApplyAsync(page);
+            Assert.That(panel.Errors["DateTo"], Is.EqualTo(DateInput.InvalidMessage));
+            Assert.That(page.FilterPanel, Is.SameAs(panel), "stays open to fix it");
+            panel.DateTo = "01/03/2026";
+            await ApplyAsync(page);
+            Assert.That(panel.Errors["DateTo"], Is.EqualTo("La fecha final es anterior a la inicial."));
+            panel.NextSevenDaysCommand.Execute(null);
+            Assert.That((panel.DateFrom, panel.DateTo), Is.EqualTo(("10/03/2026", "16/03/2026")));
+            panel.ThisWeekCommand.Execute(null);
+            await ApplyAsync(page);
+
+            Assert.That(page.IsFilterOpen, Is.False);
+            Assert.That(HelpTopics.For(page), Is.EqualTo("ensayo"));
+            Assert.That(page.Rows.Select(r => r.Id), Is.EqualTo(new[] { d.Id }));
+            Assert.That(page.FilterText, Is.EqualTo("Sin romper · Rotura del 09/03/2026 al 15/03/2026"));
+            Assert.That(page.FilterButtonText, Is.EqualTo("Filtrar (2)"));
+            Assert.That(page.FilterSummary, Is.EqualTo("Mostrando 1 de 4:"));
             Assert.That(page.HasFilter, Is.True);
-            Assert.That(page.FilterText, Is.EqualTo($"Moldeo 01/03/2026 – 02/03/2026 · Probetas {a.Id}, {c.Id}"));
+            Assert.That(page.PrintToolTip, Does.Contain("filtro"));
+
+            // × on "Sin romper": the rupture range alone (c broken today, d on Thursday).
+            await ((AsyncRelayCommand)page.FilterChips[0].RemoveCommand).ExecuteAsync();
+            Assert.That(page.Rows.Select(r => r.Id), Is.EqualTo(new[] { c.Id, d.Id }));
+            Assert.That(page.FilterText, Is.EqualTo("Rotura del 09/03/2026 al 15/03/2026"));
+
+            // Reopened with the active filter; Limpiar, then part of the description.
+            page.FilterCommand.Execute(null);
+            panel = page.FilterPanel;
+            Assert.That((panel.RangeOnRupture, panel.DateFrom), Is.EqualTo((true, "09/03/2026")));
+            panel.ClearCommand.Execute(null);
+            Assert.That(panel.MatchCount, Is.EqualTo(4));
+            panel.NumbersOrText = "columna";
+            Assert.That(panel.NumbersOrTextHint, Is.EqualTo("Descripción que contenga «columna»"));
+            Assert.That(panel.MatchCount, Is.EqualTo(1));
+            await ApplyAsync(page);
+            Assert.That(page.Rows.Select(r => r.Id), Is.EqualTo(new[] { d.Id }));
+            Assert.That(page.FilterText, Is.EqualTo("Descripción «columna»"));
+
+            // Numbers, an age and a mold day together.
+            page.FilterCommand.Execute(null);
+            panel = page.FilterPanel;
+            Assert.That(panel.NumbersOrText, Is.EqualTo("columna"));
+            panel.NumbersOrText = $"{a.Id}, {b.Id}";
+            Assert.That(panel.NumbersOrTextHint, Is.EqualTo($"Números {a.Id}, {b.Id}"));
+            panel.Ages[0].IsChecked = true;
+            Assert.That(panel.AllAges, Is.False);
+            panel.MoldDays[0].IsChecked = true;
+            Assert.That(panel.MatchCount, Is.EqualTo(1));
+            await ApplyAsync(page);
+            Assert.That(page.Rows.Select(r => r.Id), Is.EqualTo(new[] { a.Id }));
+            Assert.That(page.FilterText, Is.EqualTo($"Moldeo 01/03/2026 · Edad 7 d · Nº {a.Id}, {b.Id}"));
+
+            // Cancelar, or closing the popup, changes nothing.
+            page.FilterCommand.Execute(null);
+            page.FilterPanel.States[3].IsChecked = true;
+            page.FilterPanel.CancelCommand.Execute(null);
+            Assert.That(page.FilterPanel, Is.Null);
+            page.FilterCommand.Execute(null);
+            page.IsFilterOpen = false;
+            Assert.That(page.FilterPanel, Is.Null);
+            Assert.That(page.Rows.Select(r => r.Id), Is.EqualTo(new[] { a.Id }));
 
             await ((AsyncRelayCommand)page.ClearFilterCommand).ExecuteAsync();
-            Assert.That(page.Rows, Has.Count.EqualTo(3));
+            Assert.That(page.Rows, Has.Count.EqualTo(4));
             Assert.That(page.HasFilter, Is.False);
-            Assert.That(b.Id, Is.GreaterThan(a.Id));
+            Assert.That(page.FilterChips, Is.Empty);
+            Assert.That(page.FilterButtonText, Is.EqualTo("Filtrar"));
+        }
+
+        [Test]
+        public async Task Archived_probetas_are_included_from_the_filter_panel_and_shown_as_a_chip()
+        {
+            var test = await NewTestAsync();
+            var (_, b, _, _) = await FilterSampleAsync(test);
+            await Services.Specimens.SetArchivedAsync(b, true);
+            var page = NewPage(test, new ScriptedDialogs());
+            await page.OnNavigatedToAsync();
+            Assert.That(page.Rows, Has.Count.EqualTo(3));
+
+            page.FilterCommand.Execute(null);
+            var panel = page.FilterPanel;
+            Assert.That(panel.States[0].Count, Is.EqualTo(3));
+            panel.IncludeArchived = true;
+            Assert.That(panel.States[0].Count, Is.EqualTo(4));
+            Assert.That(panel.ApplyText, Is.EqualTo("Mostrar 4 probetas"));
+            await ApplyAsync(page);
+
+            Assert.That(page.IncludeArchived, Is.True);
+            Assert.That(page.Rows, Has.Count.EqualTo(4));
+            Assert.That(page.HasFilter, Is.False, "archived ones are never printed, so this is not a printing filter");
+            Assert.That(page.FilterText, Is.EqualTo("Con archivadas"));
+            Assert.That(page.FilterSummary, Is.EqualTo("Mostrando 4 de 4:"));
+
+            await ((AsyncRelayCommand)page.FilterChips.Single().RemoveCommand).ExecuteAsync();
+            Assert.That(page.IncludeArchived, Is.False);
+            Assert.That(page.Rows, Has.Count.EqualTo(3));
+            Assert.That(page.ShowFilterChips, Is.False);
         }
 
         [Test]

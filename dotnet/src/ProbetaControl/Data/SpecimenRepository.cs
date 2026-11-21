@@ -22,41 +22,19 @@ namespace ProbetaControl.Data
         {
         }
 
-        /// <summary>Specimens of one test (a test holds tens of rows, so no paging), ordered by ID.</summary>
-        public async Task<IReadOnlyList<Specimen>> ListByTestAsync(int compressionTestId, SpecimenFilter filter,
+        /// <summary>
+        /// Specimens of one test, ordered by ID. A test holds tens of rows, so there is no paging and the probetas
+        /// filter runs in memory (<see cref="SpecimenFilter.Matches"/>, applied by the service).
+        /// </summary>
+        public async Task<IReadOnlyList<Specimen>> ListByTestAsync(int compressionTestId, bool includeArchived,
             CancellationToken cancellationToken = default)
         {
-            filter = filter ?? SpecimenFilter.None;
-            var parameters = new DynamicParameters(new
-            {
-                compressionTestId,
-                includeArchived = filter.IncludeArchived,
-                moldFrom = filter.MoldDateFrom?.Date,
-                moldTo = filter.MoldDateTo?.Date,
-            });
-
-            var sql = new StringBuilder($"SELECT {Columns} FROM Specimens s WHERE s.CompressionTestId = @compressionTestId ")
-                .Append("AND (@includeArchived OR s.IsArchived = 0) ")
-                .Append("AND (@moldFrom IS NULL OR s.MoldDate >= @moldFrom) ")
-                .Append("AND (@moldTo IS NULL OR s.MoldDate <= @moldTo) ");
-
-            if (filter.IdRanges.Count > 0)
-            {
-                // Each range becomes its own parameters; no user text ever reaches the SQL.
-                var conditions = filter.IdRanges.Select((range, i) =>
-                {
-                    parameters.Add("from" + i, range.From);
-                    parameters.Add("to" + i, range.To);
-                    return $"s.Id BETWEEN @from{i} AND @to{i}";
-                });
-                sql.Append("AND (").Append(string.Join(" OR ", conditions)).Append(") ");
-            }
-
-            sql.Append("ORDER BY s.Id");
-
+            const string sql = "SELECT " + Columns + " FROM Specimens s WHERE s.CompressionTestId = @compressionTestId " +
+                               "AND (@includeArchived OR s.IsArchived = 0) ORDER BY s.Id";
             using (var connection = await Db.OpenAsync(cancellationToken).ConfigureAwait(false))
             {
-                var rows = await connection.QueryAsync<Specimen>(Cmd(sql.ToString(), parameters, null, cancellationToken)).ConfigureAwait(false);
+                var rows = await connection.QueryAsync<Specimen>(
+                    Cmd(sql, new { compressionTestId, includeArchived }, null, cancellationToken)).ConfigureAwait(false);
                 return rows.ToList();
             }
         }

@@ -237,6 +237,52 @@ namespace ProbetaControl.Tests.Reports
         }
 
         [Test]
+        public async Task With_the_filter_on_Rotas_the_labels_are_for_the_broken_probetas()
+        {
+            await SetServerAsync("servidor-lab");
+            var test = await NewTestAsync();
+            var pending = await AddAsync(test);
+            var broken = await AddAsync(test, load: 40);
+            await UseReadableCodesAsync(pending, broken);
+            var dialogs = new ScriptedDialogs();
+            var page = new TestDetailPageViewModel(Services, dialogs, new RecordingNavigator(), test.Id);
+            await page.LoadAsync();
+
+            // No Estado: the usual default, only the unbroken one.
+            LabelOptionsViewModel options = null;
+            dialogs.Answer(d =>
+            {
+                options = (LabelOptionsViewModel)d;
+                return false;
+            });
+            page.LabelsCommand.Execute(null);
+            Assert.That((options.ShowOnlyUntested, options.OnlyUntested, options.LabelCount), Is.EqualTo((true, true, 1)));
+
+            // Estado = Rotas: the filter's choice wins; the checkbox is hidden and off.
+            page.FilterCommand.Execute(null);
+            page.FilterPanel.States[3].IsChecked = true;
+            await ((AsyncRelayCommand)page.FilterPanel.ApplyCommand).ExecuteAsync();
+            ReportPreviewViewModel preview = null;
+            dialogs.Answer(d =>
+            {
+                options = (LabelOptionsViewModel)d;
+                return true;
+            });
+            dialogs.Answer(d =>
+            {
+                preview = (ReportPreviewViewModel)d;
+                return false;
+            });
+            page.LabelsCommand.Execute(null);
+            Assert.That((options.ShowOnlyUntested, options.OnlyUntested, options.LabelCount), Is.EqualTo((false, false, 1)));
+            using (var image = preview.Renderer.RenderPage(1, 200))
+            {
+                Assert.That(LabelLayoutTests.ReadQr(image, LabelSheet.Default, 1), Is.EqualTo("HTTP://SERVIDOR-LAB/P/" + broken.PublicCode));
+                Assert.That(LabelLayoutTests.ReadQr(image, LabelSheet.Default, 2), Is.Null);
+            }
+        }
+
+        [Test]
         public async Task Ensayo_page_prints_labels_for_its_filter_or_for_one_probeta()
         {
             await SetServerAsync("servidor-lab");

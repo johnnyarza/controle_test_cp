@@ -27,6 +27,9 @@ namespace ProbetaControl.ViewModels.CompressionTests
         private SpecimenRow _selectedRow;
         private SpecimenFilter _filter = new SpecimenFilter();
         private bool _includeArchived;
+        private System.Collections.Generic.IReadOnlyList<Specimen> _allSpecimens = Array.Empty<Specimen>();
+        private SpecimenFilterPanelViewModel _filterPanel;
+        private int _totalCount;
         private int _dueCount;
         private bool _isLoading;
         private bool _hasLoaded;
@@ -52,8 +55,8 @@ namespace ProbetaControl.ViewModels.CompressionTests
                 () => OpenSpecimenAsync(SpecimenEditorViewModel.Copy(_services, _dialogs, TestId, SelectedRow.Specimen, DesignFck)),
                 () => SelectedRow != null && CanAddSpecimens);
             ToggleArchiveSpecimenCommand = new AsyncRelayCommand(ToggleArchiveSpecimenAsync, () => SelectedRow != null && Session.IsAdmin);
-            FilterCommand = new AsyncRelayCommand(ChooseFilterAsync);
-            ClearFilterCommand = new AsyncRelayCommand(() => ApplyFilterAsync(new SpecimenFilter()), () => HasFilter);
+            FilterCommand = new RelayCommand(ToggleFilterPanel, () => _hasLoaded);
+            ClearFilterCommand = new AsyncRelayCommand(() => ApplyFilterAsync(new SpecimenFilter()), () => HasFilter || IncludeArchived);
             RecordRuptureCommand = new AsyncRelayCommand(() => RecordRuptureAsync(SelectedRow), () => CanRecordRupture(SelectedRow));
             PrintCommand = new RelayCommand(Print, () => Test != null);
             ExportExcelCommand = new AsyncRelayCommand(ExportExcelAsync, () => Test != null && !IsBusy);
@@ -139,7 +142,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
             private set => SetProperty(ref _isLoading, value);
         }
 
-        /// <summary>Archived probetas shown in grey.</summary>
+        /// <summary>Archived probetas shown in grey ("Incluir archivadas" in the filter panel; never printed).</summary>
         public bool IncludeArchived
         {
             get => _includeArchived;
@@ -147,10 +150,52 @@ namespace ProbetaControl.ViewModels.CompressionTests
             {
                 if (SetProperty(ref _includeArchived, value))
                 {
+                    RaiseFilterState();
                     _ = ReloadReportingErrorsAsync();
                 }
             }
         }
+
+        /// <summary>The panel under "Filtrar" while it is open, else null.</summary>
+        public SpecimenFilterPanelViewModel FilterPanel
+        {
+            get => _filterPanel;
+            private set
+            {
+                if (SetProperty(ref _filterPanel, value))
+                {
+                    OnPropertyChanged(nameof(IsFilterOpen));
+                }
+            }
+        }
+
+        /// <summary>Bound to the panel's popup: closing it (click outside, Esc) drops the choices not shown yet.</summary>
+        public bool IsFilterOpen
+        {
+            get => _filterPanel != null;
+            set
+            {
+                if (value && _filterPanel == null)
+                {
+                    ToggleFilterPanel();
+                }
+                else if (!value)
+                {
+                    FilterPanel = null;
+                }
+            }
+        }
+
+        /// <summary>One removable chip per part of the active filter, "Con archivadas" included.</summary>
+        public ObservableCollection<FilterChip> FilterChips { get; } = new ObservableCollection<FilterChip>();
+
+        public bool ShowFilterChips => FilterChips.Count > 0;
+
+        /// <summary>"Mostrando 3 de 12:" in front of the chips.</summary>
+        public string FilterSummary => $"Mostrando {Rows.Count} de {_totalCount}:";
+
+        /// <summary>"Filtrar" or "Filtrar (2)" with the number of active chips.</summary>
+        public string FilterButtonText => FilterChips.Count == 0 ? "Filtrar" : $"Filtrar ({FilterChips.Count})";
 
         /// <summary>Untested probetas whose rupture date is today or earlier (whole test, whatever the filter).</summary>
         public int DueCount
@@ -173,10 +218,11 @@ namespace ProbetaControl.ViewModels.CompressionTests
 
         public SpecimenFilter Filter => _filter;
 
-        public bool HasFilter => _filter.MoldDateFrom.HasValue || _filter.MoldDateTo.HasValue || _filter.IdRanges.Count > 0;
+        /// <summary>Something narrows the list (what Imprimir, Excel and Etiquetas then print); archived ones don't count.</summary>
+        public bool HasFilter => _filter.HasCriteria;
 
-        /// <summary>"Moldeo 01/11/2026 – 05/11/2026 · Probetas 1-5, 8".</summary>
-        public string FilterText => HasFilter ? Describe(_filter) : null;
+        /// <summary>The chips in one line: "Sin romper · Rotura del 20/11/2026 al 27/11/2026"; null without chips.</summary>
+        public string FilterText => FilterChips.Count == 0 ? null : string.Join(" · ", FilterChips.Select(c => c.Text));
 
         public string EmptyText => !_hasLoaded || IsLoading || Rows.Count > 0
             ? null
@@ -273,7 +319,8 @@ namespace ProbetaControl.ViewModels.CompressionTests
             var scope = single != null
                 ? $"Probeta Nº {single.Id} del ensayo Nº {TestId}"
                 : HasFilter ? $"Ensayo Nº {TestId} · probetas del filtro" : $"Ensayo Nº {TestId} · todas sus probetas";
-            var options = new LabelOptionsViewModel(_services.LabelSettings, candidates, scope, single != null);
+            var options = new LabelOptionsViewModel(_services.LabelSettings, candidates, scope, single != null,
+                brokenChosen: single == null && _filter.State == SpecimenStateFilter.Tested);
             if (!_dialogs.Show(options))
             {
                 return;
@@ -331,6 +378,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
         {
             base.OnNavigatedFrom();
             _loadCts?.Cancel();
+            FilterPanel = null;
         }
 
         /// <summary>Loads the header, the probetas (with the filter) and the due count; keeps or selects a row.</summary>
@@ -345,17 +393,9 @@ namespace ProbetaControl.ViewModels.CompressionTests
             try
             {
                 var test = await _services.Tests.GetAsync(TestId, cts.Token) ?? throw new NotFoundException("el ensayo");
-                var filter = new SpecimenFilter
-                {
-                    MoldDateFrom = _filter.MoldDateFrom,
-                    MoldDateTo = _filter.MoldDateTo,
-                    IdRanges = _filter.IdRanges,
-                    IncludeArchived = IncludeArchived,
-                };
-                var specimens = await _services.Specimens.ListByTestAsync(TestId, filter, cts.Token);
-                var whole = HasFilter || IncludeArchived
-                    ? await _services.Specimens.ListByTestAsync(TestId, null, cts.Token)
-                    : specimens;
+                // The whole ensayo once (archived ones too): the filter, the tiles and the filter panel's counts all
+                // work from it with SpecimenFilter.Matches, the same rule the printouts use.
+                var all = await _services.Specimens.ListByTestAsync(TestId, new SpecimenFilter { IncludeArchived = true }, cts.Token);
                 var due = await _services.Specimens.CountDueAsync(TestId, cts.Token);
                 if (cts.IsCancellationRequested)
                 {
@@ -364,11 +404,15 @@ namespace ProbetaControl.ViewModels.CompressionTests
 
                 Test = test;
                 DueCount = due;
-                UpdateIndicators(whole.Where(s => !s.IsArchived).ToList(), test.ConcreteDesignFck);
+                _allSpecimens = all;
+                var active = all.Where(s => !s.IsArchived).ToList();
+                UpdateIndicators(active, test.ConcreteDesignFck);
                 var keep = selectId ?? SelectedRow?.Id;
                 var today = _services.Specimens.Today;
+                var shown = _filter.WithArchived(IncludeArchived);
+                _totalCount = IncludeArchived ? all.Count : active.Count;
                 Rows.Clear();
-                foreach (var specimen in specimens)
+                foreach (var specimen in all.Where(s => shown.Matches(s, today)))
                 {
                     Rows.Add(new SpecimenRow(specimen, today, test.ConcreteDesignFck));
                 }
@@ -506,42 +550,115 @@ namespace ProbetaControl.ViewModels.CompressionTests
             await LoadAsync(row.Id);
         }
 
-        private async Task ChooseFilterAsync()
+        /// <summary>"Filtrar": opens the panel with the active filter, or closes it (dropping what wasn't shown).</summary>
+        private void ToggleFilterPanel()
         {
-            var dialog = new SpecimenFilterViewModel(_filter);
-            if (_dialogs.Show(dialog))
-            {
-                await ApplyFilterAsync(dialog.Result);
-            }
+            FilterPanel = FilterPanel != null
+                ? null
+                : new SpecimenFilterPanelViewModel(_allSpecimens, _services.Specimens.Today, _filter, IncludeArchived,
+                    async filter =>
+                    {
+                        FilterPanel = null;
+                        await ApplyFilterAsync(filter);
+                    },
+                    () => FilterPanel = null);
         }
 
+        /// <summary>Shows <paramref name="filter"/> (its IncludeArchived sets "Incluir archivadas").</summary>
         private async Task ApplyFilterAsync(SpecimenFilter filter)
         {
-            _filter = filter;
-            OnPropertyChanged(nameof(Filter));
-            OnPropertyChanged(nameof(HasFilter));
-            OnPropertyChanged(nameof(FilterText));
-            OnPropertyChanged(nameof(PrintToolTip));
-            OnPropertyChanged(nameof(ExportExcelToolTip));
-            OnPropertyChanged(nameof(LabelsToolTip));
+            _filter = filter.WithArchived(false);
+            _includeArchived = filter.IncludeArchived;
+            OnPropertyChanged(nameof(IncludeArchived));
+            RaiseFilterState();
             await LoadAsync();
         }
 
-        private static string Describe(SpecimenFilter filter)
+        private void RaiseFilterState()
         {
-            var parts = new System.Collections.Generic.List<string>();
-            if (filter.MoldDateFrom.HasValue || filter.MoldDateTo.HasValue)
+            FilterChips.Clear();
+            foreach (var chip in BuildChips())
             {
-                parts.Add("Moldeo " + (filter.MoldDateFrom.HasValue ? DateInput.Format(filter.MoldDateFrom) : "…")
-                          + " – " + (filter.MoldDateTo.HasValue ? DateInput.Format(filter.MoldDateTo) : "…"));
+                FilterChips.Add(chip);
             }
 
-            if (filter.IdRanges.Count > 0)
+            OnPropertyChanged(nameof(Filter));
+            OnPropertyChanged(nameof(HasFilter));
+            OnPropertyChanged(nameof(FilterText));
+            OnPropertyChanged(nameof(ShowFilterChips));
+            OnPropertyChanged(nameof(FilterButtonText));
+            OnPropertyChanged(nameof(PrintToolTip));
+            OnPropertyChanged(nameof(ExportExcelToolTip));
+            OnPropertyChanged(nameof(LabelsToolTip));
+            CommandManager.InvalidateRequerySuggested();
+        }
+
+        /// <summary>The active filter as chips; each one's × shows the list without that part.</summary>
+        private System.Collections.Generic.IEnumerable<FilterChip> BuildChips()
+        {
+            var f = _filter;
+            FilterChip Chip(string text, Action<SpecimenFilter> remove) => new FilterChip(text, new AsyncRelayCommand(() =>
             {
-                parts.Add("Probetas " + SpecimenFilterViewModel.FormatRanges(filter.IdRanges));
+                var next = f.WithArchived(IncludeArchived);
+                remove(next);
+                return ApplyFilterAsync(next);
+            }));
+
+            if (f.State != SpecimenStateFilter.All)
+            {
+                var text = f.State == SpecimenStateFilter.Untested ? "Sin romper"
+                    : f.State == SpecimenStateFilter.Due ? "Para romper (hoy o antes)" : "Rotas";
+                yield return Chip(text, n => n.State = SpecimenStateFilter.All);
             }
 
-            return string.Join(" · ", parts);
+            if (f.MoldDays.Count > 0)
+            {
+                yield return Chip("Moldeo " + string.Join(", ", f.MoldDays.OrderBy(d => d).Select(d => DateInput.Format(d))),
+                    n => n.MoldDays = Array.Empty<DateTime>());
+            }
+
+            if (f.DateFrom.HasValue || f.DateTo.HasValue)
+            {
+                yield return Chip(DescribeRange(f), n =>
+                {
+                    n.DateFrom = null;
+                    n.DateTo = null;
+                });
+            }
+
+            if (f.Ages.Count > 0)
+            {
+                yield return Chip("Edad " + string.Join(", ", f.Ages.OrderBy(a => a)) + " d", n => n.Ages = Array.Empty<int>());
+            }
+
+            if (f.IdRanges.Count > 0)
+            {
+                yield return Chip("Nº " + IdRangeParser.Format(f.IdRanges), n => n.IdRanges = Array.Empty<IdRange>());
+            }
+
+            if (!string.IsNullOrWhiteSpace(f.CodeText))
+            {
+                yield return Chip($"Descripción «{f.CodeText.Trim()}»", n => n.CodeText = null);
+            }
+
+            if (IncludeArchived)
+            {
+                yield return Chip("Con archivadas", n => n.IncludeArchived = false);
+            }
+        }
+
+        /// <summary>"Rotura del 20/11/2026 al 27/11/2026", "Moldeo desde 01/11/2026", "Rotura el 20/11/2026".</summary>
+        internal static string DescribeRange(SpecimenFilter filter)
+        {
+            var field = filter.DateField == SpecimenDateField.Rupture ? "Rotura" : "Moldeo";
+            var from = DateInput.Format(filter.DateFrom);
+            var to = DateInput.Format(filter.DateTo);
+            if (filter.DateFrom.HasValue && filter.DateTo.HasValue)
+            {
+                return filter.DateFrom.Value.Date == filter.DateTo.Value.Date ? $"{field} el {from}" : $"{field} del {from} al {to}";
+            }
+
+            return filter.DateFrom.HasValue ? $"{field} desde {from}" : $"{field} hasta {to}";
         }
 
         private void RaiseLockState()
@@ -560,6 +677,7 @@ namespace ProbetaControl.ViewModels.CompressionTests
         private void RaiseListState()
         {
             OnPropertyChanged(nameof(CountText));
+            OnPropertyChanged(nameof(FilterSummary));
             OnPropertyChanged(nameof(EmptyText));
             CommandManager.InvalidateRequerySuggested();
         }

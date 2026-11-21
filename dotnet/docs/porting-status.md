@@ -7,7 +7,7 @@ and is signed off.
 See also: [decisions](decisions.md) · [conventions, glossary and pitfalls](conventions.md) ·
 [development setup](../README.md) · [help topics](help-notes.md).
 
-_Last updated: 2026-11-18 (numbers with the PC's separators, Excel like the report, phase 9 photos: schema 014 and the desktop photo panel)._
+_Last updated: 2026-11-20 (eye button on password fields; deterministic QR label tests; new probetas filter panel on the ensayo page)._
 
 ## Status
 
@@ -47,7 +47,11 @@ _Last updated: 2026-11-18 (numbers with the PC's separators, Excel like the repo
    Estado and % fck columns). Probeta form in sections (Moldeo + Edad = Rotura, Hoy, average of two
    readings, live density / strength / % fck, pre-filled from the newest probeta); "Registrar rotura"
    quick dialog with "Guardar y siguiente" (also double-click / Ctrl+R on an unbroken probeta).
-   Copiar, Archivar, filter by mold dates and numbers (`1-5, 8`), Desbloquear / Bloquear.
+   Copiar, Archivar, Desbloquear / Bloquear. Filter (reworked 2026-11-20, layout D chosen by the user from four mockups):
+   a panel under "Filtrar" (Ctrl+F) with Estado, the ensayo's mold days, a date range on moldeo or rotura (Hoy / Esta
+   semana / Próx. 7 días), Edad, Nº or description and archived ones, counts on every choice and "Mostrar N probetas";
+   the active filter shows as removable chips. One rule (`SpecimenFilter.Matches`, in memory: a test holds tens of
+   probetas) serves the page, the counts and Imprimir / Excel / Etiquetas.
 6. Done: layouts chosen by the user from mockups (A for Configuración, D for the warning).
    "Probetas para romper" warning after login (probetas due today, tomorrow, then overdue for at most
    30 days, grouped by ensayo; older overdue ones are one line with "Ver en Ensayos"; "Abrir ensayo";

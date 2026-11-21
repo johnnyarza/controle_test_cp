@@ -11,6 +11,7 @@
         <KeyBinding Key="P" Modifiers="Control" Command="{Binding PrintCommand}" />
         <KeyBinding Key="E" Modifiers="Control" Command="{Binding ExportExcelCommand}" />
         <KeyBinding Key="L" Modifiers="Control" Command="{Binding LabelsCommand}" />
+        <KeyBinding Key="F" Modifiers="Control" Command="{Binding FilterCommand}" />
     </UserControl.InputBindings>
 
     <UserControl.Resources>
@@ -57,6 +58,147 @@
             <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
             <Setter Property="ContextMenu" Value="{StaticResource SpecimenMenu}" />
         </Style>
+        <!--
+            The panel under "Filtrar" (SpecimenFilterPanelViewModel; layout D chosen by the user): Estado, Edad and
+            Nº o descripción on the left; the ensayo's mold days and a date range (moldeo or rotura) on the right.
+            Nothing changes until "Mostrar N probetas" (or Enter); Esc or a click outside closes it.
+        -->
+        <DataTemplate x:Key="SpecimenFilterPanelTemplate">
+            <Border Margin="0,2,8,8" Width="600" Background="{StaticResource Brush.Surface}" BorderBrush="{StaticResource Brush.Border}"
+                    BorderThickness="1" CornerRadius="{StaticResource Radius.Control}"
+                    KeyboardNavigation.TabNavigation="Cycle" KeyboardNavigation.ControlTabNavigation="Cycle"
+                    KeyboardNavigation.DirectionalNavigation="Contained" AutomationProperties.Name="Filtrar probetas">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="315" Opacity="0.18" />
+                </Border.Effect>
+                <Border.InputBindings>
+                    <KeyBinding Key="Return" Command="{Binding ApplyCommand}" />
+                </Border.InputBindings>
+                <StackPanel>
+                    <Grid Margin="16,14,16,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="24" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Estado" />
+                            <ItemsControl ItemsSource="{Binding States}" Focusable="False">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <RadioButton GroupName="FilterState" IsChecked="{Binding IsChecked}" Content="{Binding Text}"
+                                                         VerticalContentAlignment="Center" />
+                                            <TextBlock Grid.Column="1" Style="{StaticResource MutedText}" Text="{Binding Count}" Margin="8,0,0,0" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Edad" Margin="0,12,0,4" />
+                            <WrapPanel>
+                                <ToggleButton Style="{StaticResource FilterPill}" Content="Todas" IsChecked="{Binding AllAges, Mode=OneWay}"
+                                              Command="{Binding AllAgesCommand}" AutomationProperties.Name="Todas las edades" />
+                                <ItemsControl ItemsSource="{Binding Ages}" Focusable="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <ToggleButton Style="{StaticResource FilterPill}" IsChecked="{Binding IsChecked}" Content="{Binding Text}"
+                                                          ToolTip="{Binding Count}" ToolTipService.ShowDuration="4000"
+                                                          AutomationProperties.Name="{Binding Text, StringFormat=Edad {0}}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </WrapPanel>
+
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Nº o descripción" Margin="0,8,0,4" />
+                            <TextBox Text="{Binding NumbersOrText, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Nº o descripción" />
+                            <TextBlock Style="{StaticResource MutedText}" FontSize="{StaticResource FontSize.Small}" Text="{Binding NumbersOrTextHint}"
+                                       TextWrapping="Wrap" Margin="0,4,0,0" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Días de moldeo de este ensayo" />
+                            <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                                <ItemsControl ItemsSource="{Binding MoldDays}" Focusable="False">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding Text}"
+                                                          AutomationProperties.Name="{Binding Text, StringFormat=Moldeo {0}}" />
+                                                <TextBlock Grid.Column="1" Style="{StaticResource MutedText}" Text="{Binding Detail}" Margin="8,0"
+                                                           TextTrimming="CharacterEllipsis" VerticalAlignment="Center" ToolTip="{Binding Detail}" />
+                                                <TextBlock Grid.Column="2" Style="{StaticResource MutedText}" Text="{Binding Count}" VerticalAlignment="Center" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+
+                            <Border BorderBrush="{StaticResource Brush.Divider}" BorderThickness="0,1,0,0" Margin="0,10,0,0" Padding="0,10,0,0">
+                                <StackPanel>
+                                    <WrapPanel>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Entre fechas de" VerticalAlignment="Center" Margin="0,0,8,6" />
+                                        <RadioButton Style="{StaticResource FilterPillRadio}" GroupName="FilterRange" Content="Moldeo"
+                                                     IsChecked="{Binding RangeOnMold}" AutomationProperties.Name="Fechas de moldeo" />
+                                        <RadioButton Style="{StaticResource FilterPillRadio}" GroupName="FilterRange" Content="Rotura"
+                                                     IsChecked="{Binding RangeOnRupture}" AutomationProperties.Name="Fechas de rotura" />
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <StackPanel Margin="0,0,8,0">
+                                            <TextBlock Style="{StaticResource FieldLabel}" Text="Desde" />
+                                            <TextBox Style="{StaticResource DateBox}" Width="130" Text="{Binding DateFrom, UpdateSourceTrigger=PropertyChanged}"
+                                                     AutomationProperties.Name="Desde" />
+                                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[DateFrom]}" MaxWidth="130" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource FieldLabel}" Text="Hasta" />
+                                            <TextBox Style="{StaticResource DateBox}" Width="130" Text="{Binding DateTo, UpdateSourceTrigger=PropertyChanged}"
+                                                     AutomationProperties.Name="Hasta" />
+                                            <TextBlock Style="{StaticResource FieldError}" Text="{Binding Errors[DateTo]}" MaxWidth="130" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </WrapPanel>
+                                    <WrapPanel Margin="-8,4,0,0">
+                                        <Button Style="{StaticResource SubtleButton}" Content="Hoy" Command="{Binding TodayCommand}" />
+                                        <Button Style="{StaticResource SubtleButton}" Content="Esta semana" Command="{Binding ThisWeekCommand}" />
+                                        <Button Style="{StaticResource SubtleButton}" Content="Próx. 7 días" Command="{Binding NextSevenDaysCommand}" />
+                                    </WrapPanel>
+                                    <TextBlock Style="{StaticResource MutedText}" FontSize="{StaticResource FontSize.Small}" Text="Una fecha vacía = sin límite."
+                                               Margin="0,2,0,0" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border BorderBrush="{StaticResource Brush.Divider}" BorderThickness="0,1,0,0" Padding="16,10" Margin="0,8,0,0">
+                        <DockPanel>
+                            <CheckBox Content="Incluir archivadas" IsChecked="{Binding IncludeArchived}" VerticalAlignment="Center" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Style="{StaticResource SubtleButton}" Content="Limpiar" Command="{Binding ClearCommand}" Margin="0,0,8,0"
+                                        ToolTip="Todas las opciones como al principio" />
+                                <Button Content="Cancelar" Command="{Binding CancelCommand}" Margin="0,0,8,0" />
+                                <Button Style="{StaticResource PrimaryButton}" Content="{Binding ApplyText}" Command="{Binding ApplyCommand}"
+                                        b:ButtonIcon.Icon="{StaticResource Icon.Filter}" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
     </UserControl.Resources>
 
     <!--
@@ -162,29 +304,32 @@
                 </UniformGrid>
             </StackPanel>
 
-            <!-- Active filter -->
-            <Border Grid.Row="2" Background="{StaticResource Brush.PrimarySoft}" CornerRadius="{StaticResource Radius.Control}"
-                    Padding="10,4" Margin="0,0,0,8"
-                    Visibility="{Binding HasFilter, Converter={StaticResource BoolToVisibility}}">
-                <DockPanel>
-                    <Button DockPanel.Dock="Right" Style="{StaticResource SubtleButton}" Content="Quitar filtro"
-                            Command="{Binding ClearFilterCommand}" b:ButtonIcon.Icon="{StaticResource Icon.FilterOff}" />
-                    <TextBlock VerticalAlignment="Center" TextWrapping="Wrap">
-                        <Run Text="Filtro:" FontWeight="SemiBold" />
-                        <Run Text="{Binding FilterText, Mode=OneWay}" />
-                    </TextBlock>
-                </DockPanel>
-            </Border>
-
             <!-- Probetas: toolbar, table and legend in one card -->
             <Border Grid.Row="3" MinHeight="180" Background="{StaticResource Brush.Surface}" BorderBrush="{StaticResource Brush.Border}"
                     BorderThickness="1" CornerRadius="{StaticResource Radius.Control}">
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top" Margin="12,8,12,0">
                         <WrapPanel DockPanel.Dock="Right">
-                            <Button Content="Filtrar…" Command="{Binding FilterCommand}" b:ButtonIcon.Icon="{StaticResource Icon.Filter}"
-                                    Margin="8,0,0,8" ToolTip="Por fecha de moldeo o número de probeta" />
-                            <CheckBox Content="Mostrar archivadas" IsChecked="{Binding IncludeArchived}" VerticalAlignment="Center" Margin="12,0,0,8" />
+                            <Button x:Name="FilterButton" Content="{Binding FilterButtonText}" Command="{Binding FilterCommand}"
+                                    b:ButtonIcon.Icon="{StaticResource Icon.Filter}" Margin="8,0,0,8"
+                                    ToolTip="Por estado, fechas, edad, número o descripción (Ctrl+F)" AutomationProperties.Name="Filtrar">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ShowFilterChips}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource Brush.PrimarySoft}" />
+                                                <Setter Property="BorderBrush" Value="{StaticResource Brush.Primary}" />
+                                                <Setter Property="Foreground" Value="{StaticResource Brush.Primary}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Popup IsOpen="{Binding IsFilterOpen, Mode=TwoWay}" StaysOpen="True" AllowsTransparency="True"
+                                   b:PopupPanel.Opener="{Binding ElementName=FilterButton}">
+                                <ContentControl Content="{Binding FilterPanel}" ContentTemplate="{StaticResource SpecimenFilterPanelTemplate}"
+                                                Focusable="False" />
+                            </Popup>
                             <Button Style="{StaticResource SubtleButton}" Command="{Binding RefreshCommand}"
                                     b:ButtonIcon.Icon="{StaticResource Icon.Refresh}" Margin="8,0,0,8"
                                     ToolTip="Actualizar (F5)" AutomationProperties.Name="Actualizar" />
@@ -204,6 +349,21 @@
                                     Margin="0,0,8,8" ToolTip="{Binding ArchiveToolTip}" ToolTipService.ShowOnDisabled="True" />
                         </WrapPanel>
                     </DockPanel>
+
+                    <!-- Active filter: "Mostrando 3 de 12:" and one removable chip per part -->
+                    <WrapPanel DockPanel.Dock="Top" Margin="12,0,12,6"
+                               Visibility="{Binding ShowFilterChips, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Style="{StaticResource MutedText}" Text="{Binding FilterSummary}" VerticalAlignment="Center" Margin="0,0,8,4" />
+                        <ItemsControl ItemsSource="{Binding FilterChips}" ItemTemplate="{StaticResource FilterTagTemplate}" Focusable="False">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                        <Button Style="{StaticResource SubtleButton}" Content="Quitar todo" Command="{Binding ClearFilterCommand}"
+                                b:ButtonIcon.Icon="{StaticResource Icon.FilterOff}" Margin="0,0,0,4" />
+                    </WrapPanel>
 
                     <!-- Count + colour legend -->
                     <WrapPanel DockPanel.Dock="Bottom" Margin="12,6,12,8">

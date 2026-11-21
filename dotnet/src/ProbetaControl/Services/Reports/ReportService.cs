@@ -135,13 +135,7 @@ namespace ProbetaControl.Services.Reports
         }
 
         /// <summary>The page's filter (null = none) without archived probetas: printouts never include them.</summary>
-        private static SpecimenFilter ActiveOnly(SpecimenFilter filter) => new SpecimenFilter
-        {
-            MoldDateFrom = filter?.MoldDateFrom,
-            MoldDateTo = filter?.MoldDateTo,
-            IdRanges = filter?.IdRanges ?? SpecimenFilter.None.IdRanges,
-            IncludeArchived = false,
-        };
+        private static SpecimenFilter ActiveOnly(SpecimenFilter filter) => (filter ?? SpecimenFilter.None).WithArchived(false);
 
         /// <summary>
         /// The report by client: every active probeta of the client's active ensayos (as their client, not as

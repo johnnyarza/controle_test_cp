@@ -83,15 +83,15 @@ namespace ProbetaControl.Tests.Data
 
             var byDate = await Services.Specimens.ListByTestAsync(test.Id, new SpecimenFilter
             {
-                MoldDateFrom = Today.AddDays(-3),
-                MoldDateTo = Today.AddDays(-1),
+                DateFrom = Today.AddDays(-3),
+                DateTo = Today.AddDays(-1),
             });
             Assert.That(byDate.Select(s => s.Id), Is.EquivalentTo(new[] { ids[1], ids[2], ids[3] }));
 
             var both = await Services.Specimens.ListByTestAsync(test.Id, new SpecimenFilter
             {
                 IdRanges = ranges,
-                MoldDateFrom = Today.AddDays(-3),
+                DateFrom = Today.AddDays(-3),
             });
             Assert.That(both.Select(s => s.Id), Is.EqualTo(new[] { ids[0], ids[1] }));
         }

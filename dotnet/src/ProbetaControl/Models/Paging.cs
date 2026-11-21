@@ -63,21 +63,6 @@ namespace ProbetaControl.Models
         public bool OnlyDue { get; set; }
     }
 
-    /// <summary>Specimen filter inside one test (legacy "Filtrar probetas"): mold dates and/or ID ranges.</summary>
-    public sealed class SpecimenFilter
-    {
-        public DateTime? MoldDateFrom { get; set; }
-
-        public DateTime? MoldDateTo { get; set; }
-
-        /// <summary>Inclusive ID ranges, e.g. from "1-5, 8".</summary>
-        public IReadOnlyList<IdRange> IdRanges { get; set; } = Array.Empty<IdRange>();
-
-        public bool IncludeArchived { get; set; }
-
-        public static SpecimenFilter None { get; } = new SpecimenFilter();
-    }
-
     public struct IdRange
     {
         public IdRange(int from, int to)

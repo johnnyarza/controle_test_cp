@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ProbetaControl.Data;
@@ -108,9 +109,15 @@ namespace ProbetaControl.Services
 
         public Task<Specimen> GetAsync(int id, CancellationToken cancellationToken = default) => _repository.GetAsync(id, cancellationToken);
 
-        public Task<IReadOnlyList<Specimen>> ListByTestAsync(int compressionTestId, SpecimenFilter filter = null,
-            CancellationToken cancellationToken = default) =>
-            _repository.ListByTestAsync(compressionTestId, filter, cancellationToken);
+        /// <summary>The test's probetas that match <paramref name="filter"/> (null = all active ones), ordered by ID.</summary>
+        public async Task<IReadOnlyList<Specimen>> ListByTestAsync(int compressionTestId, SpecimenFilter filter = null,
+            CancellationToken cancellationToken = default)
+        {
+            filter = filter ?? SpecimenFilter.None;
+            var all = await _repository.ListByTestAsync(compressionTestId, filter.IncludeArchived, cancellationToken).ConfigureAwait(false);
+            var today = _clock.Today;
+            return all.Where(s => filter.Matches(s, today)).ToList();
+        }
 
         /// <summary>Active probetas of the client's active ensayos dated within the range (null = open), oldest ensayo first (report by client).</summary>
         public Task<IReadOnlyList<ClientSpecimen>> ListByClientAsync(int clientId, DateTime? testDateFrom, DateTime? testDateTo, int limit,

@@ -40,7 +40,7 @@ namespace ProbetaControl.ViewModels
             [typeof(DueSpecimensViewModel)] = "aviso",
             [typeof(TestDetailPageViewModel)] = "ensayo",
             [typeof(AdminUnlockViewModel)] = "ensayo-bloqueo",
-            [typeof(SpecimenFilterViewModel)] = "ensayo-filtro",
+            [typeof(SpecimenFilterPanelViewModel)] = "ensayo-filtro",
             [typeof(SpecimenEditorViewModel)] = "probeta",
             [typeof(AverageCalculatorViewModel)] = "probeta-promedio",
             [typeof(RuptureEntryViewModel)] = "rotura",
@@ -87,6 +87,8 @@ namespace ProbetaControl.ViewModels
                     return For(settings.SelectedSection) ?? ByType[typeof(SettingsPageViewModel)];
                 case StartupViewModel startup:
                     return For(startup.CurrentStep) ?? "conexion";
+                case TestDetailPageViewModel detail when detail.FilterPanel != null:
+                    return For(detail.FilterPanel);
             }
 
             return ByType.TryGetValue(viewModel.GetType(), out var topic) ? topic : null;

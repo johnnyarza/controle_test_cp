@@ -126,14 +126,9 @@ namespace ProbetaControl.Tests.Reports
             var dialogs = new ScriptedDialogs();
             var page = new TestDetailPageViewModel(Services, dialogs, new RecordingNavigator(), test.Id);
             await page.OnNavigatedToAsync();
-            dialogs.Answer(d =>
-            {
-                var filter = (SpecimenFilterViewModel)d;
-                filter.IdRanges = $"{ids[0]}-{ids[2]}";
-                filter.ApplyCommand.Execute(null);
-                return true;
-            });
-            await ((AsyncRelayCommand)page.FilterCommand).ExecuteAsync();
+            page.FilterCommand.Execute(null);
+            page.FilterPanel.NumbersOrText = $"{ids[0]}-{ids[2]}";
+            await ((AsyncRelayCommand)page.FilterPanel.ApplyCommand).ExecuteAsync();
             Assert.That(page.HasFilter, Is.True);
             Assert.That(page.PrintToolTip, Does.Contain("filtro"));
 
