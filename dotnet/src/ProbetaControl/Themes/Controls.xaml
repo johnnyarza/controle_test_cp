@@ -656,15 +656,60 @@
         <Setter Property="CaretBrush" Value="{StaticResource Brush.Text}" />
         <Setter Property="SelectionBrush" Value="{StaticResource Brush.Primary}" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <!-- Eye button: shows the password as plain text while on (wired by Views/Behaviors/PasswordReveal.cs). -->
+        <Setter Property="b:PasswordReveal.IsEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="PasswordBox">
                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{StaticResource Radius.Control}"
                             SnapsToDevicePixels="True">
-                        <ScrollViewer x:Name="PART_ContentHost" Focusable="False"
-                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            <!-- Plain TextBox (no theme style) so the text sits exactly where the dots were. -->
+                            <TextBox x:Name="PART_RevealText" Style="{x:Null}" Visibility="Collapsed"
+                                     BorderThickness="0" Background="Transparent" Padding="{TemplateBinding Padding}"
+                                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                     Foreground="{TemplateBinding Foreground}" CaretBrush="{TemplateBinding CaretBrush}"
+                                     SelectionBrush="{TemplateBinding SelectionBrush}" FocusVisualStyle="{x:Null}"
+                                     FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"
+                                     MaxLength="{TemplateBinding MaxLength}" AcceptsReturn="False" AcceptsTab="False"
+                                     IsUndoEnabled="False" ContextMenu="{x:Null}"
+                                     AutomationProperties.Name="{Binding (AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}" />
+                            <ToggleButton x:Name="PART_Reveal" Grid.Column="1" Width="30" Focusable="False" Cursor="Hand"
+                                          ToolTip="Mostrar contraseña" AutomationProperties.Name="Mostrar contraseña">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="Bd" Background="Transparent" CornerRadius="0,4,4,0">
+                                            <Path x:Name="Glyph" Style="{StaticResource IconPath}" Data="{StaticResource Icon.Eye}"
+                                                  Stroke="{StaticResource Brush.TextSecondary}" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush.SurfaceHover}" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Glyph" Property="Data" Value="{StaticResource Icon.EyeOff}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                        </Grid>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger SourceName="PART_Reveal" Property="IsChecked" Value="True">
+                            <Setter TargetName="PART_ContentHost" Property="Visibility" Value="Hidden" />
+                            <Setter TargetName="PART_RevealText" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_Reveal" Property="ToolTip" Value="Ocultar contraseña" />
+                            <Setter TargetName="PART_Reveal" Property="AutomationProperties.Name" Value="Ocultar contraseña" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

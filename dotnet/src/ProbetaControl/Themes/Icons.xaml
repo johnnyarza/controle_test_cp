@@ -39,6 +39,8 @@
     <Geometry x:Key="Icon.Save">M 2.5,1.5 H 11.5 L 14.5,4.5 V 14.5 H 1.5 V 1.5 Z M 4.5,1.5 V 5.5 H 10.5 V 1.5 M 4.5,14.5 V 9.5 H 11.5 V 14.5</Geometry>
     <Geometry x:Key="Icon.Calendar">M 1.5,3 H 14.5 V 14.5 H 1.5 Z M 1.5,6.5 H 14.5 M 5,1.5 V 4.5 M 11,1.5 V 4.5 M 4.5,9.5 H 5.5 M 7.5,9.5 H 8.5 M 10.5,9.5 H 11.5 M 4.5,12 H 5.5 M 7.5,12 H 8.5</Geometry>
     <Geometry x:Key="Icon.Back">M 13.5,8 H 2.5 M 7,3.5 L 2.5,8 L 7,12.5</Geometry>
+    <Geometry x:Key="Icon.Eye">M 1,8 C 3,4.5 5.5,3 8,3 C 10.5,3 13,4.5 15,8 C 13,11.5 10.5,13 8,13 C 5.5,13 3,11.5 1,8 Z M 10.25,8 A 2.25,2.25 0 1 1 5.75,8 A 2.25,2.25 0 1 1 10.25,8</Geometry>
+    <Geometry x:Key="Icon.EyeOff">M 1,8 C 3,4.5 5.5,3 8,3 C 10.5,3 13,4.5 15,8 C 13,11.5 10.5,13 8,13 C 5.5,13 3,11.5 1,8 Z M 10.25,8 A 2.25,2.25 0 1 1 5.75,8 A 2.25,2.25 0 1 1 10.25,8 M 2.5,14 L 13.5,2</Geometry>
 
     <Style x:Key="IconPath" TargetType="Path">
         <Setter Property="Width" Value="16" />
