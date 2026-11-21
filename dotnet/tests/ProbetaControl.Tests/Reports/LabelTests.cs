@@ -34,6 +34,22 @@ namespace ProbetaControl.Tests.Reports
             return specimen;
         }
 
+        /// <summary>
+        /// Gives probetas whose labels a test reads back a code from <see cref="ReadableCodes"/> (their random ones could be
+        /// one of the rare codes ZXing's image detector misses).
+        /// </summary>
+        private async Task UseReadableCodesAsync(params Specimen[] specimens)
+        {
+            using (var connection = await OpenAsAdminAsync())
+            {
+                foreach (var specimen in specimens)
+                {
+                    specimen.PublicCode = ReadableCodes.Next();
+                    await connection.ExecuteAsync("UPDATE Specimens SET PublicCode = @PublicCode WHERE Id = @Id", specimen);
+                }
+            }
+        }
+
         [Test]
         public async Task A_new_probeta_gets_its_own_random_code_which_never_changes()
         {
@@ -121,6 +137,7 @@ namespace ProbetaControl.Tests.Reports
             var archived = await AddAsync(test);
             await Services.Specimens.SetArchivedAsync(archived, true);
             var c = await AddAsync(test, age: 28);
+            await UseReadableCodesAsync(a, broken, archived, c);
 
             var document = await Services.Reports.BuildLabelsAsync(test.Id, null, onlyUntested: true, startPosition: 1);
             using (var page = LabelLayoutTests.Draw(document, 1))
@@ -227,6 +244,7 @@ namespace ProbetaControl.Tests.Reports
             var a = await AddAsync(test);
             var b = await AddAsync(test);
             var broken = await AddAsync(test, load: 40);
+            await UseReadableCodesAsync(a, b, broken);
 
             var dialogs = new ScriptedDialogs();
             var page = new TestDetailPageViewModel(Services, dialogs, new RecordingNavigator(), test.Id);

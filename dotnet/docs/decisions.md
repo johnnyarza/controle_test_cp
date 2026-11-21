@@ -46,6 +46,14 @@ Decisions taken while porting Probeta Control to C# / WPF, and why. Status: [por
   preview / printer / PDF path as the reports.
 - **QR codes are made with QRCoder 1.6.0 (MIT, no dependencies).** The tests read them back with ZXing.Net
   0.16.9 (Apache-2.0), which is only in the test project, never in the exe.
+  Found 2026-11-20: every QR is valid, but for about 1 code in 450 the standard mask choice (QRCoder's, and
+  ZXing's own encoder too) gives a pattern ZXing's image detector misses at most sizes; the same text with any
+  other of the 8 masks reads at every size. The tests that read labels back therefore use a fixed list of
+  checked codes (`tests/.../Reports/ReadableCodes.cs`); random codes are tested by decoding the QR's modules
+  directly. Decided with the user: the program is left as is for now. Nobody scans labels before phase 9, and
+  probetas are broken within weeks, so labels printed until then are gone by the time the phone page exists.
+  **For phase 9:** make every label read with ZXing-based scanner apps, e.g. draw the QR with ZXing.Net and
+  pick a mask its detector reads (try the standard one, check it at a few sizes, else the next mask).
 - Screen text in Spanish; code, tables and stored values in English. Dates `dd/MM/yyyy`, never the PC's format.
   Numbers shown read-only (lists, tiles, totals, reports, labels) follow the PC's regional settings for both
   the decimal and the thousands separator (`1.050,5` or `1,050.5`); IDs (ensayo / probeta Nº, label Nº) are

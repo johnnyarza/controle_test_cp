@@ -20,7 +20,7 @@ namespace ProbetaControl.Tests.Reports
         internal static List<SpecimenLabel> Labels(int count, int firstId = 5000) => Enumerable.Range(0, count).Select(i => new SpecimenLabel
         {
             SpecimenId = firstId + i,
-            PublicCode = SpecimenCodes.NewCode(),
+            PublicCode = ReadableCodes.All[i % ReadableCodes.All.Length],
             TestId = 1234,
             RuptureDate = new DateTime(2026, 11, 12).AddDays(i % 3 * 7),
             AgeDays = 7 + i % 3 * 7,
@@ -46,9 +46,9 @@ namespace ProbetaControl.Tests.Reports
         }
 
         /// <summary>
-        /// The QR code in an image, or null. ZXing misses about 1 in 120 perfectly sharp codes at one exact size (codes it
-        /// made itself too, so the codes are fine); the same code reads at another size, as a phone camera sees it.
-        /// So a few sizes are tried before giving up.
+        /// The QR code in an image, or null. ZXing's detector can miss a sharp code at one exact size that it reads at
+        /// another, as a phone camera sees it, so a few sizes are tried before giving up. Some codes it misses at most sizes
+        /// (a mask pattern its detector dislikes): tests that read labels use <see cref="ReadableCodes"/>.
         /// </summary>
         internal static string Decode(Bitmap image)
         {
@@ -70,12 +70,41 @@ namespace ProbetaControl.Tests.Reports
             return null;
         }
 
+        /// <summary>
+        /// Random codes, as the program makes them: the modules of each PNG (20 px each, 4 modules of quiet zone) are read
+        /// straight into ZXing's QR decoder. No image detection, so this holds for every code, every run.
+        /// </summary>
         [Test]
-        public void Every_code_reads_back()
+        public void Every_code_makes_a_valid_QR()
         {
+            const int ModulePx = 20, Quiet = 4;
+            var decoder = new ZXing.QrCode.Internal.Decoder();
             for (var i = 0; i < 300; i++)
             {
                 var link = LabelLink.For("servidor-lab", SpecimenCodes.NewCode());
+                using (var png = (Bitmap)Image.FromStream(new System.IO.MemoryStream(SpecimenLabels.QrPng(link))))
+                {
+                    var size = png.Width / ModulePx - 2 * Quiet;
+                    var modules = new ZXing.Common.BitMatrix(size);
+                    for (var y = 0; y < size; y++)
+                    {
+                        for (var x = 0; x < size; x++)
+                        {
+                            modules[x, y] = Dark(png, (Quiet + x) * ModulePx + ModulePx / 2, (Quiet + y) * ModulePx + ModulePx / 2);
+                        }
+                    }
+
+                    Assert.That(decoder.decode(modules, null)?.Text, Is.EqualTo(link));
+                }
+            }
+        }
+
+        [Test]
+        public void Codes_read_back_from_a_small_image()
+        {
+            foreach (var code in ReadableCodes.All)
+            {
+                var link = LabelLink.For("servidor-lab", code);
                 using (var png = (Bitmap)Image.FromStream(new System.IO.MemoryStream(SpecimenLabels.QrPng(link))))
                 using (var small = new Bitmap(png, 200, 200))
                 {
